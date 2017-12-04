@@ -5,33 +5,198 @@
  */
 package box.definitions;
 
+import box.BoxModel;
+import box.definitions.volume.VolumeListModel;
+import box.definitions.volume.VolumeListView;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class BoxDefinitionsController {
-
+    final String volumeExpand="Volumes >";
+    final String volumeCollapse="Volumes <";
+    final String qmatrixExpand="QMatrix >";
+    final String qmatrixCollapse="QMatrix <";
+    final String insightExpand="Insight >";
+    final String insightCollapse="Insight <";
+    
+    BoxModel parentBox;
     BoxDefinitionsModel model;
     BoxDefinitionsView view;
-    
+    JFXDrawer qmatrixDrawer=new JFXDrawer();
+    JFXDrawer volumeDrawer=new JFXDrawer();
+    JFXDrawer insightDrawer=new JFXDrawer();
     
     @FXML
-    private StackPane leftDrawerPane;
-    
-     @FXML
-    private JFXTextField textf;
+    private JFXDrawersStack drawersStack;
 
-    void setModel(BoxDefinitionsModel item) {
+    @FXML
+    private JFXButton openVolumeDrawer;
+
+    @FXML
+    private JFXButton openInsightDrawer;
+
+    @FXML
+    private JFXButton openQMatrixDrawer;
+
+
+
+    void setModel(BoxDefinitionsModel item,BoxModel parentBox) {
         model=item;
+        this.parentBox=parentBox;
     }
 
     void setView(BoxDefinitionsView vw) {
         view=vw;
         
+        setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
+        setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
+        setupInsightDrawer(insightDrawer,openInsightDrawer);
+        
+        
+        
+    }
+
+    private void setupVolumeDrawer(JFXDrawer drawer,JFXButton button) {
+        drawer.setId("Volume");
+        VolumeListModel vol=new VolumeListModel(parentBox);
+        VolumeListView vollistview=new VolumeListView(vol);
+        drawer.setSidePane(vollistview);
+        drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
+        drawer.setOverLayVisible(false);
+        drawer.setResizableOnDrag(true);
+        drawer.setTranslateX(200);
+        drawer.setTranslateY(0);
+        
+        
+        
+        
+        button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+        drawer.setOnDrawerClosed(e->{
+            drawer.setVisible(false);
+            button.setText(this.volumeExpand);
+            e.consume();                //prevent further collapse of the nested (previous) drawers
+        });
+        drawer.setOnDrawerOpening(e->{
+           drawer.setVisible(true);
+            button.setText(this.volumeCollapse);
+            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+            ft.setFromValue(0.7);
+            ft.setToValue(1.0);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+        });
+        
+        drawer.setOnDrawerClosing(e->{
+            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.7);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+             
+        });
+    }
+
+    private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
+        
+        
+         drawer.setId("QMatrix");
+        VolumeListModel vol=new VolumeListModel(parentBox);
+        VolumeListView vollistview=new VolumeListView(vol);
+        drawer.setSidePane(vollistview);
+        drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
+        drawer.setOverLayVisible(false);
+        drawer.setResizableOnDrag(true);
+        drawer.setTranslateX(200);
+        drawer.setTranslateY(0);
+        
+        
+        
+        
+        button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+        drawer.setOnDrawerClosed(e->{
+            drawer.setVisible(false);
+            button.setText(this.qmatrixExpand);
+            e.consume();                //prevent further collapse of the nested (previous) drawers
+        });
+        drawer.setOnDrawerOpening(e->{
+           drawer.setVisible(true);
+            button.setText(this.qmatrixCollapse);
+            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+            ft.setFromValue(0.7);
+            ft.setToValue(1.0);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+        });
+        
+        drawer.setOnDrawerClosing(e->{
+            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.7);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+             
+        });
+     }
+
+    private void setupInsightDrawer(JFXDrawer drawer,JFXButton button) {
+         
+         drawer.setId("Insight");
+        VolumeListModel vol=new VolumeListModel(parentBox);
+        VolumeListView vollistview=new VolumeListView(vol);
+        drawer.setSidePane(vollistview);
+        drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
+        drawer.setOverLayVisible(false);
+        drawer.setResizableOnDrag(true);
+        drawer.setTranslateX(200);
+        drawer.setTranslateY(0);
+        
+        
+        
+        
+        button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+        drawer.setOnDrawerClosed(e->{
+            drawer.setVisible(false);
+            button.setText(this.insightExpand);
+            e.consume();                //prevent further collapse of the nested (previous) drawers
+        });
+        drawer.setOnDrawerOpening(e->{
+           drawer.setVisible(true);
+            button.setText(this.insightCollapse);
+            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+            ft.setFromValue(0.7);
+            ft.setToValue(1.0);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+        });
+        
+        drawer.setOnDrawerClosing(e->{
+            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.7);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+             
+        });
     }
     
 }

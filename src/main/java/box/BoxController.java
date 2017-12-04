@@ -44,7 +44,8 @@ import javafx.util.Duration;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class BoxController {
-    
+    final String expand=">";
+    final String collapse="<";
     
     BoxModel model;
     BoxView node;
@@ -74,10 +75,10 @@ public class BoxController {
         node=vw;
         drawer.setId("LEFT");
         BoxDefinitionsModel bdmodel=new BoxDefinitionsModel();
-        BoxDefinitionsView bdview=new BoxDefinitionsView(bdmodel);
+        BoxDefinitionsView bdview=new BoxDefinitionsView(bdmodel,this.model);
         drawer.setSidePane(bdview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        drawer.setDefaultDrawerSize(150);
+        drawer.setDefaultDrawerSize(bdview.computeAreaInScreen());
         drawer.setOverLayVisible(false);
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(150);
@@ -87,8 +88,13 @@ public class BoxController {
          drawersStack.toggle(drawer);
         });
         
+        drawer.setOnDrawerOpened(e->{
+        //openDrawer.setText(this.collapse);
+        });
+        
         drawer.setOnDrawerOpening(e->{
             drawer.setVisible(true);
+            openDrawer.setText(this.collapse);
             FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
             ft.setFromValue(0.7);
             ft.setToValue(1.0);
@@ -99,12 +105,13 @@ public class BoxController {
         
         drawer.setOnDrawerClosed(e->{
             drawer.setVisible(false);
+            openDrawer.setText(this.expand);
             
         });
         drawer.setOnDrawerClosing(e->{
-            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
             ft.setFromValue(1.0);
-            ft.setToValue(0.2);
+            ft.setToValue(0.7);
             ft.setAutoReverse(true);
             ft.setCycleCount(1);
             ft.play();

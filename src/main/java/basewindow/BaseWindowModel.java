@@ -17,6 +17,8 @@ import javafx.collections.ObservableList;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class BaseWindowModel {
+
+    public final static boolean DEBUG=true;
    private  List<BoxModel> boxes=new ArrayList<>(); 
     private ObservableList<BoxModel> observableBoxes=FXCollections.observableList(boxes);
     

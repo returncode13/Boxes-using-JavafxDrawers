@@ -7,6 +7,8 @@ package basewindow;
 
 import box.BoxModel;
 import box.BoxView;
+import box.definitions.BoxDefinitionsModel;
+import box.definitions.BoxDefinitionsView;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,12 +49,14 @@ public class BaseWindowController extends Stage {
 
     @FXML
     void addBox(ActionEvent event) {
-        BoxModel box=new BoxModel();
+              BoxModel box=new BoxModel();
         BoxView boxnode=new BoxView(box,interactivePane);
         //box.setBaseWindow(model);
-    //    model.getObservableBoxes().add(box);
+        //    model.getObservableBoxes().add(box);
         interactivePane.getChildren().add(boxnode);
-        
+        /*BoxDefinitionsModel model=new BoxDefinitionsModel();
+        BoxDefinitionsView bdv=new BoxDefinitionsView(model);
+        interactivePane.getChildren().add(bdv);*/
     }
     
     

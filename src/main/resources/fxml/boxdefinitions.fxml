@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.scene.layout.StackPane?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawersStack?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 
 
-<StackPane fx:id="leftDrawerPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="307.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="box.definitions.BoxDefinitionsController">
+<fx:root fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="97.0" prefWidth="93.0" type="JFXDrawersStack" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="box.definitions.BoxDefinitionsController">
    <children>
-      <JFXTextField fx:id="textf" text="Example" />
+      <GridPane prefHeight="97.0" prefWidth="75.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <JFXButton fx:id="openVolumeDrawer" text="Volumes &gt;" GridPane.rowIndex="1" />
+            <JFXButton fx:id="openInsightDrawer" text="Insight &gt;" GridPane.rowIndex="2" />
+            <JFXButton fx:id="openQMatrixDrawer" layoutX="10.0" layoutY="44.0" text="QMatrix &gt;" />
+         </children>
+      </GridPane>
    </children>
-</StackPane>
+</fx:root>
