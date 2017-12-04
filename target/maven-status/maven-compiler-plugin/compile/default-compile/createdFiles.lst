@@ -1,0 +1,10 @@
+box/BoxController.class
+box/definitions/BoxDefinitionsModel.class
+basewindow/BaseWindowModel.class
+box/definitions/BoxDefinitionsView.class
+box/BoxModel.class
+box/BoxView.class
+basewindow/Main.class
+box/definitions/BoxDefinitionsController.class
+basewindow/BaseWindowNode.class
+basewindow/BaseWindowController.class

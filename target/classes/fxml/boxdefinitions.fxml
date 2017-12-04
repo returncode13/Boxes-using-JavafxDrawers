@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane fx:id="leftDrawerPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="92.0" prefWidth="307.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="box.definitions.BoxDefinitionsController">
+   <children>
+      <JFXTextField fx:id="textf" text="Example" />
+   </children>
+</StackPane>
