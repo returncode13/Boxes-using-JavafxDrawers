@@ -13,13 +13,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
+import job.job0.JobType0Controller;
 import job.job0.JobType0View;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobType1View extends JFXDrawersStack implements JobType0View{
+public class JobType1View extends AnchorPane implements JobType0View{
     private  JobType1Model model;
     private JobType1Controller  controller;
     private AnchorPane interactivePane;
@@ -49,7 +50,7 @@ public class JobType1View extends JFXDrawersStack implements JobType0View{
                 
                 
                 controller.setModel(item);
-                controller.setView(this) ;
+                controller.setView(this,this.interactivePane) ;
                
                 
             }catch(IOException e){
@@ -69,5 +70,10 @@ public class JobType1View extends JFXDrawersStack implements JobType0View{
                 (int)(coords.getY() -(getBoundsInLocal().getHeight()/2))
                 );
         
+    }
+
+    @Override
+    public JobType0Controller getController() {
+        return controller;
     }
 }

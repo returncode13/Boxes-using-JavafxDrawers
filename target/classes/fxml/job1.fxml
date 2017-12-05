@@ -4,40 +4,48 @@
 <?import com.jfoenix.controls.JFXDrawersStack?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="74.0" prefWidth="142.0" type="JFXDrawersStack" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="job.job1.JobType1Controller">
+
+<fx:root style="-fx-background-color: Transparent;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="job.job1.JobType1Controller">
    <children>
-      <VBox fx:id="vbox">
+      <JFXDrawersStack fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="74.0" prefWidth="142.0">
          <children>
-            <JFXTextField fx:id="name" text="Name" />
-            <HBox fx:id="hbox">
+            <VBox fx:id="vbox">
                <children>
-                  <JFXButton fx:id="q" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="q" />
-                  <JFXButton fx:id="t" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin></JFXButton>
-                  <JFXButton fx:id="h" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="H">
+                  <JFXTextField fx:id="name" text="Name" />
+                  <HBox fx:id="hbox">
+                     <children>
+                        <JFXButton fx:id="q" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="q" />
+                        <JFXButton fx:id="t" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <JFXButton fx:id="h" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="H">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <Pane prefHeight="200.0" prefWidth="200.0" />
+                        <JFXButton fx:id="openDrawer" buttonType="RAISED" contentDisplay="CENTER" text="&gt;" />
+                     </children>
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
-                     <HBox.margin>
-                        <Insets left="10.0" />
-                     </HBox.margin></JFXButton>
-                  <Pane prefHeight="200.0" prefWidth="200.0" />
-                  <JFXButton fx:id="openDrawer" buttonType="RAISED" contentDisplay="CENTER" text="&gt;" />
+                     <VBox.margin>
+                        <Insets left="2.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
                </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <VBox.margin>
-                  <Insets left="2.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
+      </JFXDrawersStack>
    </children>
 </fx:root>

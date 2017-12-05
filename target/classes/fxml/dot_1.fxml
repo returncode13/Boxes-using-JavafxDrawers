@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.Circle?>
+
+
+<Circle fx:id="dot" fill="#191a1b" radius="40.0" stroke="BLACK" strokeType="INSIDE" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dot.DotController" />

@@ -5,13 +5,15 @@
  */
 package edge.parentchildedge;
 
-import boxes.BoxNode;
+
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
+import job.job0.JobType0Model;
+import job.job0.JobType0View;
 
 /**
  *
@@ -20,16 +22,16 @@ import javafx.scene.layout.AnchorPane;
 public class ParentChildEdgeView extends AnchorPane{
     private  ParentChildEdgeModel model;
     private ParentChildEdgeController  controller;
-    private BoxNode parentBoxNode;
+    private JobType0View parentJob;
     private AnchorPane interactivePane;
      private FXMLLoader fXMLLoader;
     private final URL location;
     private boolean dropReceived;
     
     
-    public ParentChildEdgeView(ParentChildEdgeModel item,BoxNode parentNode, AnchorPane interactivePane){
+    public ParentChildEdgeView(ParentChildEdgeModel item,JobType0View parentJob, AnchorPane interactivePane){
         this.location=getClass().getClassLoader().getResource("fxml/parentchildedge.fxml"); 
-       this.parentBoxNode=parentNode;
+       this.parentJob=parentJob;
        this.interactivePane=interactivePane;
           
            fXMLLoader=new FXMLLoader();
@@ -46,7 +48,7 @@ public class ParentChildEdgeView extends AnchorPane{
              
               
                 controller.setModel(item);
-                controller.setView(this,parentBoxNode,this.interactivePane);
+                controller.setView(this,parentJob,this.interactivePane);
                
                 
             }catch(IOException e){

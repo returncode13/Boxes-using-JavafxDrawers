@@ -18,6 +18,8 @@ import volume.volume0.Volume0;
  */
 public interface JobType0Model {
     public final static Long PROCESS_2D=1L;
+    public Long getId();
+    public void setId(Long id);
     public Long getType();
     public StringProperty getNameproperty();
     public void setNameproperty(String name);
@@ -35,4 +37,11 @@ public interface JobType0Model {
     public void removeParent(JobType0Model parent);
     public void addChild(JobType0Model child);
     public void removeChild(JobType0Model child); 
+
+    @Override
+    public boolean equals(Object obj);
+
+    @Override
+    public int hashCode();
+    
 }

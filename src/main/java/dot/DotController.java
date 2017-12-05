@@ -140,9 +140,9 @@ public class DotController extends Stage{
                     ParentChildEdgeModel parentModel=parentNode.getController().getModel();
                     parentModel.setDotModel(model);                      //Share this dot
                     JobType0Model childFromDot=(new ArrayList<>(model.getChildren())).get(0);    //the ONLY child associated with the dot model
-                    parentModel.setChildBoxModel(childFromDot);
+                    parentModel.setChildJob(childFromDot);
                     
-                    JobType0Model parentConnectingToDot=parentModel.getParentBoxModel();   //get the parent job connecting to this Dot
+                    JobType0Model parentConnectingToDot=parentModel.getParentJob();   //get the parent job connecting to this Dot
                     //model.addToParents(parentConnectingToDot);                      //add it to the Dots list of parents. (which will now be >1)
                     
                     parentConnectingToDot.addChild(childFromDot);

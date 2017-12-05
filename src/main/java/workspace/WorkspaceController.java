@@ -60,7 +60,7 @@ public class WorkspaceController extends Stage {
         changeProperty.bind(job.getChangeProperty());
         JobType1View jobview=new JobType1View(job,interactivePane);
         interactivePane.getChildren().add(jobview);
-        
+        System.out.println("workspace.WorkspaceController.addBox(): "+job.getId()%100);
         
         
         /*JobDefinitionsModel model=new JobDefinitionsModel();

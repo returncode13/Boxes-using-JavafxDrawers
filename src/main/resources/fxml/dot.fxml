@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+
+<fx:root id="AnchorPane" fx:id="dotanchorPane" onDragDetected="#dotOnDragDetected" onDragOver="#dotOnDragOver" onMouseClicked="#onMouseClicked" onMouseDragged="#onMouseDragged" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" onMousePressed="#onMousePressed" onMouseReleased="#onMouseReleased" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dot.DotController">
+   <children>
+      <Circle fx:id="dot" fill="#191a1b" layoutX="31.0" layoutY="34.0" onDragDropped="#dotOnDragDropped" radius="10.0" stroke="BLACK" strokeType="INSIDE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+</fx:root>

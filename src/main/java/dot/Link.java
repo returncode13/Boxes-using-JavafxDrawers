@@ -5,29 +5,31 @@
  */
 package dot;
 
-import boxes.BoxModel;
+import job.job0.JobType0Model;
+
+
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 class Link {
-    BoxModel parent;
-    BoxModel child;
+    JobType0Model parent;
+    JobType0Model child;
 
-    public BoxModel getParent() {
+    public JobType0Model getParent() {
         return parent;
     }
 
-    public void setParent(BoxModel parent) {
+    public void setParent(JobType0Model parent) {
         this.parent = parent;
     }
 
-    public BoxModel getChild() {
+    public JobType0Model getChild() {
         return child;
     }
 
-    public void setChild(BoxModel child) {
+    public void setChild(JobType0Model child) {
         this.child = child;
     }
     

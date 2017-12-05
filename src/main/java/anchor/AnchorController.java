@@ -80,7 +80,7 @@ public class AnchorController {
         
        node.setOnMouseDragged(e->{
      
-     //  System.out.println("anchor.AnchorController.setView() Mouse Dragged");
+       System.out.println("anchor.AnchorController.setView() Mouse Dragged");
        double newX=e.getX()+dragDelta.x;
        if(newX>0 && newX<AnchorController.this.interactivePane.getScene().getWidth()){
        node.setCenterX(newX);
@@ -95,7 +95,7 @@ public class AnchorController {
        
         
          node.setOnDragDetected(e->{
-      //       System.out.println("anchor.AnchorController.setView() DragDetected");
+            System.out.println("anchor.AnchorController.setView() DragDetected");
             node.startFullDrag();
         e.consume();
         });

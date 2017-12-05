@@ -14,5 +14,5 @@ import javafx.geometry.Point2D;
  */
 public interface JobType0View {
      public void relocateToPoint(Point2D xx);
-     
+     public JobType0Controller getController();
 }

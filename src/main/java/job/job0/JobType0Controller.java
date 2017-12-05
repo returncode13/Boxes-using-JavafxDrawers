@@ -10,5 +10,5 @@ package job.job0;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public interface JobType0Controller {
-    
+    public JobType0Model getModel();
 }

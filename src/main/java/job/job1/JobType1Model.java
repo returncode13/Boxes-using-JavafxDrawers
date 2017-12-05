@@ -37,8 +37,8 @@ import volume.volume0.Volume0;
  */
 public class JobType1Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
-    final private Long id=1L;
-    
+    final private Long type=1L;
+    private Long id;
     private StringProperty nameproperty;
     private List<Volume0> volumes;
     private ObservableList<Volume0> observableVolumes;
@@ -55,6 +55,7 @@ public class JobType1Model implements JobType0Model {
     
             
     public JobType1Model(WorkspaceModel workspaceModel) {
+        id=UUID.randomUUID().getMostSignificantBits();
         nameproperty=new SimpleStringProperty();
         children=new HashSet<>();
         children.add(this);                                 //born as a root. 
@@ -79,6 +80,17 @@ public class JobType1Model implements JobType0Model {
         
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    
+    
     @Override
     public StringProperty getNameproperty() {
         return nameproperty;
@@ -101,7 +113,7 @@ public class JobType1Model implements JobType0Model {
 
     @Override
     public Long getType() {
-        return this.id;
+        return this.type;
     }
     
     @Override
@@ -178,8 +190,9 @@ public class JobType1Model implements JobType0Model {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.id);
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.type);
+        hash = 29 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -195,11 +208,16 @@ public class JobType1Model implements JobType0Model {
             return false;
         }
         final JobType1Model other = (JobType1Model) obj;
+        if (!Objects.equals(this.type, other.type)) {
+            return false;
+        }
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
+
+    
     
     /***
      * Listeners

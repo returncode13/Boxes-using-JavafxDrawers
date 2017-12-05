@@ -6,38 +6,39 @@
 package edge.parentchildedge;
 
 import anchor.AnchorModel;
-import boxes.BoxModel;
+
 import dot.DotModel;
+import job.job0.JobType0Model;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class ParentChildEdgeModel {
-    BoxModel parentBoxModel;
+    JobType0Model parentJob;
     DotModel dotModel;
     AnchorModel childAnchorModel;               //Anchor dropped on the child box
-    BoxModel childBoxModel;
+    JobType0Model childJob;
 
-    public BoxModel getParentBoxModel() {
-        return parentBoxModel;
+    public JobType0Model getParentJob() {
+        return parentJob;
     }
 
-    public void setParentBoxModel(BoxModel parentBoxModel) {
-        this.parentBoxModel = parentBoxModel;
+    public void setParentJob(JobType0Model parentJob) {
+        this.parentJob = parentJob;
     }
 
     public DotModel getDotModel() {
         if(dotModel==null){
             dotModel=new DotModel();
-            dotModel.addToParents(parentBoxModel);
+            dotModel.addToParents(parentJob);
         }
         return dotModel;
     }
 
     public void setDotModel(DotModel dotModel) {
         this.dotModel = dotModel;
-        this.dotModel.addToParents(parentBoxModel);
+        this.dotModel.addToParents(parentJob);
     }
 
     public AnchorModel getChildAnchorModel() {
@@ -52,13 +53,13 @@ public class ParentChildEdgeModel {
         this.childAnchorModel = childAnchorModel;
     }
 
-    public BoxModel getChildBoxModel() {
-        return childBoxModel;
+    public JobType0Model getChildJob() {
+        return childJob;
     }
 
-    public void setChildBoxModel(BoxModel childBoxModel) {
-        this.childBoxModel = childBoxModel;
-        this.dotModel.addToChildren(this.childBoxModel);
+    public void setChildJob(JobType0Model childJob) {
+        this.childJob = childJob;
+        this.dotModel.addToChildren(this.childJob);
     }
     
     

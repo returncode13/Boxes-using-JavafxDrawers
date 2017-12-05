@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+
+
+<fx:root id="AnchorPane" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="anchor.AnchorController">
+   <children>
+      <Circle fx:id="anchor" fill="DODGERBLUE" layoutX="31.0" layoutY="34.0" onDragDetected="#anchorOnDragDetected" onDragDropped="#anchorOnDragDropped" onDragOver="#anchorOnDragOver" radius="10.0" stroke="BLACK" strokeType="INSIDE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+</fx:root>

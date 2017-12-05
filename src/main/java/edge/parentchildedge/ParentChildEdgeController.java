@@ -21,7 +21,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
+import job.job0.JobType0Model;
 import job.job0.JobType0View;
+import job.job1.JobType1View;
 
 /**
  *
@@ -71,9 +73,12 @@ public class ParentChildEdgeController {
         childAnchor=new AnchorNode(childAnchorModel, this.interactivePane);
         
         curve=createStartingCurve();
-        
-        curve.startXProperty().bind(this.jobView.layoutXProperty());
-        curve.startYProperty().bind(this.jobView.layoutYProperty());
+        JobType0Model job=this.jobView.getController().getModel();
+        type=job.getType();
+        if(type.equals(1L)) {
+        curve.startXProperty().bind(((JobType1View)this.jobView).layoutXProperty());
+        curve.startYProperty().bind(((JobType1View)this.jobView).layoutYProperty());
+        }
         curve.endXProperty().bind(childAnchor.centerXProperty());
         curve.endYProperty().bind(childAnchor.centerYProperty());
         curve.setMouseTransparent(true);
@@ -181,7 +186,7 @@ public class ParentChildEdgeController {
         childAnchor.setOnMouseDragged(e->{
            
             node.toBack();              ///overriden statement
-           // System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
+            System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
             double newX=e.getX()+dragDelta.x;
             if(newX>0 && newX<ParentChildEdgeController.this.interactivePane.getScene().getWidth()){
                 childAnchor.setCenterX(newX);
