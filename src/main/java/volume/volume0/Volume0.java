@@ -5,9 +5,12 @@
  */
 package volume.volume0;
 
+import fend.sequences.Subsurface;
 import java.io.File;
+import java.util.List;
 import javafx.beans.property.StringProperty;
-import javafx.scene.shape.Box;
+import job.job0.JobType0Model;
+
 
 /**
  *
@@ -16,12 +19,18 @@ import javafx.scene.shape.Box;
 public interface Volume0 {
     public Long getType();
     public Long getId();
+    /**
+     * Use the setId method only while loading a session
+     */
     public void setId(Long id);
     public StringProperty getName();
     public void setName(String s);
     public File getVolume();
     public void setVolume(File f);
-    public Box getParentBox();
+    public JobType0Model getParentJob();
+
+    public List<Subsurface> getSubsurfaces();
+    
     
    
 }

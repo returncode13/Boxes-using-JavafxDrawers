@@ -5,11 +5,33 @@
  */
 package volume.volume1;
 
+import workspace.WorkspaceModel;
+import fend.sequences.Subsurface;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.shape.Box;
+import job.job0.JobType0Model;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+
 import volume.volume0.Volume0;
 
 /**
@@ -22,11 +44,14 @@ public class Volume1 implements Volume0{
     private Long id;
     private StringProperty name;
     private File volume;
-    private Box parentBox;
-
-    public Volume1(Box parentBox) {
+    private JobType0Model parentJob;
+    private List<Subsurface> subsurfaces;
+    
+    public Volume1(JobType0Model parentBox) {
         id=UUID.randomUUID().getMostSignificantBits();
-        this.parentBox = parentBox;
+        this.parentJob = parentBox;
+        name=new SimpleStringProperty();
+        subsurfaces=new ArrayList<>();
     }
     
     
@@ -55,11 +80,43 @@ public class Volume1 implements Volume0{
     @Override
     public void setVolume(File f) {
        this.volume=f;
+        if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
+       
+        
+        for(File sub:f.listFiles(getSubsurfaceTimeStampFilter)){
+            String s=sub.getName();                                 //subname.0
+            String name=s.substring(0, s.indexOf("."));             //subname
+           
+            Subsurface subsurface=new Subsurface(this);
+            subsurface.setSubsurfaceName(name);
+             BasicFileAttributes attr=null;
+           try {
+              attr=Files.readAttributes(Paths.get(f.getAbsolutePath()),BasicFileAttributes.class);
+           } catch (IOException ex) {
+               Logger.getLogger(Volume1.class.getName()).log(Level.SEVERE, null, ex);
+           }
+            DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            DateTime dt=formatter.parseDateTime(attr.creationTime().toString());
+            DateTimeFormatter opformat=new DateTimeFormatterBuilder()
+              .appendYear(4, 4)
+              .appendMonthOfYear(2)
+              .appendDayOfMonth(2)
+              .appendHourOfDay(2)
+              .appendMinuteOfHour(2)
+              .appendSecondOfMinute(2)
+              .toFormatter();
+            //if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+sub.getName()+" sn: "+name+" with time "+opformat.print(dt));
+            subsurface.setTimeStamp(opformat.print(dt));
+            subsurfaces.add(subsurface);
+         
+       }
+        
+        
     }
 
     @Override
-    public Box getParentBox() {
-        return this.parentBox;
+    public JobType0Model getParentJob() {
+        return this.parentJob;
     }
 
   
@@ -85,7 +142,7 @@ public class Volume1 implements Volume0{
         hash = 97 * hash + Objects.hashCode(this.id);
         hash = 97 * hash + Objects.hashCode(this.name);
         hash = 97 * hash + Objects.hashCode(this.volume);
-        hash = 97 * hash + Objects.hashCode(this.parentBox);
+        hash = 97 * hash + Objects.hashCode(this.parentJob);
         return hash;
     }
 
@@ -113,15 +170,40 @@ public class Volume1 implements Volume0{
         if (!Objects.equals(this.volume, other.volume)) {
             return false;
         }
-        if (!Objects.equals(this.parentBox, other.parentBox)) {
+        if (!Objects.equals(this.parentJob, other.parentJob)) {
             return false;
         }
         return true;
     }
-    
-    
-    
+
    
+    /**
+     * toString() for JFXListCell bug
+     */
+     
+    @Override
+    public String toString() {
+        return name.get();
+    }
+
+    @Override
+    public List<Subsurface> getSubsurfaces() {
+        return this.subsurfaces;
+    }
     
-    
+    /**
+     * Lesser privates
+     */
+   final private String SUBSURFACE_SEARCH="*.0";                                //get only these files under the dugio
+   final private FileFilter getSubsurfaceNamesFilter=new WildcardFileFilter(SUBSURFACE_SEARCH);
+   
+   final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names
+   final Pattern pat=Pattern.compile(SUBSURFACE_TIMESTAMP);
+   final private FileFilter getSubsurfaceTimeStampFilter=new FileFilter(){
+        @Override
+        public boolean accept(File pathname) {
+            return pat.matcher(pathname.getName()).matches();
+        }
+       
+   };
 }

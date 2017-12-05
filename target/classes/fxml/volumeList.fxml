@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXListView?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="260.0" type="StackPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="box.definitions.volume.VolumeListController">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="260.0" type="StackPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="job.definitions.volume.VolumeListController">
    <children>
-      <JFXListView fx:id="volumeListView" prefHeight="400.0" prefWidth="208.0" />
+      <VBox>
+         <children>
+            <JFXButton fx:id="addVolume" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#addNewVolume" text="Add a new Volume" />
+            <JFXListView fx:id="volumeListView" prefHeight="400.0" prefWidth="208.0" />
+         </children>
+      </VBox>
    </children>
 </fx:root>
