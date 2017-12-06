@@ -5,7 +5,7 @@
  */
 package dot;
 
-import anchor.AnchorModel;
+import dot.anchor.AnchorModel;
 
 import java.awt.Color;
 import java.util.ArrayList;
