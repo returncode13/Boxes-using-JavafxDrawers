@@ -5,7 +5,7 @@
  */
 package edge.dotjobedge;
 
-import anchor.AnchorModel;
+import dot.anchor.AnchorModel;
 import dot.DotModel;
 import job.job0.JobType0Model;
 

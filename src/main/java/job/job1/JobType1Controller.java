@@ -6,7 +6,7 @@
 package job.job1;
 
 
-import anchor.AnchorNode;
+import dot.anchor.AnchorNode;
 import job.definitions.JobDefinitionsModel;
 import job.definitions.JobDefinitionsView;
 import com.jfoenix.controls.JFXButton;

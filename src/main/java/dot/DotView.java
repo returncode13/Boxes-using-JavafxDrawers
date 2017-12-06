@@ -5,7 +5,7 @@
  */
 package dot;
 
-import anchor.AnchorNode;
+import dot.anchor.AnchorNode;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;

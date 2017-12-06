@@ -5,8 +5,8 @@
  */
 package edge.dotjobedge;
 
-import anchor.AnchorModel;
-import anchor.AnchorNode;
+import dot.anchor.AnchorModel;
+import dot.anchor.AnchorNode;
 import dot.DotModel;
 import dot.DotView;
 import javafx.beans.binding.Bindings;

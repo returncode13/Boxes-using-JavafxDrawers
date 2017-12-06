@@ -5,8 +5,8 @@
  */
 package edge.parentchildedge;
 
-import anchor.AnchorModel;
-import anchor.AnchorNode;
+import dot.anchor.AnchorModel;
+import dot.anchor.AnchorNode;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;

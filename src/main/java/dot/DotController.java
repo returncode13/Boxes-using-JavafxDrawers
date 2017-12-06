@@ -5,7 +5,7 @@
  */
 package dot;
 
-import anchor.AnchorNode;
+import dot.anchor.AnchorNode;
 import job.job0.JobType0Model;
 import dot.formulaField.FormulaFieldModel;
 import dot.formulaField.FormulaFieldNode;
