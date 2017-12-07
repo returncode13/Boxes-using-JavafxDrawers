@@ -2,6 +2,7 @@ fend/edge/parentchildedge/ParentChildEdgeController$1.class
 app/settings/database/DbListController.class
 db/dao/QcTableDAOImpl.class
 db/services/NodePropertyService.class
+fend/workspace/WorkspaceController$2.class
 db/model/Logs.class
 fend/job/job1/JobType1Controller$2.class
 db/model/NodeType_.class
@@ -10,6 +11,7 @@ db/services/QcTypeService.class
 db/services/NodeTypeService.class
 db/dao/HeaderDAO.class
 db/dao/HeaderDAOImpl.class
+fend/edge/edge/EdgeModel.class
 fend/dot/DotController$4.class
 db/services/SubsurfaceServiceImpl.class
 db/model/Sequence_.class
@@ -43,6 +45,7 @@ db/model/Header.class
 db/model/QcType_.class
 db/dao/NodeTypeDAO.class
 db/model/QcType.class
+fend/workspace/WorkspaceController$3.class
 db/dao/LogsDAOImpl.class
 fend/job/definitions/volume/VolumeListModel$1.class
 db/services/SequenceServiceImpl.class
@@ -61,6 +64,7 @@ db/model/Doubt_.class
 fend/job/job1/JobType1Model.class
 db/model/QcMatrix.class
 db/model/Logs_.class
+fend/workspace/saveworkspace/SaveWorkspaceController.class
 db/dao/QcMatrixDAOImpl.class
 fend/job/definitions/JobDefinitionsController.class
 db/services/NodePropertyValueService.class
@@ -75,6 +79,7 @@ db/model/Job.class
 fend/dot/anchor/AnchorController$1.class
 db/dao/QcTableDAO.class
 db/model/Volume.class
+fend/workspace/saveworkspace/SaveWorkspaceModel.class
 db/model/DoubtType.class
 db/model/Acquisition_.class
 db/dao/LogsDAO.class
@@ -93,6 +98,7 @@ db/model/Descendant.class
 db/services/NodePropertyValueServiceImpl.class
 db/model/QcTable_.class
 app/connections/manager/ssh/SSHManager.class
+fend/edge/edge/EdgeController.class
 db/model/User_.class
 db/model/JobVolumeMap.class
 db/model/QcMatrix_.class
@@ -153,11 +159,13 @@ db/services/DescendantServiceImpl.class
 db/services/PropertyTypeServiceImpl.class
 fend/dot/DotController$3.class
 db/dao/AncestorDAOImpl.class
+fend/edge/edge/EdgeView.class
 db/services/QcTypeServiceImpl.class
 db/dao/PropertyTypeDAO.class
 fend/job/definitions/JobDefinitionsView.class
 db/dao/AncestorDAO.class
 fend/edge/dotjobedge/DotJobEdgeView.class
+fend/workspace/saveworkspace/SaveWorkSpaceView.class
 app/settings/ssh/SShSettingsController.class
 db/model/Dot.class
 fend/job/job0/JobType0View.class

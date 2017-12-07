@@ -9,6 +9,7 @@ import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorNode;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.edge.edge.EdgeController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
@@ -24,7 +25,7 @@ import fend.job.job0.JobType0Model;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class DotJobEdgeController {
+public class DotJobEdgeController implements EdgeController {
     private JobType0Model childJob;
     private DotJobEdgeModel model;
     private DotJobEdgeView node;

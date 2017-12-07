@@ -37,6 +37,10 @@ public interface JobType0Model {
     public void removeParent(JobType0Model parent);
     public void addChild(JobType0Model child);
     public void removeChild(JobType0Model child); 
+    
+    public ObservableSet<JobType0Model> getAncestors();
+    public ObservableSet<JobType0Model> getDescendants();
+   
 
     @Override
     public boolean equals(Object obj);

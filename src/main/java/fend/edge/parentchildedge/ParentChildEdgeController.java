@@ -7,6 +7,7 @@ package fend.edge.parentchildedge;
 
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorNode;
+import fend.edge.edge.EdgeController;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
@@ -29,7 +30,7 @@ import fend.job.job1.JobType1View;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class ParentChildEdgeController {
+public class ParentChildEdgeController implements EdgeController{
     private AnchorPane interactivePane;
     private JobType0View jobView;
     private ParentChildEdgeModel model;
@@ -186,7 +187,7 @@ public class ParentChildEdgeController {
         childAnchor.setOnMouseDragged(e->{
            
             node.toBack();              ///overriden statement
-            System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
+            //System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
             double newX=e.getX()+dragDelta.x;
             if(newX>0 && newX<ParentChildEdgeController.this.interactivePane.getScene().getWidth()){
                 childAnchor.setCenterX(newX);

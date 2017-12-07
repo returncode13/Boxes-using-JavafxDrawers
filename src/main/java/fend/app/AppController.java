@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -120,6 +121,7 @@ public class AppController extends Stage{
         this.view=view;
          this.setTitle("MCVE for Dots");
          this.setScene(new Scene(view));
+         this.initModality(Modality.APPLICATION_MODAL);
          this.showAndWait();
     }
     

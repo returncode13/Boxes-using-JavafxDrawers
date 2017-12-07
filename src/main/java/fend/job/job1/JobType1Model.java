@@ -48,9 +48,13 @@ public class JobType1Model implements JobType0Model {
     private WorkspaceModel workspaceModel;
     private Set<JobType0Model> parents;
     private Set<JobType0Model> children;
+    private Set<JobType0Model> ancestors;
+    private Set<JobType0Model> descendants;
+    private Boolean lineageChanged;
     private ObservableSet<JobType0Model> observableParents;
     private ObservableSet<JobType0Model> observableChildren;
-    
+    private ObservableSet<JobType0Model> observableAncestors;
+    private ObservableSet<JobType0Model> observableDescendants;
     
     
             
@@ -58,9 +62,14 @@ public class JobType1Model implements JobType0Model {
         id=UUID.randomUUID().getMostSignificantBits();
         nameproperty=new SimpleStringProperty();
         children=new HashSet<>();
-        children.add(this);                                 //born as a root. 
+        //children.add(this);                                 //born as a root. 
         parents=new HashSet<>();
-        parents.add(this);                                  //born as a root.
+        //parents.add(this);                                  //born as a root.
+        
+        ancestors=new HashSet<>();
+        descendants=new HashSet<>();
+        lineageChanged=new Boolean(false);
+        
         this.workspaceModel=workspaceModel;
         changeProperty=new SimpleBooleanProperty(false);
         duplicatesInJob=new HashSet<>();
@@ -75,6 +84,12 @@ public class JobType1Model implements JobType0Model {
         
         observableChildren=FXCollections.observableSet(children);
         observableChildren.addListener(childrenChangeListener);
+        
+        observableAncestors=FXCollections.observableSet(ancestors);
+        observableDescendants=FXCollections.observableSet(descendants);
+        
+       
+                
         
         nameproperty.addListener(nameChangeListener);
         
@@ -159,12 +174,44 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public void addParent(JobType0Model parent){
-        if(parent!=this){
-            observableParents.remove(this);
+      //  if(parent!=this){
+        //    observableParents.remove(this);
             observableParents.add(parent);
-        }
+       // }
         
     }
+
+    public ObservableSet<JobType0Model> getAncestors() {
+       
+       observableAncestors.clear();
+            for(JobType0Model parent:observableParents){
+                observableAncestors.add(parent);
+                observableAncestors.addAll(parent.getAncestors());
+            }
+        
+        return observableAncestors;
+    }
+
+    public ObservableSet<JobType0Model> getDescendants() {
+       
+        observableDescendants.clear();
+            for(JobType0Model child:observableChildren){
+                observableDescendants.add(child);
+                observableDescendants.addAll(child.getDescendants());
+                
+                
+            }
+            return observableDescendants;
+    }
+
+    public Boolean getLineageChanged() {
+        return lineageChanged;
+    }
+
+   
+    
+    
+    
     
     /**
      *
@@ -177,10 +224,8 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public void addChild(JobType0Model child){
-        if(child!=this){
-            observableChildren.remove(this);
-            observableChildren.add(child);
-        }
+          observableChildren.add(child);
+       
     }
     
     @Override
@@ -278,9 +323,23 @@ public class JobType1Model implements JobType0Model {
     final private SetChangeListener<JobType0Model> parentsChangeListener=new SetChangeListener<JobType0Model>() {
         @Override
         public void onChanged(SetChangeListener.Change<? extends JobType0Model> change) {
-          //  toggleChange();
+           
+            //  toggleChange();*/
+            
+            
+             System.out.println(".onChanged(): Ancestors for job: "+id%1000);
+            for(JobType0Model anc:getAncestors()){
+                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+            }
+            
+            System.out.println(".onChanged(): Descendants for job: "+id%1000);
+            for(JobType0Model des:getDescendants()){
+                System.out.println(des.getId()%1000+" -D- "+id%1000);
+            }
             
         }
+
+        
 
         
     };
@@ -290,8 +349,19 @@ public class JobType1Model implements JobType0Model {
     final private SetChangeListener<JobType0Model> childrenChangeListener=new SetChangeListener<JobType0Model>() {
         @Override
         public void onChanged(SetChangeListener.Change<? extends JobType0Model> change) {
-          //  toggleChange();
+           
+            //  toggleChange();*/
+            System.out.println(".onChanged(): Ancestors for job: "+id%1000);
+            for(JobType0Model anc:getAncestors()){
+                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+            }
+            
+            System.out.println(".onChanged(): Descendants for job: "+id%1000);
+            for(JobType0Model des:getDescendants()){
+                System.out.println(des.getId()%1000+" -D- "+id%1000);
+            }
         }
+
     };
     
     
@@ -302,6 +372,7 @@ public class JobType1Model implements JobType0Model {
             toggleChange();
         }
     };
+    
     
     
     /***
@@ -340,4 +411,19 @@ public class JobType1Model implements JobType0Model {
         changeProperty.set(!changeProperty.get());
     }
     
+    private void buildAncestors() {
+            observableAncestors.clear();
+          
+    }
+
+    
+    
+    
+    
+    private void buildDescendants() {
+        observableDescendants.clear();
+        
+    }
+
+   
 }

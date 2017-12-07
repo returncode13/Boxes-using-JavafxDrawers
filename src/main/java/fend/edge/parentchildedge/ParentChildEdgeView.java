@@ -6,6 +6,7 @@
 package fend.edge.parentchildedge;
 
 
+import fend.edge.edge.EdgeView;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +20,7 @@ import fend.job.job0.JobType0View;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class ParentChildEdgeView extends AnchorPane{
+public class ParentChildEdgeView extends AnchorPane implements EdgeView{
     private  ParentChildEdgeModel model;
     private ParentChildEdgeController  controller;
     private JobType0View parentJob;

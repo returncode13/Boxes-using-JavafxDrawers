@@ -101,7 +101,7 @@ public class JobType1Controller implements JobType0Controller{
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(150);
         drawer.setTranslateY(0);
-        
+        name.setText(model.getId()%1000+"");
         openDrawer.setOnMousePressed(e->{
          drawersStack.toggle(drawer);
         });
@@ -149,13 +149,13 @@ public class JobType1Controller implements JobType0Controller{
              
               if(droppedAnchor.getParent() instanceof ParentChildEdgeView){
                   System.out.println("job.job1.JobType1Controller.setView(): Instance of ParentChildEdgeView");
-                    ParentChildEdgeView parentNode=((ParentChildEdgeView)droppedAnchor.getParent());
-                    ParentChildEdgeModel parentModel=parentNode.getController().getModel();
+                    ParentChildEdgeView parentChildEdgeNode=((ParentChildEdgeView)droppedAnchor.getParent());
+                    ParentChildEdgeModel parentChildEdgeModel=parentChildEdgeNode.getController().getModel();
                     
-                    System.out.println("job.job1.JobType1Controller.setView(): parentLinkModel: "+parentModel.getParentJob().getId()%100);
+                    System.out.println("job.job1.JobType1Controller.setView(): parentLinkModel: "+parentChildEdgeModel.getParentJob().getId()%100);
                     
 
-                    JobType0Model parent=parentModel.getParentJob();
+                    JobType0Model parent=parentChildEdgeModel.getParentJob();
                     /**
                      * add the link to the box only if this box is not an existing child to the parent
                      */
@@ -166,7 +166,7 @@ public class JobType1Controller implements JobType0Controller{
                             
                         }
                         System.out.println("boxes.BoxController.setView(): contains "+model.getId()%100);
-                         parentNode.setDropReceived(false);
+                         parentChildEdgeNode.setDropReceived(false);
                          return;
                     }
                     if(parent.equals(model))
@@ -178,18 +178,18 @@ public class JobType1Controller implements JobType0Controller{
                     model.addParent(parent);
                     parent.addChild(model);
                     
-                    DotModel dotmodel=parentModel.getDotModel();
+                    DotModel dotmodel=parentChildEdgeModel.getDotModel();
                     DotView dotnode=new DotView(dotmodel, JobType1Controller.this.interactivePane);
-                    parentNode.getChildren().add(dotnode);
+                    parentChildEdgeNode.getChildren().add(dotnode);
                     
 
-                    CubicCurve curve=parentNode.getController().getCurve();  //the curve in the node
+                    CubicCurve curve=parentChildEdgeNode.getController().getCurve();  //the curve in the node
                     dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
                     dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
 
                     
-                    parentModel.setChildJob(model);
-                    parentNode.setDropReceived(true);
+                    parentChildEdgeModel.setChildJob(model);
+                    parentChildEdgeNode.setDropReceived(true);
                     droppedAnchor.centerXProperty().bind(node.layoutXProperty());
                     droppedAnchor.centerYProperty().bind(node.layoutYProperty());
                 

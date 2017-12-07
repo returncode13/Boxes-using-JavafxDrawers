@@ -7,13 +7,14 @@ package fend.edge.dotjobedge;
 
 import fend.dot.anchor.AnchorModel;
 import fend.dot.DotModel;
+import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class DotJobEdgeModel {
+public class DotJobEdgeModel implements EdgeModel{
     
    
     DotModel dotModel;      //the dotmodel from which the link originates

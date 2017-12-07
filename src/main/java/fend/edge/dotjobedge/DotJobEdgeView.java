@@ -7,6 +7,7 @@ package fend.edge.dotjobedge;
 
 
 import fend.dot.DotView;
+import fend.edge.edge.EdgeView;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +18,7 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class DotJobEdgeView extends AnchorPane{
+public class DotJobEdgeView extends AnchorPane implements EdgeView{
      private  DotJobEdgeModel model;
     private DotJobEdgeController  controller;
     private AnchorPane interactivePane;

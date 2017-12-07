@@ -8,13 +8,14 @@ package fend.edge.parentchildedge;
 import fend.dot.anchor.AnchorModel;
 
 import fend.dot.DotModel;
+import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class ParentChildEdgeModel {
+public class ParentChildEdgeModel implements EdgeModel {
     JobType0Model parentJob;
     DotModel dotModel;
     AnchorModel childAnchorModel;               //Anchor dropped on the child box
