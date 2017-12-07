@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 
-<fx:root id="AnchorPane" prefHeight="94.0" prefWidth="600.0" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="dot.formulaField.FormulaFieldController">
+<fx:root id="AnchorPane" prefHeight="94.0" prefWidth="600.0" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="fend.dot.formulaField.FormulaFieldController">
    <children>
       <GridPane layoutX="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>

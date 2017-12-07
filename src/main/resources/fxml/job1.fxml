@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<fx:root style="-fx-background-color: Transparent;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="job.job1.JobType1Controller">
+<fx:root style="-fx-background-color: Transparent;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job1.JobType1Controller">
    <children>
       <JFXDrawersStack fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="74.0" prefWidth="142.0">
          <children>

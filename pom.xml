@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>workspace.Main</mainClass>
+        <mainClass>fend.app.Main</mainClass>
     </properties>
 
     <organization>
@@ -160,5 +160,17 @@
             <version>SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.54</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>postgresql-9.4.1209</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        
     </dependencies>
 </project>
