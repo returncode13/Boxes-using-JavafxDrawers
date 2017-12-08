@@ -96,6 +96,8 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setUpdateTime(newH.getUpdateTime());
             h.setSummaryTime(newH.getSummaryTime());
             h.setTextfilepath(newH.getTextfilepath());
+            h.setMultipleInstances(newH.getModified());
+            h.setChosen(newH.getChosen());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
@@ -189,7 +191,7 @@ public class HeaderDAOImpl implements HeaderDAO{
         if(result.size()>0){
             for (Iterator<Header> iterator = result.iterator(); iterator.hasNext();) {
                 Header hdr = iterator.next();
-                subsurfacesThatNeedToBeSummarized.add(hdr.getSubsurfaceFK());
+                subsurfacesThatNeedToBeSummarized.add(hdr.getSubsurface());
                 
             }
             return subsurfacesThatNeedToBeSummarized;
@@ -435,6 +437,77 @@ public class HeaderDAOImpl implements HeaderDAO{
     }
     return result;
     }*/
+
+    @Override
+    public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = null;
+            List<Header> result=null;
+            try{
+                transaction=session.beginTransaction();
+                Criteria criteria=session.createCriteria(Header.class);
+                criteria.add(Restrictions.eq("volume", dbvol));
+                criteria.add(Restrictions.eq("subsurface", dbsub));
+                criteria.add(Restrictions.eq("timeStamp",timestamp));
+                
+                result=criteria.list();
+                transaction.commit();
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                session.close();
+            }
+            if(result.isEmpty())
+            {
+                return null;
+            }else{
+                return result.get(0);
+            }
+            
+    }
+
+    @Override
+    public List<Header> getMultipleInstances(Job job, Subsurface sub) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = null;
+            List<Header> result=null;
+            try{
+                transaction=session.beginTransaction();
+                Criteria criteria=session.createCriteria(Header.class);
+                criteria.add(Restrictions.eq("job", job));
+                criteria.add(Restrictions.eq("subsurface", sub));
+                
+                
+                result=criteria.list();
+                transaction.commit();
+                
+                if(result.size()>1){
+                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): result.size() for job "+job.getId()+" sub: "+sub.getId()+ " result.size(): "+result.size());
+                for(Header h:result){
+                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getId() );
+                    h.setMultipleInstances(true);
+                    h.setChosen(false);
+                    transaction=session.beginTransaction();
+                    
+                    session.update(h);
+                    transaction.commit();
+                }
+            }
+                
+                
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                session.close();
+            }
+            
+            if(result.isEmpty())
+            {
+                return null;
+            }else{
+                return result;  //should be of size 1
+            }
+    }
 
     
     

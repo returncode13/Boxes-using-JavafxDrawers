@@ -41,7 +41,7 @@ public interface JobType0Model {
     public ObservableSet<JobType0Model> getAncestors();
     public ObservableSet<JobType0Model> getDescendants();
    
-
+    
     @Override
     public boolean equals(Object obj);
 

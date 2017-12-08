@@ -50,6 +50,9 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
+import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -65,6 +68,12 @@ public class JobType1Controller implements JobType0Controller{
     JobType1View node;
     JFXDrawer drawer=new JFXDrawer();
     private final ContextMenu menu=new ContextMenu();
+    
+    
+    private BooleanProperty checkForHeaders;
+    
+    
+    
     @FXML
     private JFXTextField name;
     
@@ -79,7 +88,7 @@ public class JobType1Controller implements JobType0Controller{
     private JFXButton t;
 
     @FXML
-    private JFXButton h;
+    private JFXButton headerButton;
 
     
     @FXML
@@ -87,6 +96,10 @@ public class JobType1Controller implements JobType0Controller{
 
     void setModel(JobType1Model item) {
         model=item;
+        //checkForHeaders=new SimpleBooleanProperty(false);
+        //checkForHeaders.addListener(headerExtractionListener);
+        model.getHeadersCommited().addListener(headerExtractionListener);
+        
         
     }
 
@@ -251,7 +264,25 @@ public class JobType1Controller implements JobType0Controller{
          
          });
     }
-
+    
+    
+    /***
+     * Extract headers for the current job
+     
+     */
+    
+     @FXML
+    void extractHeadersForJob(ActionEvent event) {
+            t.setDisable(true);
+            model.extractLogs();
+            
+    }
+    
+    @FXML
+    void checkMultiples(ActionEvent event) {
+        model.checkMultiples();
+    }
+    
     @Override
     public JobType0Model getModel() {
         return this.model;
@@ -264,6 +295,17 @@ public class JobType1Controller implements JobType0Controller{
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println(".changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
+        }
+    };
+    
+    
+    
+    final private ChangeListener<Boolean> headerExtractionListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                t.setDisable(false);
+            }
         }
     };
     
@@ -301,4 +343,7 @@ public class JobType1Controller implements JobType0Controller{
         
         menu.getItems().addAll(addAChildJob,deleteThisJob);
     }
+    
+    
+    
 }

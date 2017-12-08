@@ -47,7 +47,7 @@ public class Subsurface implements Serializable {
      * 
      */
     
-    @OneToMany(mappedBy = "subsurfaceFK")
+    @OneToMany(mappedBy = "subsurface")
     private Set<Header> headers;
     
     @OneToMany(mappedBy = "subsurfaceFK")

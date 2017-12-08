@@ -6,6 +6,9 @@
 package fend.job.job1;
 
 
+import db.model.Subsurface;
+import db.services.HeaderService;
+import db.services.HeaderServiceImpl;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -30,6 +33,8 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
+import fend.volume.volume1.Volume1;
+import middleware.dugex.HeaderExtractor;
 
 /**
  *
@@ -55,11 +60,14 @@ public class JobType1Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableChildren;
     private ObservableSet<JobType0Model> observableAncestors;
     private ObservableSet<JobType0Model> observableDescendants;
-    
-    
+    private BooleanProperty finishedCheckingLogs;
+    private BooleanProperty headersCommited;
             
     public JobType1Model(WorkspaceModel workspaceModel) {
         id=UUID.randomUUID().getMostSignificantBits();
+        
+        finishedCheckingLogs=new SimpleBooleanProperty(false);
+        headersCommited=new SimpleBooleanProperty(false);
         nameproperty=new SimpleStringProperty();
         children=new HashSet<>();
         //children.add(this);                                 //born as a root. 
@@ -92,6 +100,9 @@ public class JobType1Model implements JobType0Model {
                 
         
         nameproperty.addListener(nameChangeListener);
+        finishedCheckingLogs.addListener(checkLogsListener);
+        
+                
         
     }
 
@@ -181,6 +192,16 @@ public class JobType1Model implements JobType0Model {
         
     }
 
+    public List<SubsurfaceHeaders> getSubsurfacesInJob() {
+        return subsurfacesInJob;
+    }
+
+    public void setSubsurfacesInJob(List<SubsurfaceHeaders> subsurfacesInJob) {
+        this.subsurfacesInJob = subsurfacesInJob;
+    }
+    
+    
+
     public ObservableSet<JobType0Model> getAncestors() {
        
        observableAncestors.clear();
@@ -233,6 +254,17 @@ public class JobType1Model implements JobType0Model {
         observableChildren.remove(child);
     }
 
+    public BooleanProperty getHeadersCommited() {
+        return headersCommited;
+    }
+
+    public void setHeadersCommited(Boolean headersCommited) {
+        this.headersCommited.set(headersCommited);
+    }
+
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -425,5 +457,32 @@ public class JobType1Model implements JobType0Model {
         
     }
 
+    public void extractLogs() {
+        System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
+       finishedCheckingLogs.set(!finishedCheckingLogs.get());
+    }
+    
+     private void extractHeaders() {
+         System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
+         new HeaderExtractor(this);
+        
+     }
+            
+     
+     ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          //  if(newValue){
+                extractHeaders();
+           // }
+        }
+    };
+
+    void checkMultiples() {
+       
+    }
+     
+    
+    
    
 }

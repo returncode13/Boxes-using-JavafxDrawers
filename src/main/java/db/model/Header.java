@@ -58,7 +58,7 @@ public class Header implements Serializable{
     
     @ManyToOne
     @JoinColumn(name="subsurface_fk",nullable = false)
-    private Subsurface subsurfaceFK;
+    private Subsurface subsurface;
     
     
     @Column(name= "TimeStamp ")
@@ -129,7 +129,7 @@ public class Header implements Serializable{
     private Boolean deleted=false; 
     
     @Column(name="NumberOfRuns")
-    private Long numberOfRuns=0L;                                               //number of times the subsurfaceFK was run
+    private Long numberOfRuns=0L;                                               //number of times the subsurface was run
     
         
     @Column(name="InsightVersion")
@@ -148,6 +148,12 @@ public class Header implements Serializable{
     @Column(name="textfilename")                                             //used for txt file types. job steptype=4
     private String textfilepath;         
     
+     @Column(name="multiple_instances")
+    private Boolean multipleInstances=false;
+    
+    @Column(name="chosen")
+    private Boolean chosen=true;
+    
     public Header() {
       
     }
@@ -155,11 +161,11 @@ public class Header implements Serializable{
     
     
 
-    /*public Header(Long id, Volume volume, Long sequence, String subsurfaceFK, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
+    /*public Header(Long id, Volume volume, Long sequence, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
     this.id = id;
     this.volume = volume;
     this.sequence = sequence;
-    this.subsurfaceFK = subsurfaceFK;
+    this.subsurface = subsurface;
     this.timeStamp = timeStamp;
     this.traceCount = traceCount;
     this.inlineMax = inlineMax;
@@ -191,7 +197,7 @@ public class Header implements Serializable{
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.volume);
-        hash = 97 * hash + Objects.hashCode(this.subsurfaceFK);
+        hash = 97 * hash + Objects.hashCode(this.subsurface);
         hash = 97 * hash + Objects.hashCode(this.traceCount);
         hash = 97 * hash + Objects.hashCode(this.inlineMax);
         hash = 97 * hash + Objects.hashCode(this.inlineMin);
@@ -235,7 +241,7 @@ public class Header implements Serializable{
             return false;
         }
         
-        if (!Objects.equals(this.subsurfaceFK, other.subsurfaceFK)) {
+        if (!Objects.equals(this.subsurface, other.subsurface)) {
             return false;
         }
         if (!Objects.equals(this.timeStamp, other.timeStamp)) {
@@ -348,21 +354,21 @@ public class Header implements Serializable{
     }
     
     public String getSubsurface() {
-    return subsurfaceFK;
+    return subsurface;
     }
     
-    public void setSubsurface(String subsurfaceFK) {
-    this.subsurfaceFK = subsurfaceFK;
+    public void setSubsurface(String subsurface) {
+    this.subsurface = subsurface;
     }*/
 
     
 
-    public Subsurface getSubsurfaceFK() {
-        return subsurfaceFK;
+    public Subsurface getSubsurface() {
+        return subsurface;
     }
 
-    public void setSubsurfaceFK(Subsurface subsurfaceFK) {
-        this.subsurfaceFK = subsurfaceFK;
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
     }
     
     
@@ -604,6 +610,22 @@ public class Header implements Serializable{
 
     public void setLogs(Set<Logs> logs) {
         this.logs = logs;
+    }
+
+    public Boolean getMultipleInstances() {
+        return multipleInstances;
+    }
+
+    public void setMultipleInstances(Boolean multipleInstances) {
+        this.multipleInstances = multipleInstances;
+    }
+
+    public Boolean getChosen() {
+        return chosen;
+    }
+
+    public void setChosen(Boolean chosen) {
+        this.chosen = chosen;
     }
     
     

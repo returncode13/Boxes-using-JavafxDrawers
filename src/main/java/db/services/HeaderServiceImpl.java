@@ -103,6 +103,16 @@ public class HeaderServiceImpl implements HeaderService{
     public List<Header> getHeaderFor(Volume v, Subsurface subsurface) {
     return hDao.getHeaderFor(v, subsurface);
     }*/
+
+    @Override
+    public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
+        return hDao.getHeadersFor(dbvol,dbsub,timestamp);
+    }
+
+    @Override
+    public List<Header> getMultipleInstances(Job job, Subsurface sub) {
+        return hDao.getMultipleInstances(job, sub);
+    }
     
     
 }

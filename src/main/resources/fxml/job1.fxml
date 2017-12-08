@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <fx:root style="-fx-background-color: Transparent;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job1.JobType1Controller">
    <children>
       <JFXDrawersStack fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="74.0" prefWidth="142.0">
@@ -20,12 +19,12 @@
                   <HBox fx:id="hbox">
                      <children>
                         <JFXButton fx:id="q" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="q" />
-                        <JFXButton fx:id="t" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
+                        <JFXButton fx:id="t" onAction="#checkMultiples" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
                         </JFXButton>
-                        <JFXButton fx:id="h" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="H">
+                        <JFXButton fx:id="headerButton" onAction="#extractHeadersForJob" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="H">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>

@@ -171,6 +171,17 @@
             <artifactId>postgresql-9.4.1209</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.api</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>RELEASE802</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>

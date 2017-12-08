@@ -34,6 +34,9 @@ public interface HeaderService {
     //public Set<Volume> getVolumesContaining(Subsurface subsurface);       //a convenience function. return the volume associated with the Subsurface=subsurface from the Header Table
 
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume next);
+
+    public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String latestTimestamp);
+    public List<Header> getMultipleInstances(Job job,Subsurface sub);
     
     
 }

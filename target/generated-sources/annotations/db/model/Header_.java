@@ -10,7 +10,6 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class Header_ {
 
 	public static volatile SingularAttribute<Header, Long> xlineMax;
-	public static volatile SingularAttribute<Header, Subsurface> subsurfaceFK;
 	public static volatile SingularAttribute<Header, Long> xlineInc;
 	public static volatile SingularAttribute<Header, Long> dugShotMax;
 	public static volatile SingularAttribute<Header, String> insightVersion;
@@ -31,9 +30,12 @@ public abstract class Header_ {
 	public static volatile SingularAttribute<Header, Long> inlineMin;
 	public static volatile SingularAttribute<Header, Long> dugChannelMax;
 	public static volatile SingularAttribute<Header, Long> offsetInc;
+	public static volatile SingularAttribute<Header, Boolean> multipleInstances;
 	public static volatile SingularAttribute<Header, Long> numberOfRuns;
 	public static volatile SingularAttribute<Header, String> updateTime;
+	public static volatile SingularAttribute<Header, Subsurface> subsurface;
 	public static volatile SingularAttribute<Header, Long> dugChannelInc;
+	public static volatile SingularAttribute<Header, Boolean> chosen;
 	public static volatile SingularAttribute<Header, Volume> volume;
 	public static volatile SingularAttribute<Header, String> timeStamp;
 	public static volatile SingularAttribute<Header, Long> offsetMax;
