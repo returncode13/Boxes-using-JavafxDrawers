@@ -7,7 +7,7 @@ package fend.job.job1;
 
 
 import fend.workspace.WorkspaceModel;
-import fend.sequences.SubsurfaceHeaders;
+import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -329,12 +329,12 @@ public class JobType1Model implements JobType0Model {
             
              System.out.println(".onChanged(): Ancestors for job: "+id%1000);
             for(JobType0Model anc:getAncestors()){
-                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+//                System.out.println(anc.getId()%1000+" -A- "+id%1000);
             }
             
             System.out.println(".onChanged(): Descendants for job: "+id%1000);
             for(JobType0Model des:getDescendants()){
-                System.out.println(des.getId()%1000+" -D- "+id%1000);
+//                System.out.println(des.getId()%1000+" -D- "+id%1000);
             }
             
         }
@@ -353,12 +353,12 @@ public class JobType1Model implements JobType0Model {
             //  toggleChange();*/
             System.out.println(".onChanged(): Ancestors for job: "+id%1000);
             for(JobType0Model anc:getAncestors()){
-                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+//                System.out.println(anc.getId()%1000+" -A- "+id%1000);
             }
             
             System.out.println(".onChanged(): Descendants for job: "+id%1000);
             for(JobType0Model des:getDescendants()){
-                System.out.println(des.getId()%1000+" -D- "+id%1000);
+//                System.out.println(des.getId()%1000+" -D- "+id%1000);
             }
         }
 
@@ -369,7 +369,7 @@ public class JobType1Model implements JobType0Model {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println(".changed(): Name from "+oldValue+ " to "+newValue);
-            toggleChange();
+            //toggleChange();
         }
     };
     

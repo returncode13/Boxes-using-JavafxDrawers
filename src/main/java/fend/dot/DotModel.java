@@ -27,6 +27,8 @@ import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import javafx.css.SimpleStyleableStringProperty;
 import fend.job.job0.JobType0Model;
+import java.util.Iterator;
+import java.util.UUID;
 
 /**
  *
@@ -37,6 +39,7 @@ public class DotModel {
     public static final String JOIN="J";
     public static final String SPLIT="S";
     
+    private Long id;
     Color color;
     DoubleProperty x=new SimpleDoubleProperty();
     DoubleProperty y=new SimpleDoubleProperty();
@@ -45,10 +48,10 @@ public class DotModel {
      */
     Set<JobType0Model> parentSet;
     Set<JobType0Model> childSet;
-    List<Link> listOfLinks;
+    Set<LinkModel> setOfLinks;
     
     
-    ObservableList<Link> observableLinkList;
+    ObservableList<LinkModel> observableLinkList;
     ObservableSet<JobType0Model> parents;
     ObservableSet<JobType0Model> children;
     
@@ -61,10 +64,11 @@ public class DotModel {
     BooleanProperty delete;     //delete this node;
     
     public DotModel(){
+        id=UUID.randomUUID().getMostSignificantBits();
         status=new SimpleStringProperty();
         delete=new SimpleBooleanProperty(false);
-        listOfLinks=new ArrayList<>();
-        observableLinkList=FXCollections.observableArrayList(listOfLinks);
+        setOfLinks=new HashSet<>();
+        observableLinkList=FXCollections.observableArrayList(setOfLinks);
         parentSet=new HashSet<>();
         childSet=new HashSet<>();
         
@@ -90,6 +94,15 @@ public class DotModel {
         
         
     }   
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     
     
     public DoubleProperty getX() {
@@ -123,6 +136,15 @@ public class DotModel {
     public void setDelete(Boolean delete) {
         this.delete.set(delete);
     }
+
+    public Set<LinkModel> getSetOfLinks() {
+        return setOfLinks;
+    }
+
+    public void setSetOfLinks(Set<LinkModel> setOfLinks) {
+        this.setOfLinks = setOfLinks;
+    }
+    
     
     
     
@@ -173,6 +195,22 @@ public class DotModel {
                         join=false;
                         enableFurtherLinks=true;
                         status.set(this.NJS);
+                        
+                        setOfLinks.clear();
+                        LinkModel link=new LinkModel();
+                        
+                        for (Iterator<JobType0Model> iterator = parents.iterator(); iterator.hasNext();) {     //This is a workaround to "get" the first element from a SET :(. no get() implementation in Set.
+                         JobType0Model next = iterator.next();
+                         link.setParent(next);
+                         
+                        }
+                        for (Iterator<JobType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                         JobType0Model next = iterator.next();
+                         link.setChild(next);
+                        }
+                        
+                       
+                        setOfLinks.add(link);
                     }
                     else if(parents.size()==1 && children.size()>1){
                         System.out.println("dot.DotModel.updateConnectionStatus():  from "+from+" setting split=true ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
@@ -181,6 +219,17 @@ public class DotModel {
                         join=false;
                         enableFurtherLinks=true;
                         status.set(this.SPLIT);
+                        setOfLinks.clear();
+                            
+                            for(JobType0Model child:children){
+                                LinkModel link=new LinkModel();
+                                 for (Iterator<JobType0Model> iterator = parents.iterator(); iterator.hasNext();) {
+                                    JobType0Model next = iterator.next();
+                                    link.setParent(next);
+                                 }
+                                link.setChild(child);
+                                setOfLinks.add(link);
+                            }
                     }
                     else if(parents.size()>1&& children.size()==1){
                          System.out.println("dot.DotModel.updateConnectionStatus():  from "+from+" setting join=true ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
@@ -189,6 +238,19 @@ public class DotModel {
                         join=true;
                         enableFurtherLinks=true;
                         status.set(this.JOIN);
+                        
+                        setOfLinks.clear();
+                            
+                            for(JobType0Model parent:parents){
+                                LinkModel link=new LinkModel();
+                                link.setParent(parent);
+                                for (Iterator<JobType0Model> iterator = children.iterator(); iterator.hasNext();) {
+                                    JobType0Model next = iterator.next();
+                                   link.setChild(next);
+                                 }
+                                setOfLinks.add(link);
+                            }
+                        
                         
                     }else{
                          System.out.println("dot.DotModel.updateConnectionStatus(): from "+from+" Disabling further links ParentSize: "+parents.size()+" ChildrenSize: "+children.size());

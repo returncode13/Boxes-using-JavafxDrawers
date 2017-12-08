@@ -5,7 +5,7 @@
  */
 package fend.volume.volume0;
 
-import fend.sequences.SubsurfaceHeaders;
+import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
 import java.util.List;
 import javafx.beans.property.StringProperty;

@@ -5,15 +5,20 @@
  */
 package fend.workspace;
 
+import db.model.Workspace;
 import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 
 /**
  *
@@ -22,13 +27,19 @@ import javafx.collections.ObservableList;
 public class WorkspaceModel {
 
     public final static boolean DEBUG=true;
+    private Long id;
     private StringProperty name=new SimpleStringProperty("");
-    private  List<JobType0Model> jobs=new ArrayList<>(); 
-    private  List<EdgeModel> edges=new ArrayList<>();
-    private ObservableList<JobType0Model> observableJobs=FXCollections.observableList(jobs);
-    private ObservableList<EdgeModel> observableEdges=FXCollections.observableArrayList(edges);
+    private  Set<JobType0Model> jobs=new HashSet<>(); 
+    private  Set<EdgeModel> edges=new HashSet<>();
+    private ObservableSet<JobType0Model> observableJobs=FXCollections.observableSet(jobs);
+    private ObservableSet<EdgeModel> observableEdges=FXCollections.observableSet(edges);
     
    
+    public WorkspaceModel(){
+        id=UUID.randomUUID().getMostSignificantBits();
+    }
+
+    
     
     
     
@@ -36,12 +47,12 @@ public class WorkspaceModel {
         this.observableJobs.add(job);
     }
 
-    public ObservableList<JobType0Model> getObservableJobs() {
+    public ObservableSet<JobType0Model> getObservableJobs() {
         return observableJobs;
     }
 
-    public void setObservableJobs(List<JobType0Model> observableJobs) {
-        this.observableJobs = FXCollections.observableArrayList(observableJobs);
+    public void setObservableJobs(Set<JobType0Model> observableJobs) {
+        this.observableJobs = FXCollections.observableSet(observableJobs);
     }
 
     
@@ -50,12 +61,12 @@ public class WorkspaceModel {
         this.observableEdges.add(edge);
     }
 
-    public ObservableList<EdgeModel> getObservableEdges() {
+    public ObservableSet<EdgeModel> getObservableEdges() {
         return observableEdges;
     }
 
-    public void setObservableEdges(List<EdgeModel> observableEdges) {
-        this.observableEdges=FXCollections.observableArrayList(observableEdges);
+    public void setObservableEdges(Set<EdgeModel> observableEdges) {
+        this.observableEdges=FXCollections.observableSet(observableEdges);
     }
 
     public StringProperty getName() {
@@ -64,6 +75,14 @@ public class WorkspaceModel {
 
     public void setName(String name) {
         this.name.set(name);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
     
     

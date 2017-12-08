@@ -6,7 +6,7 @@
 package fend.volume.volume1;
 
 import fend.workspace.WorkspaceModel;
-import fend.sequences.SubsurfaceHeaders;
+import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;

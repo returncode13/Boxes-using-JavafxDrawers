@@ -7,6 +7,7 @@ package fend.dot.anchor;
 
 
 import java.awt.Color;
+import java.util.UUID;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
@@ -17,7 +18,7 @@ import javafx.beans.value.ObservableValue;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class AnchorModel {
-    
+    Long id=UUID.randomUUID().getMostSignificantBits();
     Color color;
     DoubleProperty x=new SimpleDoubleProperty();
     DoubleProperty y=new SimpleDoubleProperty();

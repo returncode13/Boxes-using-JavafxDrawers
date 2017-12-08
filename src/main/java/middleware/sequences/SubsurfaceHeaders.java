@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.sequences;
+package middleware.sequences;
 
 import java.util.Objects;
 import javafx.beans.property.LongProperty;

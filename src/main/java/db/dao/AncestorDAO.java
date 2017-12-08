@@ -20,6 +20,8 @@ public interface AncestorDAO {
     public void deleteAncestor(Long aid);
     
     public Ancestor getAncestorFor(Job fkid,Long ancestor);     //get the entry where sessionsDetails=fkid and where the column ancestor = ancestor
+
+    public void clearTableForJob(Job dbjob);
    
    
     

@@ -19,5 +19,6 @@ public interface DescendantDAO  {
     public void deleteDescendant(Long did);
 
     public Descendant getDescendantFor(Job fkid, Long descendant);
+    public void clearTableForJob(Job dbjob);
     
 }

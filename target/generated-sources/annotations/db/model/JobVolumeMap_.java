@@ -8,9 +8,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(JobVolumeMap.class)
 public abstract class JobVolumeMap_ {
 
-	public static volatile SingularAttribute<JobVolumeMap, Volume> volume;
 	public static volatile SingularAttribute<JobVolumeMap, Long> id;
-	public static volatile SingularAttribute<JobVolumeMap, Job> job;
 
 }
 

@@ -28,8 +28,7 @@ import javax.persistence.UniqueConstraint;
 
 public class Workspace implements Serializable{
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id",nullable=false)
     private Long id;
     
     @Column(name = "name",length = 1025)
@@ -40,6 +39,9 @@ public class Workspace implements Serializable{
     
     @OneToMany(mappedBy="workspace")
     private Set<Job> jobs;
+    
+     @OneToMany(mappedBy="workspace")
+    private Set<Dot> dots;
   
     @ManyToOne
     @JoinColumn(name="user_fk")
@@ -119,6 +121,14 @@ public class Workspace implements Serializable{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Dot> getDots() {
+        return dots;
+    }
+
+    public void setDots(Set<Dot> dots) {
+        this.dots = dots;
     }
     
     

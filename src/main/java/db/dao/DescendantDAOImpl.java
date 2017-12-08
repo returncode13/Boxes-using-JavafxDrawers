@@ -8,6 +8,7 @@ package db.dao;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Descendant;
 import db.model.Job;
+import java.util.Iterator;
 
 import java.util.List;
 import org.hibernate.Criteria;
@@ -111,6 +112,37 @@ public class DescendantDAOImpl implements DescendantDAO {
             session.close();
         }
         return null;
+    }
+
+     @Override
+    public void clearTableForJob(Job dbjob) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        
+        try{
+            
+        Criteria criteria=session.createCriteria(Descendant.class);
+        criteria.add(Restrictions.eq("job", dbjob));
+        List results=criteria.list();
+     
+        
+            if(results.size()>0){
+             
+         Transaction transaction=session.beginTransaction();
+            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+                    Descendant next = (Descendant) iterator.next();
+                    session.delete(next);
+                    
+                }
+        transaction.commit();
+        
+        
+        }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    
     }
     
 }

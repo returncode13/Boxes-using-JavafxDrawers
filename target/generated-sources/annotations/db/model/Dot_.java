@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Dot.class)
 public abstract class Dot_ {
 
+	public static volatile SingularAttribute<Dot, Workspace> workspace;
 	public static volatile SetAttribute<Dot, Link> links;
 	public static volatile SingularAttribute<Dot, Long> id;
 

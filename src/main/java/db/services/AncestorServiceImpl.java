@@ -52,7 +52,13 @@ public class AncestorServiceImpl implements AncestorService{
     public void deleteAncestor(Long aid) {
         ancDao.deleteAncestor(aid);
     }
-
+    
+    @Override
+    public void clearTableForJob(Job dbjob) {
+        ancDao.clearTableForJob(dbjob);
+    }
+    
+    
     /*@Override
     public void getInitialAncestorListFor(SessionDetails s,Set<Long> listOfAncestor){
     System.out.println("db.services.AncestorServiceImpl.getInitialAncestorListFor: Asking me to find: "+s.getIdSessionDetails()+" which contains: "+s.getJobStep().getNameJobStep()+" inside session: "+s.getSessions().getNameSessions());
@@ -172,52 +178,55 @@ public class AncestorServiceImpl implements AncestorService{
     
     }*/
 
-    @Override
-      public void makeAncestorTableFor(Job job,Set<Job> listOfAncestor)
+    /*  @Override
+    public void makeAncestorTableFor(Job job,Set<Job> listOfAncestor)
     {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        
-        try{
-            
-        Criteria criteria=session.createCriteria(Ancestor.class);
-        criteria.add(Restrictions.eq("job", job));
-        List results=criteria.list();
-     
-        
-            if(results.size()>0){
-             
-         Transaction transaction=session.beginTransaction();
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-                    Ancestor next = (Ancestor) iterator.next();
-                    session.delete(next);
-                    
-                }
-        transaction.commit();
-        
-        
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    
+    try{
+    
+    Criteria criteria=session.createCriteria(Ancestor.class);
+    criteria.add(Restrictions.eq("job", job));
+    List results=criteria.list();
+    
+    
+    if(results.size()>0){
+    
+    Transaction transaction=session.beginTransaction();
+    for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+    Ancestor next = (Ancestor) iterator.next();
+    session.delete(next);
+    
     }
-         
-            Transaction transaction=session.beginTransaction();
-            
-            for (Iterator<Job> iterator = listOfAncestor.iterator(); iterator.hasNext();) {
-                Job next = iterator.next();
-                Ancestor anc=new Ancestor();
-                anc.setJob(job);
-                anc.setAncestor(next);
-
-                session.save(anc);
-            }
-         
-         transaction.commit();
-         
-         
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        
-        }
+    transaction.commit();
+    
+    
+    }
+    
+    Transaction transaction=session.beginTransaction();
+    
+    for (Iterator<Job> iterator = listOfAncestor.iterator(); iterator.hasNext();) {
+    Job next = iterator.next();
+    Ancestor anc=new Ancestor();
+    anc.setJob(job);
+    anc.setAncestor(next);
+    
+    session.save(anc);
+    }
+    
+    transaction.commit();
+    
+    
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    
+    }*/
+      
+      
+  
       /*
       @Override
       public void getAncestorFor(SessionDetails fkid, Set<Long> listOfAncestor) {
@@ -228,6 +237,8 @@ public class AncestorServiceImpl implements AncestorService{
       public Ancestor getAncestorFor(SessionDetails fkid, Long ancestor) {
       return ancDao.getAncestorFor(fkid, ancestor);
       }*/
+
+    
    
     
 }

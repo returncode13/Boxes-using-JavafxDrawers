@@ -107,8 +107,37 @@ public class AncestorDAOImpl implements AncestorDAO{
         
         return null;
     }
-    
+
+    @Override
+    public void clearTableForJob(Job dbjob) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        
+        try{
+            
+        Criteria criteria=session.createCriteria(Ancestor.class);
+        criteria.add(Restrictions.eq("job", dbjob));
+        List results=criteria.list();
      
+        
+            if(results.size()>0){
+             
+         Transaction transaction=session.beginTransaction();
+            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+                    Ancestor next = (Ancestor) iterator.next();
+                    session.delete(next);
+                    
+                }
+        transaction.commit();
+        
+        
+        }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    
+    }
          
 
 }

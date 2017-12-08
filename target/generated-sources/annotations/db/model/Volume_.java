@@ -1,7 +1,6 @@
 package db.model;
 
 import javax.annotation.Generated;
-import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
@@ -13,9 +12,9 @@ public abstract class Volume_ {
 	public static volatile SingularAttribute<Volume, String> nameVolume;
 	public static volatile SingularAttribute<Volume, String> md5Hash;
 	public static volatile SingularAttribute<Volume, Boolean> alert;
-	public static volatile SetAttribute<Volume, JobVolumeMap> jobVolumeDetails;
 	public static volatile SingularAttribute<Volume, String> pathOfVolume;
-	public static volatile SingularAttribute<Volume, Long> idVolume;
+	public static volatile SingularAttribute<Volume, Long> id;
+	public static volatile SingularAttribute<Volume, Job> job;
 	public static volatile SingularAttribute<Volume, Boolean> headerExtracted;
 
 }

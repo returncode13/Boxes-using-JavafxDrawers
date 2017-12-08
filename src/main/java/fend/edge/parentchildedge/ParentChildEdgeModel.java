@@ -10,12 +10,15 @@ import fend.dot.anchor.AnchorModel;
 import fend.dot.DotModel;
 import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class ParentChildEdgeModel implements EdgeModel {
+    Long id=UUID.randomUUID().getMostSignificantBits();
     JobType0Model parentJob;
     DotModel dotModel;
     AnchorModel childAnchorModel;               //Anchor dropped on the child box
@@ -61,6 +64,35 @@ public class ParentChildEdgeModel implements EdgeModel {
     public void setChildJob(JobType0Model childJob) {
         this.childJob = childJob;
         this.dotModel.addToChildren(this.childJob);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ParentChildEdgeModel other = (ParentChildEdgeModel) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     

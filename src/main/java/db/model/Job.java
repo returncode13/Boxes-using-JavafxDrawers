@@ -32,15 +32,13 @@ import javax.persistence.UniqueConstraint;
 public class Job implements Serializable{
     
     @Id
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
-    
     @Column(name = "id",nullable = false,unique = true,length = 10)
     private Long id;
     
     @Column(name = "name",nullable = true,length = 256)
     private String nameJobStep;
     
-    @Column(name = "insightVersionsUsed",nullable=false,length=2048)
+    @Column(name = "insightVersionsUsed",nullable=true,length=2048)
     private String insightVersions;
     
     
@@ -62,8 +60,12 @@ public class Job implements Serializable{
     
     /*@Column(name = "pending",nullable = true)
     private Boolean pending;*/
-    @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
-    private Set<JobVolumeMap> jobVolumeMap;
+    /* @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
+    private Set<JobVolumeMap> jobVolumeMap;*/
+    
+     @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
+    private Set<Volume> volumes;
+    
     
     @OneToMany(mappedBy = "job")
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
@@ -140,24 +142,23 @@ public class Job implements Serializable{
         this.alert = alert;
     }
 
-    public Set<JobVolumeMap> getJobVolumeMap() {
-        return jobVolumeMap;
+    /*public Set<JobVolumeMap> getJobVolumeMap() {
+    return jobVolumeMap;
     }
-
+    
     public void setJobVolumeMap(Set<JobVolumeMap> jobVolumeMap) {
-        
-        if(jobVolumeMap!=null)
-        {
-        this.jobVolumeMap.clear();
-        
-        for (Iterator<JobVolumeMap> iterator = jobVolumeMap.iterator(); iterator.hasNext();) {
-            JobVolumeMap next = iterator.next();
-            this.jobVolumeMap.add(next);
-        }
-        }
-        //this.jobVolumeMap = jobVolumeMap;
+    
+    if(jobVolumeMap!=null)
+    {
+    this.jobVolumeMap.clear();
+    
+    for (Iterator<JobVolumeMap> iterator = jobVolumeMap.iterator(); iterator.hasNext();) {
+    JobVolumeMap next = iterator.next();
+    this.jobVolumeMap.add(next);
     }
-
+    }
+    //this.jobVolumeMap = jobVolumeMap;
+    }*/
    
 
     public String getInsightVersions() {
@@ -271,6 +272,14 @@ public class Job implements Serializable{
 
     public void setDescendants(Set<Descendant> descendants) {
         this.descendants = descendants;
+    }
+
+    public Set<Volume> getVolumes() {
+        return volumes;
+    }
+
+    public void setVolumes(Set<Volume> volumes) {
+        this.volumes = volumes;
     }
     
     

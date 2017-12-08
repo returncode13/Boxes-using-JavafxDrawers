@@ -85,22 +85,22 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         List<Job> jobStepList=new ArrayList<>();
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria = session.createCriteria(JobVolumeMap.class);
-            criteria.add(Restrictions.eq("volume", v));
-            result=criteria.list();
-            transaction.commit();
+        /* try{
+        transaction=session.beginTransaction();
+        Criteria criteria = session.createCriteria(JobVolumeMap.class);
+        criteria.add(Restrictions.eq("volume", v));
+        result=criteria.list();
+        transaction.commit();
         }catch(Exception e){
-            e.printStackTrace();
+        e.printStackTrace();
         }finally{
-            session.close();
+        session.close();
         }
         
         for (Iterator<JobVolumeMap> iterator = result.iterator(); iterator.hasNext();) {
-            JobVolumeMap jvd = iterator.next();
-            jobStepList.add(jvd.getJob());
-        }
+        JobVolumeMap jvd = iterator.next();
+        jobStepList.add(jvd.getJob());
+        }*/
         
         return jobStepList;
     }
@@ -111,22 +111,22 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         List<Volume> volumeList=new ArrayList<>();
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria = session.createCriteria(JobVolumeMap.class);
-            criteria.add(Restrictions.eq("job", js));
-            result=criteria.list();
-            transaction.commit();
+        /* try{
+        transaction=session.beginTransaction();
+        Criteria criteria = session.createCriteria(JobVolumeMap.class);
+        criteria.add(Restrictions.eq("job", js));
+        result=criteria.list();
+        transaction.commit();
         }catch(Exception e){
-            e.printStackTrace();
+        e.printStackTrace();
         }finally{
-            session.close();
+        session.close();
         }
         
         for (Iterator<JobVolumeMap> iterator = result.iterator(); iterator.hasNext();) {
-            JobVolumeMap jvd = iterator.next();
-            volumeList.add(jvd.getVolume());
-        }
+        JobVolumeMap jvd = iterator.next();
+        volumeList.add(jvd.getVolume());
+        }*/
         
         return volumeList;
     }

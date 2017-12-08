@@ -9,13 +9,15 @@ import fend.dot.anchor.AnchorModel;
 import fend.dot.DotModel;
 import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class DotJobEdgeModel implements EdgeModel{
-    
+    Long id=UUID.randomUUID().getMostSignificantBits();
    
     DotModel dotModel;      //the dotmodel from which the link originates
     JobType0Model childJob;        //the child box on which the anchor will be dropped
@@ -48,10 +50,39 @@ public class DotJobEdgeModel implements EdgeModel{
         this.childJob = childBox;
         this.dotModel.addToChildren(this.childJob);
     }
-    
-    
-    
 
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DotJobEdgeModel other = (DotJobEdgeModel) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
+    
    
     
 }

@@ -52,50 +52,54 @@ public class DescendantServiceImpl implements DescendantService{
         descDao.deleteDescendant(did);
     }
     
-    
-    
     @Override
+    public void clearTableForJob(Job dbjob) {
+        descDao.clearTableForJob(dbjob);
+    }
+    
+    /* @Override
     public void makeDescendantTableFor(Job job, Set<Job> listOfDescendant) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        
-        try{
-            
-        Criteria criteria=session.createCriteria(Descendant.class);
-        criteria.add(Restrictions.eq("job", job));
-        List results=criteria.list();
-     
-        
-            if(results.size()>0){
-             
-         Transaction transaction=session.beginTransaction();
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-                    Descendant next = (Descendant) iterator.next();
-                    session.delete(next);
-                    
-                }
-        transaction.commit();
-        
-        
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    
+    try{
+    
+    Criteria criteria=session.createCriteria(Descendant.class);
+    criteria.add(Restrictions.eq("job", job));
+    List results=criteria.list();
+    
+    
+    if(results.size()>0){
+    
+    Transaction transaction=session.beginTransaction();
+    for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+    Descendant next = (Descendant) iterator.next();
+    session.delete(next);
+    
     }
-         
-            Transaction transaction=session.beginTransaction();
-            for (Iterator<Job> iterator = listOfDescendant.iterator(); iterator.hasNext();) {
-                Job next = iterator.next();
-                Descendant desc=new Descendant();
-                desc.setJob(job);
-                desc.setDescendant(next);
-                
-            }
-           transaction.commit();
-         
-         
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        
+    transaction.commit();
+    
+    
     }
+    
+    Transaction transaction=session.beginTransaction();
+    for (Iterator<Job> iterator = listOfDescendant.iterator(); iterator.hasNext();) {
+    Job next = iterator.next();
+    Descendant desc=new Descendant();
+    desc.setJob(job);
+    desc.setDescendant(next);
+    
+    }
+    transaction.commit();
+    
+    
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    
+    }*/
+    
 
    
 

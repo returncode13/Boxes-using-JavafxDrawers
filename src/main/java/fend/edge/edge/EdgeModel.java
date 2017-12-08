@@ -13,5 +13,12 @@ import fend.dot.DotModel;
  */
 public interface EdgeModel {
     public DotModel getDotModel();
+    public Long getId();
+
+    @Override
+    public boolean equals(Object obj);
+
+    @Override
+    public int hashCode();
     
 }

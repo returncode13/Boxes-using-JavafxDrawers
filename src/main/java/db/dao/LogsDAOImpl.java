@@ -344,7 +344,7 @@ public class LogsDAOImpl implements LogsDAO{
         if(result.isEmpty()){
             return null;
         }else if(result.size()>1){
-            throw new Exception("More than one results encountered for log: "+filename+" timestamp: "+timestamp+" volume: "+volume.getIdVolume()+" line: "+linename);
+            throw new Exception("More than one results encountered for log: "+filename+" timestamp: "+timestamp+" volume: "+volume.getId()+" line: "+linename);
         }else{
             return result.get(0);
         }

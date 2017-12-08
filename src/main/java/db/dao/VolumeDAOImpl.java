@@ -72,7 +72,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           Volume v = (Volume) session.get(Volume.class, nv.getId());
            
             
                v.setAlert(Boolean.TRUE);
@@ -94,7 +94,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           Volume v = (Volume) session.get(Volume.class, nv.getId());
            
             
                v.setAlert(Boolean.FALSE);
@@ -116,7 +116,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           Volume v = (Volume) session.get(Volume.class, nv.getId());
            
             
                v.setHeaderExtracted(Boolean.TRUE);
@@ -138,7 +138,7 @@ public class VolumeDAOImpl implements VolumeDAO {
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-           Volume v = (Volume) session.get(Volume.class, nv.getIdVolume());
+           Volume v = (Volume) session.get(Volume.class, nv.getId());
            
             
                v.setHeaderExtracted(Boolean.FALSE);

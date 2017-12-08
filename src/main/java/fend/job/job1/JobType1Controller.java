@@ -50,6 +50,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -101,7 +103,8 @@ public class JobType1Controller implements JobType0Controller{
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(150);
         drawer.setTranslateY(0);
-        name.setText(model.getId()%1000+"");
+        //name.setText(model.getId()%1000+"");
+        name.textProperty().addListener(nameChangeListener);
         openDrawer.setOnMousePressed(e->{
          drawersStack.toggle(drawer);
         });
@@ -152,7 +155,7 @@ public class JobType1Controller implements JobType0Controller{
                     ParentChildEdgeView parentChildEdgeNode=((ParentChildEdgeView)droppedAnchor.getParent());
                     ParentChildEdgeModel parentChildEdgeModel=parentChildEdgeNode.getController().getModel();
                     
-                    System.out.println("job.job1.JobType1Controller.setView(): parentLinkModel: "+parentChildEdgeModel.getParentJob().getId()%100);
+////                    System.out.println("job.job1.JobType1Controller.setView(): parentLinkModel: "+parentChildEdgeModel.getParentJob().getId()%100);
                     
 
                     JobType0Model parent=parentChildEdgeModel.getParentJob();
@@ -162,10 +165,10 @@ public class JobType1Controller implements JobType0Controller{
                     if(parent.getChildren().contains(model)){
                         for (Iterator<JobType0Model> iterator = parent.getChildren().iterator(); iterator.hasNext();) {
                             JobType0Model next = iterator.next();
-                            System.out.println("job.job1.JobType1Controller.setView(): child in "+parent.getId()%100+" : "+next.getId()%100);
+////                            System.out.println("job.job1.JobType1Controller.setView(): child in "+parent.getId()%100+" : "+next.getId()%100);
                             
                         }
-                        System.out.println("boxes.BoxController.setView(): contains "+model.getId()%100);
+//                        System.out.println("boxes.BoxController.setView(): contains "+model.getId()%100);
                          parentChildEdgeNode.setDropReceived(false);
                          return;
                     }
@@ -174,7 +177,7 @@ public class JobType1Controller implements JobType0Controller{
                         System.out.println("boxes.BoxController.setView(): cyclic");
                         return;
                     }
-                    System.out.println("job.job1.JobType1Controller.setView(): adding: "+parent.getId());
+//                    System.out.println("job.job1.JobType1Controller.setView(): adding: "+parent.getId());
                     model.addParent(parent);
                     parent.addChild(model);
                     
@@ -206,7 +209,7 @@ public class JobType1Controller implements JobType0Controller{
                     for(JobType0Model parent:parents){
                         
                          if(parent.getChildren().contains(model)){
-                            System.out.println("boxes.BoxController.setView(): "+model.getId()%100+" already exists as a child to parent "+parent.getId()%100);
+////                            System.out.println("boxes.BoxController.setView(): "+model.getId()%100+" already exists as a child to parent "+parent.getId()%100);
                              parentNode.setDropReceived(false);
                              return;
                         }
@@ -234,18 +237,18 @@ public class JobType1Controller implements JobType0Controller{
          setupMenu();
          
          name.setOnKeyPressed(e->{
-             if(e.KEY_PRESSED.equals(KeyCode.ENTER)){
-                 String text=name.getText();
-                 model.setNameproperty(text);
-            }
-             if(e.KEY_PRESSED.equals(KeyCode.TAB)){
-                 String text=name.getText();
-                 model.setNameproperty(text);
-            }
-        });
+         if(e.KEY_PRESSED.equals(KeyCode.ENTER)){
+         String text=name.getText();
+        // model.setNameproperty(text);
+         }
+         if(e.KEY_PRESSED.equals(KeyCode.TAB)){
+         String text=name.getText();
+        // model.setNameproperty(text);
+         }
+         });
          
          name.setOnKeyReleased(e->{
-             
+         
          });
     }
 
@@ -253,6 +256,20 @@ public class JobType1Controller implements JobType0Controller{
     public JobType0Model getModel() {
         return this.model;
     }
+    /**
+     * Listeners
+     */
+    final private ChangeListener<String> nameChangeListener=new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            System.out.println(".changed(): from "+oldValue+" to "+newValue);
+            model.setNameproperty(newValue);
+        }
+    };
+    
+    /***
+     * private Implementation
+     */
 
     private void setupMenu() {
          /**

@@ -74,7 +74,7 @@ public class JobDAOImpl implements JobDAO{
             Job oldJs=(Job) session.get(Job.class, jobId);
             oldJs.setNameJobStep(newJs.getNameJobStep());
             oldJs.setAlert(newJs.isAlert());
-            oldJs.setJobVolumeMap(newJs.getJobVolumeMap());
+           // oldJs.setJobVolumeMap(newJs.getJobVolumeMap());
             oldJs.setInsightVersions(newJs.getInsightVersions());
             session.update(oldJs);
             
