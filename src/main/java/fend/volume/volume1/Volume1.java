@@ -49,7 +49,8 @@ public class Volume1 implements Volume0{
     private List<SubsurfaceHeaders> subsurfaces;
     
     public Volume1(JobType0Model parentBox) {
-        id=UUID.randomUUID().getMostSignificantBits();
+       // id=UUID.randomUUID().getMostSignificantBits();
+        id=null;
         this.parentJob = parentBox;
         name=new SimpleStringProperty();
         subsurfaces=new ArrayList<>();
@@ -163,7 +164,7 @@ public class Volume1 implements Volume0{
 
     @Override
     public List<SubsurfaceHeaders> getSubsurfaces() {
-        
+        subsurfaces.clear();
         for(File sub:this.volume.listFiles(getSubsurfaceTimeStampFilter)){
             String s=sub.getName();                                 //2D-subname.0
             String name=s.substring(3, s.indexOf("."));             //subname

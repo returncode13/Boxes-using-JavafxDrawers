@@ -7,14 +7,18 @@ package db.model;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -32,7 +36,8 @@ import javax.persistence.UniqueConstraint;
 public class Job implements Serializable{
     
     @Id
-    @Column(name = "id",nullable = false,unique = true,length = 10)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "job_id",nullable = false,unique = true,length = 10)
     private Long id;
     
     @Column(name = "name",nullable = true,length = 256)
@@ -57,6 +62,8 @@ public class Job implements Serializable{
     @ManyToOne
     @JoinColumn(name="workspace_fk",nullable=false)
     private Workspace workspace;
+    
+    
     
     /*@Column(name = "pending",nullable = true)
     private Boolean pending;*/
@@ -95,6 +102,11 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "child")
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
+    
+    
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
+    private Set<Subsurface> subsurfaces;
      
     /*public Job(String nameJobStep, Boolean alert,String insightVersion,Long type) {
     this.nameJobStep = nameJobStep;
@@ -122,13 +134,15 @@ public class Job implements Serializable{
   
     
     
+    
+ 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /*public void setId(Long id) {
     this.id = id;
-    }
+    }*/
     
     public String getNameJobStep() {
         return nameJobStep;
@@ -293,6 +307,43 @@ public class Job implements Serializable{
     public void setLogs(Set<Log> logs) {
         this.logs = logs;
     }
+
+    
+    public Set<Subsurface> getSubsurfaces() {
+        return subsurfaces;
+    }
+
+    public void setSubsurfaces(Set<Subsurface> subsurfaces) {
+        this.subsurfaces = subsurfaces;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Job other = (Job) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    
+   
     
     
     

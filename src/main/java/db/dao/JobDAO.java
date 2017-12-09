@@ -21,7 +21,7 @@ public interface JobDAO {
     public Job getJob(Long jobId);
     public void updateJob(Long jobId,Job newJs);
     public void deleteJob(Long jobId);
-    
+   
     /* public void startAlert(Job js);
     public void stopAlert(Job js);*/
     /*public void setPending(Job js);

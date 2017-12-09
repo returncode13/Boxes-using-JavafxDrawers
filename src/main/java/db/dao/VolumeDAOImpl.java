@@ -156,7 +156,24 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void updateVolume(Long volid, Volume newVol) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        
+        try{
+            transaction=session.beginTransaction();
+            
+            Volume ov=(Volume) session.get(Volume.class,newVol.getId());
+            ov.setJob(newVol.getJob());
+            ov.setNameVolume(newVol.getNameVolume());
+            ov.setPathOfVolume(newVol.getPathOfVolume());
+            ov.setVolumeType(newVol.getVolumeType());
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     

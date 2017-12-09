@@ -76,6 +76,8 @@ public class JobDAOImpl implements JobDAO{
             oldJs.setAlert(newJs.isAlert());
            // oldJs.setJobVolumeMap(newJs.getJobVolumeMap());
             oldJs.setInsightVersions(newJs.getInsightVersions());
+            oldJs.setSubsurfaces(newJs.getSubsurfaces());
+            oldJs.setHeaders(newJs.getHeaders());
             session.update(oldJs);
             
             transaction.commit();

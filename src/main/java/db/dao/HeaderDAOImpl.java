@@ -484,7 +484,7 @@ public class HeaderDAOImpl implements HeaderDAO{
                 if(result.size()>1){
                     System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): result.size() for job "+job.getId()+" sub: "+sub.getId()+ " result.size(): "+result.size());
                 for(Header h:result){
-                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getId() );
+                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getId() +" subsurface ID: "+h.getSubsurface().getId()+" job: "+h.getJob().getId());
                     h.setMultipleInstances(true);
                     h.setChosen(false);
                     transaction=session.beginTransaction();

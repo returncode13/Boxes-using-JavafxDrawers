@@ -29,7 +29,8 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "Volume",schema = "obpmanager",uniqueConstraints = {@UniqueConstraint(columnNames = {"idVolume"})})
 public class Volume implements Serializable {
    @Id
-   @Column(name = "idVolume",nullable=false)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Column(name = "idVolume")
    private long id;
    
    @Column(name = "nameVolume",length = 255)
@@ -53,16 +54,16 @@ public class Volume implements Serializable {
 
     
    
-   /*
+  
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
-   private Set<Headers> headers;
-   */
+   private Set<Header> headers;
+   
    
     @ManyToOne
     @JoinColumn(name= "job_fk",nullable = false)
     private Job job;
    
-    /*   @OneToMany(mappedBy="volume")
+    /* @OneToMany(mappedBy="volume")
     private Set<JobVolumeMap> jobVolumeDetails;*/
    /*
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -155,11 +156,11 @@ public class Volume implements Serializable {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    /* public void setId(long id) {
+    this.id = id;
     }
     
-    
+    */
     public Boolean getAlert() {
         return alert;
     }
@@ -199,7 +200,6 @@ public class Volume implements Serializable {
     public void setJobVolumeDetails(Set<JobVolumeMap> jobVolumeDetails) {
     this.jobVolumeDetails = jobVolumeDetails;
     }*/
-
     public void startAlert() {
         this.setAlert(Boolean.TRUE);
     }
@@ -253,6 +253,14 @@ public class Volume implements Serializable {
 
     public void setJob(Job job) {
         this.job = job;
+    }
+
+    public Set<Header> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Set<Header> headers) {
+        this.headers = headers;
     }
 
     

@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import fend.volume.volume0.Volume0;
+import java.util.List;
 
 /**
  *
@@ -24,7 +25,7 @@ public interface JobType0Model {
     public StringProperty getNameproperty();
     public void setNameproperty(String name);
     public ObservableList<Volume0> getVolumes();
-    public void setVolumes(ObservableList<Volume0> observableVolumes);
+    public void setVolumes(List<Volume0> observableVolumes);
     public void addVolume(Volume0 vol);
     public void removeVolume(Volume0 vol);
     public BooleanProperty getChangeProperty();

@@ -41,11 +41,13 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Workflow.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodePropertyDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DoubtService.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/lineTable/LineTableController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/LogDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job0/JobType0Controller.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Item.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodePropertyValueServiceImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/lineTable/LineTableModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/PropertyTypeServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/UserServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DescendantServiceImpl.java
@@ -92,6 +94,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/sequences/SubsurfaceHeaders.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/QcTypeServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SequenceDAO.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/lineTable/LineTableView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodePropertyDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DoubtServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/anchor/AnchorModel.java
@@ -128,6 +131,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodeTypeDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/QcTableDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Dot.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/HeaderLoader.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Doubt.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/HeaderDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/UserService.java

@@ -17,6 +17,8 @@ import fend.job.job0.JobType0Model;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public interface Volume0 {
+
+    public static Long PROCESS_2D=1L;
     public Long getType();
     public Long getId();
     /**

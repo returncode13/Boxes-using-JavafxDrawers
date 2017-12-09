@@ -85,7 +85,7 @@ public class JobType1Controller implements JobType0Controller{
     private JFXButton q;
 
     @FXML
-    private JFXButton t;
+    private JFXButton showTable;
 
     @FXML
     private JFXButton headerButton;
@@ -273,7 +273,7 @@ public class JobType1Controller implements JobType0Controller{
     
      @FXML
     void extractHeadersForJob(ActionEvent event) {
-            t.setDisable(true);
+            showTable.setDisable(true);
             model.extractLogs();
             
     }
@@ -281,6 +281,12 @@ public class JobType1Controller implements JobType0Controller{
     @FXML
     void checkMultiples(ActionEvent event) {
         model.checkMultiples();
+    }
+    
+    
+    @FXML
+    void showTable(ActionEvent event) {
+            model.retrieveHeaders();
     }
     
     @Override
@@ -304,7 +310,7 @@ public class JobType1Controller implements JobType0Controller{
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                t.setDisable(false);
+                showTable.setDisable(false);
             }
         }
     };

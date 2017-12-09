@@ -18,8 +18,8 @@
                   <JFXTextField fx:id="name" text="Name" />
                   <HBox fx:id="hbox">
                      <children>
-                        <JFXButton fx:id="q" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="q" />
-                        <JFXButton fx:id="t" onAction="#checkMultiples" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
+                        <JFXButton fx:id="q" onAction="#checkMultiples" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="q" />
+                        <JFXButton fx:id="showTable" onAction="#showTable" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="T">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>

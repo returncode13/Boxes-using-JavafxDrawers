@@ -20,6 +20,7 @@ public abstract class Job_ {
 	public static volatile SetAttribute<Job, Descendant> descendants;
 	public static volatile SetAttribute<Job, Descendant> currentJobInDescendant;
 	public static volatile SingularAttribute<Job, Boolean> alert;
+	public static volatile SetAttribute<Job, Subsurface> subsurfaces;
 	public static volatile SingularAttribute<Job, String> insightVersions;
 	public static volatile SetAttribute<Job, Link> linksWithJobAsParent;
 	public static volatile SingularAttribute<Job, Long> id;

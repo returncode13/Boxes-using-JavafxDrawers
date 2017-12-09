@@ -49,11 +49,15 @@ import fend.job.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
 import fend.volume.volume0.Volume0;
+import fend.volume.volume1.Volume1;
 import fend.workspace.saveworkspace.SaveWorkSpaceView;
 import fend.workspace.saveworkspace.SaveWorkspaceModel;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
@@ -231,11 +235,13 @@ public class WorkspaceController  {
              Long currentWorkspaceId=model.getId();
              Workspace dbWorkspace=null;
              
-             if(workspaceService.getWorkspace(currentWorkspaceId)==null){           //if there is no such entry for session in the database
+             if(currentWorkspaceId==null){           //if there is no such entry for session in the database
                  System.out.println("fend.workspace.WorkspaceController.saveWorkspace() creating a new workspace entry");
                  dbWorkspace=new Workspace();
-                 dbWorkspace.setId(currentWorkspaceId);
+                // dbWorkspace.setId(currentWorkspaceId);
                  dbWorkspace.setName(model.getName().get());
+                 workspaceService.createWorkspace(dbWorkspace);
+                 model.setId(dbWorkspace.getId());
              }else{
                  dbWorkspace= workspaceService.getWorkspace(currentWorkspaceId);       //refer to the existing workspace in the db
              }
@@ -251,21 +257,27 @@ public class WorkspaceController  {
              Set<Volume> dbVolumes=new HashSet<>();
              Set<Dot> dbDots=new HashSet<>();
              Set<Link> dbLinks=new HashSet<>();
-             
+             workspaceService.createWorkspace(dbWorkspace);
              
              for(JobType0Model fejob:jobsInWorkSpace){
                  Job dbjob;
                  Set<Volume> dbVolumesForCurrentJob=new HashSet<>();
                  Long currentJobId=fejob.getId();
-                 if(jobService.getJob(currentJobId)==null){                                                                   //if it's a new node. (not saved), then create a new Job in the database and set it up.
+                 if(currentJobId==null){                                                                   //if it's a new node. (not saved), then create a new Job in the database and set it up.
                     dbjob=new Job();
-                    dbjob.setId(currentJobId);
                     Long typeOfJob=fejob.getType();
-                     //nodetype is set up during install.
                     NodeType nodetype=nodeTypeService.getNodeTypeObjForType(typeOfJob);                   
                     dbjob.setNodetype(nodetype);
                     dbjob.setWorkspace(dbWorkspace);
                     dbjob.setNameJobStep(fejob.getNameproperty().get());
+                    jobService.createJob(dbjob);
+                    
+                    
+                    fejob.setId(dbjob.getId());
+                    
+                     //nodetype is set up during install.
+                    
+                    
                     
                  }else{
                      dbjob=jobService.getJob(currentJobId);                                               // else get the instance of the previously saved job
@@ -279,13 +291,15 @@ public class WorkspaceController  {
                  for(Volume0 vol:fevolsinFejob){
                      Volume dbVol;
                      Long currentVolumeId=vol.getId();
-                     if(volumeService.getVolume(currentVolumeId)==null){
+                     if(currentVolumeId==null){
                         dbVol=new Volume();
-                        dbVol.setId(currentVolumeId);
                         dbVol.setVolumeType(vol.getType());
                         dbVol.setNameVolume(vol.getName().get());
                         dbVol.setPathOfVolume(vol.getVolume().getAbsolutePath());
                         dbVol.setJob(dbjob);
+                        volumeService.createVolume(dbVol);
+                         System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): id is now "+dbVol.getId());
+                        vol.setId(dbVol.getId());
                      }else{
                         dbVol=volumeService.getVolume(vol.getId());
                      }
@@ -303,10 +317,8 @@ public class WorkspaceController  {
              
              dbWorkspace.setJobs(dbjobs);
              
-             workspaceService.createWorkspace(dbWorkspace);
-             for(Job dbjob:dbjobs) jobService.createJob(dbjob);
-             for(Volume dbVol:dbVolumes) volumeService.createVolume(dbVol);
              
+            
              
              
              
@@ -413,7 +425,13 @@ public class WorkspaceController  {
               for(Descendant d:dbDescendants) descendantService.addDescendant(d);
            
               
+              
           }
+          
+          
+           for(Job dbjob:dbjobs) jobService.updateJob(dbjob.getId(),dbjob);
+            for(Volume dbVol:dbVolumes) volumeService.updateVolume(dbVol.getId(),dbVol);
+             workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
          }
          else{
              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Workspace is missing a name. Unsaved!");
@@ -425,7 +443,86 @@ public class WorkspaceController  {
       
      
      private void loadSession(){
+         Workspace  dbWorkspace=workspaceService.getWorkspace(model.getId());
+         Set<Job> jobsInDb=dbWorkspace.getJobs();
+         List<JobType0Model> frontEndJobModels=new ArrayList<>();
          
+         Map<Long,JobType0Model> idFrontEndJobMap=new HashMap<>();              //used to link the nodes later. alook up map
+         
+         
+         
+         for(Job dbj:jobsInDb){
+             JobType0Model fejob=null;
+             
+             Long type=dbj.getNodetype().getActualnodeid();
+             if(type.equals(JobType0Model.PROCESS_2D)){
+                 fejob=new JobType1Model(model);
+                 fejob.setId(dbj.getId());   
+                 fejob.setNameproperty(dbj.getNameJobStep());
+                 
+                 
+             }
+             
+             Set<Volume> dbvols=dbj.getVolumes();
+             List<Volume0> frontEndVolumeModels=new ArrayList<>();
+             for(Volume dbv:dbvols){
+                 Volume0 fevol=null;
+                 Long vtype=dbv.getVolumeType();
+                 
+                 if(vtype.equals(Volume0.PROCESS_2D)){
+                     fevol=new Volume1(fejob);                  //parent job and id set in contructor
+                     
+                     fevol.setId(dbv.getId());
+                     fevol.setName(dbv.getNameVolume());
+                     File volumeOnDisk=new File(dbv.getPathOfVolume());
+                     fevol.setVolume(volumeOnDisk);
+                     
+                 }
+                 frontEndVolumeModels.add(fevol);
+                 
+             } 
+             fejob.setVolumes(frontEndVolumeModels);
+             
+             idFrontEndJobMap.put(fejob.getId(), fejob);
+             
+          frontEndJobModels.add(fejob);   
+         }
+         model.setObservableJobs(new HashSet<>(frontEndJobModels));       //front end jobs and volumes set in workspace model
+         
+         
+         
+         Set<Dot> dots=dbWorkspace.getDots();
+         List<DotModel> frontEndDotModels=new ArrayList<>();
+         
+         for(Dot dot:dots){
+             DotModel fedot=new DotModel();
+             Set<Link> links=dot.getLinks();
+             Set<LinkModel> frontEndLinkModels=new HashSet<>();
+             
+             for(Link link:links){
+                
+                 Job parent=link.getParent();
+                 Job child=link.getChild();
+                 JobType0Model feParent=idFrontEndJobMap.get(parent.getId());
+                 JobType0Model feChild=idFrontEndJobMap.get(child.getId());
+                 
+                 LinkModel felink=new LinkModel();
+                 felink.setParent(feParent);
+                 felink.setChild(feChild);
+                frontEndLinkModels.add(felink);
+             }
+             fedot.setLinks(frontEndLinkModels);
+             frontEndDotModels.add(fedot);
+         }
+         
+        Set<EdgeModel> edges=new HashSet<>();
+        for(DotModel fedot:frontEndDotModels){
+            
+        }
+         
+         
+       //  
+       //  model.setObservableEdges(new HashSet<>(frontEnd));
      }
      
      

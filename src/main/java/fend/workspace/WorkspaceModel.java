@@ -36,7 +36,8 @@ public class WorkspaceModel {
     
    
     public WorkspaceModel(){
-        id=UUID.randomUUID().getMostSignificantBits();
+  //      id=UUID.randomUUID().getMostSignificantBits();
+          id=null;
     }
 
     

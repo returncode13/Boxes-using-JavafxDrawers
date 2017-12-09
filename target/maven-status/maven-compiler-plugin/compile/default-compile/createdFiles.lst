@@ -59,6 +59,7 @@ db/services/SequenceServiceImpl.class
 db/model/User.class
 fend/job/definitions/volume/VolumeListCell.class
 middleware/dugex/LogStatusManager$1.class
+fend/job/table/lineTable/LineTableView.class
 middleware/dugex/WorkflowManager.class
 db/dao/LogDAOImpl.class
 db/services/DoubtService.class
@@ -140,12 +141,14 @@ db/dao/WorkspaceDAO.class
 db/model/Log_.class
 db/model/Workspace_.class
 app/settings/database/DbListNode.class
+fend/job/table/lineTable/LineTableModel.class
 db/model/Workspace.class
 fend/job/job1/JobType1Model$4.class
 db/services/DotService.class
 middleware/dugex/WorkflowManager$1.class
 middleware/dugex/DugioScripts.class
 app/settings/database/DataBaseSettingsController.class
+fend/job/table/lineTable/LineTableController.class
 fend/edge/dotjobedge/DotJobEdgeModel.class
 db/dao/DescendantDAOImpl.class
 db/model/Subsurface_.class
@@ -199,6 +202,7 @@ db/services/LogService.class
 fend/edge/edge/EdgeView.class
 db/services/QcTypeServiceImpl.class
 db/dao/PropertyTypeDAO.class
+middleware/dugex/HeaderLoader.class
 fend/job/definitions/JobDefinitionsView.class
 middleware/watcher/WatcherFilter.class
 db/dao/AncestorDAO.class

@@ -6,9 +6,14 @@
 package fend.job.job1;
 
 
+import db.model.Job;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
+import db.services.JobService;
+import db.services.JobServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -37,6 +42,7 @@ import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
+import middleware.dugex.HeaderLoader;
 
 /**
  *
@@ -66,8 +72,8 @@ public class JobType1Model implements JobType0Model {
     private BooleanProperty headersCommited;
             
     public JobType1Model(WorkspaceModel workspaceModel) {
-        id=UUID.randomUUID().getMostSignificantBits();
-        
+        //id=UUID.randomUUID().getMostSignificantBits();
+        id=null;
         finishedCheckingLogs=new SimpleBooleanProperty(false);
         headersCommited=new SimpleBooleanProperty(false);
         nameproperty=new SimpleStringProperty();
@@ -145,8 +151,8 @@ public class JobType1Model implements JobType0Model {
     }
     
     @Override
-    public void setVolumes(ObservableList<Volume0> observableVolumes) {
-        this.observableVolumes = observableVolumes;
+    public void setVolumes(List<Volume0> volumes) {
+        this.observableVolumes =FXCollections.observableArrayList(volumes);
     }    
     
     @Override
@@ -483,6 +489,18 @@ public class JobType1Model implements JobType0Model {
 
     void checkMultiples() {
        
+    }
+
+    void retrieveHeaders() {
+        /*JobService jobService=new JobServiceImpl();
+        Job job=jobService.getJob(this.id);
+        Set<Subsurface> setSubs=job.getSubsurfaces();
+        System.out.println("fend.job.job1.JobType1Model.retrieveHeaders(): Listing subs present in job: size: "+setSubs.size());
+        for(Subsurface s:setSubs){
+        System.out.println(job.getNameJobStep()+"   :   "+s.getSubsurface());
+        }*/
+        new HeaderLoader(this);
+        
     }
      
     

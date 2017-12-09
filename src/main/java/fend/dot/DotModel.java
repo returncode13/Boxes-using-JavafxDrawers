@@ -141,7 +141,7 @@ public class DotModel {
         return setOfLinks;
     }
 
-    public void setSetOfLinks(Set<LinkModel> setOfLinks) {
+    public void setLinks(Set<LinkModel> setOfLinks) {
         this.setOfLinks = setOfLinks;
     }
     
