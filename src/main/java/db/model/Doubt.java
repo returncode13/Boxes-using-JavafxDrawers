@@ -36,7 +36,7 @@ public class Doubt {
     
     @ManyToOne
     @JoinColumn(name="subsurface_fk")
-    private Subsurface subsurfaceFK;
+    private Subsurface subsurface;
     
     @ManyToOne
     @JoinColumn(name="doubtType_fk",nullable=false)
@@ -135,12 +135,12 @@ public class Doubt {
         this.doubtType = doubtType;
     }
 
-    public Subsurface getSubsurfaceFK() {
-        return subsurfaceFK;
+    public Subsurface getSubsurface() {
+        return subsurface;
     }
 
-    public void setSubsurfaceFK(Subsurface subsurfaceFK) {
-        this.subsurfaceFK = subsurfaceFK;
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
     }
 
     public User getUser() {

@@ -49,7 +49,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             ll.setErrorMessage(newds.getErrorMessage());
             //ll.setHeaders(newds.getHeaders());
             //ll.setParentSessionDetails(newds.getParentSessionDetails());
-            ll.setSubsurfaceFK(newds.getSubsurfaceFK());
+            ll.setSubsurface(newds.getSubsurface());
             ll.setLink(newds.getLink());
             ll.setStatus(newds.getStatus());
             ll.setUser(newds.getUser());

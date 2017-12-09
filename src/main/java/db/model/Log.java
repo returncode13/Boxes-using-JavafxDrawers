@@ -20,12 +20,20 @@ import javax.persistence.Table;
  * @author naila0152
  */
 @Entity
-@Table(name="Logs",schema = "obpmanager")
+@Table(name="Log",schema = "obpmanager")
 
-public class Logs implements Serializable{
+public class Log implements Serializable{
     @Id
    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long idLogs;
+    
+    @ManyToOne
+    @JoinColumn(name="job_fk",nullable = true)
+    private Job job;
+    
+    @ManyToOne
+    @JoinColumn(name="subsurface_fk",nullable = true)
+    private Subsurface subsurface;
     
     @ManyToOne
     @JoinColumn(name="headers_fk",nullable = true)
@@ -47,8 +55,9 @@ public class Logs implements Serializable{
     @Column(name="timeStamp",length =1024)
     private String timestamp;
     
-    @Column(name="subsurfaces",length=1024)
-    private String subsurfaces;
+    /*@Column(name="subsurfaces",length=1024)
+    private String subsurfaces;*/
+    
     
     @Column(name="sequence")
     private Long sequence;
@@ -73,7 +82,20 @@ public class Logs implements Serializable{
     
     @Column(name="SummaryTime")
     private String summaryTime;
+    
+    @Column(name="version")
+    private Long version;
 
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+    
+    
+    
     public String getUpdateTime() {
         return updateTime;
     }
@@ -104,13 +126,13 @@ public class Logs implements Serializable{
     
     
     
-    public String getSubsurfaces() {
-        return subsurfaces;
+    /*public String getSubsurfaces() {
+    return subsurfaces;
     }
-
+    
     public void setSubsurfaces(String sublines) {
-        this.subsurfaces = sublines;
-    }
+    this.subsurfaces = sublines;
+    }*/
 
     public Long getSequence() {
         return sequence;
@@ -214,6 +236,23 @@ public class Logs implements Serializable{
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
     }
+
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
+
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+    
     
     
     

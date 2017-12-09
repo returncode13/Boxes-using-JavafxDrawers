@@ -50,11 +50,14 @@ public class Subsurface implements Serializable {
     @OneToMany(mappedBy = "subsurface")
     private Set<Header> headers;
     
-    @OneToMany(mappedBy = "subsurfaceFK")
+    @OneToMany(mappedBy = "subsurface")
     private Set<QcTable> qctables;
     
-    @OneToMany(mappedBy = "subsurfaceFK")
+    @OneToMany(mappedBy = "subsurface")
     private Set<Doubt> doubts;
+    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Log> logs ;
     
     
     public Subsurface() {
@@ -114,6 +117,14 @@ public class Subsurface implements Serializable {
 
     public void setQctables(Set<QcTable> qctables) {
         this.qctables = qctables;
+    }
+
+    public Set<Log> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(Set<Log> logs) {
+        this.logs = logs;
     }
     
     

@@ -6,10 +6,12 @@
 package db.dao;
 
 import db.model.Header;
-import db.model.Logs;
+import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
+import db.model.Subsurface;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -25,10 +27,10 @@ import org.hibernate.transform.Transformers;
  * @author sharath nair  
  * sharath.nair@polarcus.com
  */
-public class LogsDAOImpl implements LogsDAO{
+public class LogDAOImpl implements LogDAO{
 
     @Override
-    public void createLogs(Logs l) {
+    public void createLogs(Log l) {
        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -43,10 +45,10 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public Logs getLogs(Long lid) {
+    public Log getLogs(Long lid) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
-            Logs l= (Logs) session.get(Logs.class, lid);
+            Log l= (Log) session.get(Log.class, lid);
             return l;
         }catch(Exception e){
             e.printStackTrace();
@@ -57,14 +59,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public void updateLogs(Long lid, Logs newL) {
+    public void updateLogs(Long lid, Log newL) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Logs ll=(Logs) session.get(Logs.class,lid);
+            Log ll=(Log) session.get(Log.class,lid);
             ll.setHeader(newL.getHeader());
-            ll.setSubsurfaces(newL.getSubsurfaces());
+            //ll.setSubsurfaces(newL.getSubsurfaces());
+            ll.setSubsurface(newL.getSubsurface());
             ll.setInsightVersion(newL.getInsightVersion());
             ll.setLogpath(newL.getLogpath());
             ll.setTimestamp(newL.getTimestamp());
@@ -76,6 +79,8 @@ public class LogsDAOImpl implements LogsDAO{
             ll.setWorkflow(newL.getWorkflow());
             ll.setUpdateTime(newL.getUpdateTime());
             ll.setSummaryTime(newL.getSummaryTime());
+            ll.setJob(newL.getJob());
+            ll.setVersion(newL.getVersion());
             session.update(ll);
             
             
@@ -93,7 +98,7 @@ public class LogsDAOImpl implements LogsDAO{
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
-            Logs h= (Logs) session.get(Logs.class, lid);
+            Log h= (Log) session.get(Log.class, lid);
             session.delete(h);
             transaction.commit();
         }catch(Exception e){
@@ -104,13 +109,13 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Header h) {
+    public List<Log> getLogsFor(Header h) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("headers", h));
             result=criteria.list();
             transaction.commit();
@@ -123,13 +128,13 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Volume v) {
+    public List<Log> getLogsFor(Volume v) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             result=criteria.list();
             transaction.commit();
@@ -142,15 +147,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Volume v, String subline) {
+    public List<Log> getLogsFor(Volume v, Subsurface subline) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
-            criteria.add(Restrictions.eq("subsurfaces", subline));
+            criteria.add(Restrictions.eq("subsurface", subline));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){
@@ -162,15 +167,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public Logs getLatestLogFor(Volume v, String subline) {
+    public Log getLatestLogFor(Volume v, Subsurface subline) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
-            criteria.add(Restrictions.eq("subsurfaces", subline));
+            criteria.add(Restrictions.eq("subsurface", subline));
             criteria.addOrder(Order.desc("timestamp"));
             result=criteria.list();
             transaction.commit();
@@ -186,13 +191,13 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+    public List<Log> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.add(Restrictions.eq("completedsuccessfully", completed));
             criteria.add(Restrictions.eq("running", running));
@@ -210,15 +215,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Volume v, String subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+    public List<Log> getLogsFor(Volume v, Subsurface subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
-            criteria.add(Restrictions.eq("subsurfaces", subline));
+            criteria.add(Restrictions.eq("subsurface", subline));
             criteria.add(Restrictions.eq("completedsuccessfully", completed));
             criteria.add(Restrictions.eq("running", running));
             criteria.add(Restrictions.eq("errored", errored));
@@ -235,15 +240,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
     
     @Override
-    public List<Logs> getLogsFor(Volume v, Workflow workflow) {
+    public List<Log> getLogsFor(Volume v, Workflow workflow) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         List<Workflow> reswf=null;
         try{
             transaction=session.beginTransaction();
            
-                Criteria criteria=session.createCriteria(Logs.class);
+                Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             //criteria.add(Restrictions.eq("workflow", workflow));
             criteria.add(Restrictions.or(Restrictions.isNull("workflow"),Restrictions.eq("workflow", workflow)));
@@ -260,13 +265,13 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getLogsFor(Volume v, Long seq) {
+    public List<Log> getLogsFor(Volume v, Long seq) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.add(Restrictions.eq("sequence", seq));
             result=criteria.list();
@@ -280,16 +285,16 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getSequencesFor(Volume v) {
+    public List<Log> getSequencesFor(Volume v) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.setProjection(Projections.distinct(Projections.projectionList().add(Projections.property("sequence"),"sequence")));
-            criteria.setResultTransformer(Transformers.aliasToBean(Logs.class));
+            criteria.setResultTransformer(Transformers.aliasToBean(Log.class));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){
@@ -301,17 +306,17 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public List<Logs> getSubsurfacesFor(Volume v, Long seq) {
+    public List<Log> getSubsurfacesFor(Volume v, Long seq) {
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", v));
             criteria.add(Restrictions.eq("sequence", seq));
             criteria.setProjection(Projections.distinct(Projections.projectionList().add(Projections.property("subsurfaces"),"subsurfaces")));
-            criteria.setResultTransformer(Transformers.aliasToBean(Logs.class));
+            criteria.setResultTransformer(Transformers.aliasToBean(Log.class));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){
@@ -323,15 +328,15 @@ public class LogsDAOImpl implements LogsDAO{
     }
 
     @Override
-    public Logs getLogsFor(Volume volume, String linename, String timestamp, String filename) throws Exception{
+    public Log getLogsFor(Volume volume, Subsurface linename, String timestamp, String filename) throws Exception{
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<Logs> result=null;
+        List<Log> result=null;
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Logs.class);
+            Criteria criteria=session.createCriteria(Log.class);
             criteria.add(Restrictions.eq("volume", volume));
-            criteria.add(Restrictions.eq("subsurfaces", linename));
+            criteria.add(Restrictions.eq("subsurface", linename));
             criteria.add(Restrictions.eq("logpath", filename));
             criteria.add(Restrictions.eq("timestamp", timestamp));
             result=criteria.list();
@@ -350,6 +355,66 @@ public class LogsDAOImpl implements LogsDAO{
         }
             
         
+    }
+
+    @Override
+    public List<Log> getLogsFor(Job dbJob) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Log> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Log.class);
+            criteria.add(Restrictions.eq("job", dbJob));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Log> getLogsByTimeFor(Job dbJob) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Log> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Log.class);
+            criteria.add(Restrictions.eq("job", dbJob));
+            criteria.addOrder(Order.asc("timestamp"));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Log> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Log.class);
+            criteria.add(Restrictions.eq("job", dbJob));
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.addOrder(Order.asc("timestamp"));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
     

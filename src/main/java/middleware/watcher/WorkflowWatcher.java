@@ -5,11 +5,10 @@
  */
 package middleware.watcher;
 
-import db.model.Logs;
+import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
-import db.services.LogsService;
-import db.services.LogsServiceImpl;
+import db.services.LogServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import db.services.WorkflowService;
@@ -35,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import db.services.LogService;
 
 /*
  * @author sharath nair
@@ -49,33 +49,33 @@ public class WorkflowWatcher {
     
     private Volume volume;
     private final VolumeService vserv=new VolumeServiceImpl();
-    private final LogsService lserv=new LogsServiceImpl();
+    private final LogService lserv=new LogServiceImpl();
     private final WorkflowService wserv=new WorkflowServiceImpl();
-    private List<Logs> loglist;
-    private Map<Logs,WorkflowHolder> mlogwfholder=new HashMap<>();
+    private List<Log> loglist;
+    private Map<Log,WorkflowHolder> mlogwfholder=new HashMap<>();
     private WorkflowHolder workflowHolder;
     private MessageDigest md;
     private DugioScripts dugioscripts;
-    private TimerTask task;
+    /* private TimerTask task;
     private Timer timer;
-    
+    */
     
     
     public WorkflowWatcher(Volume volume)  {
         this.volume = volume;
         dugioscripts=new DugioScripts();
-      task=new TimerTask(){
-            @Override
-            public void run() {
-                watchForWorkflows();
-                
-            }
-          
-      };
-      
-      timer=new Timer();
-      timer.schedule(task, new Date(),10000);
-          
+        /* task=new TimerTask(){
+        @Override
+        public void run() {
+        
+        
+        }
+        
+        };
+        
+        timer=new Timer();
+        timer.schedule(task, new Date(),10000);*/
+           watchForWorkflows();
     }
     
     private void watchForWorkflows(){
@@ -90,9 +90,9 @@ public class WorkflowWatcher {
             executorService.submit(new Callable<Void>(){
              @Override
              public Void call() throws Exception {
-                for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
+                for (Iterator<Log> iterator = loglist.iterator(); iterator.hasNext();) {
             
-                Logs next = iterator.next();
+                Log next = iterator.next();
                 String logpath=next.getLogpath();
                 Process process=new ProcessBuilder(dugioscripts.getWorkflowExtractor().getAbsolutePath(),logpath).start();
                 InputStream is = process.getInputStream();
@@ -162,7 +162,7 @@ public class WorkflowWatcher {
              public Void call() throws Exception {
               //  for (Iterator<Logs> iterator = loglist.iterator(); iterator.hasNext();) {
                  
-               // Logs next = iterator.next();
+               // Log next = iterator.next();
                 String logpath=volume.getPathOfVolume();                //type 2 workflow information stored in volPath/notes.txt  . the path to notes.txt is hardcoded in the dugioscript
             
                 Process process=new ProcessBuilder(dugioscripts.getSegdLoadNotesTxtTimeWorkflowExtractor().getAbsolutePath(),logpath).start();
@@ -228,7 +228,7 @@ public class WorkflowWatcher {
                    }
                    
                    
-                   for(Logs log:loglist){
+                   for(Log log:loglist){
                       // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
                        log.setWorkflow(wfForLog);
                        lserv.updateLogs(log.getIdLogs(), log);

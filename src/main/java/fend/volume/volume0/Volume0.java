@@ -28,8 +28,9 @@ public interface Volume0 {
     public File getVolume();
     public void setVolume(File f);
     public JobType0Model getParentJob();
-
+    
     public List<SubsurfaceHeaders> getSubsurfaces();
+    public File getLogFolder();
     
     
    

@@ -9,13 +9,13 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class QcTable_ {
 
 	public static volatile SingularAttribute<QcTable, Boolean> result;
-	public static volatile SingularAttribute<QcTable, Subsurface> subsurfaceFK;
 	public static volatile SingularAttribute<QcTable, String> summaryTime;
 	public static volatile SingularAttribute<QcTable, QcMatrix> qcmatrix;
 	public static volatile SingularAttribute<QcTable, String> comment;
 	public static volatile SingularAttribute<QcTable, String> updateTime;
 	public static volatile SingularAttribute<QcTable, Long> id;
 	public static volatile SingularAttribute<QcTable, String> time;
+	public static volatile SingularAttribute<QcTable, Subsurface> subsurface;
 	public static volatile SingularAttribute<QcTable, User> user;
 
 }

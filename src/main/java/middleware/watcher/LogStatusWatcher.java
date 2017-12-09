@@ -6,10 +6,9 @@
 package middleware.watcher;
 
 import app.properties.AppProperties;
-import db.model.Logs;
+import db.model.Log;
 import db.model.Volume;
-import db.services.LogsService;
-import db.services.LogsServiceImpl;
+import db.services.LogServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.volume.volume0.Volume0;
@@ -38,6 +37,7 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import db.services.LogService;
 
 /**
  *
@@ -52,8 +52,8 @@ class LogStatusHolder{
     
 }
 public class LogStatusWatcher {
-    private LogsService lserv=new LogsServiceImpl();
-    private List<Logs>  listOfdbLogs;
+    private LogService lserv=new LogServiceImpl();
+    private List<Log>  listOfdbLogs;
     private List<LogStatusHolder> logstatusHolderList=new ArrayList<>();
     private VolumeService volserv=new VolumeServiceImpl();
     private Volume0 volselmodel;
@@ -83,11 +83,11 @@ public class LogStatusWatcher {
                         public void run() {
                         listOfdbLogs=lserv.getLogsFor(volume,false,true,false,false);                   //get only logs that are running
                              if(listOfdbLogs!=null){
-                        for (Iterator<Logs> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
+                        for (Iterator<Log> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
                             try {
-                                Logs log = iterator.next();
+                                Log log = iterator.next();
                                 String logpath=log.getLogpath();
-                                String linename=log.getSubsurfaces();
+                                String linename=log.getSubsurface().getSubsurface();
                                 //Start of green block
                                 Process processg=new ProcessBuilder(dugioscripts.getLogStatusCompletedSuccessfully().getAbsolutePath(),logpath).start();
                                 InputStream isg = processg.getInputStream();
@@ -143,8 +143,8 @@ public class LogStatusWatcher {
                         }
                     
                         
-                        for (Iterator<Logs> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
-                            Logs log=iterator.next();
+                        for (Iterator<Log> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
+                            Log log=iterator.next();
                             /*String logstatus=new String("Running");
                             Boolean running=log.getRunning();
                             Boolean errored=log.getErrored();

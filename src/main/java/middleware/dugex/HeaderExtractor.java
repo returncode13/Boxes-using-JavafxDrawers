@@ -7,10 +7,13 @@ package middleware.dugex;
 
 import db.model.Header;
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
+import db.services.LogService;
+import db.services.LogServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
@@ -23,8 +26,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +45,7 @@ public class HeaderExtractor {
     SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     HeaderService headerService=new HeaderServiceImpl();
     VolumeService volumeService=new VolumeServiceImpl();
+    LogService logService=new LogServiceImpl();
     private DugioScripts dugioscript=new DugioScripts();
     DugioMetaHeader dmh=new DugioMetaHeader();
     
@@ -61,15 +67,7 @@ public class HeaderExtractor {
               for(SubsurfaceHeaders sub:subsInVol){
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName().get());
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName().get());
-                  /* Subsurface dbsub=null;
-                  for(Subsurface s:subsurfaceService.getSubsurfaceList()){
-                  
-                  
-                  if(s.getSubsurface().equals(sub.getSubsurfaceName().get())) {
-                  dbsub=s;
-                  break;
-                  }
-                  }*/
+                
                   
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
                   String latestTimestamp=sub.getTimeStamp().get();
@@ -199,10 +197,23 @@ public class HeaderExtractor {
              hdr.setOffsetMax(offsetMax);
              hdr.setOffsetMin(offsetMin);
              hdr.setOffsetInc(offsetInc);
-                System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight versions from logs");
-                System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest workflow versions from logs");
-                System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign number of runs from logs");
+                
+             System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
+             Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
+             hdr.setInsightVersion(latestLog.getInsightVersion());
+             hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
+             hdr.setNumberOfRuns(latestLog.getVersion()+1);
+               
+                System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
              
+                List<Log> logsForHeader=logService.getLogsFor(hdr.getVolume(), hdr.getSubsurface());
+                Set<Log> setOfLogsForHeader=new HashSet<>(logsForHeader);
+                for(Log l:setOfLogsForHeader){
+                    l.setHeader(hdr);
+                    logService.updateLogs(l.getIdLogs(), l);
+                }
+                
+                hdr.setLogs(setOfLogsForHeader);
                          System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
                          headerService.createHeader(hdr);
                          

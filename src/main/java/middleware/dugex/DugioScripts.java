@@ -33,7 +33,7 @@ public class DugioScripts implements Serializable{
     private File segdLoadLinenameTimeFromGCLogs;
     private File segdLoadSaillineInsightFromGCLogs;
     private File segdLoadCheckIfGCLogsFinished;
-    
+    private File subsurfaceInsightVersionForLog;
     
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
@@ -70,6 +70,10 @@ public class DugioScripts implements Serializable{
     
    /*  private String subsurfaceLogContent="#!/bin/bash\n" +
 "for i in $1/*; do awk '/lineName|VERSION/ { print FILENAME\" \" $0}' ORS=\" \" $i | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}';done | sort -k 2,3";*/
+     
+     
+     private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
+"sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{print $7\" Insight=\"$12}'";                //one log at a time
      
      
       private String subsurfaceLogContent="#!/bin/bash\n" +
@@ -325,7 +329,18 @@ public class DugioScripts implements Serializable{
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        try {
+            subsurfaceInsightVersionForLog=File.createTempFile("subsurfaceInsightVersionForLog", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(subsurfaceInsightVersionForLog));
+            bw.write(subsurfaceInsightVersionForLogContent);
+            bw.close();
+            subsurfaceInsightVersionForLog.setExecutable(true,false);
+            subsurfaceInsightVersionForLog.deleteOnExit();
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }
@@ -387,6 +402,10 @@ public class DugioScripts implements Serializable{
 
     public File getSegdLoadCheckIfGCLogsFinished() {
         return segdLoadCheckIfGCLogsFinished;
+    }
+
+    public File getSubsurfaceInsightVersionForLog() {
+        return subsurfaceInsightVersionForLog;
     }
     
     

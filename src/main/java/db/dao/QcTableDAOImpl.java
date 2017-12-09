@@ -66,7 +66,7 @@ public class QcTableDAOImpl implements QcTableDAO{
             /*h.setSequenceNumber(newQ.getSequenceNumber());
             h.setSubsurface(newQ.getSubsurface());*/
             //h.setHeaders(newQ.getHeaders());
-            h.setSubsurfaceFK(newQ.getSubsurfaceFK());
+            h.setSubsurface(newQ.getSubsurface());
             h.setResult(newQ.getResult());
           //  h.setQctype(newQ.getQctype());
           h.setQcmatrix(newQ.getQcmatrix());

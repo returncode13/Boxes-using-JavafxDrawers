@@ -22,7 +22,7 @@ public abstract class Header_ {
 	public static volatile SingularAttribute<Header, Boolean> modified;
 	public static volatile SingularAttribute<Header, Long> id;
 	public static volatile SingularAttribute<Header, Long> cmpInc;
-	public static volatile SetAttribute<Header, Logs> logs;
+	public static volatile SetAttribute<Header, Log> logs;
 	public static volatile SingularAttribute<Header, Long> dugShotMin;
 	public static volatile SingularAttribute<Header, Long> offsetMin;
 	public static volatile SingularAttribute<Header, Long> cmpMax;

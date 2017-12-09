@@ -83,6 +83,10 @@ public class Job implements Serializable{
     private Set<QcMatrix> qcmatrices;
     
     @OneToMany(mappedBy = "job")
+    private Set<Log> logs;
+    
+    
+    @OneToMany(mappedBy = "job")
     private Set<Header> headers;
     
     @OneToMany(mappedBy = "parent")
@@ -280,6 +284,14 @@ public class Job implements Serializable{
 
     public void setVolumes(Set<Volume> volumes) {
         this.volumes = volumes;
+    }
+
+    public Set<Log> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(Set<Log> logs) {
+        this.logs = logs;
     }
     
     

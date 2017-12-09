@@ -15,7 +15,7 @@ public abstract class Workflow_ {
 	public static volatile SingularAttribute<Workflow, String> md5sum;
 	public static volatile SingularAttribute<Workflow, Long> id;
 	public static volatile SingularAttribute<Workflow, String> time;
-	public static volatile SetAttribute<Workflow, Logs> logs;
+	public static volatile SetAttribute<Workflow, Log> logs;
 
 }
 

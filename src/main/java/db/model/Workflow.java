@@ -34,7 +34,7 @@ public class Workflow implements Serializable{
     private Volume volume;
     
     @OneToMany(mappedBy="workflow",cascade=CascadeType.ALL,orphanRemoval = true)
-    private Set<Logs> logs;
+    private Set<Log> logs;
     
     @Column(name="wfversion")
     private Long wfversion;
@@ -89,11 +89,11 @@ public class Workflow implements Serializable{
         this.contents = contents;
     }
 
-    public Set<Logs> getLogs() {
+    public Set<Log> getLogs() {
         return logs;
     }
 
-    public void setLogs(Set<Logs> logs) {
+    public void setLogs(Set<Log> logs) {
         this.logs = logs;
     }
 

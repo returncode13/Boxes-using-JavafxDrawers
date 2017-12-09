@@ -40,6 +40,7 @@ import fend.volume.volume0.Volume0;
  * Type 1 Volumes. logs under ../200../logs
  */
 public class Volume1 implements Volume0{
+    private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
     private final Long type=1L;
     private Long id;
     private StringProperty name;
@@ -210,4 +211,10 @@ public class Volume1 implements Volume0{
         }
        
    };
+
+    @Override
+    public File getLogFolder() {
+        System.out.println("fend.volume.volume1.Volume1.getLogFolder(): returning file pointing to : "+volume.getAbsolutePath()+LOGPATH);
+        return new File(volume.getAbsolutePath()+LOGPATH);
+    }
 }

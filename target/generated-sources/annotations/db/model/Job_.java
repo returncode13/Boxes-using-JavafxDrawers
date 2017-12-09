@@ -24,6 +24,7 @@ public abstract class Job_ {
 	public static volatile SetAttribute<Job, Link> linksWithJobAsParent;
 	public static volatile SingularAttribute<Job, Long> id;
 	public static volatile SetAttribute<Job, Ancestor> ancestors;
+	public static volatile SetAttribute<Job, Log> logs;
 
 }
 

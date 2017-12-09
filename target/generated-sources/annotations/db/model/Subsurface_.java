@@ -16,6 +16,7 @@ public abstract class Subsurface_ {
 	public static volatile SingularAttribute<Subsurface, Long> id;
 	public static volatile SetAttribute<Subsurface, Acquisition> acquisition;
 	public static volatile SingularAttribute<Subsurface, String> subsurface;
+	public static volatile SetAttribute<Subsurface, Log> logs;
 
 }
 

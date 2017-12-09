@@ -43,7 +43,7 @@ public class Header implements Serializable{
     
     
     @OneToMany(mappedBy = "header",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<Logs> logs;
+    private Set<Log> logs;
     
     /*@OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<DoubtStatus> doubtstatus;
@@ -148,7 +148,7 @@ public class Header implements Serializable{
     @Column(name="textfilename")                                             //used for txt file types. job steptype=4
     private String textfilepath;         
     
-     @Column(name="multiple_instances")
+    @Column(name="multiple_instances")
     private Boolean multipleInstances=false;
     
     @Column(name="chosen")
@@ -604,11 +604,11 @@ public class Header implements Serializable{
         this.job = job;
     }
 
-    public Set<Logs> getLogs() {
+    public Set<Log> getLogs() {
         return logs;
     }
 
-    public void setLogs(Set<Logs> logs) {
+    public void setLogs(Set<Log> logs) {
         this.logs = logs;
     }
 

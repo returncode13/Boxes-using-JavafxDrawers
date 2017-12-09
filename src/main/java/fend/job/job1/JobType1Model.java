@@ -34,7 +34,9 @@ import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
+import java.util.logging.LogManager;
 import middleware.dugex.HeaderExtractor;
+import middleware.dugex.DugLogManager;
 
 /**
  *
@@ -459,6 +461,7 @@ public class JobType1Model implements JobType0Model {
 
     public void extractLogs() {
         System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
+        new DugLogManager(this);
        finishedCheckingLogs.set(!finishedCheckingLogs.get());
     }
     
