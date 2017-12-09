@@ -120,6 +120,8 @@ public class DugLogManager {
             
             System.out.println("middleware.dugex.DugLogManager.<init>(): updating workflows...");
             WorkflowManager workflowManager=new WorkflowManager(dbVol);
+            System.out.println("middleware.dugex.DugLogManager.<init>(): updating run status...");
+            LogStatusManager logStatusManager=new LogStatusManager(vol);
             
         }
     }
@@ -141,10 +143,10 @@ public class DugLogManager {
                 
                 String value;
                 while((value=br.readLine())!=null){
-                    System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                    //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
                     String linename=value.substring(9,value.indexOf(" "));
                     String insight=value.substring(value.indexOf(" ")+9);
-                    System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
+                    //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
                     
                     LogInformation li=new LogInformation();
                     li.log=fw.fwrap;

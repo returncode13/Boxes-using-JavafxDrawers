@@ -16,9 +16,9 @@ db/dao/HeaderDAOImpl.class
 fend/edge/edge/EdgeModel.class
 middleware/dugex/HeaderExtractor.class
 fend/dot/DotController$4.class
+middleware/dugex/LogStatusManager.class
 db/services/SubsurfaceServiceImpl.class
 db/model/Sequence_.class
-middleware/watcher/LogWatcher$2.class
 app/properties/AppProperties.class
 db/model/NodeProperty.class
 middleware/dugex/DugioMetaHeader.class
@@ -38,7 +38,6 @@ db/services/WorkflowService.class
 db/dao/NodePropertyValueDAO.class
 db/dao/SequenceDAOImpl.class
 db/services/WorkspaceService.class
-middleware/watcher/LogWatcher$1.class
 db/services/AncestorService.class
 db/dao/DescendantDAO.class
 fend/job/definitions/JobDefinitionsModel.class
@@ -59,6 +58,7 @@ fend/job/definitions/volume/VolumeListModel$1.class
 db/services/SequenceServiceImpl.class
 db/model/User.class
 fend/job/definitions/volume/VolumeListCell.class
+middleware/dugex/LogStatusManager$1.class
 middleware/dugex/WorkflowManager.class
 db/dao/LogDAOImpl.class
 db/services/DoubtService.class
@@ -98,7 +98,6 @@ db/dao/JobVolumeMapDAO.class
 db/services/LinkServiceImpl.class
 db/services/DoubtTypeService.class
 middleware/sequences/SubsurfaceHeaders.class
-middleware/watcher/LogWatcher.class
 fend/dot/DotModel.class
 db/services/AncestorServiceImpl.class
 db/services/LinkService.class
@@ -114,7 +113,6 @@ db/model/Descendant.class
 db/services/NodePropertyValueServiceImpl.class
 middleware/watcher/WorkflowWatcher$1.class
 db/model/QcTable_.class
-middleware/watcher/LogWatchHolder.class
 app/connections/manager/ssh/SSHManager.class
 fend/edge/edge/EdgeController.class
 db/model/User_.class
@@ -179,8 +177,8 @@ db/dao/UserDAOImpl.class
 fend/edge/parentchildedge/ParentChildEdgeController.class
 db/dao/VolumeDAOImpl.class
 db/services/QcTableServiceImpl.class
-middleware/watcher/LogStatusWatcher$1$1.class
 middleware/watcher/LogStatusHolder.class
+middleware/dugex/LogStatusHolder.class
 db/services/VolumeService.class
 fend/volume/volume1/Volume1.class
 db/services/AcquisitionServiceImpl.class
@@ -195,7 +193,6 @@ db/services/DescendantServiceImpl.class
 db/services/PropertyTypeServiceImpl.class
 fend/job/job1/JobType1Model$5.class
 middleware/dugex/DugLogManager$FileWrapper.class
-middleware/watcher/LogWatcher$1$1.class
 fend/dot/DotController$3.class
 db/dao/AncestorDAOImpl.class
 db/services/LogService.class

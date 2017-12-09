@@ -3,7 +3,6 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/JobDefinitionsController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/database/DbListNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SubsurfaceService.java
-/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/watcher/LogWatcher.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SequenceService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/WorkspaceService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/AncestorService.java
@@ -115,6 +114,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/LinkService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/JobDefinitionsView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/saveworkspace/SaveWorkspaceModel.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/LogStatusManager.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/JobVolumeMapServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Acquisition.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceDAO.java

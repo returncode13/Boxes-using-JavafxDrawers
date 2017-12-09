@@ -60,8 +60,8 @@ public class LogStatusWatcher {
     private Volume volume;
     private DugioScripts dugioscripts;
     
-    TimerTask task;
-    Timer timer;
+    /*  TimerTask task;
+    Timer timer;*/
     
     
     public LogStatusWatcher(Volume0 volselmod){
@@ -78,9 +78,9 @@ public class LogStatusWatcher {
                 public Void call() throws Exception {
                   
                     
-                    task=new TimerTask() {
-                        @Override
-                        public void run() {
+//                    task=new TimerTask() {
+/*@Override
+public void run() {*/
                         listOfdbLogs=lserv.getLogsFor(volume,false,true,false,false);                   //get only logs that are running
                              if(listOfdbLogs!=null){
                         for (Iterator<Log> iterator = listOfdbLogs.iterator(); iterator.hasNext();) {
@@ -159,12 +159,12 @@ public class LogStatusWatcher {
                         
                     }
                     
-                        }
-                    };
+                             /*   }
+                             };*/
                         
-                        timer=new Timer();
-                        timer.schedule(task,new Date(),30000);       
-                    
+                    /*timer=new Timer();
+                    timer.schedule(task,new Date(),30000);
+                    */
                    
                     
                     return null;
