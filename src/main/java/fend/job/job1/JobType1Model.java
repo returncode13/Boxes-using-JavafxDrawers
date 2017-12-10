@@ -14,6 +14,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
+import fend.job.definitions.qcmatrix.qctype.QcMatrixRow;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -55,6 +56,10 @@ public class JobType1Model implements JobType0Model {
     private StringProperty nameproperty;
     private List<Volume0> volumes;
     private ObservableList<Volume0> observableVolumes;
+    
+    private List<QcMatrixRow> qcmatrix;
+    private ObservableList<QcMatrixRow> observableQcMatrix;
+    
     private List<SubsurfaceHeaders> subsurfacesInJob;
     private Set<SubsurfaceHeaders> duplicatesInJob;
     private BooleanProperty changeProperty;
@@ -94,6 +99,13 @@ public class JobType1Model implements JobType0Model {
         
         observableVolumes=FXCollections.observableArrayList(volumes);
         observableVolumes.addListener(volumeListChangeListener);
+        
+        
+        qcmatrix =new ArrayList<>();
+        
+        observableQcMatrix=FXCollections.observableArrayList(qcmatrix);
+        observableQcMatrix.addListener(qcmatrixChangeListener);
+        
         
         observableParents=FXCollections.observableSet(parents);
         observableParents.addListener(parentsChangeListener);
@@ -357,6 +369,20 @@ public class JobType1Model implements JobType0Model {
  
     };
     
+    final private ListChangeListener<QcMatrixRow> qcmatrixChangeListener=new ListChangeListener<QcMatrixRow>() {
+        @Override
+        public void onChanged(ListChangeListener.Change<? extends QcMatrixRow> c) {
+                while(c.next()){
+                    for(QcMatrixRow q:c.getAddedSubList()){
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                    }
+                    for(QcMatrixRow q:c.getRemoved()){
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                    }
+                }
+        }
+    };
+    
     /**
      * Listen to changes. 
      */
@@ -503,6 +529,26 @@ public class JobType1Model implements JobType0Model {
         }*/
         new HeaderLoader(this);
         
+    }
+
+    @Override
+    public ObservableList<QcMatrixRow> getQcMatrix() {
+        return observableQcMatrix;
+    }
+
+    @Override
+    public void setQcMatrix(List<QcMatrixRow> qcMatrixRows) {
+        this.observableQcMatrix=FXCollections.observableArrayList(qcMatrixRows);
+    }
+
+    @Override
+    public void addQcMatrixRow(QcMatrixRow qcmrow) {
+        observableQcMatrix.add(qcmrow);
+    }
+
+    @Override
+    public void removeQcMatrixRow(QcMatrixRow qcmrow) {
+        observableQcMatrix.remove(qcmrow);
     }
      
     

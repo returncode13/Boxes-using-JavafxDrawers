@@ -38,12 +38,12 @@ public class VolumeListModel {
             public void onChanged(ListChangeListener.Change<? extends Volume0> c) {
                     while(c.next()){
                         for(Volume0 vol:c.getAddedSubList()){
-                            if(WorkspaceModel.DEBUG) System.out.println("box.definitions.volume.VolumeListModel.added(): "+vol.getName());
+                            if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.added(): "+vol.getName());
                             addVolumeToParentJob(vol);
                         }
                         
                         for(Volume0 vol:c.getRemoved()){
-                            if(WorkspaceModel.DEBUG) System.out.println("box.definitions.volume.VolumeListModel.removed(): "+vol.getName());
+                            if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): "+vol.getName());
                             removeVolumeFromParentJob(vol);
                         }
                     }

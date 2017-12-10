@@ -46,7 +46,7 @@ public class VolumeListCell extends JFXListCell<Volume0>{
             setText(null);
             setGraphic(null);
         }else{
-            
+            setText(vol.getName().get());
             setGraphic(hbox);
         }
     }

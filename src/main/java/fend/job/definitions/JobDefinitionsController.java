@@ -13,6 +13,10 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import fend.job.definitions.qcmatrix.QcMatrixModel;
+import fend.job.definitions.qcmatrix.QcMatrixView;
+import fend.job.definitions.qcmatrixold.qcCheckListModel;
+import fend.job.definitions.qcmatrixold.qcCheckListNode;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
@@ -114,11 +118,14 @@ public class JobDefinitionsController {
         
         
          drawer.setId("QMatrix");
-         VolumeListModel vol=new VolumeListModel(parentBox);
-         VolumeListView vollistview=new VolumeListView(vol);
-        drawer.setSidePane(vollistview);
+         /*VolumeListModel vol=new VolumeListModel(parentBox);
+         VolumeListView vollistview=new VolumeListView(vol);*/
+         
+         QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
+         QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);
+        drawer.setSidePane(qcMatrixView);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
+        drawer.setDefaultDrawerSize(qcMatrixView.computeAreaInScreen());
         drawer.setOverLayVisible(false);
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(200);
