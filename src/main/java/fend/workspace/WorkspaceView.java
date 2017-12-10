@@ -51,4 +51,8 @@ public class WorkspaceView extends AnchorPane{
                 throw new RuntimeException(e);
             }
     }
+
+    public WorkspaceController getController() {
+        return this.controller;
+    }
 }

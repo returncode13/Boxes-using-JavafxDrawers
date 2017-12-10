@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,10 +39,10 @@ public class Workspace implements Serializable{
     /* @Column(name = "hashSessions",length = 1025)
     private String hashSessions;*/
     
-    @OneToMany(mappedBy="workspace")
+    @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
     private Set<Job> jobs;
     
-     @OneToMany(mappedBy="workspace")
+     @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
     private Set<Dot> dots;
   
     @ManyToOne

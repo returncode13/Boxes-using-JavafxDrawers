@@ -70,36 +70,36 @@ public class Job implements Serializable{
     /* @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
     private Set<JobVolumeMap> jobVolumeMap;*/
     
-     @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
+     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)                             //create a member named "job" in the JobVolumeMap class definition
     private Set<Volume> volumes;
     
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
     
-    @OneToMany(mappedBy = "ancestor")
+    @OneToMany(mappedBy = "ancestor",fetch=FetchType.EAGER)
     private Set<Ancestor> ancestors;                    
     
-    @OneToMany(mappedBy ="job")
+    @OneToMany(mappedBy ="job",fetch=FetchType.EAGER)
     private Set<Descendant> currentJobInDescendant;
     
-    @OneToMany(mappedBy ="descendant")
+    @OneToMany(mappedBy ="descendant",fetch=FetchType.EAGER)
     private Set<Descendant> descendants;
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<QcMatrix> qcmatrices;
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Log> logs;
     
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Header> headers;
     
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent",fetch=FetchType.EAGER)
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links
     
-    @OneToMany(mappedBy = "child")
+    @OneToMany(mappedBy = "child",fetch=FetchType.EAGER)
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
     

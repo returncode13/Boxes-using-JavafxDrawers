@@ -57,6 +57,7 @@ public class DotDAOImpl implements DotDAO{
         try{
             transaction=session.beginTransaction();
              Dot l= (Dot) session.get(Dot.class, id);
+             l.setStatus(newDot.getStatus());
              l.setLinks(newDot.getLinks());
              
             session.update(l);

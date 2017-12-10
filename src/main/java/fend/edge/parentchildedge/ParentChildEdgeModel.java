@@ -35,14 +35,14 @@ public class ParentChildEdgeModel implements EdgeModel {
     public DotModel getDotModel() {
         if(dotModel==null){
             dotModel=new DotModel();
-            dotModel.addToParents(parentJob);
+          //  dotModel.addToParents(parentJob);
         }
         return dotModel;
     }
 
     public void setDotModel(DotModel dotModel) {
         this.dotModel = dotModel;
-        this.dotModel.addToParents(parentJob);
+     //   this.dotModel.addToParents(parentJob);
     }
 
     public AnchorModel getChildAnchorModel() {
@@ -63,7 +63,7 @@ public class ParentChildEdgeModel implements EdgeModel {
 
     public void setChildJob(JobType0Model childJob) {
         this.childJob = childJob;
-        this.dotModel.addToChildren(this.childJob);
+//        this.dotModel.addToChildren(this.childJob);
     }
 
     public Long getId() {

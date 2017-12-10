@@ -7,7 +7,9 @@ package db.model;
 
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,26 +28,31 @@ import javax.persistence.Table;
 public class Dot {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name="workspace_fk",nullable=false)
-    Workspace workspace;
+    private Workspace workspace;
+    
+    
+    @Column(name="status")
+    private String status;
+    
     
     public Dot() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    /*public void setId(Long id) {
+    this.id = id;
     }
-    
+    */
      
     public Long getId() {
         return id;
     }
     
-    @OneToMany(mappedBy = "dot")
+    @OneToMany(mappedBy = "dot",fetch=FetchType.EAGER)
     private Set<Link> links;
 
     public Set<Link> getLinks() {
@@ -88,6 +95,16 @@ public class Dot {
         }
         return true;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
     
     
     

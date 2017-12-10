@@ -38,6 +38,7 @@ db/services/WorkflowService.class
 db/dao/NodePropertyValueDAO.class
 db/dao/SequenceDAOImpl.class
 db/services/WorkspaceService.class
+fend/app/loading/LoadWorkspaceModel.class
 db/services/AncestorService.class
 db/dao/DescendantDAO.class
 fend/job/definitions/JobDefinitionsModel.class
@@ -48,6 +49,7 @@ middleware/dugex/DugLogManager$1.class
 db/model/Log.class
 fend/dot/anchor/AnchorController$Delta.class
 db/model/Header.class
+fend/app/loading/LoadWorkspaceController$1.class
 db/model/QcType_.class
 middleware/dugex/HeaderExtractor$1.class
 middleware/dugex/DugLogManager$LogInformation.class
@@ -81,6 +83,7 @@ db/services/NodePropertyValueService.class
 fend/dot/anchor/AnchorController.class
 db/services/VolumeServiceImpl.class
 fend/app/AppView.class
+fend/app/loading/LoadWorkspaceController.class
 db/dao/AcquisitionDAOImpl.class
 db/services/UserService.class
 fend/app/AppController.class
@@ -132,7 +135,6 @@ db/model/Volume_.class
 app/settings/database/DataBaseSettingsWrapper.class
 db/dao/QcTypeDAO.class
 db/services/NodePropertyServiceImpl.class
-fend/dot/DotModel$2.class
 db/dao/UserDAO.class
 db/services/LogServiceImpl.class
 db/dao/JobVolumeMapDAOImpl.class
@@ -162,6 +164,7 @@ fend/edge/dotjobedge/DotJobEdgeController$Delta.class
 db/services/SubsurfaceService.class
 middleware/watcher/LogStatusWatcher.class
 db/dao/WorkflowDAOImpl.class
+fend/workspace/WorkspaceController$4.class
 fend/job/definitions/volume/VolumeListModel.class
 db/model/Descendant_.class
 middleware/watcher/LogStatusWatcher$1.class
@@ -179,6 +182,7 @@ fend/app/Main.class
 db/dao/UserDAOImpl.class
 fend/edge/parentchildedge/ParentChildEdgeController.class
 db/dao/VolumeDAOImpl.class
+fend/app/loading/LoadWorkspaceNode.class
 db/services/QcTableServiceImpl.class
 middleware/watcher/LogStatusHolder.class
 middleware/dugex/LogStatusHolder.class

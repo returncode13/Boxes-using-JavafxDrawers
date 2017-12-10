@@ -5,8 +5,16 @@
  */
 package fend.app;
 
+import db.model.Workspace;
+import db.services.WorkspaceService;
+import db.services.WorkspaceServiceImpl;
+import fend.app.loading.LoadWorkspaceModel;
+import fend.app.loading.LoadWorkspaceNode;
 import fend.workspace.WorkspaceModel;
 import fend.workspace.WorkspaceView;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -22,8 +30,9 @@ import javafx.stage.Stage;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class AppController extends Stage{
-    AppModel model;
-    AppView view;
+    private AppModel model;
+    private AppView view;
+    private WorkspaceService workspaceService=new WorkspaceServiceImpl();
     
      @FXML
     private MenuBar menubar;
@@ -82,7 +91,18 @@ public class AppController extends Stage{
 
     @FXML
     void loadSession(ActionEvent event) {
-
+        List<Workspace> list=workspaceService.listWorkspaces();
+        ObservableList<Workspace> observableList=FXCollections.observableArrayList(list);
+        LoadWorkspaceModel lwm=new LoadWorkspaceModel(observableList);
+        LoadWorkspaceNode lwn=new LoadWorkspaceNode(lwm);
+        
+        Workspace workspaceToBeLoaded=lwm.getWorkspaceToBeLoaded();
+        
+        WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel();
+        frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
+        WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
+        frontEndWorkspaceView.getController().setLoading(true);
+        basePane.getChildren().add(frontEndWorkspaceView);
     }
 
     @FXML

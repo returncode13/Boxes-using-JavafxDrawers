@@ -366,16 +366,16 @@ public class JobType1Model implements JobType0Model {
            
             //  toggleChange();*/
             
-            
-             System.out.println(".onChanged(): Ancestors for job: "+id%1000);
+            /*
+            //             System.out.println(".onChanged(): Ancestors for job: "+id%1000);
             for(JobType0Model anc:getAncestors()){
-//                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+            //                System.out.println(anc.getId()%1000+" -A- "+id%1000);
             }
             
-            System.out.println(".onChanged(): Descendants for job: "+id%1000);
+            //     System.out.println(".onChanged(): Descendants for job: "+id%1000);
             for(JobType0Model des:getDescendants()){
-//                System.out.println(des.getId()%1000+" -D- "+id%1000);
-            }
+            //                System.out.println(des.getId()%1000+" -D- "+id%1000);
+            }*/
             
         }
 
@@ -391,15 +391,15 @@ public class JobType1Model implements JobType0Model {
         public void onChanged(SetChangeListener.Change<? extends JobType0Model> change) {
            
             //  toggleChange();*/
-            System.out.println(".onChanged(): Ancestors for job: "+id%1000);
-            for(JobType0Model anc:getAncestors()){
-//                System.out.println(anc.getId()%1000+" -A- "+id%1000);
-            }
-            
-            System.out.println(".onChanged(): Descendants for job: "+id%1000);
-            for(JobType0Model des:getDescendants()){
-//                System.out.println(des.getId()%1000+" -D- "+id%1000);
-            }
+          //  System.out.println(".onChanged(): Ancestors for job: "+id%1000);
+          /* for(JobType0Model anc:getAncestors()){
+          //                System.out.println(anc.getId()%1000+" -A- "+id%1000);
+          }
+          
+          //System.out.println(".onChanged(): Descendants for job: "+id%1000);
+          for(JobType0Model des:getDescendants()){
+          //                System.out.println(des.getId()%1000+" -D- "+id%1000);
+          }*/
         }
 
     };
@@ -408,8 +408,9 @@ public class JobType1Model implements JobType0Model {
     final private ChangeListener<String> nameChangeListener=new ChangeListener<String>() {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            System.out.println(".changed(): Name from "+oldValue+ " to "+newValue);
+            System.out.println("fend.job.job1.JobType1Model.namechangeListener.changed(): Name from "+oldValue+ " to "+newValue);
             //toggleChange();
+            
         }
     };
     
@@ -448,6 +449,7 @@ public class JobType1Model implements JobType0Model {
         }
     
     void toggleChange() {
+       
         changeProperty.set(!changeProperty.get());
     }
     

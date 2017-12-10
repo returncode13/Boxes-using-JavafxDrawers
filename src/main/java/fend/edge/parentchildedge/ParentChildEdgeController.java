@@ -5,6 +5,8 @@
  */
 package fend.edge.parentchildedge;
 
+import fend.dot.DotModel;
+import fend.dot.DotView;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorNode;
 import fend.edge.edge.EdgeController;
@@ -24,6 +26,7 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
+import fend.job.job1.JobType1Controller;
 import fend.job.job1.JobType1View;
 
 /**
@@ -116,6 +119,44 @@ public class ParentChildEdgeController implements EdgeController{
         return this.model;
     }
     
+    
+    public DotView setChildJobView(JobType0View childJobView,DotView dotnode){
+       
+        if(dotnode==null){              //i.e. create a new dot in the center of the parent and the child
+            
+       
+        
+        DotModel dotmodel=model.getDotModel();
+        dotnode=new DotView(dotmodel, ParentChildEdgeController.this.interactivePane);
+            System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): created a new dotnode: "+dotnode.getId());
+        node.getChildren().add(dotnode);
+        
+        dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
+        dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
+        
+        
+        JobType0Model job=childJobView.getController().getModel();
+        model.setChildJob(job);
+        node.setDropReceived(true);
+        type=job.getType();
+         if(type.equals(JobType0Model.PROCESS_2D)) {
+             /*curve.endXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             curve.endYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+        childAnchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+        childAnchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
+       
+        }
+          
+          }
+        else{                                    //this is when the dot exists. and when it needs to be "joined" to.
+            System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): binding to dotnode "+dotnode.getId());
+            childAnchor.centerXProperty().bind(dotnode.centerXProperty());
+            childAnchor.centerYProperty().bind(dotnode.centerYProperty());
+            
+        }
+        node.toBack();
+        return dotnode;
+    };
     
     /**
      * We do this so that the Dots position lies on the midpoint of the curves start and end x,y coords

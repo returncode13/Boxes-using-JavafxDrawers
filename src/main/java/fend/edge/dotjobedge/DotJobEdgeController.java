@@ -20,6 +20,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.JobType0View;
+import fend.job.job1.JobType1View;
 
 /**
  *
@@ -209,6 +211,20 @@ public class DotJobEdgeController implements EdgeController {
         });
         
     }
+    
+     public void setChildJobView(JobType0View childJobView){
+        this.curve.endXProperty().unbind();
+        this.curve.endYProperty().unbind();
+         JobType0Model job=childJobView.getController().getModel();
+        Long type=job.getType();
+         if(type.equals(JobType0Model.PROCESS_2D)) {
+             /*curve.endXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             curve.endYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+        anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+        anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
+       
+        }
+    };
 
     public DotJobEdgeModel getModel() {
         return model;

@@ -48,7 +48,7 @@ public class DotJobEdgeModel implements EdgeModel{
 
     public void setChildJob(JobType0Model childBox) {
         this.childJob = childBox;
-        this.dotModel.addToChildren(this.childJob);
+        //this.dotModel.addToChildren(this.childJob);
     }
 
     public Long getId() {

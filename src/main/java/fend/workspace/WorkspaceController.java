@@ -34,8 +34,12 @@ import db.services.WorkspaceServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
+import fend.edge.dotjobedge.DotJobEdgeModel;
+import fend.edge.dotjobedge.DotJobEdgeView;
 import fend.edge.edge.EdgeModel;
 import fend.edge.edge.EdgeView;
+import fend.edge.parentchildedge.ParentChildEdgeModel;
+import fend.edge.parentchildedge.ParentChildEdgeView;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -56,6 +60,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,7 +101,7 @@ public class WorkspaceController  {
     private DescendantService descendantService=new DescendantServiceImpl();
     private LinkService linkService=new LinkServiceImpl();
     private DotService dotService = new DotServiceImpl();
-    
+    private BooleanProperty loadingProperty=new SimpleBooleanProperty(false);
     
     List<BooleanProperty> changePropertyList=new ArrayList<>();
     
@@ -155,6 +160,7 @@ public class WorkspaceController  {
         interactivePane.prefWidthProperty().bind(scrollpane.widthProperty());
         interactivePane.prefHeightProperty().bind(scrollpane.heightProperty());
         interactivePane.getChildren().addListener(jobLinkChangeListener);
+        loadingProperty.addListener(loadingListener);
         model=item;
         
         
@@ -196,7 +202,14 @@ public class WorkspaceController  {
         }
     };
     
-    
+    ChangeListener<Boolean> loadingListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                loadSession();
+            }
+        }
+    };
     
     /**
      * private Implementation
@@ -256,7 +269,7 @@ public class WorkspaceController  {
              Set<Job> dbjobs=new HashSet<>();
              Set<Volume> dbVolumes=new HashSet<>();
              Set<Dot> dbDots=new HashSet<>();
-             Set<Link> dbLinks=new HashSet<>();
+             
              workspaceService.createWorkspace(dbWorkspace);
              
              for(JobType0Model fejob:jobsInWorkSpace){
@@ -270,8 +283,9 @@ public class WorkspaceController  {
                     dbjob.setNodetype(nodetype);
                     dbjob.setWorkspace(dbWorkspace);
                     dbjob.setNameJobStep(fejob.getNameproperty().get());
+                     
                     jobService.createJob(dbjob);
-                    
+                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Creating job "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
                     
                     fejob.setId(dbjob.getId());
                     
@@ -280,7 +294,9 @@ public class WorkspaceController  {
                     
                     
                  }else{
+                     
                      dbjob=jobService.getJob(currentJobId);                                               // else get the instance of the previously saved job
+                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Fetched job "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
                  }
                  
                     
@@ -327,22 +343,33 @@ public class WorkspaceController  {
               */
              Set<EdgeModel> edges=model.getObservableEdges();
              Set<DotModel> dots=new HashSet<>();
+             Set<Link> dbLinks=new HashSet<>();
              
+             dotService.clearUnattachedDots(dbWorkspace);   //delete dots that have zero length set of links. i.e. unattached dots. for current session
              for(EdgeModel edge:edges){
                  DotModel dot=edge.getDotModel();
                  dots.add(dot);
-                 Long currrentDotId=dot.getId();
+                 Long currentDotId=dot.getId();
                  Dot dbDot;
-                 if(dotService.getDot(currrentDotId)==null){
+                 if(currentDotId==null){
                      dbDot=new Dot();
-                     dbDot.setId(currrentDotId);
                      dbDot.setWorkspace(dbWorkspace);
+                     dbDot.setStatus(dot.getStatus().get());
+                     
+                     dotService.createDot(dbDot);
+                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..creating dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" status: "+dbDot.getStatus() );
+                     dot.setId(dbDot.getId());
                  }else{
-                     dbDot=dotService.getDot(currrentDotId);
+                     
+                     dbDot=dotService.getDot(currentDotId);
+                     
+                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..fetched dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" initial status: "+dbDot.getStatus() );
+                     dbDot.setStatus(dot.getStatus().get());
+                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..fetched dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" final status: "+dbDot.getStatus() );
                  }
                  
-                 Set<LinkModel> linksSharingThisDot=dot.getSetOfLinks();
-                 Set<Link> dbLinksForDbDot=new HashSet<>();
+                 Set<LinkModel> linksSharingThisDot=dot.getLinks();
+                 /*  Set<Link> dbLinksForDbDot=new HashSet<>();*/
                  
                  for(LinkModel lm:linksSharingThisDot){
                      Link dbLink=new Link();
@@ -353,12 +380,12 @@ public class WorkspaceController  {
                      dbLink.setParent(parent);
                      dbLink.setChild(child);
                      dbLink.setDot(dbDot);
-                     dbLinksForDbDot.add(dbLink);
+                 //    dbLinksForDbDot.add(dbLink);
                      dbLinks.add(dbLink);
                  }
                                 
                     
-                 dbDot.setLinks(dbLinksForDbDot);
+                 dbDot.setLinks(dbLinks);
                  dbDots.add(dbDot);
                  
                  
@@ -367,12 +394,22 @@ public class WorkspaceController  {
              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Number of edges: "+edges.size());
              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Number of dots: "+dots.size());
              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): dbLinks.size(): "+dbLinks.size());
-             dotService.clearUnattachedDots(dbWorkspace);   //delete dots that have zero length set of links. i.e. unattached dots. for current session
+             
              
              dbWorkspace.setDots(dbDots);
              
-             for(Dot d:dbDots) dotService.createDot(d);   //create only attached ones.
-             for(Link l:dbLinks) linkService.createLink(l); 
+             for(Link l:dbLinks) {
+             
+             linkService.createLink(l);
+             System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): creating link: "+l.getId()+" with dot: "+l.getDot().getId()+" parent: "+l.getParent().getNameJobStep()+"("+l.getParent().getId()+") child:"+l.getChild().getNameJobStep()+"("+l.getChild().getId()+")");
+             }
+            
+             for(Dot d:dbDots) {
+                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating dot: "+d.getId());
+                 dotService.updateDot(d.getId(),d);
+             }   //create only attached ones.
+              
+             
              
              
              
@@ -442,7 +479,7 @@ public class WorkspaceController  {
       }
       
      
-     private void loadSession(){
+     private  void loadSession(){
          Workspace  dbWorkspace=workspaceService.getWorkspace(model.getId());
          Set<Job> jobsInDb=dbWorkspace.getJobs();
          List<JobType0Model> frontEndJobModels=new ArrayList<>();
@@ -459,7 +496,7 @@ public class WorkspaceController  {
                  fejob=new JobType1Model(model);
                  fejob.setId(dbj.getId());   
                  fejob.setNameproperty(dbj.getNameJobStep());
-                 
+                 System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: "+dbj.getNameJobStep());
                  
              }
              
@@ -476,7 +513,7 @@ public class WorkspaceController  {
                      fevol.setName(dbv.getNameVolume());
                      File volumeOnDisk=new File(dbv.getPathOfVolume());
                      fevol.setVolume(volumeOnDisk);
-                     
+                     System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : "+dbv.getNameVolume()+" to job: "+dbj.getNameJobStep() );
                  }
                  frontEndVolumeModels.add(fevol);
                  
@@ -492,38 +529,124 @@ public class WorkspaceController  {
          
          
          Set<Dot> dots=dbWorkspace.getDots();
+         System.out.println("fend.workspace.WorkspaceController.loadSession(): the size of  dots retrieved : "+dots.size() );
          List<DotModel> frontEndDotModels=new ArrayList<>();
          
          for(Dot dot:dots){
              DotModel fedot=new DotModel();
              Set<Link> links=dot.getLinks();
+             System.out.println("fend.workspace.WorkspaceController.loadSession(): number of links sharing  dot: "+dot.getId()+" in state "+dot.getStatus()+" links.size(): "+links.size());
+             fedot.setStatus(dot.getStatus());
+             fedot.setId(dot.getId());
              Set<LinkModel> frontEndLinkModels=new HashSet<>();
              
              for(Link link:links){
                 
                  Job parent=link.getParent();
                  Job child=link.getChild();
+                 System.out.println("fend.workspace.WorkspaceController.loadSession(): adding parent from Link "+parent.getNameJobStep()+" id: "+parent.getId());
+                 System.out.println("fend.workspace.WorkspaceController.loadSession(): adding child from Link "+child.getNameJobStep()+" id: "+child.getId());
                  JobType0Model feParent=idFrontEndJobMap.get(parent.getId());
                  JobType0Model feChild=idFrontEndJobMap.get(child.getId());
                  
                  LinkModel felink=new LinkModel();
                  felink.setParent(feParent);
                  felink.setChild(feChild);
+                 fedot.createLink(feParent, feChild);
                 frontEndLinkModels.add(felink);
              }
              fedot.setLinks(frontEndLinkModels);
              frontEndDotModels.add(fedot);
          }
          
+         
+         Map<Long,JobType0View> idJobViewsMap=inflateFrontEndViews();
+         
+         
+         
+         
         Set<EdgeModel> edges=new HashSet<>();
         for(DotModel fedot:frontEndDotModels){
+            System.out.println("fend.workspace.WorkspaceController.loadSession() for loop for feDot: id "+fedot.getId()+" in state "+fedot.getStatus().get());
+            if(fedot.getStatus().get().equals(DotModel.NJS)){                                     // if NJS.  then the one link will be a parentchildedge
+               DotView dotview=null;
+                Set<LinkModel> links=fedot.getLinks();
+                for (LinkModel link : links) {
+                    
+                    JobType0Model parent=link.getParent();
+                    JobType0Model child=link.getChild();
+                    ParentChildEdgeModel pcem=new ParentChildEdgeModel();
+                    pcem.setParentJob(parent);
+                    pcem.setChildJob(child);
+                    pcem.setDotModel(fedot);
+                    
+                    ParentChildEdgeView pcv=new ParentChildEdgeView(pcem, idJobViewsMap.get(parent.getId()), interactivePane);
+                    pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),dotview);
+                    
+                    edges.add(pcem);
+                }
+             }
+            if(fedot.getStatus().get().equals(DotModel.JOIN)){                                     // if JOIN.  then the all links can be a parentchildedge
+               Set<LinkModel> links=fedot.getLinks();
+               int count=0;
+               DotView dotview=null;
+                for (LinkModel link : links) {
+                    JobType0Model parent=link.getParent();
+                    JobType0Model child=link.getChild();
+                    ParentChildEdgeModel pcem=new ParentChildEdgeModel();
+                    pcem.setParentJob(parent);
+                    pcem.setChildJob(child);
+                    pcem.setDotModel(fedot);
+                    
+                        if(count==0){
+                            System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" Befrore call dotview is "+(dotview==null?"is Null":" is new "));
+                            ParentChildEdgeView pcv=new ParentChildEdgeView(pcem, idJobViewsMap.get(parent.getId()), interactivePane);
+                            dotview=pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),null);     // creates the dot
+                            System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" After call dotview is "+(dotview==null?"is Null":" is new "));
+                        }else{
+                            System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" Vefore call dotview is "+(dotview==null?"is Null":" is new "));
+                            ParentChildEdgeView pcv=new ParentChildEdgeView(pcem, idJobViewsMap.get(parent.getId()), interactivePane);
+                            pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),dotview);      //joins to the dot
+                        }
+                    count++;
+                    edges.add(pcem);
+                }
+                
+            }
+            if(fedot.getStatus().get().equals(DotModel.SPLIT)){                                     // if SPLIT.  then the one link is PCE the rest DJE
+               
+            }
             
         }
+        
+        model.setObservableEdges(edges);
          
+        
          
        //  
        //  model.setObservableEdges(new HashSet<>(frontEnd));
      }
+
+    private Map<Long,JobType0View> inflateFrontEndViews() {
+        Set<JobType0Model> jobmodels=(Set<JobType0Model>) model.getObservableJobs();
+        Set<EdgeModel> edgeModels=(Set<EdgeModel>) model.getObservableEdges();
+        List<JobType0View> jobviews=new ArrayList<>();
+        
+        Map<Long,JobType0View> idFrontEndJobMap=new HashMap<>();              //used to link the nodes later. alook up map
+        
+        for(JobType0Model job:jobmodels){
+            if(job.getType().equals(JobType0Model.PROCESS_2D)){
+                JobType1View jv=new JobType1View((JobType1Model) job, interactivePane);
+                idFrontEndJobMap.put(job.getId(),jv);
+                interactivePane.getChildren().add(jv);
+            }
+        }
+        return idFrontEndJobMap;
+    }
+
+    public void setLoading(boolean b) {
+        loadingProperty.set(b);
+    }
      
      
      

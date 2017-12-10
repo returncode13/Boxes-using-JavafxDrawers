@@ -15,6 +15,7 @@ import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXTextField;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.dot.LinkModel;
 import fend.edge.dotjobedge.DotJobEdgeModel;
 import fend.edge.dotjobedge.DotJobEdgeView;
 import fend.edge.parentchildedge.ParentChildEdgeModel;
@@ -51,6 +52,7 @@ import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
+import java.util.HashSet;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -116,7 +118,7 @@ public class JobType1Controller implements JobType0Controller{
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(150);
         drawer.setTranslateY(0);
-        //name.setText(model.getId()%1000+"");
+        name.setText(model.getNameproperty().get());
         name.textProperty().addListener(nameChangeListener);
         openDrawer.setOnMousePressed(e->{
          drawersStack.toggle(drawer);
@@ -195,9 +197,12 @@ public class JobType1Controller implements JobType0Controller{
                     parent.addChild(model);
                     
                     DotModel dotmodel=parentChildEdgeModel.getDotModel();
+                    /*dotmodel.addToParents(parent);
+                    dotmodel.addToChildren(model);*/
+                    dotmodel.createLink(parent, model);
                     DotView dotnode=new DotView(dotmodel, JobType1Controller.this.interactivePane);
-                    parentChildEdgeNode.getChildren().add(dotnode);
-                    
+                    parentChildEdgeNode.getChildren().add(0,dotnode);
+                   
 
                     CubicCurve curve=parentChildEdgeNode.getController().getCurve();  //the curve in the node
                     dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
@@ -214,11 +219,18 @@ public class JobType1Controller implements JobType0Controller{
               
               
               
-              if(droppedAnchor.getParent() instanceof DotJobEdgeView){
+              if(droppedAnchor.getParent() instanceof DotJobEdgeView){         //split
                     DotJobEdgeView parentNode=(DotJobEdgeView) droppedAnchor.getParent();
                     DotJobEdgeModel parentModel=parentNode.getController().getModel();
                     
-                    Set<JobType0Model> parents=parentModel.getDotModel().getParents();          //since the drop happens from a Dot to a Box , the Box is a child of the Dots parents
+                    Set<LinkModel> linksFromDot=parentModel.getDotModel().getLinks();
+                    
+                    /*Set<JobType0Model> parents=parentModel.getDotModel().getParents();          //since the drop happens from a Dot to a Box , the Box is a child of the Dots parents*/
+                    Set<JobType0Model> parents=new HashSet<>();
+                    
+                    for(LinkModel link:linksFromDot){
+                        parents.add(link.getParent());
+                    }
                     for(JobType0Model parent:parents){
                         
                          if(parent.getChildren().contains(model)){
@@ -234,6 +246,9 @@ public class JobType1Controller implements JobType0Controller{
                         
                         model.addParent(parent);
                         parent.addChild(model);
+                        /*parentModel.getDotModel().addToChildren(model);            //add to the shared Dots children*/
+                        parentModel.getDotModel().createLink(parent, model);       //create a new link in the dot
+                        
                     }
                     
                     parentNode.setDropReceived(true);
@@ -299,8 +314,9 @@ public class JobType1Controller implements JobType0Controller{
     final private ChangeListener<String> nameChangeListener=new ChangeListener<String>() {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            System.out.println(".changed(): from "+oldValue+" to "+newValue);
+            System.out.println("workspace.WorkspaceController.NameChangeListener.changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
+           
         }
     };
     

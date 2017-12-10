@@ -138,8 +138,8 @@ public class DotController extends Stage{
                     ParentChildEdgeView parentNode=((ParentChildEdgeView)droppedAnchor.getParent());
                     
                     ParentChildEdgeModel parentModel=parentNode.getController().getModel();
-                    parentModel.setDotModel(model);                      //Share this dot
-                    JobType0Model childFromDot=(new ArrayList<>(model.getChildren())).get(0);    //the ONLY child associated with the dot model
+                    
+                    JobType0Model childFromDot=(new ArrayList<>(model.getLinks())).get(0).getChild();    //the ONLY child associated with the dot model
                     parentModel.setChildJob(childFromDot);
                     
                     JobType0Model parentConnectingToDot=parentModel.getParentJob();   //get the parent job connecting to this Dot
@@ -147,6 +147,9 @@ public class DotController extends Stage{
                     
                     parentConnectingToDot.addChild(childFromDot);
                     childFromDot.addParent(parentConnectingToDot);
+                   // model.addToParents(parentConnectingToDot);
+                    model.createLink(parentConnectingToDot,childFromDot);
+                    parentModel.setDotModel(model);                      //Share this dot. 
                     parentNode.setDropReceived(true);
                     droppedAnchor.centerXProperty().bind(node.centerXProperty());
                     droppedAnchor.centerYProperty().bind(node.centerYProperty());
@@ -179,8 +182,8 @@ public class DotController extends Stage{
     }
     
      private void deleteNodeAndLinks() {
-            Set<JobType0Model> parents=model.getParents();
-            Set<JobType0Model> children=model.getChildren();
+         /*   Set<JobType0Model> parents=model.getParents();
+         Set<JobType0Model> children=model.getChildren();*/
             
     }
             
