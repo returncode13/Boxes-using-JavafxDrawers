@@ -6,7 +6,7 @@
 package fend.job.definitions.qcmatrix;
 
  
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
 import java.util.List;

@@ -52,7 +52,7 @@ import fend.job.job1.JobType1View;
 import fend.job.definitions.JobDefinitionsModel;
 import fend.job.definitions.JobDefinitionsView;
 import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.definitions.volume.VolumeListModel;
 import fend.job.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;

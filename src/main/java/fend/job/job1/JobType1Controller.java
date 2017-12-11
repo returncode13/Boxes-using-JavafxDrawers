@@ -51,6 +51,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
+import fend.job.table.qctable.QcTableModel;
+import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
 import java.util.HashSet;
 import javafx.beans.property.BooleanProperty;
@@ -83,8 +85,8 @@ public class JobType1Controller implements JobType0Controller{
     @FXML
     private JFXDrawersStack drawersStack;
     
-    @FXML
-    private JFXButton q;
+     @FXML
+    private JFXButton qctable;
 
     @FXML
     private JFXButton showTable;
@@ -304,10 +306,21 @@ public class JobType1Controller implements JobType0Controller{
             model.retrieveHeaders();
     }
     
+     @FXML
+    void showQctable(ActionEvent event) {
+            QcTableModel qcTableModel=new QcTableModel(model);
+            QcTableView qcTableView=new QcTableView(qcTableModel);
+    }
+    
+    
     @Override
     public JobType0Model getModel() {
         return this.model;
     }
+    
+    
+    
+    
     /**
      * Listeners
      */

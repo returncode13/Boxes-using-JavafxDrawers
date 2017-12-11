@@ -11,7 +11,7 @@ import com.jfoenix.controls.JFXListCell;
 import db.model.QcMatrixRow;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;

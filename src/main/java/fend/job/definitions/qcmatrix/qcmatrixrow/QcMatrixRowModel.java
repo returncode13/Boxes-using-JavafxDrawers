@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.definitions.qcmatrix.qctype;
+package fend.job.definitions.qcmatrix.qcmatrixrow;
 
 import db.model.QcMatrixRow;
 import db.model.QcType;
@@ -22,11 +22,19 @@ import javafx.beans.value.ObservableValue;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcMatrixRowModel {
+    public static final String INDETERMINATE="indeterminate";
+    public static final String SELECTED="selected";
+    public static final String UNSELECTED="unselected";
+    
     Long id=null;
     StringProperty name=new SimpleStringProperty("");
     BooleanProperty checked=new SimpleBooleanProperty(false);
     QcType qctype;
     QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    
+    BooleanProperty checkUncheckProperty=new SimpleBooleanProperty();
+    BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
+    
     
     public QcMatrixRowModel() {
         
@@ -62,6 +70,7 @@ public class QcMatrixRowModel {
     }
 
     public void setChecked(Boolean checked) {
+        if(checked==null)checked=false;
         this.checked.set(checked);
     }
 
@@ -86,6 +95,24 @@ public class QcMatrixRowModel {
         this.qctype = qctype;
     }
 
+    public BooleanProperty getCheckUncheckProperty() {
+        return checkUncheckProperty;
+    }
+
+    public void setCheckUncheckProperty(Boolean checkUncheck) {
+        this.checkUncheckProperty.set(checkUncheck);
+    }
+
+    public BooleanProperty getIndeterminateProperty() {
+        return indeterminateProperty;
+    }
+
+    public void setIndeterminateProperty(Boolean isIndeterminate) {
+        this.indeterminateProperty.set(isIndeterminate);
+    }
+
+    
+    
     
     
     @Override
@@ -114,9 +141,70 @@ public class QcMatrixRowModel {
     }
 
     
+     
+    private final StringProperty passQc = new SimpleStringProperty();
     
+    public String isPassQc() {
+     if(indeterminateProperty.get()){
+         passQc.set(INDETERMINATE);
+       
+     }else{
+         if(checkUncheckProperty.getValue()){
+             passQc.set(SELECTED);
+         }else{
+             passQc.set(UNSELECTED);
+         }
+        
+     }
+     return passQc.get();
+    }
     
-   
+    public void setPassQc(String value) {
+         if(value.equals(INDETERMINATE)){
+             indeterminateProperty.set(true);
+         }else{
+             indeterminateProperty.set(false);
+             if(value.equals(SELECTED)){
+                 checkUncheckProperty.set(true);
+             }else{
+                 checkUncheckProperty.set(false);
+             }
+         }
+    }
     
+    public StringProperty passQcProperty() {
+        
+        if(indeterminateProperty.get()){
+         passQc.set(INDETERMINATE);
+        
+     }else{
+        if(checkUncheckProperty.getValue()){
+             passQc.set(SELECTED);
+         }else{
+             passQc.set(UNSELECTED);
+         }
+        
+     }
+        return passQc;
+    }
+    
+    /*
+    ChangeListener<Boolean> indeterminateChangeListener=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    if(newValue){
+    QcMatrixRowModel.this.passQc.set(INDETERMINATE);
+    }
+    }
+    };
+    
+    ChangeListener<Boolean> checkUncheckChangeListener=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    if(newValue){
+    QcMatrixRowModel.this.passQc.set(INDETERMINATE);
+    }
+    }
+    };*/
     
 }

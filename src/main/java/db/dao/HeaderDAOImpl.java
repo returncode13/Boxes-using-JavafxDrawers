@@ -155,7 +155,21 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public List<Header> getHeadersFor(Job job) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Header> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Header.class);
+            criteria.add(Restrictions.eq("job", job));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
     @Override

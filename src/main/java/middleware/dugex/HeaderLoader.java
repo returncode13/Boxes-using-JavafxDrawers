@@ -33,7 +33,7 @@ public class HeaderLoader {
         Job dbjob=jobService.getJob(this.job.getId());
         List<Header> headersInJob=headerService.getHeadersFor(dbjob);
         for(Header h :headersInJob){
-            System.out.println(h.getSubsurface()+" duplicate: "+h.getMultipleInstances()+" chosen: "+h.getChosen());
+            System.out.println("Seq: "+h.getSubsurface().getSequence().getSequenceno()+" sub: "+h.getSubsurface().getSubsurface()+" id:  "+h.getSubsurface().getId()+"duplicate: "+h.getMultipleInstances()+" chosen: "+h.getChosen());
         }
         
         

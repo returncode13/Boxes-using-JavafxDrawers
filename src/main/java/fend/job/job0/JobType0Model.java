@@ -7,7 +7,7 @@ package fend.job.job0;
 
 
 import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;

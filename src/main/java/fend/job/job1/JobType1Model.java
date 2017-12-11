@@ -14,7 +14,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
