@@ -213,8 +213,7 @@ public class DotJobEdgeController implements EdgeController {
     }
     
      public void setChildJobView(JobType0View childJobView){
-        this.curve.endXProperty().unbind();
-        this.curve.endYProperty().unbind();
+        
          JobType0Model job=childJobView.getController().getModel();
         Long type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {
@@ -224,6 +223,8 @@ public class DotJobEdgeController implements EdgeController {
         anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
        
         }
+         this.node.toBack();
+         
     };
 
     public DotJobEdgeModel getModel() {

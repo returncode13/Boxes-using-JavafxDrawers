@@ -604,7 +604,8 @@ public class WorkspaceController  {
                     edges.add(pcem);
                 }
              }
-            if(fedot.getStatus().get().equals(DotModel.JOIN)){                                     // if JOIN.  then the all links can be a parentchildedge
+            if(fedot.getStatus().get().equals(DotModel.JOIN)){                                     // if JOIN.  Set the 1st encounter parent-child as a PCE. get the common dot(view).
+                                                                                                   // next join to the dot as you would handle the case of a drop on the dotView.
                Set<LinkModel> links=fedot.getLinks();
                int count=0;
                DotView dotview=null;
@@ -616,10 +617,10 @@ public class WorkspaceController  {
                     pcem.setChildJob(child);
                     pcem.setDotModel(fedot);
                     
-                        if(count==0){
+                        if(count==0){                                                                   
                             System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" Befrore call dotview is "+(dotview==null?"is Null":" is new "));
                             ParentChildEdgeView pcv=new ParentChildEdgeView(pcem, idJobViewsMap.get(parent.getId()), interactivePane);
-                            dotview=pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),null);     // creates the dot
+                            dotview=pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),null);     // creates the dot  and get it
                             System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" After call dotview is "+(dotview==null?"is Null":" is new "));
                         }else{
                             System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" Vefore call dotview is "+(dotview==null?"is Null":" is new "));
@@ -632,7 +633,34 @@ public class WorkspaceController  {
                 
             }
             if(fedot.getStatus().get().equals(DotModel.SPLIT)){                                     // if SPLIT.  then the one link is PCE the rest DJE
-               
+               Set<LinkModel> links=fedot.getLinks();
+               int count=0;
+               DotView dotview=null;
+               for(LinkModel link:links){
+                   JobType0Model parent=link.getParent();
+                   JobType0Model child=link.getChild();
+                   if(count==0){
+                        ParentChildEdgeModel pcem=new ParentChildEdgeModel();
+                        pcem.setParentJob(parent);
+                        pcem.setChildJob(child);
+                        pcem.setDotModel(fedot);
+                        System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" Befrore call dotview is "+(dotview==null?"is Null":" is new "));
+                        ParentChildEdgeView pcv=new ParentChildEdgeView(pcem, idJobViewsMap.get(parent.getId()), interactivePane);
+                        dotview=pcv.getController().setChildJobView(idJobViewsMap.get(child.getId()),null);     // creates the dot  and get it
+                        System.out.println("fend.workspace.WorkspaceController.loadSession() count: "+count+" After call dotview is "+(dotview==null?"is Null":" is new "));
+                        edges.add(pcem);
+                        
+                   }else{
+                       DotJobEdgeModel djem=new DotJobEdgeModel();
+                       djem.setDotModel(fedot);
+                       djem.setChildJob(child);
+                       DotJobEdgeView djev=new DotJobEdgeView(djem, dotview, interactivePane);
+                       djev.getController().setChildJobView(idJobViewsMap.get(child.getId()));
+                       edges.add(djem);
+                   }
+                   count++;
+                   
+               }
             }
             
         }
