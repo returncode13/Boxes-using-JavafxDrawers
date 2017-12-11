@@ -277,6 +277,7 @@ db/services/JobService.class
 fend/edge/parentchildedge/ParentChildEdgeModel.class
 db/services/UserServiceImpl.class
 db/model/QcTable.class
+fend/job/table/qctable/seq/sub/QcTableSubsurface.class
 db/dao/NodePropertyValueDAOImpl.class
 app/settings/database/DataBaseSettings.class
 db/services/JobServiceImpl.class

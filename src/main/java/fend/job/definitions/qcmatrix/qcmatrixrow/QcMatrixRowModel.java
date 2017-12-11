@@ -28,7 +28,7 @@ public class QcMatrixRowModel {
     
     Long id=null;
     StringProperty name=new SimpleStringProperty("");
-    BooleanProperty checked=new SimpleBooleanProperty(false);
+    BooleanProperty checkedByUser=new SimpleBooleanProperty(false);
     QcType qctype;
     QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
     
@@ -38,7 +38,7 @@ public class QcMatrixRowModel {
     
     public QcMatrixRowModel() {
         
-        checked.addListener(new ChangeListener<Boolean>(){
+        checkedByUser.addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 QcMatrixRow dbqcmatrixrow=qcMatrixRowService.getQcMatrixRow(id);
@@ -61,17 +61,17 @@ public class QcMatrixRowModel {
     }
 
     public BooleanProperty checkedProperty() {
-        return checked;
+        return checkedByUser;
     }
 
     
-    public Boolean isChecked() {
-        return checked.get();
+    public Boolean getCheckedByUser() {
+        return checkedByUser.get();
     }
 
-    public void setChecked(Boolean checked) {
+    public void setCheckedByUser(Boolean checked) {
         if(checked==null)checked=false;
-        this.checked.set(checked);
+        this.checkedByUser.set(checked);
     }
 
     @Override

@@ -10,6 +10,7 @@ import db.model.QcMatrixRow;
 import db.model.Sequence;
 import db.model.Subsurface;
 import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,11 +22,11 @@ import javafx.collections.ObservableList;
 public class QcTableSequence  {
     private Sequence sequence;
     private Subsurface subsurface;
-    List<QcMatrixRowModel> qcmatrix;
+    List<QcMatrixRowModel> qcmatrix=new ArrayList<>();
     ObservableList<QcMatrixRowModel> observableQcMatrix;
     ObservableList<QcTableSequence> children;
-    private QcTableSequence parent;
     
+    private Boolean isChild=false;
     private Boolean isParent=true;                          //used to update the checkbox states
     private String updateTime=new String();
     public boolean updateChildren=false;
@@ -53,16 +54,29 @@ public class QcTableSequence  {
     }
 
     public void setQcmatrix(List<QcMatrixRowModel> qcmatrix) {
-        this.observableQcMatrix=FXCollections.observableArrayList(qcmatrix);
+        for(QcMatrixRowModel q:qcmatrix){
+            QcMatrixRowModel nq=new QcMatrixRowModel();
+            nq.setCheckUncheckProperty(q.getCheckUncheckProperty().get());
+            nq.setIndeterminateProperty(q.getIndeterminateProperty().get());
+            nq.setCheckedByUser(q.getCheckedByUser());
+            nq.setName(q.getName().get());
+            nq.setPassQc(q.isPassQc());
+            nq.setQctype(q.getQctype());
+            nq.setId(q.getId());
+            this.qcmatrix.add(nq);
+        }
+        this.observableQcMatrix=FXCollections.observableArrayList(this.qcmatrix);
+        for(QcTableSequence child:children){
+            child.setQcmatrix(qcmatrix);
+        }
+        
     }
 
     public void setUpdateTime(String updateTime) {
         this.updateTime=updateTime;
     }
 
-    public Boolean isParent () {
-        return isParent;
-    }
+    
 
     public void setIsParent(Boolean isParent) {
         this.isParent = isParent;
@@ -77,14 +91,22 @@ public class QcTableSequence  {
         this.children = children;
     }
 
-    public void setParent(QcTableSequence seqtreeroot) {
-        this.parent=seqtreeroot;
-    }
+   
 
     public QcTableSequence getParent() {
-        return parent;
+        return this;
     }
 
+    public Boolean isChild() {
+        return isChild;
+    }
+
+    public Boolean isParent() {
+        return isParent;
+    }
+
+    public void setParent(QcTableSequence seqtreeroot) {
+    }
     
     
     

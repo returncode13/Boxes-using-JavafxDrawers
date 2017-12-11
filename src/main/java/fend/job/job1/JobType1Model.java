@@ -374,10 +374,10 @@ public class JobType1Model implements JobType0Model {
         public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
                 while(c.next()){
                     for(QcMatrixRowModel q:c.getAddedSubList()){
-                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
                     for(QcMatrixRowModel q:c.getRemoved()){
-                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
                 }
         }

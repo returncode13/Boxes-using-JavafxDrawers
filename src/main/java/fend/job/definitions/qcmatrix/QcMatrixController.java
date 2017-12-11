@@ -88,7 +88,7 @@ public class QcMatrixController {
                 qcrw.setId(qcmatrixRow.getId());
                 qcrw.setName(qcmatrixRow.getQctype().getName());
                 System.out.println("fend.job.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
-                qcrw.setChecked(qcmatrixRow.getPresent());
+                qcrw.setCheckedByUser(qcmatrixRow.getPresent());
                 
                 qcMatrixModel.addQcMatrixRow(qcrw);
             }

@@ -53,8 +53,24 @@ public class QcTableController extends Stage{
     public void setView(QcTableView vw){
         
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
+        
+        
+         List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
+        for(QcTableSequence qcseq:sequences){
+            TreeItem<QcTableSequence> qseqroot=new TreeItem<>(qcseq);
+            for(QcTableSequence qcsub:qcseq.getChildren()){
+                TreeItem<QcTableSequence> qcsubchild=new TreeItem<>(qcsub);
+                qseqroot.getChildren().add(qcsubchild);
+            }
+            treeSeq.add(qseqroot);
+        }
+        
+        
+        
+        
+        
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of sequenceList received: "+sequences.size());
-        List<JFXTreeTableColumn<QcTableSequence,Boolean>> columns=new ArrayList<>();
+        List<TreeTableColumn<QcTableSequence,Boolean>> columns=new ArrayList<>();
         ObservableList<QcMatrixRowModel> qcMatrixForCols=sequences.get(0).getQcmatrix();
         
         //JFXTreeTableColumn<QcTableSequence,Long> seqCol=new JFXTreeTableColumn<>();
@@ -92,9 +108,9 @@ public class QcTableController extends Stage{
         for(int i=0;i<qcMatrixForCols.size();i++){
             QcMatrixRowModel qcrow=qcMatrixForCols.get(i);
             final int index=i;
-            JFXTreeTableColumn<QcTableSequence,Boolean> qcCol=new JFXTreeTableColumn<>(qcrow.getName().get());
+            TreeTableColumn<QcTableSequence,Boolean> qcCol=new TreeTableColumn<>(qcrow.getName().get());
             qcCol.setText(qcrow.getName().get());
-            qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index);});
+            
             qcCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, Boolean>, ObservableValue<Boolean>>() {
                 @Override 
                 public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<QcTableSequence, Boolean> param) {
@@ -138,28 +154,24 @@ public class QcTableController extends Stage{
                 }
             });
             
+          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index);});
           
             columns.add(qcCol);
         }
         
         
+        
         //final TreeItem<QcTableSequence> root=new RecursiveTreeItem<>(sequences,RecursiveTreeObject::getChildren);
-        List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
-        for(QcTableSequence qcseq:sequences){
-            TreeItem<QcTableSequence> qseqroot=new TreeItem<>(qcseq);
-            for(QcTableSequence qcsub:qcseq.getChildren()){
-                TreeItem<QcTableSequence> qcsubchild=new TreeItem<>(qcsub);
-                qseqroot.getChildren().add(qcsubchild);
-            }
-            treeSeq.add(qseqroot);
-        }
+       
+        
+        treetableView.getColumns().addAll(seqCol,subCol);
+        treetableView.getColumns().addAll(columns);
         CheckBoxTreeItem<QcTableSequence> root=new CheckBoxTreeItem<>();
         root.getChildren().addAll(treeSeq);
         root.setIndependent(true);
         treetableView.setRoot(root);
         treetableView.setShowRoot(false);
-        treetableView.getColumns().addAll(seqCol,subCol);
-        treetableView.getColumns().addAll(columns);
+        
         
         this.view=vw;
         

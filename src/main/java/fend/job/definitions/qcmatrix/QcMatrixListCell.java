@@ -44,7 +44,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
         checkbox.selectedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                getItem().setChecked(newValue);
+                getItem().setCheckedByUser(newValue);
                 
             }
             
@@ -62,7 +62,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
             setText(null);
             setGraphic(null);
         }else{
-            if(qctype.isChecked())
+            if(qctype.getCheckedByUser())
                 checkbox.setSelected(true);
             else
                 checkbox.setSelected(false);

@@ -16,6 +16,7 @@ import db.services.QcMatrixRowServiceImpl;
 import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
 import fend.job.table.qctable.seq.QcTableSequence;
+import fend.job.table.qctable.seq.sub.QcTableSubsurface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,11 +71,13 @@ public class QcTableModel {
             
             System.out.println("fend.job.table.qctable.QcTableModel.<init>(): found seq: "+seq.getSequenceno());
             
-            QcTableSequence qctableSubsurface=new QcTableSequence();
-            qctableSubsurface.setQcmatrix(feqcmr);
+            QcTableSubsurface qctableSubsurface=new QcTableSubsurface();
+            
             qctableSubsurface.setSequence(seq);
             qctableSubsurface.setSubsurface(s);
-            qctableSubsurface.setIsParent(false);
+           
+            qctableSubsurface.setQcmatrix(feqcmr);
+           // qctableSubsurface.setIsParent(false);
             
             if(!lookupmap.containsKey(seq)){
                 List<QcTableSequence> ql=new ArrayList<>();
@@ -93,10 +96,11 @@ public class QcTableModel {
             ObservableList<QcTableSequence> obssubs=FXCollections.observableArrayList(subs);
             System.out.println("fend.job.table.qctable.QcTableModel.<init>(): new Sequence root added: ");
             QcTableSequence seqtreeroot=new QcTableSequence();
+            seqtreeroot.setChildren(obssubs);
             seqtreeroot.setQcmatrix(feqcmr);
             seqtreeroot.setSequence(seq);
-            seqtreeroot.setChildren(obssubs);
-            seqtreeroot.setIsParent(true);
+            
+           // seqtreeroot.setIsParent(true);
             for(QcTableSequence sub:obssubs){
                 sub.setParent(seqtreeroot);
             }
