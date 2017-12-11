@@ -217,10 +217,8 @@ public class DotJobEdgeController implements EdgeController {
          JobType0Model job=childJobView.getController().getModel();
         Long type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {
-             /*curve.endXProperty().bind(((JobType1View)childJobView).layoutXProperty());
-             curve.endYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
-        anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
-        anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
+            anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+            anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
        
         }
          this.node.toBack();

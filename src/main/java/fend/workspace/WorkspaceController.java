@@ -179,43 +179,9 @@ public class WorkspaceController  {
     }
     
      
-     /**
-      * Listeners:
-      **/
-     
-     
-      ListChangeListener<Node> jobLinkChangeListener=new ListChangeListener<Node>() {
-        @Override
-        public void onChanged(ListChangeListener.Change<? extends Node> c) {
-            while(c.next()){
-                for(Node node:c.getAddedSubList()){
-                    if(node instanceof JobType0View){
-                        System.out.println(".onChanged(): new job added to workspace: ");
-                        model.getObservableJobs().add(((JobType0View) node).getController().getModel());
-                    }
-                    
-                    if(node instanceof EdgeView){
-                        model.getObservableEdges().add(((EdgeView) node).getController().getModel());
-                        System.out.println(".onChanged() new edge was added to the workspace "+((EdgeView) node).getController().getModel().getId()%1000+" size of set: "+model.getObservableEdges().size());
-                        
-                    }
-                    
-                    if(node instanceof DotView){
-                        System.out.println(".onChanged() new Dot was added to the workspace");
-                    }
-                }
-            }
-        }
-    };
+   
     
-    ChangeListener<Boolean> loadingListener=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(newValue){
-                loadSession();
-            }
-        }
-    };
+    
     
     /**
      * private Implementation
@@ -716,6 +682,38 @@ public class WorkspaceController  {
         }
     };
      
-     
+     private ChangeListener<Boolean> loadingListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                loadSession();
+            }
+        }
+    };
+      
+     private ListChangeListener<Node> jobLinkChangeListener=new ListChangeListener<Node>() {
+        @Override
+        public void onChanged(ListChangeListener.Change<? extends Node> c) {
+            while(c.next()){
+                for(Node node:c.getAddedSubList()){
+                    if(node instanceof JobType0View){
+                        System.out.println(".onChanged(): new job added to workspace: ");
+                        model.getObservableJobs().add(((JobType0View) node).getController().getModel());
+                    }
+                    
+                    if(node instanceof EdgeView){
+                        model.getObservableEdges().add(((EdgeView) node).getController().getModel());
+                        System.out.println(".onChanged() new edge was added to the workspace "+((EdgeView) node).getController().getModel().getId()%1000+" size of set: "+model.getObservableEdges().size());
+                        
+                    }
+                    
+                    if(node instanceof DotView){
+                        System.out.println(".onChanged() new Dot was added to the workspace");
+                    }
+                }
+            }
+        }
+    };
+    
     
 }

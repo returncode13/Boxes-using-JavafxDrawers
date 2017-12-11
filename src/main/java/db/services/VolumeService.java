@@ -5,6 +5,7 @@
  */
 package db.services;
 
+import db.model.Job;
 import java.util.List;
 
 import db.model.Volume;
@@ -23,5 +24,7 @@ public interface VolumeService {
     public void stopAlert(Volume v);
     public void setHeaderExtractionFlag(Volume v);
     public void resetHeaderExtractionFlag(Volume v);
+
+    public List<Volume> getVolumesForJob(Job dbjob);
     
 }

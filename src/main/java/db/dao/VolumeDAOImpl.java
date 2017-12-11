@@ -6,9 +6,13 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
 import db.model.Volume;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -174,6 +178,27 @@ public class VolumeDAOImpl implements VolumeDAO {
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<Volume> getVolumesForJob(Job job) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Volume> results=null;
+        try{
+            transaction=session.beginTransaction();
+            
+            Criteria criteria=session.createCriteria(Volume.class);
+            criteria.add(Restrictions.eq("job", job));
+            results=criteria.list();
+            
+        }catch(Exception e){
+            
+        }finally{
+            session.close();
+        }
+        
+        return results;
     }
 
     
