@@ -6,7 +6,7 @@
 package db.dao;
 
 import db.model.Header;
-import db.model.QcMatrix;
+import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
 import db.model.Subsurface;
@@ -69,7 +69,7 @@ public class QcTableDAOImpl implements QcTableDAO{
             h.setSubsurface(newQ.getSubsurface());
             h.setResult(newQ.getResult());
           //  h.setQctype(newQ.getQctype());
-          h.setQcmatrix(newQ.getQcmatrix());
+          h.setQcMatrixRow(newQ.getQcMatrixRow());
             h.setComment(newQ.getComment());
             h.setUpdateTime(newQ.getUpdateTime());
             h.setSummaryTime(newQ.getSummaryTime());
@@ -141,7 +141,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     }*/
 
     @Override
-    public List<QcTable> getQcTableFor(QcMatrix qmx) {
+    public List<QcTable> getQcTableFor(QcMatrixRow qmx) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
@@ -178,7 +178,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     return result;
     }*/
     /* @Override
-    public QcTable getQcTableFor(QcMatrix qmx, Header h) throws Exception{
+    public QcTable getQcTableFor(QcMatrixRow qmx, Header h) throws Exception{
     Session session = HibernateUtil.getSessionFactory().openSession();
     Transaction transaction = null;
     List<QcTable> result=null;
@@ -223,7 +223,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     }
 
     @Override
-    public QcTable getQcTableFor(QcMatrix qmx, Subsurface s) throws Exception {
+    public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface s) throws Exception {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;

@@ -12,7 +12,14 @@ import fend.app.loading.LoadWorkspaceModel;
 import fend.app.loading.LoadWorkspaceNode;
 import fend.workspace.WorkspaceModel;
 import fend.workspace.WorkspaceView;
+import fend.workspace.saveworkspace.SaveWorkSpaceView;
+import fend.workspace.saveworkspace.SaveWorkspaceModel;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -100,6 +107,7 @@ public class AppController extends Stage{
         
         WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel();
         frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
+        frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());
         WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
         frontEndWorkspaceView.getController().setLoading(true);
         basePane.getChildren().add(frontEndWorkspaceView);
@@ -122,9 +130,41 @@ public class AppController extends Stage{
 
     @FXML
     void startNewWorkspace(ActionEvent event) {
-         WorkspaceModel model=new WorkspaceModel();
-        WorkspaceView node=new WorkspaceView(model);
-        basePane.getChildren().add(node);
+        Workspace dbWorkspace= new Workspace();
+        final BooleanProperty nameEntered=new SimpleBooleanProperty(false);
+         SaveWorkspaceModel sm=new SaveWorkspaceModel();
+             Platform.runLater(new Runnable() {
+                 @Override
+                 public void run() {
+                     SaveWorkSpaceView sv=new SaveWorkSpaceView(sm);
+                 }
+             });
+             
+             sm.getName().addListener((obs,old,newname)->{
+                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): nameEntered: "+newname);
+                 if(newname.length()>0)
+                 dbWorkspace.setName(newname);
+                 nameEntered.set(true);
+             });
+        
+       nameEntered.addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue){
+                    System.out.println("fend.app.AppController.startNewWorkspace(): creating a new Workspace");
+                    workspaceService.createWorkspace(dbWorkspace);
+                    WorkspaceModel model=new WorkspaceModel();
+                    model.setId(dbWorkspace.getId());
+                    model.setName(dbWorkspace.getName());
+                    WorkspaceView node=new WorkspaceView(model);
+                    basePane.getChildren().add(node);
+                }else{
+                    return;
+                }
+            }
+           
+       });
+        
     }
     
     

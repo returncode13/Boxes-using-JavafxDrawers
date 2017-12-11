@@ -87,7 +87,7 @@ public class Job implements Serializable{
     private Set<Descendant> descendants;
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
-    private Set<QcMatrix> qcmatrices;
+    private Set<QcMatrixRow> qcmatrix;
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Log> logs;
@@ -244,12 +244,12 @@ public class Job implements Serializable{
         this.currentJobInDescendant = currentJobInDescendant;
     }
 
-    public Set<QcMatrix> getQcmatrices() {
-        return qcmatrices;
+    public Set<QcMatrixRow> getQcmatrix() {
+        return qcmatrix;
     }
 
-    public void setQcmatrices(Set<QcMatrix> qcmatrices) {
-        this.qcmatrices = qcmatrices;
+    public void setQcmatrix(Set<QcMatrixRow> qcmatrix) {
+        this.qcmatrix = qcmatrix;
     }
 
     public Set<Link> getLinksWithJobAsParent() {

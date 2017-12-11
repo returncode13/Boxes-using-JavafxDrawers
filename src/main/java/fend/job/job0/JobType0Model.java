@@ -7,7 +7,7 @@ package fend.job.job0;
 
 
 import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRow;
+import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -32,10 +32,10 @@ public interface JobType0Model {
     public void addVolume(Volume0 vol);
     public void removeVolume(Volume0 vol);
     
-    public ObservableList<QcMatrixRow> getQcMatrix();                   //shot <selected>,  stack <unselected>
-    public void setQcMatrix(List<QcMatrixRow> observableQcMatrixRows);
-    public void addQcMatrixRow(QcMatrixRow qcmrow);                     // shot<selected>
-    public void removeQcMatrixRow(QcMatrixRow qcmrow);
+    public ObservableList<QcMatrixRowModel> getQcMatrix();                   //shot <selected>,  stack <unselected>
+    public void setQcMatrix(List<QcMatrixRowModel> observableQcMatrixRows);
+    public void addQcMatrixRow(QcMatrixRowModel qcmrow);                     // shot<selected>
+    public void removeQcMatrixRow(QcMatrixRowModel qcmrow);
     
     public BooleanProperty getChangeProperty();
     public void setChangeProperty(Boolean change);

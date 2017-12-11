@@ -6,7 +6,7 @@
 package db.dao;
 
 import db.model.Header;
-import db.model.QcMatrix;
+import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
 import db.model.Subsurface;
@@ -26,8 +26,8 @@ public interface QcTableDAO {
   //  public List<QcTable> getQcTableFor(Volume v);
   //  public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval
     /* public List<QcTable> getQcTableFor(Header h);
-    public QcTable getQcTableFor(QcMatrix qmx,Header h) throws Exception;*/
-    public List<QcTable> getQcTableFor(QcMatrix qmx);
+    public QcTable getQcTableFor(QcMatrixRow qmx,Header h) throws Exception;*/
+    public List<QcTable> getQcTableFor(QcMatrixRow qmx);
     public List<QcTable> getQcTableFor(Subsurface s);
-    public QcTable getQcTableFor(QcMatrix qmx,Subsurface s) throws Exception;
+    public QcTable getQcTableFor(QcMatrixRow qmx,Subsurface s) throws Exception;
 }

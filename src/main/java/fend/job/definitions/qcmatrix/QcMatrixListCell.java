@@ -8,7 +8,10 @@ package fend.job.definitions.qcmatrix;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRow;
+import db.model.QcMatrixRow;
+import db.services.QcMatrixRowService;
+import db.services.QcMatrixRowServiceImpl;
+import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -16,12 +19,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import fend.volume.volume0.Volume0;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixListCell extends JFXListCell<QcMatrixRow>{
+public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
     HBox hbox=new HBox();
    
     Pane pane=new Pane();
@@ -36,7 +41,14 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRow>{
         //HBox.setHgrow(pane, Priority.ALWAYS);
         //button.getStyleClass().add("checkbox-raised");
        
-        
+        checkbox.selectedProperty().addListener(new ChangeListener<Boolean>(){
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                getItem().setChecked(newValue);
+                
+            }
+            
+        });
         
         //this.getStyleClass().add("-fx-background-color: #5264AE ");
     }
@@ -44,12 +56,16 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRow>{
    
     
     @Override
-    protected void updateItem(QcMatrixRow qctype,boolean empty){
+    protected void updateItem(QcMatrixRowModel qctype,boolean empty){
         super.updateItem(qctype, empty);
         if(qctype==null||empty){
             setText(null);
             setGraphic(null);
         }else{
+            if(qctype.isChecked())
+                checkbox.setSelected(true);
+            else
+                checkbox.setSelected(false);
             setText(qctype.getName().get());
             setGraphic(hbox);
         }

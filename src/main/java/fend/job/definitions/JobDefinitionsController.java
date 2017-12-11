@@ -15,8 +15,7 @@ import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import fend.job.definitions.qcmatrix.QcMatrixModel;
 import fend.job.definitions.qcmatrix.QcMatrixView;
-import fend.job.definitions.qcmatrixold.qcCheckListModel;
-import fend.job.definitions.qcmatrixold.qcCheckListNode;
+
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;

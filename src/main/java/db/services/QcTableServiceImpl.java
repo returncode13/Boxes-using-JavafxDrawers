@@ -10,7 +10,7 @@ import db.model.QcTable;
 
 import java.util.List;
 import db.dao.QcTableDAO;
-import db.model.QcMatrix;
+import db.model.QcMatrixRow;
 import db.model.Subsurface;
 
 /**
@@ -52,7 +52,7 @@ public class QcTableServiceImpl implements QcTableService{
     }*/
 
     @Override
-    public List<QcTable> getQcTableFor(QcMatrix qmx) {
+    public List<QcTable> getQcTableFor(QcMatrixRow qmx) {
         return qcmDAO.getQcTableFor(qmx);
     }
 
@@ -62,7 +62,7 @@ public class QcTableServiceImpl implements QcTableService{
     }
 
     @Override
-    public QcTable getQcTableFor(QcMatrix qmx, Subsurface h)  throws Exception{
+    public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface h)  throws Exception{
         return qcmDAO.getQcTableFor(qmx, h);
     }
     

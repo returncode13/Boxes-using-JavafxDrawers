@@ -5,7 +5,7 @@
  */
 package fend.job.definitions.qcmatrix.qctype.addQcType;
 
-import fend.job.definitions.qcmatrixold.addqctype.*;
+
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;

@@ -11,6 +11,7 @@ import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
 import db.model.NodeType;
+import db.model.QcMatrixRow;
 import db.model.Volume;
 import db.model.Workspace;
 import db.services.AncestorService;
@@ -27,6 +28,8 @@ import db.services.LinkService;
 import db.services.LinkServiceImpl;
 import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
+import db.services.QcMatrixRowService;
+import db.services.QcMatrixRowServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import db.services.WorkspaceService;
@@ -48,6 +51,8 @@ import fend.job.job1.JobType1Model;
 import fend.job.job1.JobType1View;
 import fend.job.definitions.JobDefinitionsModel;
 import fend.job.definitions.JobDefinitionsView;
+import fend.job.definitions.qcmatrix.QcMatrixModel;
+import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
 import fend.job.definitions.volume.VolumeListModel;
 import fend.job.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
@@ -91,6 +96,7 @@ public class WorkspaceController  {
     
     private WorkspaceModel model;
     private WorkspaceView node;
+    private Workspace dbWorkspace;
     
     private WorkspaceService workspaceService=new WorkspaceServiceImpl();
     private JobService jobService=new JobServiceImpl();
@@ -102,7 +108,7 @@ public class WorkspaceController  {
     private LinkService linkService=new LinkServiceImpl();
     private DotService dotService = new DotServiceImpl();
     private BooleanProperty loadingProperty=new SimpleBooleanProperty(false);
-    
+    private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
     List<BooleanProperty> changePropertyList=new ArrayList<>();
     
     @FXML
@@ -121,24 +127,24 @@ public class WorkspaceController  {
     @FXML
     private Button add;
 
+   
+    
+    
+    
     @FXML
     void addBox(ActionEvent event) {
+        Job dbjob=new Job();
+        Long typeOfJob=JobType0Model.PROCESS_2D;
+        NodeType nodetype=nodeTypeService.getNodeTypeObjForType(typeOfJob);                   
+        dbjob.setNodetype(nodetype);
+        dbjob.setWorkspace(dbWorkspace);
+        jobService.createJob(dbjob);
+        
         JobType1Model job=new JobType1Model(this.model);
+        job.setId(dbjob.getId());
         BooleanProperty changeProperty=new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
-        changeProperty.addListener(new ChangeListener<Boolean>(){
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-               
-               
-                    if(model.DEBUG)System.out.println("Saving session");
-                    saveWorkspace();
-                
-            }
-
-          
-            
-        });
+        changeProperty.addListener(workspaceChangedListener);
         
         changePropertyList.add(changeProperty);
         JobType1View jobview=new JobType1View(job,interactivePane);
@@ -162,7 +168,7 @@ public class WorkspaceController  {
         interactivePane.getChildren().addListener(jobLinkChangeListener);
         loadingProperty.addListener(loadingListener);
         model=item;
-        
+        dbWorkspace=workspaceService.getWorkspace(model.getId());
         
       }
 
@@ -220,21 +226,7 @@ public class WorkspaceController  {
         
         final BooleanProperty readyToSave=new SimpleBooleanProperty(false);
          if(model.getName().get().isEmpty()){
-             SaveWorkspaceModel sm=new SaveWorkspaceModel();
-             Platform.runLater(new Runnable() {
-                 @Override
-                 public void run() {
-                     SaveWorkSpaceView sv=new SaveWorkSpaceView(sm);
-                 }
-             });
-             
-             sm.getName().addListener((obs,old,newname)->{
-                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): nameEntered: "+newname);
-                 if(newname.length()>0)
-                 model.setName(newname);
-                 
-                 readyToSave.set(true);
-             });
+            
              
              
          }else{
@@ -269,6 +261,7 @@ public class WorkspaceController  {
              Set<Job> dbjobs=new HashSet<>();
              Set<Volume> dbVolumes=new HashSet<>();
              Set<Dot> dbDots=new HashSet<>();
+             Set<QcMatrixRow> dbQcMatrixRows=new HashSet<>();
              
              workspaceService.createWorkspace(dbWorkspace);
              
@@ -297,10 +290,14 @@ public class WorkspaceController  {
                      
                      dbjob=jobService.getJob(currentJobId);                                               // else get the instance of the previously saved job
                      System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Fetched job "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
+                     dbjob.setNameJobStep(fejob.getNameproperty().get());
+                     
                  }
                  
                     
-                
+                /***
+                 * Volumes in the job
+                 */
                  
                  
                  List<Volume0> fevolsinFejob=fejob.getVolumes();
@@ -327,9 +324,26 @@ public class WorkspaceController  {
                  dbVolumes.addAll(dbVolumesForCurrentJob);
                  
                 dbjob.setVolumes(dbVolumesForCurrentJob);
+                
+                
+                
+                
+                
+                
+             /***
+              * QcMatrix for the job. QcMatrix are commited/updated straight to the db based on UI
+              **/
+            
+                List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(dbjob);
+                dbjob.setQcmatrix(new HashSet<>(qcmatrixForJob));
                 dbjobs.add(dbjob);
-                 
              }
+             
+             
+             
+             
+             
+            
              
              dbWorkspace.setJobs(dbjobs);
              
@@ -468,6 +482,9 @@ public class WorkspaceController  {
           
            for(Job dbjob:dbjobs) jobService.updateJob(dbjob.getId(),dbjob);
             for(Volume dbVol:dbVolumes) volumeService.updateVolume(dbVol.getId(),dbVol);
+          
+            
+            
              workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
          }
          else{
@@ -481,6 +498,7 @@ public class WorkspaceController  {
      
      private  void loadSession(){
          Workspace  dbWorkspace=workspaceService.getWorkspace(model.getId());
+        
          Set<Job> jobsInDb=dbWorkspace.getJobs();
          List<JobType0Model> frontEndJobModels=new ArrayList<>();
          
@@ -637,6 +655,14 @@ public class WorkspaceController  {
         for(JobType0Model job:jobmodels){
             if(job.getType().equals(JobType0Model.PROCESS_2D)){
                 JobType1View jv=new JobType1View((JobType1Model) job, interactivePane);
+                
+                /**
+                 * Attach Listeners to save workspace
+                 */
+                BooleanProperty changeProperty=new SimpleBooleanProperty(false);
+                changeProperty.bind(job.getChangeProperty());
+                changeProperty.addListener(workspaceChangedListener);
+                changePropertyList.add(changeProperty);
                 idFrontEndJobMap.put(job.getId(),jv);
                 interactivePane.getChildren().add(jv);
             }
@@ -650,7 +676,17 @@ public class WorkspaceController  {
      
      
      
-     
+     /***
+      * Listeners
+      
+      **/
+     private ChangeListener<Boolean> workspaceChangedListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+              if(model.DEBUG)System.out.println("Saving workspace");
+            saveWorkspace();
+        }
+    };
      
      
     

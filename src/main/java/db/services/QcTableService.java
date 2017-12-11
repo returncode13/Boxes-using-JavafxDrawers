@@ -6,7 +6,7 @@
 package db.services;
 
 import db.model.Header;
-import db.model.QcMatrix;
+import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
 import db.model.Subsurface;
@@ -25,7 +25,7 @@ public interface QcTableService {
     
     /*public List<QcTable> getQcTableFor(Volume v);
     public List<QcTable> getQcTableFor(Volume v,QcType qctype);               //for column wise retrieval*/
-     public List<QcTable> getQcTableFor(QcMatrix qmx);
+     public List<QcTable> getQcTableFor(QcMatrixRow qmx);
     public List<QcTable> getQcTableFor(Subsurface s);
-    public QcTable getQcTableFor(QcMatrix qmx,Subsurface s) throws Exception;
+    public QcTable getQcTableFor(QcMatrixRow qmx,Subsurface s) throws Exception;
 }

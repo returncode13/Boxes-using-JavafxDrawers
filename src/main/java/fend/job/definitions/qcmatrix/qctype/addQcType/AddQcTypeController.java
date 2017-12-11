@@ -5,7 +5,7 @@
  */
 package fend.job.definitions.qcmatrix.qctype.addQcType;
 
-import fend.job.definitions.qcmatrixold.addqctype.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
