@@ -89,7 +89,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
           String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           selectedItem=this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
           selectedItem.setUpdateTime(updateTime);
-          System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): indeterminateProperty(): "+newValue+" for "+selectedItem.getSequence().getSequenceno()+" : "+selectedItem.getSubsurface().getSubsurface());
+         // System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): indeterminateProperty(): "+newValue+" for "+selectedItem.getSequence().getSequenceno()+" : "+selectedItem.getSubsurface().getSubsurface());
           selectedItem.getQcmatrix().get(index).getIndeterminateProperty().set(newValue);
           
          
@@ -100,7 +100,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
        checkBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
            @Override
            public void handle(MouseEvent event) {
-               System.out.println(".handle(): MouseClicked");
+            //   System.out.println(".handle(): MouseClicked");
              
                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                
@@ -110,7 +110,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                 if(selectedItem.isParent()){
                      selectedItem.updateChildren=true;
                     for(QcTableSequence child: selectedItem.getChildren()){
-                        System.out.println(".handle(): updating children");
+               //         System.out.println(".handle(): updating children");
                         child.updateParent=false;
                     }
                     updateDownwards(updateTime);
@@ -176,7 +176,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                    String result=qmr.isPassQc();
                    Long qcmrId=qmr.getId();
                      Subsurface childsub=selectedItem.getSubsurface();
-                     System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
+                  //   System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
                      
                      Boolean resForDb=null;
                             if(result.equals(QcMatrixRowModel.INDETERMINATE)) resForDb=null;
@@ -215,10 +215,9 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                 QcTableSequence parent=children.get(0).getParent();
                 for(QcTableSequence child:children){
                     indeterminateCount+=child.getQcmatrix().get(index).getIndeterminateProperty().get()?1:0;
-                    selectedCount+=child.getQcmatrix().get(index).getCheckUncheckProperty().get()?1:0;
                     
                 }
-                System.out.println(selectedItem.getSequence().getSequenceno()+" updating parent: indcount: "+indeterminateCount+" selectCount: "+selectedCount);    
+                //System.out.println(selectedItem.getSequence().getSequenceno()+" updating parent: indcount: "+indeterminateCount+" selectCount: "+selectedCount);    
                 if(indeterminateCount>0) {
                     
                      parent.getQcmatrix().get(index).getIndeterminateProperty().set(true);
@@ -268,7 +267,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                    String result=qmr.isPassQc();
                    Long qcmrId=qmr.getId();
                      Subsurface childsub=child.getSubsurface();
-                    System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
+                   // System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
                     
                     
                     

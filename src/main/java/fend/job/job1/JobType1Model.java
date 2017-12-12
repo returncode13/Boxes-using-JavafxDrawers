@@ -44,6 +44,7 @@ import java.util.logging.LogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderLoader;
+import middleware.sequences.SequenceHeaders;
 
 /**
  *
@@ -56,6 +57,7 @@ public class JobType1Model implements JobType0Model {
     private StringProperty nameproperty;
     private List<Volume0> volumes;
     private ObservableList<Volume0> observableVolumes;
+    private ObservableList<SequenceHeaders> sequenceHeaders;
     
     private List<QcMatrixRowModel> qcmatrix;
     private ObservableList<QcMatrixRowModel> observableQcMatrix;
@@ -452,7 +454,7 @@ public class JobType1Model implements JobType0Model {
             duplicatesInJob.clear();
             Map<SubsurfaceHeaders,String> lookupMap=new HashMap<>();
             for(SubsurfaceHeaders s:subsurfacesInJob){
-                String name=s.getSubsurfaceName().get();
+                String name=s.getSubsurfaceName();
                 if(lookupMap.containsValue(name)){
                     duplicatesInJob.add(s);                                                 //add the duplicate
                     Map<SubsurfaceHeaders,String> t=new HashMap<>(lookupMap);
@@ -467,7 +469,7 @@ public class JobType1Model implements JobType0Model {
                     }
                 }
                 else{
-                    lookupMap.put(s,s.getSubsurfaceName().get());
+                    lookupMap.put(s,s.getSubsurfaceName());
                 }
             }
             
@@ -519,17 +521,19 @@ public class JobType1Model implements JobType0Model {
        
     }
 
-    void retrieveHeaders() {
-        /*JobService jobService=new JobServiceImpl();
-        Job job=jobService.getJob(this.id);
-        Set<Subsurface> setSubs=job.getSubsurfaces();
-        System.out.println("fend.job.job1.JobType1Model.retrieveHeaders(): Listing subs present in job: size: "+setSubs.size());
-        for(Subsurface s:setSubs){
-        System.out.println(job.getNameJobStep()+"   :   "+s.getSubsurface());
-        }*/
-        new HeaderLoader(this);
+   
+
+    public ObservableList<SequenceHeaders> getSequenceHeaders() {
+        retrieveHeaders();
+        return sequenceHeaders;
+    }
+    
+     void retrieveHeaders() {
+        HeaderLoader headerloader=new HeaderLoader(this);
+        sequenceHeaders=headerloader.getSequenceHeaders();
         
     }
+    
 
     @Override
     public ObservableList<QcMatrixRowModel> getQcMatrix() {

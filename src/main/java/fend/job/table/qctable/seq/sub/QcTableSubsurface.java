@@ -82,7 +82,7 @@ public class QcTableSubsurface extends QcTableSequence{
          for(QcMatrixRowModel q:qcmatrix){
             QcMatrixRowModel nq=new QcMatrixRowModel();
             nq.setId(q.getId());
-             System.out.println("loading result for QMid: "+nq.getId()+" Subid: "+subsurface.getId()+" - "+subsurface.getSubsurface());
+             //System.out.println("loading result for QMid: "+nq.getId()+" Subid: "+subsurface.getId()+" - "+subsurface.getSubsurface());
              try{
                  QcTable qcTableFromDb=qcTableService.getQcTableFor(nq.getId(), subsurface);
                  
@@ -165,7 +165,7 @@ public class QcTableSubsurface extends QcTableSequence{
          public void onChanged(ListChangeListener.Change<? extends StringProperty> c) {
              while(c.next()){
                  if(c.wasUpdated()){
-                     System.out.println(".onChanged(): from "+c.getFrom()+" to "+c.getTo()+" was updated");
+                //     System.out.println(".onChanged(): from "+c.getFrom()+" to "+c.getTo()+" was updated");
                  }
              }
          }

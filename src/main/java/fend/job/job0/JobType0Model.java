@@ -15,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import fend.volume.volume0.Volume0;
 import java.util.List;
+import middleware.sequences.SequenceHeaders;
 
 /**
  *
@@ -51,6 +52,7 @@ public interface JobType0Model {
     public ObservableSet<JobType0Model> getAncestors();
     public ObservableSet<JobType0Model> getDescendants();
    
+    public ObservableList<SequenceHeaders> getSequenceHeaders();  
     
     @Override
     public boolean equals(Object obj);

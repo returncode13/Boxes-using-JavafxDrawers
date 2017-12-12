@@ -51,6 +51,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
+import fend.job.table.lineTable.LineTableModel;
+import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
@@ -303,7 +305,8 @@ public class JobType1Controller implements JobType0Controller{
     
     @FXML
     void showTable(ActionEvent event) {
-            model.retrieveHeaders();
+            LineTableModel lineTableModel=new LineTableModel(model);
+            LineTableView lineTableView=new LineTableView(lineTableModel);
     }
     
      @FXML

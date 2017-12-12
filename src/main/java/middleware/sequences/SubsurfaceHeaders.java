@@ -5,12 +5,15 @@
  */
 package middleware.sequences;
 
+import db.model.Subsurface;
 import java.util.Objects;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -45,9 +48,26 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     private LongProperty cmpMax= new SimpleLongProperty();  
     private LongProperty cmpMin= new SimpleLongProperty();  
     private LongProperty cmpInc= new SimpleLongProperty(); 
+    private StringProperty insight=new SimpleStringProperty();
+    private StringProperty workflow=new SimpleStringProperty();
+    private LongProperty numberOfRuns=new SimpleLongProperty();
     
-    private SequenceHeaders sequence;
+    private BooleanProperty chosen=new SimpleBooleanProperty();
+    private BooleanProperty multiple=new SimpleBooleanProperty();
+    
+    private SequenceHeaders sequenceHeader;
+    private Subsurface subsurface;
 
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
+
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
+    }
+    
+    
+    
     public SubsurfaceHeaders(Volume0 volume) {
         this.volume = volume;
     }
@@ -55,16 +75,18 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     
     private SubsurfaceHeaders(){}
     
-    public StringProperty getSubsurfaceName() {
-        return subsurfaceName;
+    @Override
+    public String getSubsurfaceName() {
+        return subsurfaceName.get();
     }
 
     public void setSubsurfaceName(String subsurfaceName) {
         this.subsurfaceName.set(subsurfaceName);
     }
 
-    public StringProperty getTimeStamp() {
-        return timeStamp;
+    @Override
+    public String getTimeStamp() {
+        return timeStamp.get();
     }
 
     public void setTimeStamp(String timeStamp) {
@@ -78,6 +100,264 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     public void setVolume(Volume0 volume) {
         this.volume = volume;
     }
+
+    @Override
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
+
+    @Override
+    public Long getSequenceNumber() {
+        return sequenceNumber.get();
+    }
+
+    public void setSequenceNumber(Long sequenceNumber) {
+        this.sequenceNumber.set(sequenceNumber);
+    }
+
+    @Override
+    public Long getTraceCount() {
+        return traceCount.get();
+    }
+
+    public void setTraceCount(Long traceCount) {
+        this.traceCount.set(traceCount);
+    }
+
+    @Override
+    public Long getInlineMax() {
+        return inlineMax.get();
+    }
+
+    public void setInlineMax(Long inlineMax) {
+        this.inlineMax.set(inlineMax);
+    }
+
+    @Override
+    public Long getInlineMin() {
+        return inlineMin.get();
+    }
+
+    public void setInlineMin(Long inlineMin) {
+        this.inlineMin.set(inlineMin);
+    }
+
+    @Override
+    public Long getInlineInc() {
+        return inlineInc.get();
+    }
+
+    public void setInlineInc(Long inlineInc) {
+        this.inlineInc.set(inlineInc);
+    }
+
+    @Override
+    public Long getXlineMax() {
+        return xlineMax.get();
+    }
+
+    public void setXlineMax(Long xlineMax) {
+        this.xlineMax.set(xlineMax);
+    }
+
+    @Override
+    public Long getXlineMin() {
+        return xlineMin.get();
+    }
+
+    public void setXlineMin(Long xlineMin) {
+        this.xlineMin.set(xlineMin);
+    }
+
+    @Override
+    public Long getXlineInc() {
+        return xlineInc.get();
+    }
+
+    public void setXlineInc(Long xlineInc) {
+        this.xlineInc.set(xlineInc);
+    }
+
+    @Override
+    public Long getDugShotMax() {
+        return dugShotMax.get();
+    }
+
+    public void setDugShotMax(Long dugShotMax) {
+        this.dugShotMax.set(dugShotMax);
+    }
+
+    @Override
+    public Long getDugShotMin() {
+        return dugShotMin.get();
+    }
+
+    public void setDugShotMin(Long dugShotMin) {
+        this.dugShotMin.set(dugShotMin);
+    }
+
+    @Override
+    public Long getDugShotInc() {
+        return dugShotInc.get();
+    }
+
+    public void setDugShotInc(Long dugShotInc) {
+        this.dugShotInc.set(dugShotInc);
+    }
+
+    @Override
+    public Long getDugChannelMax() {
+        return dugChannelMax.get();
+    }
+
+    public void setDugChannelMax(Long dugChannelMax) {
+        this.dugChannelMax.set(dugChannelMax);
+    }
+
+    @Override
+    public Long getDugChannelMin() {
+        return dugChannelMin.get();
+    }
+
+    public void setDugChannelMin(Long dugChannelMin) {
+        this.dugChannelMin.set(dugChannelMin);
+    }
+
+    @Override
+    public Long getDugChannelInc() {
+        return dugChannelInc.get();
+    }
+
+    public void setDugChannelInc(Long dugChannelInc) {
+        this.dugChannelInc.set(dugChannelInc);
+    }
+
+    @Override
+    public Long getOffsetMax() {
+        return offsetMax.get();
+    }
+
+    public void setOffsetMax(Long offsetMax) {
+        this.offsetMax.set(offsetMax);
+    }
+
+    @Override
+    public Long getOffsetMin() {
+        return offsetMin.get();
+    }
+
+    public void setOffsetMin(Long offsetMin) {
+        this.offsetMin.set(offsetMin);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public Long getOffsetInc() {
+        return offsetInc.get();
+    }
+
+    public void setOffsetInc(Long offsetInc) {
+        this.offsetInc.set(offsetInc);
+    }
+
+    @Override
+    public Long getCmpMax() {
+        return cmpMax.get();
+    }
+
+    public void setCmpMax(Long cmpMax) {
+        this.cmpMax.set(cmpMax);
+    }
+
+    @Override
+    public Long getCmpMin() {
+        return cmpMin.get();
+    }
+
+    public void setCmpMin(Long cmpMin) {
+        this.cmpMin.set(cmpMin);
+    }
+
+    @Override
+    public Long getCmpInc() {
+        return cmpInc.get();
+    }
+
+    public void setCmpInc(Long cmpInc) {
+        this.cmpInc.set(cmpInc);
+    }
+
+    public SequenceHeaders getSequenceHeader() {
+        return sequenceHeader;
+    }
+
+    public void setSequenceHeader(SequenceHeaders sequenceHeader) {
+        this.sequenceHeader = sequenceHeader;
+    }
+
+    @Override
+    public String getInsight() {
+        return insight.get();
+    }
+
+    public void setInsight(String insight) {
+        this.insight.set(insight);
+    }
+
+    @Override
+    public String getWorkflow() {
+        return workflow.get();
+    }
+
+    public void setWorkflow(String workflow) {
+        this.workflow.set(workflow);
+    }
+
+    @Override
+    public Long getNumberOfRuns() {
+        return numberOfRuns.get();
+    }
+
+    public void setNumberOfRuns(Long numberOfRuns) {
+        this.numberOfRuns.set(numberOfRuns);
+    }
+
+    public BooleanProperty getChosen() {
+        return chosen;
+    }
+
+    public void setChosen(BooleanProperty chosen) {
+        this.chosen = chosen;
+    }
+
+    public BooleanProperty getMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(BooleanProperty multiple) {
+        this.multiple = multiple;
+    }
+    
+    
+    
+    
+    
 
     
       
@@ -97,7 +377,7 @@ public class SubsurfaceHeaders extends SequenceHeaders{
         hash = 71 * hash + Objects.hashCode(this.sequenceNumber);
         hash = 71 * hash + Objects.hashCode(this.subsurfaceName);
         hash = 71 * hash + Objects.hashCode(this.timeStamp);
-        hash = 71 * hash + Objects.hashCode(this.sequence);
+        hash = 71 * hash + Objects.hashCode(this.sequenceHeader);
         return hash;
     }
 
@@ -125,7 +405,7 @@ public class SubsurfaceHeaders extends SequenceHeaders{
         if (!Objects.equals(this.timeStamp, other.timeStamp)) {
             return false;
         }
-        if (!Objects.equals(this.sequence, other.sequence)) {
+        if (!Objects.equals(this.sequenceHeader, other.sequenceHeader)) {
             return false;
         }
         return true;

@@ -44,6 +44,7 @@ import middleware.sequences.SubsurfaceHeaders;
  */
 public class HeaderExtractor {
     JobType0Model job;
+    Job dbjob;
     SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     HeaderService headerService=new HeaderServiceImpl();
     VolumeService volumeService=new VolumeServiceImpl();
@@ -56,7 +57,7 @@ public class HeaderExtractor {
     public HeaderExtractor(JobType0Model j){
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
-        Job dbjob=jobService.getJob(job.getId());
+        dbjob=jobService.getJob(job.getId());
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
@@ -70,13 +71,13 @@ public class HeaderExtractor {
               //Job dbjob=dbvol.getJob();
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
-                  Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName().get());
+                  Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                   setOfSubsurfacesInJob.add(dbsub);
-                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName().get());
+                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
                 
                   
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
-                  String latestTimestamp=sub.getTimeStamp().get();
+                  String latestTimestamp=sub.getTimeStamp();
                   if(headerService.getHeadersFor(dbvol,dbsub,latestTimestamp)==null){
                       System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
                       Header header=new Header();
@@ -232,6 +233,7 @@ public class HeaderExtractor {
                 }
                 
                 headerService.updateHeader(hdr.getId(), hdr);
+                headerService.getMultipleInstances(dbjob, hdr.getSubsurface());
                 
                            
             return null;

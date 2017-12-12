@@ -5,10 +5,36 @@
  */
 package fend.job.table.lineTable;
 
+import fend.job.job0.JobType0Model;
+import javafx.collections.ObservableList;
+import middleware.sequences.SequenceHeaders;
+
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class LineTableModel {
+    private ObservableList<SequenceHeaders> sequenceHeaders;
+    private JobType0Model job;
+
+    public LineTableModel(JobType0Model job) {
+        this.job = job;
+        sequenceHeaders=this.job.getSequenceHeaders();
+    }
+
+    public JobType0Model getJob() {
+        return job;
+    }
+
+    
+    
+    public ObservableList<SequenceHeaders> getSequenceHeaders() {
+        return sequenceHeaders;
+    }
+
+    public void setSequenceHeaders(ObservableList<SequenceHeaders> sequenceHeaders) {
+        this.sequenceHeaders = sequenceHeaders;
+    }
+    
     
 }

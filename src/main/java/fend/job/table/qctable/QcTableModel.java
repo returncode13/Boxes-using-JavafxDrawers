@@ -48,7 +48,7 @@ public class QcTableModel {
         parentJob=jobService.getJob(this.fejob.getId());
         qctableSequences=FXCollections.observableArrayList();
         List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(parentJob, true);
-        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+parentJob.getId()+" is "+qcmatrixForJob.size());
+       // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+parentJob.getId()+" is "+qcmatrixForJob.size());
         List<QcMatrixRowModel> feqcmr=new ArrayList<>();
         
        
@@ -61,15 +61,15 @@ public class QcTableModel {
             femod.setName(qcmrow.getQctype().getName());
             femod.setQctype(qcmrow.getQctype());
             feqcmr.add(femod);
-            System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModel with id: "+femod.getId()+" name: "+femod.getName().get());
+         //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModel with id: "+femod.getId()+" name: "+femod.getName().get());
         }
         
         Set<Subsurface> subsinJob=parentJob.getSubsurfaces();
-        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+parentJob.getId()+" size: "+subsinJob.size());
+     //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+parentJob.getId()+" size: "+subsinJob.size());
         for(Subsurface s:subsinJob){
             Sequence seq=s.getSequence();
             
-            System.out.println("fend.job.table.qctable.QcTableModel.<init>(): found seq: "+seq.getSequenceno());
+          //  System.out.println("fend.job.table.qctable.QcTableModel.<init>(): found seq: "+seq.getSequenceno());
             
             QcTableSubsurface qctableSubsurface=new QcTableSubsurface();
             
@@ -81,11 +81,11 @@ public class QcTableModel {
             
             if(!lookupmap.containsKey(seq)){
                 List<QcTableSequence> ql=new ArrayList<>();
-                System.out.println("fend.job.table.qctable.QcTableModel.<init>(): was NULL and creating a new list  to the lookup map "+qctableSubsurface.getSubsurface().getSubsurface());
+             //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): was NULL and creating a new list  to the lookup map "+qctableSubsurface.getSubsurface().getSubsurface());
                 ql.add(qctableSubsurface);
                 lookupmap.put(seq, ql);
             }else{
-                System.out.println("fend.job.table.qctable.QcTableModel.<init>(): adding a new entry to the lookup map "+qctableSubsurface.getSubsurface().getSubsurface());
+              //  System.out.println("fend.job.table.qctable.QcTableModel.<init>(): adding a new entry to the lookup map "+qctableSubsurface.getSubsurface().getSubsurface());
                 lookupmap.get(seq).add(qctableSubsurface);
             }
         }
@@ -94,7 +94,7 @@ public class QcTableModel {
             Sequence seq = entry.getKey();
             List<QcTableSequence> subs = entry.getValue();
             ObservableList<QcTableSequence> obssubs=FXCollections.observableArrayList(subs);
-            System.out.println("fend.job.table.qctable.QcTableModel.<init>(): new Sequence root added: ");
+           // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): new Sequence root added: ");
             QcTableSequence seqtreeroot=new QcTableSequence();
             seqtreeroot.setChildren(obssubs);
             seqtreeroot.setQcmatrix(feqcmr);
@@ -108,7 +108,7 @@ public class QcTableModel {
             qctableSequences.add(seqtreeroot);      //each entry can now be rendered as seq.Long   sub.string   qcmatrix[1].check/Uncheck/Indeterminate  qcmatrix[2].check/Uncheck/Indeterminate... qcmatrix[n].check/uncheck/indeteminate
         }
         
-        System.out.println("fend.job.table.qctable.QcTableModel.<init>() qctableSequences is of size(): "+qctableSequences.size());
+      //  System.out.println("fend.job.table.qctable.QcTableModel.<init>() qctableSequences is of size(): "+qctableSequences.size());
     }
     
     
