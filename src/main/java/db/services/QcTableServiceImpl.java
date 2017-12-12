@@ -65,6 +65,11 @@ public class QcTableServiceImpl implements QcTableService{
     public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface h)  throws Exception{
         return qcmDAO.getQcTableFor(qmx, h);
     }
+
+    @Override
+    public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s) throws Exception {
+         return qcmDAO.getQcTableFor(qcmatrixRowId, s);
+    }
     
     
 

@@ -12,6 +12,13 @@ import db.model.Subsurface;
 import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -25,12 +32,14 @@ public class QcTableSequence  {
     List<QcMatrixRowModel> qcmatrix=new ArrayList<>();
     ObservableList<QcMatrixRowModel> observableQcMatrix;
     ObservableList<QcTableSequence> children;
+    List<StringProperty> changedProperty=new ArrayList<>();
     
     private Boolean isChild=false;
     private Boolean isParent=true;                          //used to update the checkbox states
     private String updateTime=new String();
     public boolean updateChildren=false;
     public boolean updateParent=false;
+    
     
     public Sequence getSequence() {
         return sequence;
@@ -63,6 +72,10 @@ public class QcTableSequence  {
             nq.setPassQc(q.isPassQc());
             nq.setQctype(q.getQctype());
             nq.setId(q.getId());
+            StringProperty changed=new SimpleStringProperty();
+            changed.bind(nq.passQcProperty());
+            changed.addListener(qcTableSelectionChangedListener);
+            changedProperty.add(changed);
             this.qcmatrix.add(nq);
         }
         this.observableQcMatrix=FXCollections.observableArrayList(this.qcmatrix);
@@ -75,6 +88,11 @@ public class QcTableSequence  {
     public void setUpdateTime(String updateTime) {
         this.updateTime=updateTime;
     }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+    
 
     
 
@@ -109,7 +127,16 @@ public class QcTableSequence  {
     }
     
     
+    /***
+     * Listeners
+     */
     
+    private ChangeListener<String> qcTableSelectionChangedListener=new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            System.out.println(".changed(): on SequenceLevel");
+        }
+    };
     
     
     

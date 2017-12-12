@@ -148,7 +148,7 @@ public class QcTableDAOImpl implements QcTableDAO{
         try{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcTable.class);
-        criteria.add(Restrictions.eq("qcmatrix", qmx));
+        criteria.add(Restrictions.eq("qcMatrixRow", qmx));
         result=criteria.list();
         transaction.commit();
         }catch(Exception e){
@@ -230,7 +230,7 @@ public class QcTableDAOImpl implements QcTableDAO{
         try{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcTable.class);
-        criteria.add(Restrictions.eq("qcmatrix", qmx));
+        criteria.add(Restrictions.eq("qcMatrixRow", qmx));
         criteria.add(Restrictions.eq("subsurface", s));
         result=criteria.list();
         transaction.commit();
@@ -243,6 +243,32 @@ public class QcTableDAOImpl implements QcTableDAO{
             return null;
         }else if(result.size()>1){
             throw new Exception("More than one qcTable entries encountered for qcmatrix :  id "+qmx.getId()+" and subsurface id: "+s.getId()+" name: "+s.getSubsurface());
+        }else{
+            return result.get(0);
+        }
+    }
+
+    @Override
+    public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s) throws Exception{
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<QcTable> result=null;
+        try{
+        transaction=session.beginTransaction();
+        Criteria criteria=session.createCriteria(QcTable.class);
+        criteria.add(Restrictions.eq("qcMatrixRow.id", qcmatrixRowId));
+        criteria.add(Restrictions.eq("subsurface", s));
+        result=criteria.list();
+        transaction.commit();
+        }catch(Exception e){
+        e.printStackTrace();
+        }finally{
+        session.close();
+        }
+        if(result.isEmpty()){
+            return null;
+        }else if(result.size()>1){
+            throw new Exception("More than one qcTable entries encountered for qcmatrix :  id "+qcmatrixRowId+" and subsurface id: "+s.getId()+" name: "+s.getSubsurface());
         }else{
             return result.get(0);
         }

@@ -96,7 +96,7 @@ public class QcTableController extends Stage{
                     //System.out.println("fend.job.table.qctable.QcTableController.setView(): Null Pointer encountered");
                 }
                 if(sublinename==null){
-                    return new SimpleStringProperty("filler");
+                    return new SimpleStringProperty(sublinename=param.getValue().getValue().getSequence().getRealLineName());
                 }else{
                     return new SimpleStringProperty(sublinename);
                 }
@@ -119,7 +119,13 @@ public class QcTableController extends Stage{
                      qcCol.setText(qseq.getQcmatrix().get(index).getName().get());
                      SimpleBooleanProperty checkUncheck=new SimpleBooleanProperty();
                      SimpleBooleanProperty indeterminate=new SimpleBooleanProperty();
+                     String name=qseq.getSubsurface().getSubsurface();
+                     if(name==null){
+                         name=qseq.getSequence().getRealLineName();
+                     }
                      
+                     System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
+                     System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
                      checkUncheck.bindBidirectional(qseq.getQcmatrix().get(index).getCheckUncheckProperty());
                      indeterminate.bindBidirectional(qseq.getQcmatrix().get(index).getIndeterminateProperty());
                      

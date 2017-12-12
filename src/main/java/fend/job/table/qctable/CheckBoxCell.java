@@ -7,6 +7,13 @@ package fend.job.table.qctable;
 
 
 import app.properties.AppProperties;
+import db.model.QcMatrixRow;
+import db.model.QcTable;
+import db.model.Subsurface;
+import db.services.QcMatrixRowService;
+import db.services.QcMatrixRowServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.List;
@@ -22,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -29,7 +37,8 @@ import org.joda.time.DateTimeZone;
  */
 public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
     TreeTableColumn<QcTableSequence, Boolean> param;
-    
+    private QcTableService qcTableService=new QcTableServiceImpl();
+    private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
     QcTableSequence selectedItem;
     int index;
     final CheckBox checkBox;
@@ -82,6 +91,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
           selectedItem.setUpdateTime(updateTime);
           System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): indeterminateProperty(): "+newValue+" for "+selectedItem.getSequence().getSequenceno()+" : "+selectedItem.getSubsurface().getSubsurface());
           selectedItem.getQcmatrix().get(index).getIndeterminateProperty().set(newValue);
+          
          
       });
      
@@ -162,6 +172,40 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
      private void updateUpwards(String updateTime){
              String indString=QcMatrixRowModel.INDETERMINATE;
              String passQcString=new String();
+                    QcMatrixRowModel qmr=selectedItem.getQcmatrix().get(index);
+                   String result=qmr.isPassQc();
+                   Long qcmrId=qmr.getId();
+                     Subsurface childsub=selectedItem.getSubsurface();
+                     System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
+                     
+                     Boolean resForDb=null;
+                            if(result.equals(QcMatrixRowModel.INDETERMINATE)) resForDb=null;
+                            else if(result.equals(QcMatrixRowModel.SELECTED)) {resForDb=true;}
+                            else{resForDb=false;}
+                     
+                     
+                     QcTable qctable;
+                     try {
+                        qctable=qcTableService.getQcTableFor(qcmrId, childsub);
+                        if(qctable!=null){                                              //update existing qctable entry
+                            
+                            qctable.setResult(resForDb);
+                            qctable.setUpdateTime(updateTime);
+                            qcTableService.updateQcTable(qctable.getId(), qctable);
+                        }else{                                                      //create  a new qctable entry
+                            qctable=new QcTable();
+                            QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
+                            qctable.setQcMatrixRow(dbqcmr);
+                            qctable.setSubsurface(childsub);
+                            qctable.setUpdateTime(updateTime);
+                            qctable.setResult(resForDb);
+                            qcTableService.createQcTable(qctable);
+                        }
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    
+                    
             if(selectedItem.updateParent){
               
             List<QcTableSequence> children=selectedItem.getChildren();
@@ -220,6 +264,48 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                    child.getQcmatrix().get(index).getIndeterminateProperty().set(selectedItem.getQcmatrix().get(index).getIndeterminateProperty().get());
                    child.getQcmatrix().get(index).setPassQc(passQcString);
                    child.setUpdateTime(updateTime);
+                   QcMatrixRowModel qmr=child.getQcmatrix().get(index);
+                   String result=qmr.isPassQc();
+                   Long qcmrId=qmr.getId();
+                     Subsurface childsub=child.getSubsurface();
+                    System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
+                    
+                    
+                    
+                    //
+                     Boolean resForDb=null;
+                            if(result.equals(QcMatrixRowModel.INDETERMINATE)) resForDb=null;
+                            else if(result.equals(QcMatrixRowModel.SELECTED)) {resForDb=true;}
+                            else{resForDb=false;}
+                     
+                     
+                     QcTable qctable;
+                     try {
+                        qctable=qcTableService.getQcTableFor(qcmrId, childsub);
+                        if(qctable!=null){                                              //update existing qctable entry
+                            
+                            qctable.setResult(resForDb);
+                            qctable.setUpdateTime(updateTime);
+                            qcTableService.updateQcTable(qctable.getId(), qctable);
+                        }else{                                                      //create  a new qctable entry
+                            qctable=new QcTable();
+                            QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
+                            qctable.setQcMatrixRow(dbqcmr);
+                            qctable.setSubsurface(childsub);
+                            qctable.setUpdateTime(updateTime);
+                            qctable.setResult(resForDb);
+                            qcTableService.createQcTable(qctable);
+                        }
+                    } catch (Exception ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    
+                    
+                    //
+                    
+                    
+                    
+                    
                  }
                 
               

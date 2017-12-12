@@ -141,9 +141,11 @@ app/connections/hibernate/Connections.class
 app/settings/ssh/SShSettingsNode.class
 db/model/Dot_.class
 fend/dot/LinkModel.class
+fend/job/table/qctable/seq/sub/QcTableSubsurface$1.class
 db/services/PropertyTypeService.class
 fend/dot/formulaField/FormulaFieldModel.class
 middleware/dugex/DugioHeaderValuesExtractor$2.class
+fend/job/table/qctable/seq/QcTableSequence$1.class
 db/model/Item.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class
@@ -302,4 +304,5 @@ middleware/dugex/LongHolder.class
 fend/job/job1/JobType1Controller$1.class
 db/dao/DoubtTypeDAO.class
 db/services/WorkspaceServiceImpl.class
+fend/job/table/qctable/seq/sub/QcTableSubsurface$2.class
 fend/job/job1/JobType1Model$2.class
