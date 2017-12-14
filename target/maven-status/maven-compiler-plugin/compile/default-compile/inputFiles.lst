@@ -17,6 +17,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Volume.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SequenceDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Descendant.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VariableArgumentServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Sequence.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job0/JobType0Model.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeController.java
@@ -38,7 +39,6 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/watcher/LogStatusWatcher.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/QcTableServiceImpl.java
-/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/formulaField/FormulaFieldNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/QcType.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/QcMatrixView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Workflow.java
@@ -69,6 +69,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodePropertyValueService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/NodePropertyValue.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/VariableArgument.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/DugLogManager.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/app/loading/LoadWorkspaceNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/LinkDAO.java
@@ -87,6 +88,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodeTypeService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/connections/hibernate/HibernateUtil.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobVolumeMapDAO.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/VariableArgumentDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/UserDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VolumeServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/WorkspaceServiceImpl.java
@@ -125,10 +127,12 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodePropertyService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/DescendantDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/anchor/AnchorView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/VolumeDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Log.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/LinkDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/LinkService.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/variableArgument/VariableArgumentModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/JobDefinitionsView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/saveworkspace/SaveWorkspaceModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/LogStatusManager.java
@@ -151,6 +155,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job1/JobType1View.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/ssh/SShSettingsController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/AcquisitionServiceImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/VariableArgumentDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/core/Seq.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/formulaField/FormulaFieldController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/database/DataBaseSettingsWrapper.java
@@ -187,6 +192,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/HeaderDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/parentchildedge/ParentChildEdgeController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodeTypeDAOImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VariableArgumentService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/database/DbListController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/ssh/SShSettings.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DotServiceImpl.java
@@ -198,13 +204,13 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/volume/volume1/Volume1.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/QcTableModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/JobDefinitionsModel.java
-/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/anchor/AnchorNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/PropertyType.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/QcMatrixRowDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/LogDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/DoubtTypeDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/PropertyTypeService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodePropertyValueDAO.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/formulaField/FormulaFieldView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/NodeProperty.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/WorkspaceView.java

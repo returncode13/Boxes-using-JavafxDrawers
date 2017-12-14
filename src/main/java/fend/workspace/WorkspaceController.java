@@ -321,6 +321,7 @@ public class WorkspaceController  {
              /**
               * Setting up Links
               */
+             /*
              Set<EdgeModel> edges=model.getObservableEdges();
              Set<DotModel> dots=new HashSet<>();
              Set<Link> dbLinks=new HashSet<>();
@@ -331,27 +332,27 @@ public class WorkspaceController  {
                  dots.add(dot);
                  Long currentDotId=dot.getId();
                  Dot dbDot;
-                 if(currentDotId==null){
-                     dbDot=new Dot();
-                     dbDot.setWorkspace(dbWorkspace);
-                     dbDot.setStatus(dot.getStatus().get());
+                 /*if(currentDotId==null){
+                 dbDot=new Dot();
+                 dbDot.setWorkspace(dbWorkspace);
+                 dbDot.setStatus(dot.getStatus().get());
+                 
+                 dotService.createDot(dbDot);
+                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..creating dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" status: "+dbDot.getStatus() );
+                 dot.setId(dbDot.getId());
+                 }else{*/
                      
-                     dotService.createDot(dbDot);
-                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..creating dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" status: "+dbDot.getStatus() );
-                     dot.setId(dbDot.getId());
-                 }else{
-                     
-                     dbDot=dotService.getDot(currentDotId);
+                  /*   dbDot=dotService.getDot(currentDotId);
                      
                      System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..fetched dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" initial status: "+dbDot.getStatus() );
                      dbDot.setStatus(dot.getStatus().get());
                      System.out.println("fend.workspace.WorkspaceController.saveWorkspace()..fetched dot with id: "+dbDot.getId()+ " currentId: "+currentDotId+" final status: "+dbDot.getStatus() );
-                 }
+                // }
                  
                  Set<LinkModel> linksSharingThisDot=dot.getLinks();
                  /*  Set<Link> dbLinksForDbDot=new HashSet<>();*/
                  
-                 for(LinkModel lm:linksSharingThisDot){
+              /*   for(LinkModel lm:linksSharingThisDot){
                      Link dbLink=new Link();
                      Job child=jobService.getJob(lm.getChild().getId());
                      Job parent=jobService.getJob(lm.getParent().getId());
@@ -389,7 +390,7 @@ public class WorkspaceController  {
                  dotService.updateDot(d.getId(),d);
              }   //create only attached ones.
               
-             
+             */
              
              
              
@@ -517,7 +518,7 @@ public class WorkspaceController  {
          List<DotModel> frontEndDotModels=new ArrayList<>();
          
          for(Dot dot:dots){
-             DotModel fedot=new DotModel();
+             DotModel fedot=new DotModel(model);
              Set<Link> links=dot.getLinks();
              System.out.println("fend.workspace.WorkspaceController.loadSession(): number of links sharing  dot: "+dot.getId()+" in state "+dot.getStatus()+" links.size(): "+links.size());
              fedot.setStatus(dot.getStatus());

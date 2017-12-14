@@ -23,7 +23,7 @@ import javafx.scene.shape.Circle;
 public class AnchorController {
     AnchorPane interactivePane;
     AnchorModel model;
-    AnchorNode node;
+    AnchorView node;
     final Delta dragDelta=new Delta();
     @FXML
     private Circle anchor;
@@ -59,7 +59,7 @@ public class AnchorController {
         return this.model;
     }
 
-    void setView(AnchorNode nd,AnchorPane interactivePane) {
+    void setView(AnchorView nd,AnchorPane interactivePane) {
         node=nd;
         node.setRadius(10.0);
         node.setCenterX(10.0);

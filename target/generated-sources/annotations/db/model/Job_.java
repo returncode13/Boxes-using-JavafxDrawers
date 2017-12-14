@@ -13,6 +13,7 @@ public abstract class Job_ {
 	public static volatile SingularAttribute<Job, Workspace> workspace;
 	public static volatile SetAttribute<Job, Ancestor> currentJobInAncestor;
 	public static volatile SetAttribute<Job, Link> linksWithJobAsChild;
+	public static volatile SetAttribute<Job, VariableArgument> variableArguments;
 	public static volatile SingularAttribute<Job, NodeType> nodetype;
 	public static volatile SingularAttribute<Job, String> nameJobStep;
 	public static volatile SetAttribute<Job, Volume> volumes;

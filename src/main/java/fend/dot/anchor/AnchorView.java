@@ -21,7 +21,7 @@ import javafx.scene.shape.Circle;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AnchorNode extends Circle{
+public class AnchorView extends Circle{
    private  AnchorModel model;
     private AnchorController  controller;
     private  AnchorPane interactivePane;
@@ -31,8 +31,9 @@ public class AnchorNode extends Circle{
    
     
     
-    public AnchorNode(AnchorModel item,AnchorPane interactivePane){
-        this.location=getClass().getClassLoader().getResource("fxml/anchor.fxml"); 
+    public AnchorView(AnchorModel item,AnchorPane interactivePane){
+        model=item;
+        this.location=getClass().getClassLoader().getResource("fxml/dot/anchor/anchor.fxml"); 
        this.interactivePane=interactivePane;
           
            fXMLLoader=new FXMLLoader();
@@ -51,7 +52,7 @@ public class AnchorNode extends Circle{
                 //setId((new UID()).toString());
                 
                 
-                controller.setModel(item);
+                controller.setModel(model);
                 controller.setView(this,this.interactivePane) ;
                
                 

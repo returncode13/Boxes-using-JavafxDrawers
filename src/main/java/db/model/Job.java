@@ -102,7 +102,8 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "child",fetch=FetchType.EAGER)
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
-    
+    @OneToMany(mappedBy = "argument",fetch = FetchType.EAGER)
+    private Set<VariableArgument> variableArguments;
     
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
@@ -317,6 +318,19 @@ public class Job implements Serializable{
         this.subsurfaces = subsurfaces;
     }
 
+    public Set<VariableArgument> getVariableArguments() {
+        return variableArguments;
+    }
+
+    public void setVariableArguments(Set<VariableArgument> variableArguments) {
+        this.variableArguments = variableArguments;
+    }
+    
+    
+    
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 5;

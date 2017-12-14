@@ -34,7 +34,7 @@ public class ParentChildEdgeModel implements EdgeModel {
 
     public DotModel getDotModel() {
         if(dotModel==null){
-            dotModel=new DotModel();
+            dotModel=new DotModel(this.parentJob.getWorkspaceModel());
           //  dotModel.addToParents(parentJob);
         }
         return dotModel;

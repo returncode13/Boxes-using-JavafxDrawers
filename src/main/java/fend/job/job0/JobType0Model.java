@@ -14,6 +14,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import fend.volume.volume0.Volume0;
+import fend.workspace.WorkspaceModel;
 import java.util.List;
 import middleware.sequences.SequenceHeaders;
 
@@ -59,5 +60,7 @@ public interface JobType0Model {
 
     @Override
     public int hashCode();
+
+    public WorkspaceModel getWorkspaceModel();
     
 }

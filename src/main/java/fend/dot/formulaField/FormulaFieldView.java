@@ -15,16 +15,16 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class FormulaFieldNode extends AnchorPane{
+public class FormulaFieldView extends AnchorPane{
     private FXMLLoader fXMLLoader;
     private final URL location;
     private FormulaFieldController formulaFieldController;
     
-    public FormulaFieldNode(FormulaFieldModel lsm)
+    public FormulaFieldView(FormulaFieldModel lsm)
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/formulafield.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/dot/formulafield/formulafield.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

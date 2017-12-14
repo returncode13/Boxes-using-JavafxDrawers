@@ -6,7 +6,7 @@
 package fend.edge.dotjobedge;
 
 import fend.dot.anchor.AnchorModel;
-import fend.dot.anchor.AnchorNode;
+import fend.dot.anchor.AnchorView;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.edge.edge.EdgeController;
@@ -34,7 +34,7 @@ public class DotJobEdgeController implements EdgeController {
     private DotModel dotmodel;
     private DotView dotnode;
     private AnchorModel anchorModel;
-    private AnchorNode anchor;
+    private AnchorView anchor;
     private AnchorPane interactivePane;
     
     final Delta dragDelta=new Delta(); 
@@ -73,7 +73,7 @@ public class DotJobEdgeController implements EdgeController {
                 
      
         
-        anchor=new AnchorNode(anchorModel,this.interactivePane);
+        anchor=new AnchorView(anchorModel,this.interactivePane);
 //        dotnode=new DotView(dotmodel);
         this.interactivePane=interactivePane;
         dotnode=commonDot;

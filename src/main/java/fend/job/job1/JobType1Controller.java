@@ -6,7 +6,7 @@
 package fend.job.job1;
 
 
-import fend.dot.anchor.AnchorNode;
+import fend.dot.anchor.AnchorView;
 import fend.job.definitions.JobDefinitionsModel;
 import fend.job.definitions.JobDefinitionsView;
 import com.jfoenix.controls.JFXButton;
@@ -167,7 +167,7 @@ public class JobType1Controller implements JobType0Controller{
              
              
              System.out.println("job.job1.JobType1Controller.setView(): MouseDrag Released");
-              AnchorNode droppedAnchor=(AnchorNode) e.getGestureSource();
+              AnchorView droppedAnchor=(AnchorView) e.getGestureSource();
              
               if(droppedAnchor.getParent() instanceof ParentChildEdgeView){
                   System.out.println("job.job1.JobType1Controller.setView(): Instance of ParentChildEdgeView");
@@ -203,8 +203,9 @@ public class JobType1Controller implements JobType0Controller{
                     DotModel dotmodel=parentChildEdgeModel.getDotModel();
                     /*dotmodel.addToParents(parent);
                     dotmodel.addToChildren(model);*/
-                    dotmodel.createLink(parent, model);
                     DotView dotnode=new DotView(dotmodel, JobType1Controller.this.interactivePane);
+                    dotmodel.createLink(parent, model);
+                    
                     parentChildEdgeNode.getChildren().add(0,dotnode);
                    
 

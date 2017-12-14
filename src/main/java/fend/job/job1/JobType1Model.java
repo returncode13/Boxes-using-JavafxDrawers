@@ -554,6 +554,11 @@ public class JobType1Model implements JobType0Model {
     public void removeQcMatrixRow(QcMatrixRowModel qcmrow) {
         observableQcMatrix.remove(qcmrow);
     }
+
+    @Override
+    public WorkspaceModel getWorkspaceModel() {
+        return workspaceModel;
+    }
      
     
     
