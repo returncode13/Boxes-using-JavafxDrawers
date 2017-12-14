@@ -5,7 +5,6 @@
  */
 package db.model;
 
-import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,8 +40,7 @@ public class Link {
     private Dot dot;
     
     
-    @OneToMany(mappedBy = "link")
-    private Set<Doubt> doubts;                  //all doubts associated with this link
+  
     
     public Link() {
     }
@@ -68,13 +66,7 @@ public class Link {
         this.child = child;
     }
 
-    public Set<Doubt> getDoubts() {
-        return doubts;
-    }
-
-    public void setDoubts(Set<Doubt> doubts) {
-        this.doubts = doubts;
-    }
+  
 
     public Dot getDot() {
         return dot;
@@ -82,43 +74,6 @@ public class Link {
 
     public void setDot(Dot dot) {
         this.dot = dot;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.id);
-        hash = 29 * hash + Objects.hashCode(this.parent);
-        hash = 29 * hash + Objects.hashCode(this.child);
-        hash = 29 * hash + Objects.hashCode(this.dot);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Link other = (Link) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        if (!Objects.equals(this.parent, other.parent)) {
-            return false;
-        }
-        if (!Objects.equals(this.child, other.child)) {
-            return false;
-        }
-        if (!Objects.equals(this.dot, other.dot)) {
-            return false;
-        }
-        return true;
     }
     
     

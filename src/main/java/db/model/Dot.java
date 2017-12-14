@@ -38,6 +38,9 @@ public class Dot {
     @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
     private Set<VariableArgument> variableArguments;
     
+    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    private Set<Doubt> doubts;
+    
     @Column(name="status")
     private String status;
     
@@ -146,6 +149,15 @@ public class Dot {
         this.error = error;
     }
 
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+
+    
     
     
     

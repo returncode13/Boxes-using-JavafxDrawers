@@ -7,8 +7,13 @@ package db.services;
 
 import db.dao.LinkDAO;
 import db.dao.LinkDAOImpl;
+import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
+import db.model.Workspace;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -42,5 +47,32 @@ public class LinkServiceImpl implements LinkService {
     public void clearLinksforJob(Job job) {
         linkDAO.clearLinksforJob(job);
     }
+
+    @Override
+    public Set<Link> getLinksContainingSubsurface(Subsurface s, Workspace w) {
+          //return links which whose parent and child contain Subsurface S
+        Set<Dot> dotsInWorkspace=w.getDots();
+        Set<Link> links=new HashSet<>();
+               
+        for(Dot dot:dotsInWorkspace){
+            Set<Link> linksinDot=dot.getLinks();
+            for(Link l:linksinDot){
+                Set<Subsurface> parentSubsurfaces=l.getParent().getSubsurfaces();
+                if(!parentSubsurfaces.contains(s)){
+                    continue;
+                }else{
+                    if(l.getChild().getSubsurfaces().contains(s)){
+                        links.add(l);
+                    }
+                    System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
+                }
+            }
+        }
+        
+        return links;
+        
+    }
+    
+
     
 }

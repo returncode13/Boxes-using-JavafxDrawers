@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -48,9 +50,23 @@ public class Doubt {
     private User user;
     
         
-    @ManyToOne
+    /*  @ManyToOne
     @JoinColumn(name="link_fk")
     private Link link;                              //several doubts maybe associated to a single link.
+    */
+    
+    @ManyToOne
+    @JoinColumn(name="dot_fk")                      //several  with the same dot
+    private Dot dot;
+    
+    @ManyToOne
+    @JoinColumn(name="child_job_fk")
+    private Job childJob;
+    
+    @OneToMany(mappedBy = "doubt")
+    private Set<DoubtStatus> doubtStatuses;
+    
+    
     /*
     @ManyToOne
     @JoinColumn(name="user_fk",nullable=true)
@@ -61,27 +77,27 @@ public class Doubt {
     private Long childSessionDetailsId;
     */
     
-    @Column(name="status")
+    /*@Column(name="status")
     private String status;
     
     @Column(name="errorMessage")
     private String errorMessage;
-
+    
     public String getStatus() {
-        return status;
+    return status;
     }
-
+    
     public void setStatus(String status) {
-        this.status = status;
+    this.status = status;
     }
-
+    
     public String getErrorMessage() {
-        return errorMessage;
+    return errorMessage;
     }
-
+    
     public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+    this.errorMessage = errorMessage;
+    }*/
 
     /*public Long getChildSessionDetailsId() {
     return childSessionDetailsId;
@@ -151,12 +167,36 @@ public class Doubt {
         this.user = user;
     }
 
-    public Link getLink() {
-        return link;
+    /*  public Link getLink() {
+    return link;
+    }
+    
+    public void setLink(Link link) {
+    this.link = link;
+    }*/
+
+    public Dot getDot() {
+        return dot;
     }
 
-    public void setLink(Link link) {
-        this.link = link;
+    public void setDot(Dot dot) {
+        this.dot = dot;
+    }
+
+    public Job getChildJob() {
+        return childJob;
+    }
+
+    public void setChildJob(Job childJob) {
+        this.childJob = childJob;
+    }
+
+    public Set<DoubtStatus> getDoubtStatuses() {
+        return doubtStatuses;
+    }
+
+    public void setDoubtStatuses(Set<DoubtStatus> doubtStatuses) {
+        this.doubtStatuses = doubtStatuses;
     }
     
     

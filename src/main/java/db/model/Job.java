@@ -109,6 +109,10 @@ public class Job implements Serializable{
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
     private Set<Subsurface> subsurfaces;
      
+    
+    @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
+    private Set<Doubt> doubts;
+    
     /*public Job(String nameJobStep, Boolean alert,String insightVersion,Long type) {
     this.nameJobStep = nameJobStep;
     this.alert = alert;
@@ -325,6 +329,16 @@ public class Job implements Serializable{
     public void setVariableArguments(Set<VariableArgument> variableArguments) {
         this.variableArguments = variableArguments;
     }
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+    
+    
     
     
     

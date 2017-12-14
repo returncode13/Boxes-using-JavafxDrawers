@@ -46,13 +46,17 @@ public class DoubtDAOImpl implements DoubtDAO{
             transaction=session.beginTransaction();
             Doubt ll=(Doubt) session.get(Doubt.class,dsid);
             ll.setDoubtType(newds.getDoubtType());
-            ll.setErrorMessage(newds.getErrorMessage());
+            //ll.setErrorMessage(newds.getErrorMessage());
             //ll.setHeaders(newds.getHeaders());
             //ll.setParentSessionDetails(newds.getParentSessionDetails());
+            //ll.setSubsurface(newds.getSubsurface());
+            //ll.setLink(newds.getLink());
+            //ll.setStatus(newds.getStatus());
+            ll.setChildJob(newds.getChildJob());
+            ll.setDot(newds.getDot());
             ll.setSubsurface(newds.getSubsurface());
-            ll.setLink(newds.getLink());
-            ll.setStatus(newds.getStatus());
             ll.setUser(newds.getUser());
+            ll.setDoubtStatuses(newds.getDoubtStatuses());
             session.update(ll);
             
             

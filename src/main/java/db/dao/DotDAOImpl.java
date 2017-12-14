@@ -63,6 +63,7 @@ public class DotDAOImpl implements DotDAO{
              l.setFormula(newDot.getFormula());
              l.setTolerance(newDot.getTolerance());
              l.setError(newDot.getError());
+             l.setDoubts(newDot.getDoubts());
              
             session.update(l);
             

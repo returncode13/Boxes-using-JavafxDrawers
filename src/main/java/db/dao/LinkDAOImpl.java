@@ -6,10 +6,18 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
+import db.model.Workspace;
+import db.services.WorkspaceService;
+import db.services.WorkspaceServiceImpl;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -77,7 +85,7 @@ public class LinkDAOImpl implements LinkDAO{
              l.setChild(newLink.getChild());
              l.setParent(newLink.getParent());
              l.setDot(newLink.getDot());
-             l.setDoubts(newLink.getDoubts());
+         
              
             session.update(l);
             
@@ -123,5 +131,6 @@ public class LinkDAOImpl implements LinkDAO{
             session.close();
         }
     }
-    
+
+   
 }

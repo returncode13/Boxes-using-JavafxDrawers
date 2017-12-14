@@ -35,7 +35,7 @@ public class User {
     private Set<QcTable> qctables;
 
     @OneToMany(mappedBy = "user")
-    private Set<Doubt> doubts;
+    private Set<DoubtStatus> doubtStatuses;
     
     public Long getId() {
         return id;
@@ -57,13 +57,15 @@ public class User {
         this.qctables = qctables;
     }
 
-    public Set<Doubt> getDoubts() {
-        return doubts;
+    public Set<DoubtStatus> getDoubtStatuses() {
+        return doubtStatuses;
     }
 
-    public void setDoubts(Set<Doubt> doubts) {
-        this.doubts = doubts;
+    public void setDoubtStatuses(Set<DoubtStatus> doubtStatuses) {
+        this.doubtStatuses = doubtStatuses;
     }
+
+    
     
     
     

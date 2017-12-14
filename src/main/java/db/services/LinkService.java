@@ -7,6 +7,9 @@ package db.services;
 
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
+import db.model.Workspace;
+import java.util.Set;
 
 /**
  *
@@ -18,5 +21,5 @@ public interface LinkService {
     public void deleteLink(Long id);
     public void updateLink(Long id,Link newLink);
     public void clearLinksforJob(Job job);      //clear links where either child=job or parent=job
-    
+    public Set<Link> getLinksContainingSubsurface(Subsurface s,Workspace w); //return links where s belongs to both parent.getSub() AND child.getSub(); in workspace w
 }
