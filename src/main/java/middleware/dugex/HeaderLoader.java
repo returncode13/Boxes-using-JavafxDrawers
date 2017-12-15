@@ -55,6 +55,7 @@ public class HeaderLoader {
             //headerService.getMultipleInstances(dbjob, h.getSubsurface());
             System.out.println("Seq: "+h.getSubsurface().getSequence().getSequenceno()+" sub: "+h.getSubsurface().getSubsurface()+" id:  "+h.getSubsurface().getId()+" duplicate: "+h.getMultipleInstances()+" chosen: "+h.getChosen() +"  Volume: "+h.getVolume().getNameVolume());
             SubsurfaceHeaders sub=new SubsurfaceHeaders(feVolMap.get(h.getVolume().getId()));
+                sub.setId(h.getId());
                 sub.setSubsurface(h.getSubsurface());
                 sub.setSubsurfaceName(h.getSubsurface().getSubsurface());
                 sub.setTimeStamp(h.getTimeStamp());
@@ -84,6 +85,8 @@ public class HeaderLoader {
                 sub.setInsight(h.getInsightVersion());
                 sub.setWorkflow(h.getWorkflowVersion()+"");
                 sub.setUpdateTime(h.getUpdateTime());
+                sub.setChosen(h.getChosen());
+                sub.setMultiple(h.getMultipleInstances());
                 if(!lookupmap.containsKey(h.getSubsurface().getSequence())){
                     List<SubsurfaceHeaders> subMap=new ArrayList<>();
                     subMap.add(sub);

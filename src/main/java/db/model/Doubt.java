@@ -5,9 +5,11 @@
  */
 package db.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -63,7 +65,7 @@ public class Doubt {
     @JoinColumn(name="child_job_fk")
     private Job childJob;
     
-    @OneToMany(mappedBy = "doubt")
+    @OneToMany(mappedBy = "doubt",fetch = FetchType.EAGER)
     private Set<DoubtStatus> doubtStatuses;
     
     
@@ -200,6 +202,7 @@ public class Doubt {
     }
     
     public void addToDoubtStatuses(DoubtStatus doubtStatus) {
+        if(this.doubtStatuses==null) this.doubtStatuses=new HashSet<>();
         this.doubtStatuses.add(doubtStatus);
                 
     }

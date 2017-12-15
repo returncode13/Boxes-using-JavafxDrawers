@@ -5,15 +5,33 @@
  */
 package fend.job.table.lineTable;
 
+import com.jfoenix.controls.JFXTreeTableRow;
 import com.jfoenix.controls.JFXTreeTableView;
+import db.model.Header;
+import db.model.Job;
+import db.model.Subsurface;
+import db.services.HeaderService;
+import db.services.HeaderServiceImpl;
+import db.services.JobService;
+import db.services.JobServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import middleware.sequences.SequenceHeaders;
 import middleware.sequences.SubsurfaceHeaders;
 
@@ -22,9 +40,12 @@ import middleware.sequences.SubsurfaceHeaders;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class LineTableController extends Stage{
-    LineTableModel model;
-    LineTableView view;
-    
+    private LineTableModel model;
+    private LineTableView view;
+    private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    private JobService jobService=new JobServiceImpl();
+    private HeaderService headerService=new HeaderServiceImpl();
+            
     
      @FXML
     private JFXTreeTableView<SequenceHeaders> treetableView;
@@ -35,6 +56,57 @@ public class LineTableController extends Stage{
 
     void setView(LineTableView vw) {
         view=vw;
+        
+        treetableView.setRowFactory(ttv->{
+            ContextMenu contextMenu = new ContextMenu();
+         //ContextMenu contextMenuOverride = new ContextMenu();
+         MenuItem showLogsMenuItem=new MenuItem("Logs");
+         MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
+         MenuItem chooseThisHeader=new MenuItem("Choose This Subsurface");
+         MenuItem showOverride=new MenuItem("Override Doubt");
+         contextMenu.getItems().add(showLogsMenuItem);
+         contextMenu.getItems().add(showWorkFlowVersion); 
+         
+         JFXTreeTableRow<SequenceHeaders> row=new JFXTreeTableRow<SequenceHeaders>(){
+             @Override
+             protected void updateItem(SequenceHeaders item,boolean empty){
+                 super.updateItem(item,empty);
+                  if(item==null || empty){
+                    setText(null);
+                    setStyle("");
+                    setContextMenu(null);
+                }if(item!=null&& !item.getChosen()){
+                    ContextMenu cm=new ContextMenu();
+                    cm.getItems().add(showLogsMenuItem);
+                    cm.getItems().add(showWorkFlowVersion);
+                    cm.getItems().add(chooseThisHeader);
+                    setContextMenu(cm);
+                }else if(item!=null && item.getChosen()){
+                    /*if(contextMenu.getItems().contains(chooseThisHeader)){
+                    contextMenu.getItems().remove(chooseThisHeader);
+                    }*/
+                    setContextMenu(contextMenu);
+                }
+                
+             }
+         };
+         
+         chooseThisHeader.setOnAction(evt->{
+             Long id=row.getItem().getId();
+             /*Subsurface s=row.getItem().getSubsurface();
+             Long jobId=model.getJob().getId();
+             Job job=jobService.getJob(jobId);
+             Subsurface sub=subsurfaceService.getSubsurface(id);*/
+             Header h=headerService.getHeader(id);
+             h.setChosen(true);
+             headerService.updateHeader(h.getId(), h);
+             
+         });
+         
+         
+         return row;
+        });
+        
         
         
         TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
@@ -66,8 +138,20 @@ public class LineTableController extends Stage{
         TreeTableColumn<SequenceHeaders,Boolean>  chosen=new TreeTableColumn<>("chosen");
         
         
-        sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
-        subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
+        //sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
+        sequenceNumber.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, Long>, ObservableValue<Long>>() {
+            @Override
+            public ObservableValue<Long> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, Long> param) {
+                return new SimpleLongProperty(param.getValue().getValue().getSequence().getSequenceno()).asObject();
+            }
+        });
+        //subsurfaceName.setCellValueFactory(new TreeItemPropertyValueFactory<>("subsurface"));
+        subsurfaceName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, String> param) {
+                return new SimpleStringProperty(param.getValue().getValue().getSubsurfaceName());
+            }
+        });
         timeStamp.setCellValueFactory(new TreeItemPropertyValueFactory<>("timeStamp"));
         tracecount.setCellValueFactory(new TreeItemPropertyValueFactory<>("traceCount"));
         inlineMax.setCellValueFactory(new TreeItemPropertyValueFactory<>("inlineMax"));
@@ -95,27 +179,27 @@ public class LineTableController extends Stage{
         chosen.setCellValueFactory(new TreeItemPropertyValueFactory<>("chosen"));
         
         
-        /*multiple.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
-        TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
-        
-        @Override
-        protected void updateItem(Boolean item, boolean empty){
-        super.updateItem(item, empty);
-        TreeTableRow<SequenceHeaders> seqTreeRow=getTreeTableRow();
-        if(item==null || empty ){
-        setText(null);
-        seqTreeRow.setStyle("");
-        setStyle("");
-        }else{
-        seqTreeRow.setStyle(item ? "-fx-background-color:orange":"");
-        setText(item.toString());
-        setStyle(item? "-fx-background-color:red":"");
-        }
-        }
-        };
+        multiple.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
+                TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
+
+                @Override
+                protected void updateItem(Boolean item, boolean empty){
+                super.updateItem(item, empty);
+                TreeTableRow<SequenceHeaders> seqTreeRow=getTreeTableRow();
+                if(item==null || empty ){
+                setText(null);
+                seqTreeRow.setStyle("");
+                setStyle("");
+                }else{
+                seqTreeRow.setStyle(item ? "-fx-background-color:orange":"");
+                setText(item.toString());
+                setStyle(item? "-fx-background-color:red":"");
+                }
+                }
+                };
         return cell;
         });
-        */
+        
         
         
         

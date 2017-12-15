@@ -33,5 +33,5 @@ public interface DoubtService {
     public List<Doubt> getDoubtListForJobInSession(Headers hd);*/
 
     // public List<Doubt> getDoubtsForLink(Link  link);    
-    public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) throws Exception;
+    public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) ;
 }

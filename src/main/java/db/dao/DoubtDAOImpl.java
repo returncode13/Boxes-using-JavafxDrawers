@@ -229,7 +229,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     }*/
 
     @Override
-    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) throws Exception{
+    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -237,7 +237,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Doubt.class);
             criteria.add(Restrictions.eq("subsurface", sub));
-            criteria.add(Restrictions.eq("job", job));
+            criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("dot", dot));
             criteria.add(Restrictions.eq("doubtType",doubtType));
            
@@ -250,7 +250,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             session.close();
         }
         if(result.size()>1){
-            throw new Exception("More than one doubt associated with Sub: "+sub.getId()+", Job: "+job.getId()+", Dot: "+dot.getId()+", Doubttype: "+doubtType.getName());
+            return null;
         }else if(result.isEmpty()){
                 return null;
                 }

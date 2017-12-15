@@ -152,6 +152,7 @@ public void run() {*/
                             Boolean cancelled=log.getCancelled();
                             Boolean success=log.getCompletedsuccessfully();
                             if()*/
+                            System.out.println("watcher.LogStatusWatcher().init<>().call(): updating logs");
                             log.setUpdateTime(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));      //stored as a string  yyyyMMddHHmmss
                             lserv.updateLogs(log.getIdLogs(), log);
                             //LogStatusWatcher.this.volselmodel.addToLogstatusMapForSeq(log.getSeqn(),);

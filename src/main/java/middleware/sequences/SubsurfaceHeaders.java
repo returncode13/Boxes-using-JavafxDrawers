@@ -5,6 +5,7 @@
  */
 package middleware.sequences;
 
+import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.Objects;
 import javafx.beans.property.LongProperty;
@@ -25,7 +26,7 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     private Volume0 volume;
     private String updateTime=new String();
     private String summaryTime=new String();
-    
+    private Long id;
     private LongProperty sequenceNumber = new SimpleLongProperty();   
     private StringProperty subsurfaceName=new SimpleStringProperty();
     private StringProperty timeStamp=new SimpleStringProperty();
@@ -58,6 +59,22 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     private SequenceHeaders sequenceHeader;
     private Subsurface subsurface;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    
+    
+    @Override
+    public Sequence getSequence(){
+        return subsurface.getSequence();
+    }
+    
     public Subsurface getSubsurface() {
         return subsurface;
     }
@@ -338,20 +355,20 @@ public class SubsurfaceHeaders extends SequenceHeaders{
         this.numberOfRuns.set(numberOfRuns);
     }
 
-    public BooleanProperty getChosen() {
-        return chosen;
+    public Boolean getChosen() {
+        return chosen.get();
     }
 
-    public void setChosen(BooleanProperty chosen) {
-        this.chosen = chosen;
+    public void setChosen(Boolean chosen) {
+        this.chosen.set(chosen);
     }
 
-    public BooleanProperty getMultiple() {
-        return multiple;
+    public Boolean getMultiple() {
+        return multiple.get();
     }
 
-    public void setMultiple(BooleanProperty multiple) {
-        this.multiple = multiple;
+    public void setMultiple(Boolean multiple) {
+        this.multiple.set(multiple);
     }
     
     

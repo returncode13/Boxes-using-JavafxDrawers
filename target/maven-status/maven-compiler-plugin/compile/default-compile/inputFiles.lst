@@ -4,6 +4,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/JobDefinitionsController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/database/DbListNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SubsurfaceService.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/DugioMetaHeader.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SequenceService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/WorkspaceService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.java
@@ -37,6 +38,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/volume/VolumeListView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/saveworkspace/SaveWorkspaceController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/DotDAOImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/doubt/DoubtTypeModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/watcher/LogStatusWatcher.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/QcTableServiceImpl.java
@@ -124,7 +126,6 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DoubtTypeServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/AncestorDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/seq/QcTableSequence.java
-/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/DugioMetaHeaders.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/AcquisitionDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobVolumeMapDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodePropertyService.java
@@ -144,11 +145,11 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/DoubtDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VolumeService.java
-/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/DugioHeaderValuesExtractor.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/volume/VolumeListController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/LinkModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/volume/VolumeListModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodeTypeDAO.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/doubt/DoubtStatusModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/QcTableDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Dot.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/HeaderLoader.java
@@ -202,6 +203,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/settings/ssh/SShSettings.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DotServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/JobServiceImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/doubt/Doubt.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/CheckBoxCell.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/app/loading/LoadWorkspaceController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobDAO.java

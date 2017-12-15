@@ -75,7 +75,7 @@ public class DoubtServiceImpl implements DoubtService{
     }*/
 
     @Override
-    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) throws Exception {
+    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
         return dsDAO.getDoubtFor(sub, job, dot, doubtType);
     }
     

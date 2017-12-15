@@ -23,7 +23,6 @@ app/properties/AppProperties.class
 db/model/NodeProperty.class
 fend/job/table/qctable/CheckBoxCell$3.class
 middleware/dugex/DugioMetaHeader.class
-middleware/dugex/FileTimeStampHolder.class
 db/services/WorkflowServiceImpl.class
 db/model/NodeType.class
 fend/volume/volume0/Volume0.class
@@ -41,6 +40,7 @@ db/dao/NodePropertyValueDAO.class
 db/dao/SequenceDAOImpl.class
 db/services/WorkspaceService.class
 fend/dot/DotController$5.class
+middleware/doubt/DoubtTypeModel.class
 fend/app/loading/LoadWorkspaceModel.class
 db/services/AncestorService.class
 fend/job/table/qctable/QcTableController$3$1.class
@@ -79,7 +79,6 @@ fend/dot/DotController.class
 fend/workspace/WorkspaceView.class
 fend/job/definitions/volume/VolumeListView.class
 db/services/VariableArgumentServiceImpl.class
-middleware/dugex/DugioMetaHeaders.class
 fend/dot/formulaField/FormulaFieldController.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class
 fend/edge/parentchildedge/ParentChildEdgeView.class
@@ -89,6 +88,7 @@ db/services/QcMatrixRowService.class
 db/model/Cart.class
 app/settings/database/DataBaseSettingsNode.class
 db/model/Doubt_.class
+fend/job/table/lineTable/LineTableController$1.class
 fend/job/job1/JobType1Model.class
 db/services/VariableArgumentService.class
 db/model/VariableArgument.class
@@ -118,6 +118,7 @@ db/dao/DoubtStatusDAO.class
 fend/dot/formulaField/FormulaFieldView.class
 db/model/DoubtType.class
 db/model/Acquisition_.class
+fend/job/table/lineTable/LineTableController$4.class
 middleware/watcher/WorkflowWatcher$2.class
 db/dao/DotDAO.class
 db/dao/JobVolumeMapDAO.class
@@ -134,6 +135,7 @@ middleware/watcher/Watcher.class
 db/model/PropertyType_.class
 db/dao/DoubtDAO.class
 db/dao/LinkDAO.class
+middleware/doubt/Doubt.class
 db/services/JobVolumeMapServiceImpl.class
 db/services/QcTableService.class
 db/model/Descendant.class
@@ -141,6 +143,7 @@ db/services/NodePropertyValueServiceImpl.class
 middleware/watcher/WorkflowWatcher$1.class
 fend/job/table/qctable/seq/QcTableSequence.class
 db/model/QcTable_.class
+fend/job/table/lineTable/LineTableController$3.class
 app/connections/manager/ssh/SSHManager.class
 fend/edge/edge/EdgeController.class
 db/model/User_.class
@@ -158,12 +161,12 @@ fend/dot/LinkModel.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$1.class
 db/services/PropertyTypeService.class
 fend/dot/formulaField/FormulaFieldModel.class
-middleware/dugex/DugioHeaderValuesExtractor$2.class
 fend/job/table/qctable/seq/QcTableSequence$1.class
 db/model/Item.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class
 app/settings/database/DataBaseSettingsWrapper.class
+fend/job/table/lineTable/LineTableController$2.class
 db/dao/QcTypeDAO.class
 db/services/NodePropertyServiceImpl.class
 db/dao/UserDAO.class
@@ -173,6 +176,7 @@ db/dao/JobVolumeMapDAOImpl.class
 db/dao/LinkDAOImpl.class
 db/dao/WorkspaceDAO.class
 db/model/Log_.class
+middleware/doubt/DoubtStatusModel.class
 db/model/Workspace_.class
 app/settings/database/DbListNode.class
 fend/job/table/lineTable/LineTableModel.class
@@ -212,7 +216,6 @@ db/services/SequenceService.class
 fend/dot/formulaField/FormulaFieldModel$2.class
 fend/job/definitions/qcmatrix/QcMatrixController.class
 middleware/watcher/WorkflowHolder.class
-middleware/dugex/DugioHeaderValuesExtractor.class
 fend/app/Main.class
 db/dao/UserDAOImpl.class
 fend/job/table/qctable/QcTableController$3$2.class
@@ -230,7 +233,6 @@ db/services/AcquisitionServiceImpl.class
 fend/job/job1/JobType1View.class
 fend/job/job0/JobType0Model.class
 db/dao/VolumeDAO.class
-middleware/dugex/DugioHeaderValuesExtractor$1.class
 app/settings/database/DbListModel.class
 db/services/AcquisitionService.class
 fend/job/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel$1.class
@@ -263,7 +265,6 @@ fend/workspace/WorkspaceModel.class
 db/dao/SequenceDAO.class
 fend/dot/anchor/AnchorModel.class
 db/model/Doubt.class
-middleware/dugex/DugioHeaderValuesExtractor$3.class
 db/services/DotServiceImpl.class
 fend/dot/DotView.class
 db/model/Link.class
@@ -288,7 +289,6 @@ db/model/Job_.class
 db/model/Header_.class
 fend/dot/DotModel$1.class
 fend/job/definitions/qcmatrix/QcMatrixModel.class
-middleware/dugex/DugioHeaderValuesExtractor$4.class
 fend/dot/DotController$1.class
 db/dao/JobDAO.class
 db/dao/SubsurfaceDAOImpl.class
@@ -301,7 +301,6 @@ fend/job/table/qctable/seq/sub/QcTableSubsurface.class
 db/dao/NodePropertyValueDAOImpl.class
 app/settings/database/DataBaseSettings.class
 db/services/JobServiceImpl.class
-middleware/dugex/DugioHeaderValuesExtractor$5.class
 db/model/DoubtType_.class
 app/settings/ssh/SShSettings.class
 fend/job/definitions/qcmatrix/QcMatrixView.class
@@ -318,7 +317,6 @@ fend/job/table/qctable/CheckBoxCell$1.class
 db/services/HeaderServiceImpl.class
 db/model/DoubtStatus_.class
 db/model/Sequence.class
-middleware/dugex/LongHolder.class
 fend/job/job1/JobType1Controller$1.class
 db/dao/DoubtTypeDAO.class
 db/dao/VariableArgumentDAOImpl.class

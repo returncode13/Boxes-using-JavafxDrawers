@@ -189,9 +189,9 @@ public class WorkspaceController  {
     }
     
      @FXML
-    void getSummary(ActionEvent event) {
+    void getSummary(ActionEvent event) throws Exception {
         
-        try{
+      //  try{
             
        
         Map<String,Double> mapForVariableSetting=new HashMap<>();
@@ -220,11 +220,20 @@ public class WorkspaceController  {
                 for(VariableArgument va:variableArguments){
                     String var=va.getVariable();
                     Job arg=va.getArgument();
+                    Double tracesArg;
                     Header h=headerService.getChosenHeaderFor(arg, s);
-                    Double tracesArg=Double.valueOf(h.getTraceCount()+"");
+                    if(h==null){
+                        tracesArg=0.0;
+                    }else{
+                        tracesArg=Double.valueOf(h.getTraceCount()+"");
+                    }
+                    
                     mapForVariableSetting.put(var, tracesArg);
-                    if(!var.equals("y0"))variableSet.add(var);                              //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
-                    argumentSet.add(arg);
+                    if(!var.equals("y0")){                      //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
+                        variableSet.add(var);
+                        argumentSet.add(arg);
+                    }                            
+                    
                 }
                 System.out.println("fend.workspace.WorkspaceController.getSummary(): Sub: "+s.getSubsurface()+" linkParent: "+l.getParent().getNameJobStep()+" linkChild: "+l.getChild().getNameJobStep());
                 System.out.println("fend.workspace.WorkspaceController.getSummary(): function: "+function);
@@ -240,9 +249,10 @@ public class WorkspaceController  {
                             .build()
                             .setVariables(mapForVariableSetting);
                 Double result=e.evaluate();
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): result = "+result);
+               
                 Double y=mapForVariableSetting.get("y0");
                 Double evaluated=Math.abs(y-result)/y;
+                 System.out.println("fend.workspace.WorkspaceController.getSummary(): result = "+result+" evaluated difference/y = "+evaluated);
                 if(evaluated<=tolerance){
                     System.out.println("fend.workspace.WorkspaceController.getSummary(): no doubt");
                 }else if(evaluated<=error && evaluated>tolerance){
@@ -252,7 +262,8 @@ public class WorkspaceController  {
                     Doubt doubt;
                     
                     if(dotState.equals(DotModel.JOIN)){
-                        if((doubt=doubtService.getDoubtFor(s, l.getChild(), dot, doubtTypeTraces))==null){
+                        if((doubtService.getDoubtFor(s, l.getChild(), dot, doubtTypeTraces))==null){
+                            System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt entry for "+s.getSubsurface()+" job: "+l.getChild().getId()+" : "+l.getChild().getNameJobStep());
                             doubt=new Doubt();
                             doubt.setChildJob(l.getChild());
                             doubt.setSubsurface(s);
@@ -273,6 +284,7 @@ public class WorkspaceController  {
                             doubtService.updateDoubt(doubt.getId(), doubt);
                             
                         }else{
+                            doubt=doubtService.getDoubtFor(s, l.getChild(), dot, doubtTypeTraces);
                             Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
                             for(DoubtStatus ds:doubtStatuses){
                                 System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: "+doubt.getId()+" "+ds.getStatus()+" comment: "+ds.getComment()+" time: "+ds.getTimeStamp());
@@ -280,7 +292,8 @@ public class WorkspaceController  {
                         }
                     }else{
                         for(Job child:argumentSet){                     //In states SPLIT and NJS , the argument set comprises of only children. since P=f(C1,C2,..Cn);
-                            if((doubt=doubtService.getDoubtFor(s, child, dot, doubtTypeTraces))==null){
+                            if((doubtService.getDoubtFor(s, child, dot, doubtTypeTraces))==null){
+                                System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt entry for "+s.getSubsurface()+" job: "+child.getId()+" : "+child.getNameJobStep());
                             doubt=new Doubt();
                             doubt.setChildJob(child);
                             doubt.setSubsurface(s);
@@ -299,9 +312,10 @@ public class WorkspaceController  {
                             doubt.addToDoubtStatuses(doubtStatus);
                             doubtService.updateDoubt(doubt.getId(), doubt);
                         }else{
+                                doubt=doubtService.getDoubtFor(s, child, dot, doubtTypeTraces);
                                 Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
                             for(DoubtStatus ds:doubtStatuses){
-                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: "+doubt.getId()+" "+ds.getStatus()+" comment: "+ds.getComment()+" time: "+ds.getTimeStamp());
+                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: "+doubt.getId()+" "+ds.getStatus()+" comment: "+ds.getComment()+" time: "+ds.getTimeStamp());
                             }
                                 
                             }
@@ -316,10 +330,10 @@ public class WorkspaceController  {
         }
         
         
-        
-         }catch(Exception e){
-             System.out.println("fend.workspace.WorkspaceController.getSummary(): "+e.getLocalizedMessage());
-         }
+        /*
+        }catch(Exception e){
+        System.out.println("fend.workspace.WorkspaceController.getSummary(): Exception "+e.getLocalizedMessage());
+        }*/
 
     }
      

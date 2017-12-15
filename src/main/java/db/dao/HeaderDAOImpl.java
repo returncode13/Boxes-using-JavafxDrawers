@@ -98,6 +98,7 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setTextfilepath(newH.getTextfilepath());
             h.setMultipleInstances(newH.getModified());
             h.setChosen(newH.getChosen());
+            h.setLogs(newH.getLogs());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
@@ -498,6 +499,8 @@ public class HeaderDAOImpl implements HeaderDAO{
                 if(result.size()>1){
                     System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): result.size() for job "+job.getId()+" sub: "+sub.getId()+ " result.size(): "+result.size());
                 for(Header h:result){
+                    transaction=null;
+                    
                     System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getId() +" subsurface ID: "+h.getSubsurface().getId()+" job: "+h.getJob().getId());
                     h.setMultipleInstances(true);
                     h.setChosen(false);
@@ -549,7 +552,7 @@ public class HeaderDAOImpl implements HeaderDAO{
                 return null;
             }
             else if(result.size()>1){
-                throw new Exception("More than one chosen header found!!");
+                throw new Exception("More than one chosen header found!!. Please choose a single header for "+job.getNameJobStep()+" : sub: "+sub.getSubsurface());
             }
             else if(result.size()==1)
             {

@@ -7,6 +7,7 @@ package middleware.sequences;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.Sequence;
+import db.model.Subsurface;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,7 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private StringProperty workflow=new SimpleStringProperty();
     private LongProperty numberOfRuns=new SimpleLongProperty();*/
     
+    private Long id;
     private Long sequenceNumber=0L;
     private String subsurfaceName=new String();
     private String timeStamp=new String();
@@ -77,12 +79,24 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private String insight=new String();
     private String workflow=new String();
     private Long numberOfRuns=0L;
-    
+    private Boolean chosen=true;
+    private Boolean multiple=false;
     
     
     
     private Sequence sequence;
+    private Subsurface subsurface;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    
+    
     public Sequence getSequence() {
         return sequence;
     }
@@ -130,9 +144,25 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
                      workflow="Multiple";
                  }
              }
+            traceCount+=sub.getTraceCount();
+            inlineMax=Math.max(inlineMax, sub.getInlineMax());
+            inlineMin=Math.min(inlineMin, sub.getInlineMin());
+            inlineInc=Math.min(inlineInc, sub.getInlineInc());
+            xlineMax=Math.max(xlineMax, sub.getXlineMax());
+            xlineMin=Math.min(xlineMin,sub.getXlineMin());
+            dugShotMax=Math.max(dugShotMax, sub.getDugShotMax());
+            dugShotMin=Math.min(dugShotMin,sub.getDugShotMin());
+            dugShotInc=Math.max(dugShotInc, sub.getDugChannelInc());
+            dugChannelMax=Math.max(dugChannelMax,sub.getDugChannelMax());
+            dugChannelMin=Math.min(dugChannelMin, sub.getDugChannelMin());
+            offsetMax=Math.max(offsetMax,sub.getOffsetMax());
+            offsetMin=Math.min(offsetMin, sub.getOffsetMin());
+            cmpMax=Math.max(cmpMax,sub.getCmpMax());
+            cmpMin=Math.min(cmpMin,sub.getCmpMin());
+            cmpInc=Math.max(cmpInc,sub.getCmpInc());
+            numberOfRuns=Math.max(numberOfRuns, sub.getNumberOfRuns());
             
-            
-            sum(traceCount,sub.getTraceCount());
+            /*sum(traceCount,sub.getTraceCount());
             max(inlineMax,sub.getInlineMax());
             min(inlineMin,sub.getInlineMin());
             max(inlineInc,sub.getInlineInc());
@@ -151,7 +181,7 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
             max(cmpMax,sub.getCmpMax());
             min(cmpMin,sub.getCmpMin());
             max(cmpInc,sub.getCmpInc());
-            max(numberOfRuns,sub.getNumberOfRuns());
+            max(numberOfRuns,sub.getNumberOfRuns());*/
            
            
             count++;
@@ -272,6 +302,18 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
 
     public Long getNumberOfRuns() {
         return numberOfRuns;
+    }
+
+    public Boolean getChosen() {
+        return chosen;
+    }
+
+    public Boolean getMultiple() {
+        return multiple;
+    }
+
+    public Subsurface getSubsurface() {
+        return subsurface;
     }
     
     

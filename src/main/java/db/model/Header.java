@@ -42,7 +42,7 @@ public class Header implements Serializable{
     
     
     
-    @OneToMany(mappedBy = "header",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "header")
     private Set<Log> logs;
     
     /*@OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
