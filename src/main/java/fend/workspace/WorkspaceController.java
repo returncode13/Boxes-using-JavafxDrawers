@@ -18,6 +18,7 @@ import db.model.Job;
 import db.model.Link;
 import db.model.NodeType;
 import db.model.QcMatrixRow;
+import db.model.QcTable;
 import db.model.Subsurface;
 import db.model.VariableArgument;
 import db.model.Volume;
@@ -46,6 +47,8 @@ import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
@@ -140,6 +143,7 @@ public class WorkspaceController  {
     private DoubtService doubtService=new DoubtServiceImpl();
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
+    private QcTableService qcTableService=new QcTableServiceImpl();
     
     private List<BooleanProperty> changePropertyList=new ArrayList<>();
     
@@ -274,7 +278,7 @@ public class WorkspaceController  {
                             
                            
                             DoubtStatus doubtStatus=new DoubtStatus();
-                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                             doubtStatus.setDoubt(doubt);
                             doubtStatus.setStatus(DoubtStatusModel.YES);
                             doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -303,7 +307,7 @@ public class WorkspaceController  {
                             doubtService.createDoubt(doubt);
                             
                             DoubtStatus doubtStatus=new DoubtStatus();
-                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                             doubtStatus.setDoubt(doubt);
                             doubtStatus.setStatus(DoubtStatusModel.YES);
                             doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -325,7 +329,105 @@ public class WorkspaceController  {
                     
                 }
                 
-                //dependency end
+                //dependency end    <--put inside a function. 
+                
+                
+                //qc start  <--put inside a function. 
+                DoubtType doubtTypeQc=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
+                Job lparent=l.getParent();
+                Job jchild =l.getChild();
+                List<QcMatrixRow> parentQcMatrix=qcMatrixRowService.getQcMatrixForJob(lparent, true);
+                Boolean passQc=true;
+                for(QcMatrixRow qcmr:parentQcMatrix){
+                    QcTable qctableentries=qcTableService.getQcTableFor(qcmr,s);
+                    Boolean qcresult=qctableentries.getResult();
+                    if(qcresult==null){
+                        qcresult=false;
+                    }
+                    passQc=passQc && qcresult;
+                    
+                }
+                if(!passQc){  //if parent has failed a single qc. Indeterminate or unchecked. create a doubt in the child
+                    Doubt doubt;
+                    if((doubt=doubtService.getDoubtFor(s, jchild, dot, doubtTypeQc))==null){
+                         doubt=new Doubt();
+                        doubt.setChildJob(jchild);
+                        doubt.setDot(dot);
+                        doubt.setSubsurface(s);
+                        doubt.setDoubtType(doubtTypeQc);
+                        //doubt.setUser(user)
+                        doubtService.createDoubt(doubt);
+                         DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(),s.getSubsurface(),doubtTypeQc.getName()));
+                            doubtStatus.setDoubt(doubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            doubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(doubt.getId(), doubt);
+                        
+                    }else{
+                       Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
+                       for(DoubtStatus d:doubtStatuses){
+                         System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: "+doubt.getId()+" "+d.getStatus()+" comment: "+d.getComment()+" time: "+d.getTimeStamp());
+                            }
+                    }
+                }
+                
+                //qc end <--put inside a function
+                
+                
+                
+                //time start
+                DoubtType doubtTypeTime=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+                Job hparent=l.getParent();
+                Job hchild=l.getChild();
+                Header hp=headerService.getChosenHeaderFor(hparent, s);
+                Header hc=headerService.getChosenHeaderFor(hchild, s);
+                Long hpt=Long.valueOf(hp.getTimeStamp());
+                Long hct=Long.valueOf(hc.getTimeStamp());
+                if(hpt >= hct){             //if parent is created after the child. creat a doubt in the child
+                    Doubt doubt;
+                   if((doubt=doubtService.getDoubtFor(s, hchild, dot, doubtTypeTime))==null){
+                       doubt=new Doubt();
+                       doubt.setChildJob(hchild);
+                       doubt.setDot(dot);
+                       doubt.setSubsurface(s);
+                       doubt.setDoubtType(doubtTypeTime);
+                       //doubt.setUser(user);
+                       doubtService.createDoubt(doubt);
+                       
+                            DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(),new String(hpt+""), hchild.getNameJobStep(), new String(hct+""), s.getSubsurface(), doubtTypeTime.getName()));
+                            doubtStatus.setDoubt(doubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            doubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(doubt.getId(), doubt);
+                       
+                   }else{
+                        Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
+                       for(DoubtStatus d:doubtStatuses){
+                         System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: "+doubt.getId()+" "+d.getStatus()+" comment: "+d.getComment()+" time: "+d.getTimeStamp());
+                            }
+                    }
+                       
+                   }
+                else{
+                    //do nothing
+                }
+                //time end <--put inside a function
+                
+                
+                
+                
+                //insight
+                
+                //insight-end <--put inside a function
+                
             }   
         }
         
