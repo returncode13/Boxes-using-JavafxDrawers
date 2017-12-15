@@ -58,7 +58,7 @@ public class DotModel {
     private StringProperty status;     //display the status of the Dot on it
     private BooleanProperty delete;     //delete this node;
     private BooleanProperty linkWasCreated;
-    private StringProperty formula=new SimpleStringProperty("");
+    private StringProperty function=new SimpleStringProperty("");
     private DoubleProperty error=new SimpleDoubleProperty(0.0);
     private DoubleProperty tolerance=new SimpleDoubleProperty(0.0);
     private VariableArgumentModel variableArgumentModel=new VariableArgumentModel();
@@ -222,12 +222,12 @@ public class DotModel {
     
     
 
-    public StringProperty getFormula() {
-        return formula;
+    public StringProperty getFunction() {
+        return function;
     }
 
     public void setFormula(String formula) {
-        this.formula.set(formula);
+        this.function.set(formula);
     }
 
     public DoubleProperty getError() {

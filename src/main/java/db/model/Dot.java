@@ -44,14 +44,14 @@ public class Dot {
     @Column(name="status")
     private String status;
     
-    @Column(name="formula")
-    private String formula;
+    @Column(name="function")
+    private String function;
     
     @Column(name="tolerance")
-    private Double tolerance;
+    private Double tolerance=0.0;
     
     @Column(name="error")
-    private Double error;
+    private Double error=0.0;
     
     public Dot() {
     }
@@ -125,12 +125,12 @@ public class Dot {
         this.variableArguments = variableArguments;
     }
 
-    public String getFormula() {
-        return formula;
+    public String getFunction() {
+        return function;
     }
 
-    public void setFormula(String formula) {
-        this.formula = formula;
+    public void setFunction(String function) {
+        this.function = function;
     }
 
     public Double getTolerance() {

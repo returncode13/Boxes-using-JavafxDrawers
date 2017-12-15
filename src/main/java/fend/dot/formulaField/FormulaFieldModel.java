@@ -26,6 +26,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -41,10 +47,10 @@ public class FormulaFieldModel {
    
    
    String info=new String();
-   String formula=new String();                         //any valid mathematical formula
-   Double rhsResult=0.0;                                //result of the formula
-   Double tolerance=0.0;                                //in %
-   Double error=0.0;                                    //in %
+   StringProperty function=new SimpleStringProperty("");                         //any valid mathematical function
+   DoubleProperty rhsResult=new SimpleDoubleProperty(0.0);                                //result of the function
+   DoubleProperty tolerance=new SimpleDoubleProperty(0.0);                               //in %
+   DoubleProperty error=new SimpleDoubleProperty(0.0);                                    //in %
    /**
     * If abs(rhsResult)< tolerance  . set doubt=none
     * if tolerance<abs(rhsResult)<error.  set doubt=warning 
@@ -64,41 +70,55 @@ public class FormulaFieldModel {
     public FormulaFieldModel(DotModel dot) {
         this.dot = dot;
         dbDot=dotService.getDot(dot.getId());
-        formula=dbDot.getFormula();
-        tolerance=dbDot.getTolerance();
-        error=dbDot.getError();
+        function.set(dbDot.getFunction());
+        tolerance.set(dbDot.getTolerance()==null?0.0:dbDot.getTolerance());
+        error.set(dbDot.getError()==null?0.0:dbDot.getError());
         dbVariableArguments=dbDot.getVariableArguments();
         variableArgumentMap.clear();
         for(VariableArgument va:dbVariableArguments){
             variableArgumentMap.put(va.getVariable(), va.getArgument());
         }
         
+        function.addListener(formulaChangeListener);
+        tolerance.addListener(toleranceChangeListener);
+        error.addListener(errorChangeListener);
+        
           
     }
 
-    public String getFormula() {
-        return formula;
+    public StringProperty getFunction() {
+        return function;
     }
 
-    public void setFormula(String formula) {
-        this.formula = formula;
+    public void setFunction(String formula) {
+        this.function.set(formula);
     }
 
-    public Double getTolerance() {
+    public DoubleProperty getRhsResult() {
+        return rhsResult;
+    }
+
+    public void setRhsResult(Double rhsResult) {
+        this.rhsResult.set(rhsResult);
+    }
+
+    public DoubleProperty getTolerance() {
         return tolerance;
     }
 
     public void setTolerance(Double tolerance) {
-        this.tolerance = tolerance;
+        this.tolerance.set(tolerance);
     }
 
-    public Double getError() {
+    public DoubleProperty getError() {
         return error;
     }
 
     public void setError(Double error) {
-        this.error = error;
+        this.error.set(error);
     }
+
+   
 
     public String getInfo(){
        return dot.getVariableArgumentModel().getInfo();
@@ -110,18 +130,46 @@ public class FormulaFieldModel {
    
     
     
-    void update() {
-        System.out.println("fend.dot.formulaField.FormulaFieldModel.update(): updating the dot");
-        dot.setFormula(formula);
-        dot.setError(error);
-        dot.setTolerance(tolerance);
-        /* dbDot.setFormula(formula);
-        dbDot.setError(error);
-        dbDot.setTolerance(tolerance);
-        dotService.updateDot(dbDot.getId(), dbDot);*/
+    /*void update() {
+    System.out.println("fend.dot.formulaField.FormulaFieldModel.update(): updating the dot");
+    
+    
+    
+    
+    }*/
+    
+    
+    
+    /**
+     * Listeners
+     **/
+    private final ChangeListener<String> formulaChangeListener=new ChangeListener<String>() {
+       @Override
+       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+           dot.setFormula(function.get());
+       }
+   };
+    
+    private final ChangeListener<Number> toleranceChangeListener=new ChangeListener<Number>() {
+       @Override
+       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+          dot.setTolerance(tolerance.get());
+         
+       }
+   };
+    
+    
+    /* private final ChangeListener<Double> errorChangeListener=new ChangeListener<Double>() {
+    @Override
+    public void changed(ObservableValue<? extends Double> observable, Double oldValue, Double newValue) {
+    dot.setError(error.get());
     }
-    
-    
-    
-    
+    };*/
+    private final ChangeListener<Number> errorChangeListener=new ChangeListener<Number>() {
+       @Override
+       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+          dot.setError(error.get());
+         
+       }
+   };
 }

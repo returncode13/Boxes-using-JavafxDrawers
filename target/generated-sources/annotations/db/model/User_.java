@@ -9,7 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(User.class)
 public abstract class User_ {
 
-	public static volatile SetAttribute<User, Doubt> doubts;
+	public static volatile SetAttribute<User, DoubtStatus> doubtStatuses;
 	public static volatile SetAttribute<User, QcTable> qctables;
 	public static volatile SingularAttribute<User, Long> id;
 	public static volatile SetAttribute<User, Workspace> workspaces;

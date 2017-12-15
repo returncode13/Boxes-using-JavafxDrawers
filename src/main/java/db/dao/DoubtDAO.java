@@ -5,11 +5,13 @@
  */
 package db.dao;
 
+import db.model.Dot;
 import db.model.Doubt;
 import db.model.DoubtType;
 import db.model.Header;
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public interface DoubtDAO {
     public List<Doubt> getDoubtListForJobInSession(Header hd);*/
     
     
-    public List<Doubt> getDoubtsForLink(Link  link);
+   // public List<Doubt> getDoubtsForLink(Link  link);
     
-    
+    public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) throws Exception;
 }

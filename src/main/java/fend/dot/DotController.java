@@ -246,6 +246,10 @@ public class DotController extends Stage{
         });
          
          model.toggleLinkWasCreated();          //force a toggle during load
+         
+         model.getFunction().addListener(functionChangeListener);
+         model.getTolerance().addListener(toleranceChangeListener);
+         model.getError().addListener(errorChangeListener);
     }
 
     
@@ -412,37 +416,39 @@ public class DotController extends Stage{
     }
    
     
-   final private ChangeListener<String> formulaChangeListener=new ChangeListener<String>() {
+   final private ChangeListener<String> functionChangeListener=new ChangeListener<String>() {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             if(model.getId()!=null){
                 dbDot=dotService.getDot(model.getId());
-                dbDot.setFormula(newValue);
+                dbDot.setFunction(newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
             }
         }
     };
    
    
-   final private ChangeListener<Double> toleranceChangeListener=new ChangeListener<Double>() {
+   final private ChangeListener<Number> toleranceChangeListener=new ChangeListener<Number>() {
         @Override
-        public void changed(ObservableValue<? extends Double> observable, Double oldValue, Double newValue) {
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
              if(model.getId()!=null){
                 dbDot=dotService.getDot(model.getId());
-                dbDot.setTolerance(newValue);
+                dbDot.setTolerance((Double) newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
             }
         }
     };
    
-   final private ChangeListener<Double> errorChangeListener=new ChangeListener<Double>() {
+   final private ChangeListener<Number> errorChangeListener=new ChangeListener<Number>() {
         @Override
-        public void changed(ObservableValue<? extends Double> observable, Double oldValue, Double newValue) {
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
              if(model.getId()!=null){
                 dbDot=dotService.getDot(model.getId());
-                dbDot.setError(newValue);
+                dbDot.setError((Double) newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
             }
         }
     };
+
+   
 }

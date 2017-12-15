@@ -5,13 +5,21 @@
  */
 package fend.workspace;
 
+import app.properties.AppProperties;
+import com.jfoenix.controls.JFXButton;
 import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
+import db.model.Doubt;
+import db.model.DoubtStatus;
+import db.model.DoubtType;
+import db.model.Header;
 import db.model.Job;
 import db.model.Link;
 import db.model.NodeType;
 import db.model.QcMatrixRow;
+import db.model.Subsurface;
+import db.model.VariableArgument;
 import db.model.Volume;
 import db.model.Workspace;
 import db.services.AncestorService;
@@ -20,6 +28,14 @@ import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
 import db.services.DotService;
 import db.services.DotServiceImpl;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
+import db.services.DoubtStatusService;
+import db.services.DoubtStatusServiceImpl;
+import db.services.DoubtTypeService;
+import db.services.DoubtTypeServiceImpl;
+import db.services.HeaderService;
+import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.JobVolumeMapService;
@@ -30,6 +46,8 @@ import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import db.services.WorkspaceService;
@@ -85,6 +103,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import jdk.internal.dynalink.linker.LinkerServices;
+import middleware.doubt.DoubtStatusModel;
+import middleware.doubt.DoubtTypeModel;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -98,6 +122,9 @@ public class WorkspaceController  {
     private WorkspaceView node;
     private Workspace dbWorkspace;
     
+    
+    private BooleanProperty loadingProperty=new SimpleBooleanProperty(false);
+    
     private WorkspaceService workspaceService=new WorkspaceServiceImpl();
     private JobService jobService=new JobServiceImpl();
     private VolumeService volumeService=new VolumeServiceImpl();
@@ -107,16 +134,21 @@ public class WorkspaceController  {
     private DescendantService descendantService=new DescendantServiceImpl();
     private LinkService linkService=new LinkServiceImpl();
     private DotService dotService = new DotServiceImpl();
-    private BooleanProperty loadingProperty=new SimpleBooleanProperty(false);
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
-    List<BooleanProperty> changePropertyList=new ArrayList<>();
+    private HeaderService headerService=new HeaderServiceImpl();
+    private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    private DoubtService doubtService=new DoubtServiceImpl();
+    private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
+    private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
+    
+    private List<BooleanProperty> changePropertyList=new ArrayList<>();
     
     @FXML
     private AnchorPane baseWindow;              //depth =0 
     
     
     @FXML
-    private SplitPane splitpane;                  //depth =1 
+    private SplitPane splitpane;                //depth =1 
 
     
     @FXML   
@@ -128,7 +160,8 @@ public class WorkspaceController  {
     private Button add;
 
    
-    
+     @FXML
+    private JFXButton summaryButton;
     
     
     @FXML
@@ -155,6 +188,142 @@ public class WorkspaceController  {
         
     }
     
+     @FXML
+    void getSummary(ActionEvent event) {
+        
+        try{
+            
+       
+        Map<String,Double> mapForVariableSetting=new HashMap<>();
+        Set<String> variableSet=new HashSet<>();
+        Set<Job> argumentSet=new HashSet<>();
+        List<Subsurface> subsurfaceList=subsurfaceService.getSubsurfaceList();
+        dbWorkspace=workspaceService.getWorkspace(dbWorkspace.getId());
+        for(Subsurface s:subsurfaceList){
+            System.out.println("fend.workspace.WorkspaceController.getSummary(): Loop for subsurface : "+s.getSubsurface());
+            Set<Link> linkNodesContainingSub=linkService.getLinksContainingSubsurface(s, dbWorkspace);                  //all links where both the parent and the child contains sub s
+            for(Link l:linkNodesContainingSub){
+                
+                
+                //dependency
+                DoubtType doubtTypeTraces=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
+                System.out.println("fend.workspace.WorkspaceController.getSummary(): inside Link : "+l.getId()+" "+l.getParent().getNameJobStep()+"--->"+l.getChild().getNameJobStep()); 
+                
+                Dot dot=l.getDot();                     //the dot to which the link belongs
+                String function=dot.getFunction();
+                Double tolerance=dot.getTolerance();
+                Double error=dot.getError();
+                Set<VariableArgument> variableArguments=dot.getVariableArguments();         //variable and the arguments belonging to the dot.
+                mapForVariableSetting.clear();
+                variableSet.clear();
+                argumentSet.clear();
+                for(VariableArgument va:variableArguments){
+                    String var=va.getVariable();
+                    Job arg=va.getArgument();
+                    Header h=headerService.getChosenHeaderFor(arg, s);
+                    Double tracesArg=Double.valueOf(h.getTraceCount()+"");
+                    mapForVariableSetting.put(var, tracesArg);
+                    if(!var.equals("y0"))variableSet.add(var);                              //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
+                    argumentSet.add(arg);
+                }
+                System.out.println("fend.workspace.WorkspaceController.getSummary(): Sub: "+s.getSubsurface()+" linkParent: "+l.getParent().getNameJobStep()+" linkChild: "+l.getChild().getNameJobStep());
+                System.out.println("fend.workspace.WorkspaceController.getSummary(): function: "+function);
+                System.out.println("fend.workspace.WorkspaceController.getSummary(): setting var-args");
+                for (Map.Entry<String, Double> entry : mapForVariableSetting.entrySet()) {
+                    String key = entry.getKey();
+                    Double value = entry.getValue();
+                    System.out.println(key+" = "+value);
+                }
+                
+                Expression e=new ExpressionBuilder(function)
+                            .variables(variableSet)
+                            .build()
+                            .setVariables(mapForVariableSetting);
+                Double result=e.evaluate();
+                System.out.println("fend.workspace.WorkspaceController.getSummary(): result = "+result);
+                Double y=mapForVariableSetting.get("y0");
+                Double evaluated=Math.abs(y-result)/y;
+                if(evaluated<=tolerance){
+                    System.out.println("fend.workspace.WorkspaceController.getSummary(): no doubt");
+                }else if(evaluated<=error && evaluated>tolerance){
+                    System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt");
+                    String dotState=dot.getStatus();
+                                 
+                    Doubt doubt;
+                    
+                    if(dotState.equals(DotModel.JOIN)){
+                        if((doubt=doubtService.getDoubtFor(s, l.getChild(), dot, doubtTypeTraces))==null){
+                            doubt=new Doubt();
+                            doubt.setChildJob(l.getChild());
+                            doubt.setSubsurface(s);
+                            doubt.setDot(dot);
+                            doubt.setDoubtType(doubtTypeTraces);
+                            //doubt.setUser(user);
+                            doubtService.createDoubt(doubt);
+                            
+                           
+                            DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                            doubtStatus.setDoubt(doubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            doubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(doubt.getId(), doubt);
+                            
+                        }else{
+                            Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
+                            for(DoubtStatus ds:doubtStatuses){
+                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: "+doubt.getId()+" "+ds.getStatus()+" comment: "+ds.getComment()+" time: "+ds.getTimeStamp());
+                            }
+                        }
+                    }else{
+                        for(Job child:argumentSet){                     //In states SPLIT and NJS , the argument set comprises of only children. since P=f(C1,C2,..Cn);
+                            if((doubt=doubtService.getDoubtFor(s, child, dot, doubtTypeTraces))==null){
+                            doubt=new Doubt();
+                            doubt.setChildJob(child);
+                            doubt.setSubsurface(s);
+                            doubt.setDot(dot);
+                            doubt.setDoubtType(doubtTypeTraces);
+                            //doubt.setUser(user);
+                            doubtService.createDoubt(doubt);
+                            
+                            DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                            doubtStatus.setDoubt(doubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            doubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(doubt.getId(), doubt);
+                        }else{
+                                Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
+                            for(DoubtStatus ds:doubtStatuses){
+                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: "+doubt.getId()+" "+ds.getStatus()+" comment: "+ds.getComment()+" time: "+ds.getTimeStamp());
+                            }
+                                
+                            }
+                        }
+                    }
+                             
+                    
+                }
+                
+                //dependency end
+            }   
+        }
+        
+        
+        
+         }catch(Exception e){
+             System.out.println("fend.workspace.WorkspaceController.getSummary(): "+e.getLocalizedMessage());
+         }
+
+    }
+     
+    
     
     
     
@@ -178,7 +347,8 @@ public class WorkspaceController  {
         node=vq;
     }
     
-     
+    
+    
    
     
     

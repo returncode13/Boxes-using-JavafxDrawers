@@ -28,7 +28,7 @@
         </rowConstraints>
          <children>
             <JFXButton fx:id="okButton" buttonType="RAISED" maxWidth="1.7976931348623157E308" onAction="#okClicked" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Ok" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-            <JFXTextField fx:id="formula" alignment="CENTER" promptText="y=f(x1,x2,..,xn)" GridPane.rowIndex="2" />
+            <JFXTextField fx:id="function" alignment="CENTER" promptText="y=f(x1,x2,..,xn)" GridPane.rowIndex="2" />
             <JFXTextArea fx:id="textArea" editable="false" />
             <JFXButton fx:id="cancel" buttonType="RAISED" layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" onAction="#cancel" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Cancel" GridPane.columnIndex="4" GridPane.rowIndex="3" />
             <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" promptText="tolerance %" GridPane.columnIndex="2" GridPane.rowIndex="2">

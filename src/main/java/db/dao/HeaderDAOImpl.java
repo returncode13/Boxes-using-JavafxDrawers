@@ -523,6 +523,43 @@ public class HeaderDAOImpl implements HeaderDAO{
             }
     }
 
+    @Override
+    public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
+         Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = null;
+            List<Header> result=null;
+            try{
+                transaction=session.beginTransaction();
+                Criteria criteria=session.createCriteria(Header.class);
+                criteria.add(Restrictions.eq("job", job));
+                criteria.add(Restrictions.eq("subsurface", sub));
+                criteria.add(Restrictions.eq("chosen", true));
+                
+                
+                result=criteria.list();
+                transaction.commit();
+                }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                session.close();
+            }
+            
+            if(result.isEmpty())
+            {
+                return null;
+            }
+            else if(result.size()>1){
+                throw new Exception("More than one chosen header found!!");
+            }
+            else if(result.size()==1)
+            {
+                return result.get(0);
+            }
+            else{
+                return null;
+            }
+    }
+
     
     
 }

@@ -11,6 +11,8 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Link;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Dot;
+import db.model.Subsurface;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -99,25 +101,25 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
 
     
-     @Override
+    /*   @Override
     public List<Doubt> getDoubtsForLink(Link link) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<Doubt> result=null;
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Doubt.class);
-            criteria.add(Restrictions.eq("link", link));
-            
-            result=criteria.list();
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        return result;
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<Doubt> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(Doubt.class);
+    criteria.add(Restrictions.eq("link", link));
+    
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
     }
+    return result;
+    }*/
     
     
     /* @Override
@@ -225,6 +227,42 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
     return result;
     }*/
+
+    @Override
+    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) throws Exception{
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("job", job));
+            criteria.add(Restrictions.eq("dot", dot));
+            criteria.add(Restrictions.eq("doubtType",doubtType));
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>1){
+            throw new Exception("More than one doubt associated with Sub: "+sub.getId()+", Job: "+job.getId()+", Dot: "+dot.getId()+", Doubttype: "+doubtType.getName());
+        }else if(result.isEmpty()){
+                return null;
+                }
+        else if (result.size()==1){
+                return  result.get(0);
+                }else{
+            return null;
+        }
+               
+        
+        
+    }
 
    
     

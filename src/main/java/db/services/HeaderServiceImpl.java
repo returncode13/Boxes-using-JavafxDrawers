@@ -113,6 +113,11 @@ public class HeaderServiceImpl implements HeaderService{
     public List<Header> getMultipleInstances(Job job, Subsurface sub) {
         return hDao.getMultipleInstances(job, sub);
     }
+
+    @Override
+    public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
+        return hDao.getChosenHeaderFor(job,sub);
+    }
     
     
 }

@@ -25,7 +25,7 @@ public class FormulaFieldController extends Stage{
     
        
     @FXML
-    private JFXTextField formula;
+    private JFXTextField function;
 
      @FXML
     private JFXTextField tolerance;
@@ -47,14 +47,14 @@ public class FormulaFieldController extends Stage{
 
     void setModel(FormulaFieldModel lsm) {
         model=lsm;
-        formula.setText(model.getFormula());
-        tolerance.setText(model.getTolerance()+"");
-        error.setText(model.getError()+"");
+        function.setText(model.getFunction().get());
+        tolerance.setText(model.getTolerance().get()+"");
+        error.setText(model.getError().get()+"");
         textArea.setText(model.getInfo());
         
-        tolerance.textProperty().addListener(toleranceListener);
+        /*tolerance.textProperty().addListener(toleranceListener);
         error.textProperty().addListener(errorListener);
-        formula.textProperty().addListener(formulaListener);
+        function.textProperty().addListener(functionListener);*/
     }
 
     void setView(FormulaFieldView nd) {
@@ -67,7 +67,11 @@ public class FormulaFieldController extends Stage{
    
     @FXML
     void okClicked(ActionEvent event) {
-        model.update();
+        model.setFunction(function.getText());
+        model.setTolerance(Double.valueOf(tolerance.getText()));
+        model.setError(Double.valueOf(error.getText()));
+        
+        close();
     }
     
     @FXML
@@ -77,32 +81,32 @@ public class FormulaFieldController extends Stage{
     /**
      * Listeners
      **/
-    private ChangeListener<String> toleranceListener=new ChangeListener<String>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            model.setTolerance(Double.valueOf(newValue));
-        }
+    /*private ChangeListener<String> functionListener=new ChangeListener<String>() {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    model.setFunction(newValue);
+    }
     };
     
-     private ChangeListener<String> errorListener=new ChangeListener<String>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            try{
-                model.setError(Double.valueOf(newValue));
-            }catch(NumberFormatException nfe){
-                model.setError(0.0);
-            }
-        }
+    private ChangeListener<String> errorListener=new ChangeListener<String>() {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    try{
+    model.setError(Double.valueOf(newValue));
+    }catch(NumberFormatException nfe){
+    model.setError(0.0);
+    }
+    }
     };
-     
-      private ChangeListener<String> formulaListener=new ChangeListener<String>() {
-        @Override
-        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            try{
-                model.setError(Double.valueOf(newValue));
-            }catch(NumberFormatException nfe){
-                model.setError(0.0);
-            }
-        }
-    };
+    
+    private ChangeListener<String> toleranceListener=new ChangeListener<String>() {
+    @Override
+    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+    try{
+    model.setError(Double.valueOf(newValue));
+    }catch(NumberFormatException nfe){
+    model.setError(0.0);
+    }
+    }
+    };*/
 }

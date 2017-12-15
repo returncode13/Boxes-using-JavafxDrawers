@@ -199,6 +199,11 @@ public class Doubt {
         this.doubtStatuses = doubtStatuses;
     }
     
+    public void addToDoubtStatuses(DoubtStatus doubtStatus) {
+        this.doubtStatuses.add(doubtStatus);
+                
+    }
+    
     
     
 }

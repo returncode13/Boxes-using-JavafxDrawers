@@ -9,6 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Job.class)
 public abstract class Job_ {
 
+	public static volatile SetAttribute<Job, Doubt> doubts;
 	public static volatile SetAttribute<Job, Header> headers;
 	public static volatile SingularAttribute<Job, Workspace> workspace;
 	public static volatile SetAttribute<Job, Ancestor> currentJobInAncestor;
