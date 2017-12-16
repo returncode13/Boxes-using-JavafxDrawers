@@ -15,6 +15,7 @@ import db.model.Link;
 import db.model.Subsurface;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -34,4 +35,6 @@ public interface DoubtService {
 
     // public List<Doubt> getDoubtsForLink(Link  link);    
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) ;
+
+    public List<Doubt> getDoubtFor(Subsurface s, Job jchild, Dot dot);
 }

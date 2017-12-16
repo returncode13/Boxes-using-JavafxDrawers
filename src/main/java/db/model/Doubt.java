@@ -65,9 +65,19 @@ public class Doubt {
     @JoinColumn(name="child_job_fk")
     private Job childJob;
     
+    @ManyToOne
+    @JoinColumn(name="seq_fk")
+    private Sequence sequence;
+    
     @OneToMany(mappedBy = "doubt",fetch = FetchType.EAGER)
     private Set<DoubtStatus> doubtStatuses;
     
+    @ManyToOne
+    @JoinColumn(name = "doubt_cause_id")
+    private Doubt doubtCause;
+    
+    @OneToMany(mappedBy = "doubtCause",fetch=FetchType.EAGER)
+    private Set<Doubt> inheritedDoubts=new HashSet<>();
     
     /*
     @ManyToOne
@@ -206,6 +216,37 @@ public class Doubt {
         this.doubtStatuses.add(doubtStatus);
                 
     }
+
+    public Doubt getDoubtCause() {
+        return doubtCause;
+    }
+
+    public void setDoubtCause(Doubt doubtCause) {
+        this.doubtCause = doubtCause;
+    }
+
+    public Set<Doubt> getInheritedDoubts() {
+        return inheritedDoubts;
+    }
+
+    public void setInheritedDoubts(Set<Doubt> inheritedDoubts) {
+        this.inheritedDoubts = inheritedDoubts;
+    }
+
+    public void addToInheritedDoubts(Doubt inheritedDoubt) {
+        this.inheritedDoubts.add(inheritedDoubt);
+    }
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
+
+    
+    
     
     
     

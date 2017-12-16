@@ -43,4 +43,22 @@ public class DoubtStatusModel {
         
         return message;
     } 
+
+    public static String getNewDoubtInsightMessage(String parentnameJobStep, String sub,String insightVersionsInParentJob, String insightVersionInParentHeader, String childnameJobStep0,String doubttype) {
+        String message=new String();
+         if(doubttype.equals(DoubtTypeModel.INSIGHT)){
+            message=doubttype+": line: "+sub+" was run with Insight Version "+insightVersionInParentHeader+" which was not amongst the list of Insight versions declared for the job: "+parentnameJobStep+" \ninsight Versions: "+insightVersionsInParentJob;
+        }
+        
+        return message;
+    }
+
+    public static String getNewDoubtInheritanceMessage(String parent, String subsurface, String child, String doubttype) {
+        String message=new String();
+         if(doubttype.equals(DoubtTypeModel.INHERIT)){
+            message=doubttype+": line: "+subsurface+" in job "+child+" has inherited doubt(s) from its parent "+parent;
+        }
+        
+        return message;
+    }
 }

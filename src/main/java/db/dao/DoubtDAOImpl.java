@@ -14,6 +14,7 @@ import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.Subsurface;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -59,6 +60,8 @@ public class DoubtDAOImpl implements DoubtDAO{
             ll.setSubsurface(newds.getSubsurface());
             ll.setUser(newds.getUser());
             ll.setDoubtStatuses(newds.getDoubtStatuses());
+            ll.setInheritedDoubts(newds.getInheritedDoubts());
+            ll.setDoubtCause(newds.getDoubtCause());
             session.update(ll);
             
             
@@ -262,6 +265,35 @@ public class DoubtDAOImpl implements DoubtDAO{
                
         
         
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("childJob", job));
+            criteria.add(Restrictions.eq("dot", dot));
+           
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>=1){
+            return result;
+        }else {
+            return null;
+        
+        }
     }
 
    

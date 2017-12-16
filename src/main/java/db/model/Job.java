@@ -53,6 +53,8 @@ public class Job implements Serializable{
     /*@Column(name = "type",nullable=false)
     private Long type;*/
     
+    @Column(name="depth",nullable=false)
+    private Long depth;
    
     
     @ManyToOne
@@ -108,7 +110,15 @@ public class Job implements Serializable{
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
     private Set<Subsurface> subsurfaces;
+    
+     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
+    private Set<Sequence> sequences;
      
+    
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    private Set<Summary> summaries;
+    
     
     @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
     private Set<Doubt> doubts;
@@ -337,6 +347,30 @@ public class Job implements Serializable{
     public void setDoubts(Set<Doubt> doubts) {
         this.doubts = doubts;
     }
+
+    public Long getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Long depth) {
+        this.depth = depth;
+    }
+
+    public Set<Summary> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(Set<Summary> summaries) {
+        this.summaries = summaries;
+    }
+
+    public Set<Sequence> getSequences() {
+        return sequences;
+    }
+
+    public void setSequences(Set<Sequence> sequences) {
+        this.sequences = sequences;
+    }
     
     
     
@@ -370,7 +404,7 @@ public class Job implements Serializable{
         return true;
     }
 
-   
+    
 
     
    

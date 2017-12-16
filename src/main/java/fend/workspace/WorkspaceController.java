@@ -427,9 +427,95 @@ public class WorkspaceController  {
                 
                 
                 //insight
+                DoubtType doubtTypeInsight=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
+                Job iparent=l.getParent();
+                Job ichild=l.getChild();
+                Header hip=headerService.getChosenHeaderFor(iparent, s);
+                Header hic=headerService.getChosenHeaderFor(ichild, s);
+                String insightVersionsInParentJob= iparent.getInsightVersions();
+                String insightVersionInParentHeader=hip.getInsightVersion();
                 
+                String parts[]=insightVersionsInParentJob.split(";");
+                Boolean insightPass=false;
+                for(String part:parts){
+                    insightPass=insightPass || (part.equals(insightVersionInParentHeader));
+                }
+                if(!insightPass){
+                    //hic.setDoubt(true)   //set doubt in the child
+                    Doubt doubt;
+                    if((doubt=doubtService.getDoubtFor(s, ichild, dot, doubtTypeInsight))==null){
+                       doubt=new Doubt();
+                       doubt.setChildJob(ichild);
+                       doubt.setDot(dot);
+                       doubt.setSubsurface(s);
+                       doubt.setDoubtType(doubtTypeInsight);
+                       doubtService.createDoubt(doubt);
+                       
+                       DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtInsightMessage(iparent.getNameJobStep(),s.getSubsurface(),insightVersionsInParentJob,insightVersionInParentHeader,ichild.getNameJobStep(),doubtTypeInsight.getName()));
+                            doubtStatus.setDoubt(doubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            doubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(doubt.getId(), doubt);
+                       
+                       
+                    }else{
+                         Set<DoubtStatus> doubtStatuses=doubt.getDoubtStatuses();
+                       for(DoubtStatus d:doubtStatuses){
+                         System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: "+doubt.getId()+" "+d.getStatus()+" comment: "+d.getComment()+" time: "+d.getTimeStamp());
+                            }
+                    }
+                }
                 //insight-end <--put inside a function
                 
+                
+                
+                //inheritance   <--called at the very end. Put all doubts on top
+                Job inhParent=l.getParent();
+                Job inhChild=l.getChild();
+                DoubtType doubtTypeInherit=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+                List<Doubt> doubtsInParent=doubtService.getDoubtFor(s, inhParent, dot);
+                
+                if(doubtsInParent!=null){
+                    for(Doubt cause:doubtsInParent){
+                        Set<Doubt> inherited=cause.getInheritedDoubts();
+                       
+                        
+                        if(inherited!=null && inherited.size()>0){
+                            continue;                   //do nothing
+                        }else{                          
+                            Doubt inhDoubt=new Doubt();
+                            inhDoubt.setDoubtType(doubtTypeInherit);
+                            inhDoubt.setChildJob(inhChild);
+                            inhDoubt.setDot(dot);
+                            inhDoubt.setDoubtCause(cause);
+                            inhDoubt.setSubsurface(s);
+                            //inhDoubt.setUser(user);
+                            doubtService.createDoubt(inhDoubt);
+                            
+                            DoubtStatus doubtStatus=new DoubtStatus();
+                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtInheritanceMessage(iparent.getNameJobStep(),s.getSubsurface(),ichild.getNameJobStep(),doubtTypeInherit.getName()));
+                            doubtStatus.setDoubt(inhDoubt);
+                            doubtStatus.setStatus(DoubtStatusModel.YES);
+                            doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
+                            //doubtStatus.setUser(user);
+                            doubtStatusService.createDoubtStatus(doubtStatus);
+                            inhDoubt.addToDoubtStatuses(doubtStatus);
+                            doubtService.updateDoubt(inhDoubt.getId(), inhDoubt);
+                            
+                            cause.addToInheritedDoubts(inhDoubt);
+                            doubtService.updateDoubt(cause.getId(), cause);
+                            
+                        }
+                        
+                       
+                        
+                    }
+                }
+                //inheritance-end <--put inside a function
             }   
         }
         
@@ -681,9 +767,9 @@ public class WorkspaceController  {
              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): creating link: "+l.getId()+" with dot: "+l.getDot().getId()+" parent: "+l.getParent().getNameJobStep()+"("+l.getParent().getId()+") child:"+l.getChild().getNameJobStep()+"("+l.getChild().getId()+")");
              }
             
-             for(Dot d:dbDots) {
-                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating dot: "+d.getId());
-                 dotService.updateDot(d.getId(),d);
+             for(Dot cause:dbDots) {
+                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating dot: "+cause.getId());
+                 dotService.updateDot(cause.getId(),cause);
              }   //create only attached ones.
               
              */
@@ -1018,7 +1104,7 @@ public class WorkspaceController  {
       * Get all insight versions from the folder
       */
      
-     final private String INSIGHT_REGEX="\\d*.\\d*-[\\w_-]*";     //match d.d-xxxxxx, d.d-xxxxx-ABC , d.d-xxxxxxx-ABC_mno, d.d-xxxxxx_mno
+     final private String INSIGHT_REGEX="\\d*.\\d*-[\\w_-]*";     //match cause.cause-xxxxxx, cause.cause-xxxxx-ABC , cause.cause-xxxxxxx-ABC_mno, cause.cause-xxxxxx_mno
      final private Pattern pattern=Pattern.compile(INSIGHT_REGEX);
      final private FileFilter insightFilter=new FileFilter(){
         @Override
