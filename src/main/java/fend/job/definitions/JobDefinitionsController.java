@@ -13,6 +13,8 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import fend.job.definitions.insight.InsightListModel;
+import fend.job.definitions.insight.InsightListView;
 import fend.job.definitions.qcmatrix.QcMatrixModel;
 import fend.job.definitions.qcmatrix.QcMatrixView;
 
@@ -117,8 +119,8 @@ public class JobDefinitionsController {
         
         
          drawer.setId("QMatrix");
-         /*VolumeListModel vol=new VolumeListModel(parentBox);
-         VolumeListView vollistview=new VolumeListView(vol);*/
+         /*VolumeListModel insmodel=new VolumeListModel(parentBox);
+         VolumeListView insList=new VolumeListView(insmodel);*/
          
          QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
          QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);
@@ -164,11 +166,11 @@ public class JobDefinitionsController {
     private void setupInsightDrawer(JFXDrawer drawer,JFXButton button) {
          
          drawer.setId("Insight");
-         VolumeListModel vol=new VolumeListModel(parentBox);
-         VolumeListView vollistview=new VolumeListView(vol);
-        drawer.setSidePane(vollistview);
+         InsightListModel insmodel=new InsightListModel(parentBox);
+         InsightListView insList=new InsightListView(insmodel);
+        drawer.setSidePane(insList);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
+        drawer.setDefaultDrawerSize(insList.computeAreaInScreen());
         drawer.setOverLayVisible(false);
         drawer.setResizableOnDrag(true);
         drawer.setTranslateX(200);

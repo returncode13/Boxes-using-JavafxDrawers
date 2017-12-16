@@ -5,20 +5,12 @@
  */
 package fend.job.definitions.qcmatrix;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
-import db.model.QcMatrixRow;
-import db.services.QcMatrixRowService;
-import db.services.QcMatrixRowServiceImpl;
 import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import fend.volume.volume0.Volume0;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 

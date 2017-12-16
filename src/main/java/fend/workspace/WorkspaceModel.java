@@ -33,7 +33,7 @@ public class WorkspaceModel {
     private  Set<EdgeModel> edges=new HashSet<>();
     private ObservableSet<JobType0Model> observableJobs=FXCollections.observableSet(jobs);
     private ObservableSet<EdgeModel> observableEdges=FXCollections.observableSet(edges);
-    
+    private List<String> insightVersions=new ArrayList<>();
    
     public WorkspaceModel(){
   //      id=UUID.randomUUID().getMostSignificantBits();
@@ -85,6 +85,16 @@ public class WorkspaceModel {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<String> getInsightVersions() {
+        return insightVersions;
+    }
+
+    public void setInsightVersions(List<String> insightVersions) {
+        this.insightVersions = insightVersions;
+    }
+    
+    
     
     
     

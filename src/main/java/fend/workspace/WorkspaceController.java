@@ -83,6 +83,7 @@ import fend.volume.volume1.Volume1;
 import fend.workspace.saveworkspace.SaveWorkSpaceView;
 import fend.workspace.saveworkspace.SaveWorkspaceModel;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,6 +91,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -454,6 +456,14 @@ public class WorkspaceController  {
         loadingProperty.addListener(loadingListener);
         model=item;
         dbWorkspace=workspaceService.getWorkspace(model.getId());
+        File insightLocation=new File(AppProperties.INSIGHT_LOCATION);
+        File[] insights=insightLocation.listFiles(insightFilter);
+        List<String> insightVersionStrings=new ArrayList<>();
+        for(File insight:insights){
+            System.out.println("fend.workspace.WorkspaceController.setModel(): insightVersions Found: "+insight.getName());
+            insightVersionStrings.add(insight.getName());
+        }
+        model.setInsightVersions(insightVersionStrings);
         
       }
 
@@ -1002,5 +1012,22 @@ public class WorkspaceController  {
         }
     };
     
+     
+     
+     /***
+      * Get all insight versions from the folder
+      */
+     
+     final private String INSIGHT_REGEX="\\d*.\\d*-[\\w_-]*";     //match d.d-xxxxxx, d.d-xxxxx-ABC , d.d-xxxxxxx-ABC_mno, d.d-xxxxxx_mno
+     final private Pattern pattern=Pattern.compile(INSIGHT_REGEX);
+     final private FileFilter insightFilter=new FileFilter(){
+        @Override
+        public boolean accept(File pathname) {
+            return pattern.matcher(pathname.getName()).matches();
+        }
+         
+     };
+             
+             
     
 }

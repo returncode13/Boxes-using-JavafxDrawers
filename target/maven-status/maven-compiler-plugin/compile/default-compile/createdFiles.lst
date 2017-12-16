@@ -40,6 +40,7 @@ db/dao/NodePropertyValueDAO.class
 db/dao/SequenceDAOImpl.class
 db/services/WorkspaceService.class
 fend/dot/DotController$5.class
+fend/job/definitions/insight/InsightVersion$1.class
 middleware/doubt/DoubtTypeModel.class
 fend/app/loading/LoadWorkspaceModel.class
 db/services/AncestorService.class
@@ -75,6 +76,7 @@ fend/job/table/lineTable/LineTableView.class
 middleware/dugex/WorkflowManager.class
 db/dao/LogDAOImpl.class
 db/services/DoubtService.class
+fend/job/definitions/insight/InsightListCell.class
 fend/dot/DotController.class
 fend/workspace/WorkspaceView.class
 fend/job/definitions/volume/VolumeListView.class
@@ -82,6 +84,7 @@ db/services/VariableArgumentServiceImpl.class
 fend/dot/formulaField/FormulaFieldController.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class
 fend/edge/parentchildedge/ParentChildEdgeView.class
+fend/job/definitions/insight/InsightListCell$1.class
 fend/dot/anchor/AnchorView.class
 db/dao/DoubtStatusDAOImpl.class
 db/services/QcMatrixRowService.class
@@ -108,6 +111,7 @@ fend/app/AppController.class
 fend/workspace/WorkspaceController$1.class
 db/model/Job.class
 fend/dot/anchor/AnchorController$1.class
+fend/job/definitions/insight/InsightListView.class
 fend/job/table/qctable/QcTableController.class
 db/dao/QcTableDAO.class
 db/model/Volume.class
@@ -201,6 +205,7 @@ db/services/SubsurfaceService.class
 middleware/watcher/LogStatusWatcher.class
 fend/dot/variableArgument/VariableArgumentModel.class
 db/dao/WorkflowDAOImpl.class
+fend/workspace/WorkspaceController$4.class
 fend/job/definitions/volume/VolumeListModel.class
 db/model/Descendant_.class
 middleware/watcher/LogStatusWatcher$1.class
@@ -217,6 +222,7 @@ fend/dot/formulaField/FormulaFieldModel$2.class
 fend/job/definitions/qcmatrix/QcMatrixController.class
 middleware/watcher/WorkflowHolder.class
 fend/app/Main.class
+fend/job/definitions/insight/InsightVersion.class
 db/dao/UserDAOImpl.class
 fend/job/table/qctable/QcTableController$3$2.class
 fend/edge/parentchildedge/ParentChildEdgeController.class
@@ -250,6 +256,7 @@ fend/edge/edge/EdgeView.class
 fend/job/table/qctable/QcTableController$1.class
 db/services/QcTypeServiceImpl.class
 db/dao/PropertyTypeDAO.class
+fend/job/definitions/insight/InsightListController.class
 middleware/dugex/HeaderLoader.class
 fend/job/definitions/JobDefinitionsView.class
 middleware/watcher/WatcherFilter.class
@@ -276,6 +283,7 @@ fend/job/job0/JobType0Controller.class
 fend/job/definitions/volume/VolumeListController.class
 db/dao/PropertyTypeDAOImpl.class
 db/model/NodePropertyValue.class
+fend/job/definitions/insight/InsightListModel.class
 db/dao/NodePropertyDAOImpl.class
 middleware/sequences/SequenceHeaders.class
 fend/app/AppModel.class

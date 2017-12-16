@@ -6,6 +6,8 @@
 package app.properties;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -19,12 +21,13 @@ public class AppProperties {
                                                                     3. PATCH version when you make backwards-compatible bug fixes
                                                             */
     
-    
+    public static final String INSIGHT_LOCATION="/d/sw/Insight";
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     private static String project=new String("no project selected");
     private String sessionName=new String("unknown session");
     private String irdbHost=new String("no host assigned");
-
+    
+    
     public String getProject() {
         return project;
     }
@@ -48,6 +51,8 @@ public class AppProperties {
     public void setIrdbHost(String irdbHost) {
         this.irdbHost = irdbHost;
     }
+
+   
 
     
     
