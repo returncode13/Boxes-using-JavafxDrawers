@@ -172,6 +172,8 @@ public class DotModel {
         setOfLinks.add(lm);
         parentSet.add(parent);
         childSet.add(child);
+        parent.addChild(child);
+        child.addParent(parent);
         workspaceModel=parent.getWorkspaceModel();
         System.out.println("fend.dot.DotModel.createLink(): link was created");
         linkWasCreated.set(!linkWasCreated.get());

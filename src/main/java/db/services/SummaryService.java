@@ -1,0 +1,19 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package db.services;
+
+import db.model.Summary;
+
+/**
+ *
+ * @author sharath nair <sharath.nair@polarcus.com>
+ */
+public interface SummaryService {
+ public void createSummary(Summary summary);
+ public Summary getSummary(Long id);
+ public void deleteSummary(Long id);
+ public void updateSummary(Long id,Summary newSummary);
+}

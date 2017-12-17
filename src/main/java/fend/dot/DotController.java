@@ -279,8 +279,8 @@ public class DotController extends Stage{
                      Link dbLink=new Link();
                      Job child=jobService.getJob(lm.getChild().getId());
                      Job parent=jobService.getJob(lm.getParent().getId());
-                      linkService.clearLinksforJob(child);                 //rebuild each save
-                      linkService.clearLinksforJob(parent);                //rebuild each save     
+                      //linkService.clearLinksforJob(child,dbDot);                 //rebuild each save
+                      //linkService.clearLinksforJob(parent,dbDot);                //rebuild each save     
                      dbLink.setParent(parent);
                      dbLink.setChild(child);
                      dbLink.setDot(dbDot);

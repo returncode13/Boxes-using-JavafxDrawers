@@ -19,8 +19,10 @@ public abstract class Job_ {
 	public static volatile SingularAttribute<Job, String> nameJobStep;
 	public static volatile SetAttribute<Job, Volume> volumes;
 	public static volatile SetAttribute<Job, QcMatrixRow> qcmatrix;
+	public static volatile SetAttribute<Job, Sequence> sequences;
 	public static volatile SetAttribute<Job, Descendant> descendants;
 	public static volatile SetAttribute<Job, Descendant> currentJobInDescendant;
+	public static volatile SingularAttribute<Job, Long> depth;
 	public static volatile SingularAttribute<Job, Boolean> alert;
 	public static volatile SetAttribute<Job, Subsurface> subsurfaces;
 	public static volatile SingularAttribute<Job, String> insightVersions;
@@ -28,6 +30,7 @@ public abstract class Job_ {
 	public static volatile SingularAttribute<Job, Long> id;
 	public static volatile SetAttribute<Job, Ancestor> ancestors;
 	public static volatile SetAttribute<Job, Log> logs;
+	public static volatile SetAttribute<Job, Summary> summaries;
 
 }
 

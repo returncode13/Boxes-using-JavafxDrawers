@@ -13,6 +13,10 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXTextField;
+import db.model.Descendant;
+import db.model.Job;
+import db.services.JobService;
+import db.services.JobServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -70,8 +74,10 @@ public class JobType1Controller implements JobType0Controller{
     final String expand=">";
     final String collapse="<";
     private AnchorPane interactivePane;
-    JobType1Model model;
-    JobType1View node;
+    private JobType1Model model;
+    private JobType1View node;
+    private Job dbjob;
+    private JobService jobService=new JobServiceImpl();
     JFXDrawer drawer=new JFXDrawer();
     private final ContextMenu menu=new ContextMenu();
     
@@ -102,10 +108,12 @@ public class JobType1Controller implements JobType0Controller{
 
     void setModel(JobType1Model item) {
         model=item;
-        //checkForHeaders=new SimpleBooleanProperty(false);
+        dbjob=jobService.getJob(model.getId());
+//checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
-        
+        model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
+      //  model.getDepth().addListener(depthChangeListener);
         
     }
 
@@ -197,15 +205,20 @@ public class JobType1Controller implements JobType0Controller{
                         return;
                     }
 //                    System.out.println("job.job1.JobType1Controller.setView(): adding: "+parent.getId());
-                    model.addParent(parent);
-                    parent.addChild(model);
+/*model.addParent(parent);
+parent.addChild(model);*/
                     
                     DotModel dotmodel=parentChildEdgeModel.getDotModel();
                     /*dotmodel.addToParents(parent);
                     dotmodel.addToChildren(model);*/
                     DotView dotnode=new DotView(dotmodel, JobType1Controller.this.interactivePane);
-                    dotmodel.createLink(parent, model);
+                    dotmodel.createLink(parent, model); // create a link between parent and child .add child to parent's list of children and parent to child's list of parents
                     
+                    Long parentDepth=parent.getDepth().get();
+                    if(model.getDepth().get()<(parentDepth+1)){
+                        model.setListenToDepthChange(true);
+                        model.setDepth(parentDepth+1);
+                    }
                     parentChildEdgeNode.getChildren().add(0,dotnode);
                    
 
@@ -249,10 +262,15 @@ public class JobType1Controller implements JobType0Controller{
                             return;
                         }
                         
-                        model.addParent(parent);
-                        parent.addChild(model);
+                         Long parentDepth=parent.getDepth().get();
+                    if(model.getDepth().get()<(parentDepth+1)){
+                        model.setDepth(parentDepth+1);
+                    } 
+                         
+                    /*model.addParent(parent);
+                    parent.addChild(model);*/
                         /*parentModel.getDotModel().addToChildren(model);            //add to the shared Dots children*/
-                        parentModel.getDotModel().createLink(parent, model);       //create a new link in the dot
+                        parentModel.getDotModel().createLink(parent, model);       //create a new link in the dot. add child to parent's list of children and parent to child's list of parents
                         
                     }
                     
@@ -345,6 +363,47 @@ public class JobType1Controller implements JobType0Controller{
             if(newValue){
                 showTable.setDisable(false);
             }
+        }
+    };
+    
+    
+    final private ChangeListener<Number> depthChangeListener=new ChangeListener<Number>() {
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
+           dbjob.setDepth((Long) newValue);
+           jobService.updateJob(dbjob.getId(), dbjob);
+           /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved
+           for(Descendant d:descendants){
+           d.getDescendant().setDepth(d.getDescendant().getDepth()+1);
+           }*/
+           Set<JobType0Model> descendants=model.getDescendants();
+           for(JobType0Model desc:descendants){
+            System.out.println("depth will change for Descendants: "+desc.getNameproperty().get()+" from "+desc.getDepth().get()+" --> "+(desc.getDepth().get()+1));
+            Job d=jobService.getJob(desc.getId());
+            d.setDepth(desc.getDepth().get()+1);
+            jobService.updateJob(d.getId(), d);
+            desc.setListenToDepthChange(false);
+            desc.setDepth(desc.getDepth().get()+1);
+            desc.setListenToDepthChange(true);
+           }
+           /*Set<JobType0Model> children=model.getChildren();
+           for(JobType0Model child:children){
+           child.setDepth(child.getDepth().get()+1);
+           }*/
+        }
+    };
+    
+    
+    final private ChangeListener<Boolean> listenToDepthChange=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                model.getDepth().addListener(depthChangeListener);
+            }else{
+                model.getDepth().removeListener(depthChangeListener);
+            }
+                    
         }
     };
     

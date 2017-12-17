@@ -89,7 +89,9 @@ public class JobDAOImpl implements JobDAO{
             oldJs.setQcmatrix(newJs.getQcmatrix());
             oldJs.setVariableArguments(newJs.getVariableArguments());
             oldJs.setDoubts(newJs.getDoubts());
-            
+            oldJs.setSummaries(newJs.getSummaries());
+            oldJs.setSequences(newJs.getSequences());
+            oldJs.setDepth(newJs.getDepth());
             session.update(oldJs);
             
             transaction.commit();

@@ -99,12 +99,13 @@ public class LinkDAOImpl implements LinkDAO{
     }
     
     @Override
-    public void clearLinksforJob(Job job) {
+    public void clearLinksforJob(Job job,Dot dot) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
             
         Criteria criteria=session.createCriteria(Link.class);
+        Criterion rest0=Restrictions.eq("dot",dot);
         Criterion rest1=Restrictions.eq("parent", job);
         Criterion rest2=Restrictions.eq("child", job);
         criteria.add(Restrictions.or(rest1,rest2));

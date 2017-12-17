@@ -25,6 +25,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/seq/sub/QcTableSubsurface.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SummaryServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/User.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/WorkspaceController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/WorkflowManager.java
@@ -85,6 +86,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/watcher/WorkflowWatcher.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job1/JobType1Controller.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/DugioScripts.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SummaryService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/qcmatrix/QcMatrixListCell.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/WorkflowDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SequenceServiceImpl.java
@@ -147,6 +149,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Acquisition.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/DoubtDAOImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SummaryDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/insight/InsightListView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VolumeService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/volume/VolumeListController.java
@@ -196,6 +199,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/dotjobedge/DotJobEdgeModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/JobVolumeMap.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/HeaderServiceImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Summary.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DoubtStatusService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/PropertyTypeDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/QcMatrixRowServiceImpl.java
@@ -222,6 +226,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/PropertyTypeService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/NodePropertyValueDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/dot/formulaField/FormulaFieldView.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SummaryDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/NodeProperty.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/definitions/insight/InsightListModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceDAOImpl.java

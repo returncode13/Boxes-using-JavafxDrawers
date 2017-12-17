@@ -62,6 +62,8 @@ public class DoubtDAOImpl implements DoubtDAO{
             ll.setDoubtStatuses(newds.getDoubtStatuses());
             ll.setInheritedDoubts(newds.getInheritedDoubts());
             ll.setDoubtCause(newds.getDoubtCause());
+            ll.setSequence(newds.getSequence());
+            
             session.update(ll);
             
             

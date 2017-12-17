@@ -44,8 +44,8 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public void clearLinksforJob(Job job) {
-        linkDAO.clearLinksforJob(job);
+    public void clearLinksforJob(Job job,Dot dot) {
+        linkDAO.clearLinksforJob(job,dot);
     }
 
     @Override

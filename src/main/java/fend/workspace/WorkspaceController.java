@@ -177,6 +177,8 @@ public class WorkspaceController  {
         NodeType nodetype=nodeTypeService.getNodeTypeObjForType(typeOfJob);                   
         dbjob.setNodetype(nodetype);
         dbjob.setWorkspace(dbWorkspace);
+        
+        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
         jobService.createJob(dbjob);
         
         JobType1Model job=new JobType1Model(this.model);
@@ -273,6 +275,7 @@ public class WorkspaceController  {
                             doubt=new Doubt();
                             doubt.setChildJob(l.getChild());
                             doubt.setSubsurface(s);
+                            doubt.setSequence(s.getSequence());
                             doubt.setDot(dot);
                             doubt.setDoubtType(doubtTypeTraces);
                             //doubt.setUser(user);
@@ -303,6 +306,7 @@ public class WorkspaceController  {
                             doubt=new Doubt();
                             doubt.setChildJob(child);
                             doubt.setSubsurface(s);
+                            doubt.setSequence(s.getSequence());
                             doubt.setDot(dot);
                             doubt.setDoubtType(doubtTypeTraces);
                             //doubt.setUser(user);
@@ -356,6 +360,7 @@ public class WorkspaceController  {
                         doubt.setChildJob(jchild);
                         doubt.setDot(dot);
                         doubt.setSubsurface(s);
+                        doubt.setSequence(s.getSequence());
                         doubt.setDoubtType(doubtTypeQc);
                         //doubt.setUser(user)
                         doubtService.createDoubt(doubt);
@@ -396,6 +401,7 @@ public class WorkspaceController  {
                        doubt.setChildJob(hchild);
                        doubt.setDot(dot);
                        doubt.setSubsurface(s);
+                       doubt.setSequence(s.getSequence());
                        doubt.setDoubtType(doubtTypeTime);
                        //doubt.setUser(user);
                        doubtService.createDoubt(doubt);
@@ -448,6 +454,7 @@ public class WorkspaceController  {
                        doubt.setChildJob(ichild);
                        doubt.setDot(dot);
                        doubt.setSubsurface(s);
+                       doubt.setSequence(s.getSequence());
                        doubt.setDoubtType(doubtTypeInsight);
                        doubtService.createDoubt(doubt);
                        
@@ -493,6 +500,7 @@ public class WorkspaceController  {
                             inhDoubt.setDot(dot);
                             inhDoubt.setDoubtCause(cause);
                             inhDoubt.setSubsurface(s);
+                            inhDoubt.setSequence(s.getSequence());
                             //inhDoubt.setUser(user);
                             doubtService.createDoubt(inhDoubt);
                             
@@ -863,6 +871,8 @@ public class WorkspaceController  {
                  fejob=new JobType1Model(model);
                  fejob.setId(dbj.getId());   
                  fejob.setNameproperty(dbj.getNameJobStep());
+                 fejob.setDepth(dbj.getDepth());
+                 
                  System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: "+dbj.getNameJobStep());
                  
              }

@@ -41,6 +41,8 @@ import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderLoader;
@@ -54,6 +56,7 @@ public class JobType1Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
     final private Long type=1L;
     private Long id;
+    private LongProperty depth;
     private StringProperty nameproperty;
     private List<Volume0> volumes;
     private ObservableList<Volume0> observableVolumes;
@@ -77,10 +80,13 @@ public class JobType1Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
+    private BooleanProperty listenToDepthChange;
             
     public JobType1Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
         id=null;
+        depth=new SimpleLongProperty();
+        depth.set(0L);                                               // at birth depth=0;
         finishedCheckingLogs=new SimpleBooleanProperty(false);
         headersCommited=new SimpleBooleanProperty(false);
         nameproperty=new SimpleStringProperty();
@@ -124,7 +130,7 @@ public class JobType1Model implements JobType0Model {
         nameproperty.addListener(nameChangeListener);
         finishedCheckingLogs.addListener(checkLogsListener);
         
-                
+        listenToDepthChange=new SimpleBooleanProperty(false);
         
     }
 
@@ -444,6 +450,8 @@ public class JobType1Model implements JobType0Model {
     
     
     
+    
+    
     /***
      * Private Implementation
      */
@@ -559,7 +567,31 @@ public class JobType1Model implements JobType0Model {
     public WorkspaceModel getWorkspaceModel() {
         return workspaceModel;
     }
+
+    @Override
+    public void setDepth(Long depth) {
+        this.depth.set(depth);
+    }
+
+    @Override
+    public LongProperty getDepth() {
+        return this.depth;
+    }
+
+    @Override
+    public BooleanProperty getListenToDepthChangeProperty() {
+        return this.listenToDepthChange;
+    }
+
+    public BooleanProperty getListenToDepthChange() {
+        return listenToDepthChange;
+    }
+
+    public void setListenToDepthChange(Boolean listenToDepthChange) {
+        this.listenToDepthChange.set(listenToDepthChange);
+    }
      
+    
     
     
    

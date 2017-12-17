@@ -9,7 +9,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(Doubt.class)
 public abstract class Doubt_ {
 
+	public static volatile SingularAttribute<Doubt, Sequence> sequence;
 	public static volatile SetAttribute<Doubt, DoubtStatus> doubtStatuses;
+	public static volatile SingularAttribute<Doubt, Doubt> doubtCause;
+	public static volatile SetAttribute<Doubt, Doubt> inheritedDoubts;
 	public static volatile SingularAttribute<Doubt, Dot> dot;
 	public static volatile SingularAttribute<Doubt, Job> childJob;
 	public static volatile SingularAttribute<Doubt, DoubtType> doubtType;

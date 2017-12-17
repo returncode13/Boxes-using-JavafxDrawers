@@ -7,6 +7,7 @@ fend/workspace/WorkspaceController$2.class
 middleware/dugex/WorkflowHolder.class
 fend/job/job1/JobType1Controller$2.class
 db/model/NodeType_.class
+db/dao/SummaryDAO.class
 fend/job/job1/JobType1Model$1.class
 db/services/QcTypeService.class
 db/services/NodeTypeService.class
@@ -36,6 +37,7 @@ db/dao/QcTypeDAOImpl.class
 middleware/core/Sub.class
 db/services/HeaderService.class
 db/services/WorkflowService.class
+db/services/SummaryService.class
 db/dao/NodePropertyValueDAO.class
 db/dao/SequenceDAOImpl.class
 db/services/WorkspaceService.class
@@ -53,9 +55,11 @@ fend/edge/dotjobedge/DotJobEdgeController$1.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.class
 db/dao/NodePropertyDAO.class
 db/model/QcMatrixRow_.class
+db/services/SummaryServiceImpl.class
 fend/job/job1/JobType1Model$6.class
 middleware/dugex/DugLogManager$1.class
 db/model/Log.class
+db/model/Summary.class
 fend/dot/anchor/AnchorController$Delta.class
 db/model/Header.class
 fend/app/loading/LoadWorkspaceController$1.class
@@ -77,6 +81,7 @@ middleware/dugex/WorkflowManager.class
 db/dao/LogDAOImpl.class
 db/services/DoubtService.class
 fend/job/definitions/insight/InsightListCell.class
+fend/job/job1/JobType1Controller$6.class
 fend/dot/DotController.class
 fend/workspace/WorkspaceView.class
 fend/job/definitions/volume/VolumeListView.class
@@ -167,6 +172,7 @@ db/services/PropertyTypeService.class
 fend/dot/formulaField/FormulaFieldModel.class
 fend/job/table/qctable/seq/QcTableSequence$1.class
 db/model/Item.class
+db/model/Summary_.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class
 app/settings/database/DataBaseSettingsWrapper.class
@@ -176,6 +182,7 @@ db/services/NodePropertyServiceImpl.class
 db/dao/UserDAO.class
 db/services/LogServiceImpl.class
 db/services/DoubtStatusService.class
+fend/job/job1/JobType1Controller$5.class
 db/dao/JobVolumeMapDAOImpl.class
 db/dao/LinkDAOImpl.class
 db/dao/WorkspaceDAO.class
@@ -231,6 +238,7 @@ db/dao/VolumeDAOImpl.class
 fend/app/loading/LoadWorkspaceNode.class
 db/services/QcTableServiceImpl.class
 middleware/watcher/LogStatusHolder.class
+db/dao/SummaryDAOImpl.class
 middleware/dugex/LogStatusHolder.class
 db/services/VolumeService.class
 fend/volume/volume1/Volume1.class

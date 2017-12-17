@@ -8,6 +8,7 @@ package middleware.dugex;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.services.HeaderService;
@@ -63,6 +64,7 @@ public class HeaderExtractor {
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
+        Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type1 extraction
         if(job.getType().equals(JobType0Model.PROCESS_2D)){
            
@@ -74,7 +76,10 @@ public class HeaderExtractor {
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                  Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
+                  setOfSequencesInJob.add(dbseq);
+                          
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
                 
                   
@@ -102,6 +107,7 @@ public class HeaderExtractor {
           }
           
           dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+          dbjob.setSequences(setOfSequencesInJob);
           dbjob.setHeaders(setOfHeadersInJob);
           jobService.updateJob(dbjob.getId(), dbjob);
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
