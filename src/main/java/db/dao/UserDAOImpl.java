@@ -43,7 +43,9 @@ public class UserDAOImpl implements UserDAO{
         try{
             transaction=session.beginTransaction();
             User ll=(User) session.get(User.class,uid);
-            
+            ll.setWorkspaces(newUser.getWorkspaces());
+            ll.setQctables(newUser.getQctables());
+            ll.setDoubtStatuses(newUser.getDoubtStatuses());
             session.update(ll);
             
             

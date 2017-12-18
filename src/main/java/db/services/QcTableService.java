@@ -28,4 +28,5 @@ public interface QcTableService {
      public List<QcTable> getQcTableFor(QcMatrixRow qmx);
     public List<QcTable> getQcTableFor(Subsurface s);
     public QcTable getQcTableFor(QcMatrixRow qmx,Subsurface s) throws Exception;
+    public QcTable getQcTableFor(Long qcmatrixRowId,Subsurface s) throws Exception;
 }

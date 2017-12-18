@@ -5,20 +5,12 @@
  */
 package fend.job.definitions.qcmatrix;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
-import db.model.QcMatrixRow;
-import db.services.QcMatrixRowService;
-import db.services.QcMatrixRowServiceImpl;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import fend.volume.volume0.Volume0;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -44,7 +36,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
         checkbox.selectedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                getItem().setChecked(newValue);
+                getItem().setCheckedByUser(newValue);
                 
             }
             
@@ -62,7 +54,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
             setText(null);
             setGraphic(null);
         }else{
-            if(qctype.isChecked())
+            if(qctype.getCheckedByUser())
                 checkbox.setSelected(true);
             else
                 checkbox.setSelected(false);

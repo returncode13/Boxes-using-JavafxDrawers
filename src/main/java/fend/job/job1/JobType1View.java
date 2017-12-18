@@ -47,9 +47,7 @@ public class JobType1View extends AnchorPane implements JobType0View{
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
-                
-                
-                controller.setModel(item);
+                 controller.setModel(item);
                 controller.setView(this,this.interactivePane) ;
                
                 

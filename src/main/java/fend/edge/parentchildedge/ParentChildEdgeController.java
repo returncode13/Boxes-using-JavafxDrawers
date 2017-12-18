@@ -8,7 +8,7 @@ package fend.edge.parentchildedge;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.anchor.AnchorModel;
-import fend.dot.anchor.AnchorNode;
+import fend.dot.anchor.AnchorView;
 import fend.edge.edge.EdgeController;
 
 import javafx.beans.binding.Bindings;
@@ -40,7 +40,7 @@ public class ParentChildEdgeController implements EdgeController{
     private ParentChildEdgeView node;
     
     private AnchorModel childAnchorModel;
-    private AnchorNode childAnchor;
+    private AnchorView childAnchor;
     private Long type;
     
     final Delta dragDelta=new Delta();
@@ -74,7 +74,7 @@ public class ParentChildEdgeController implements EdgeController{
         this.jobView=parentJob;
         this.interactivePane=interactivePane;
         
-        childAnchor=new AnchorNode(childAnchorModel, this.interactivePane);
+        childAnchor=new AnchorView(childAnchorModel, this.interactivePane);
         
         curve=createStartingCurve();
         JobType0Model job=this.jobView.getController().getModel();

@@ -104,7 +104,7 @@ public class AppController extends Stage{
         LoadWorkspaceNode lwn=new LoadWorkspaceNode(lwm);
         
         Workspace workspaceToBeLoaded=lwm.getWorkspaceToBeLoaded();
-        
+        if(workspaceToBeLoaded==null) return;
         WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel();
         frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
         frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());

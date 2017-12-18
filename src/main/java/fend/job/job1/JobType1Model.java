@@ -14,7 +14,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -41,9 +41,12 @@ import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderLoader;
+import middleware.sequences.SequenceHeaders;
 
 /**
  *
@@ -53,9 +56,11 @@ public class JobType1Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
     final private Long type=1L;
     private Long id;
+    private LongProperty depth;
     private StringProperty nameproperty;
     private List<Volume0> volumes;
     private ObservableList<Volume0> observableVolumes;
+    private ObservableList<SequenceHeaders> sequenceHeaders;
     
     private List<QcMatrixRowModel> qcmatrix;
     private ObservableList<QcMatrixRowModel> observableQcMatrix;
@@ -75,10 +80,13 @@ public class JobType1Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
+    private BooleanProperty listenToDepthChange;
             
     public JobType1Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
         id=null;
+        depth=new SimpleLongProperty();
+        depth.set(0L);                                               // at birth depth=0;
         finishedCheckingLogs=new SimpleBooleanProperty(false);
         headersCommited=new SimpleBooleanProperty(false);
         nameproperty=new SimpleStringProperty();
@@ -122,7 +130,7 @@ public class JobType1Model implements JobType0Model {
         nameproperty.addListener(nameChangeListener);
         finishedCheckingLogs.addListener(checkLogsListener);
         
-                
+        listenToDepthChange=new SimpleBooleanProperty(false);
         
     }
 
@@ -374,10 +382,10 @@ public class JobType1Model implements JobType0Model {
         public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
                 while(c.next()){
                     for(QcMatrixRowModel q:c.getAddedSubList()){
-                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
                     for(QcMatrixRowModel q:c.getRemoved()){
-                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.isChecked());
+                        System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
                 }
         }
@@ -442,6 +450,8 @@ public class JobType1Model implements JobType0Model {
     
     
     
+    
+    
     /***
      * Private Implementation
      */
@@ -452,7 +462,7 @@ public class JobType1Model implements JobType0Model {
             duplicatesInJob.clear();
             Map<SubsurfaceHeaders,String> lookupMap=new HashMap<>();
             for(SubsurfaceHeaders s:subsurfacesInJob){
-                String name=s.getSubsurfaceName().get();
+                String name=s.getSubsurfaceName();
                 if(lookupMap.containsValue(name)){
                     duplicatesInJob.add(s);                                                 //add the duplicate
                     Map<SubsurfaceHeaders,String> t=new HashMap<>(lookupMap);
@@ -467,7 +477,7 @@ public class JobType1Model implements JobType0Model {
                     }
                 }
                 else{
-                    lookupMap.put(s,s.getSubsurfaceName().get());
+                    lookupMap.put(s,s.getSubsurfaceName());
                 }
             }
             
@@ -519,17 +529,19 @@ public class JobType1Model implements JobType0Model {
        
     }
 
-    void retrieveHeaders() {
-        /*JobService jobService=new JobServiceImpl();
-        Job job=jobService.getJob(this.id);
-        Set<Subsurface> setSubs=job.getSubsurfaces();
-        System.out.println("fend.job.job1.JobType1Model.retrieveHeaders(): Listing subs present in job: size: "+setSubs.size());
-        for(Subsurface s:setSubs){
-        System.out.println(job.getNameJobStep()+"   :   "+s.getSubsurface());
-        }*/
-        new HeaderLoader(this);
+   
+
+    public ObservableList<SequenceHeaders> getSequenceHeaders() {
+        retrieveHeaders();
+        return sequenceHeaders;
+    }
+    
+     void retrieveHeaders() {
+        HeaderLoader headerloader=new HeaderLoader(this);
+        sequenceHeaders=headerloader.getSequenceHeaders();
         
     }
+    
 
     @Override
     public ObservableList<QcMatrixRowModel> getQcMatrix() {
@@ -550,7 +562,36 @@ public class JobType1Model implements JobType0Model {
     public void removeQcMatrixRow(QcMatrixRowModel qcmrow) {
         observableQcMatrix.remove(qcmrow);
     }
+
+    @Override
+    public WorkspaceModel getWorkspaceModel() {
+        return workspaceModel;
+    }
+
+    @Override
+    public void setDepth(Long depth) {
+        this.depth.set(depth);
+    }
+
+    @Override
+    public LongProperty getDepth() {
+        return this.depth;
+    }
+
+    @Override
+    public BooleanProperty getListenToDepthChangeProperty() {
+        return this.listenToDepthChange;
+    }
+
+    public BooleanProperty getListenToDepthChange() {
+        return listenToDepthChange;
+    }
+
+    public void setListenToDepthChange(Boolean listenToDepthChange) {
+        this.listenToDepthChange.set(listenToDepthChange);
+    }
      
+    
     
     
    

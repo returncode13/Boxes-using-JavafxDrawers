@@ -132,6 +132,10 @@ public class Workspace implements Serializable{
     public void setDots(Set<Dot> dots) {
         this.dots = dots;
     }
+
+    public void addToDots(Dot dbDot) {
+        this.dots.add(dbDot);
+    }
     
     
     

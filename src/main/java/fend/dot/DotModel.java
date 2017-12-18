@@ -5,12 +5,12 @@
  */
 package fend.dot;
 
-import fend.dot.anchor.AnchorModel;
 
+import db.model.Job;
+import fend.dot.formulaField.FormulaFieldModel;
+import fend.dot.variableArgument.VariableArgumentModel;
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -21,14 +21,10 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
-import javafx.css.SimpleStyleableStringProperty;
 import fend.job.job0.JobType0Model;
-import java.util.Iterator;
-import java.util.UUID;
+import fend.workspace.WorkspaceModel;
+import java.util.Map;
 
 /**
  *
@@ -40,61 +36,47 @@ public class DotModel {
     public static final String SPLIT="S";
     
     private Long id;
-    Color color;
-    DoubleProperty x=new SimpleDoubleProperty();
-    DoubleProperty y=new SimpleDoubleProperty();
+    private Color color;
+    private DoubleProperty x=new SimpleDoubleProperty();
+    private DoubleProperty y=new SimpleDoubleProperty();
     /**
      * ParentSet and ChildSet are used to trip the state of the dot. (join,split,njs)
      */
-    Set<JobType0Model> parentSet;
-    Set<JobType0Model> childSet;
-    Set<LinkModel> setOfLinks;
+    private Set<JobType0Model> parentSet;
+    private Set<JobType0Model> childSet;
+    private Set<LinkModel> setOfLinks;
+    private WorkspaceModel workspaceModel;
     
+    private ObservableList<LinkModel> observableLinkList;
     
-    ObservableList<LinkModel> observableLinkList;
-    /* ObservableSet<JobType0Model> parents;
-    ObservableSet<JobType0Model> children;*/
     
     boolean split=false;       //1 Parent --> m Children
     boolean join=false;        //m Parents --> 1 Child
     boolean njs=false;         //1 Parent --> 1 Child
-    boolean enableFurtherLinks=true;  
+    boolean enableFurtherLinks=false;  
     
-    StringProperty status;     //display the status of the Dot on it
-    BooleanProperty delete;     //delete this node;
-    private BooleanProperty statusProperty;
+    private StringProperty status;     //display the status of the Dot on it
+    private BooleanProperty delete;     //delete this node;
+    private BooleanProperty linkWasCreated;
+    private StringProperty function=new SimpleStringProperty("");
+    private DoubleProperty error=new SimpleDoubleProperty(0.0);
+    private DoubleProperty tolerance=new SimpleDoubleProperty(0.0);
+    private VariableArgumentModel variableArgumentModel=new VariableArgumentModel();
     
-    public DotModel(){
+    
+    public DotModel(WorkspaceModel workspaceM){
 //        id=UUID.randomUUID().getMostSignificantBits();
         id=null;
         status=new SimpleStringProperty("");
         delete=new SimpleBooleanProperty(false);
         setOfLinks=new HashSet<>();
         observableLinkList=FXCollections.observableArrayList(setOfLinks);
-        statusProperty=new SimpleBooleanProperty(false);
+        linkWasCreated=new SimpleBooleanProperty(false);
         parentSet=new HashSet<>();
         childSet=new HashSet<>();
-        statusProperty.addListener(statusChangeListener);
-        /*parents=FXCollections.observableSet(parentSet);
-        children=FXCollections.observableSet(childSet);*/
-        
-        /* parents.addListener(new SetChangeListener<JobType0Model>(){
-        @Override
-        public void onChanged(SetChangeListener.Change<? extends JobType0Model> change) {
-        updateConnectionStatus("Parent");
-        }
-        
-        });
-        
-        children.addListener(new SetChangeListener<JobType0Model>(){
-        @Override
-        public void onChanged(SetChangeListener.Change<? extends JobType0Model> change) {
-        updateConnectionStatus("Children");
-        //
-        }
-        
-        });*/
-        
+        linkWasCreated.addListener(statusChangeListener);
+        this.workspaceModel=workspaceM;
+       
         
     }   
 
@@ -153,28 +135,7 @@ public class DotModel {
     
     
     
-    /*
-    
-    public void addToParents(JobType0Model box) {
-    if(!this.parents.contains(box)){
-    this.parents.add(box);
-    }
-    }
-    
-    
-    public void addToChildren(JobType0Model box) {
-    if(!this.children.contains(box)){
-    this.children.add(box);
-    }
-    }
-    
-    public ObservableSet<JobType0Model> getParents() {
-    return parents;
-    }
-    
-    public ObservableSet<JobType0Model> getChildren() {
-    return children;
-    }*/
+   
 
     public boolean isSplit() {
         return split;
@@ -191,89 +152,18 @@ public class DotModel {
     public boolean enableFurtherLinks() {
         return enableFurtherLinks;
     }
-    
-    /*  private void updateConnectionStatus(String from) {
-    if((parents.size()==1) && (children.size()==1)){
-    System.out.println("dot.DotModel.updateConnectionStatus():  from "+from+" setting njs=true ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
-    njs=true;
-    split=false;
-    join=false;
-    enableFurtherLinks=true;
-    status.set(this.NJS);
-    
-    
+
+    public WorkspaceModel getWorkspaceModel() {
+        return workspaceModel;
     }
-    else if(parents.size()==1 && children.size()>1){
-    System.out.println("dot.DotModel.updateConnectionStatus():  from "+from+" setting split=true ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
-    njs=false;
-    split=true;
-    join=false;
-    enableFurtherLinks=true;
-    status.set(this.SPLIT);
-    
-    }
-    else if(parents.size()>1&& children.size()==1){
-    System.out.println("dot.DotModel.updateConnectionStatus():  from "+from+" setting join=true ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
-    njs=false;
-    split=false;
-    join=true;
-    enableFurtherLinks=true;
-    status.set(this.JOIN);
-    
-    
-    
-    
-    }else{
-    System.out.println("dot.DotModel.updateConnectionStatus(): from "+from+" Disabling further links ParentSize: "+parents.size()+" ChildrenSize: "+children.size());
-    enableFurtherLinks=false;
-    }
-    }*/
-    /*private void updateLinks() {
-    if(status.get().equals(NJS)){
-    setOfLinks.clear();
-    LinkModel link=new LinkModel();
-    
-    for (Iterator<JobType0Model> iterator = parents.iterator(); iterator.hasNext();) {     //This is a workaround to "get" the first element from a SET :(. no get() implementation in Set.
-    JobType0Model next = iterator.next();
-    link.setParent(next);
-    
-    }
-    for (Iterator<JobType0Model> iterator = children.iterator(); iterator.hasNext();) {
-    JobType0Model next = iterator.next();
-    link.setChild(next);
+
+    public void setWorkspaceModel(WorkspaceModel workspaceModel) {
+        this.workspaceModel = workspaceModel;
     }
     
     
-    setOfLinks.add(link);
-    }
-    if(status.get().equals(SPLIT)){
-    setOfLinks.clear();
     
-    for(JobType0Model child:children){
-    LinkModel link=new LinkModel();
-    for (Iterator<JobType0Model> iterator = parents.iterator(); iterator.hasNext();) {
-    JobType0Model next = iterator.next();
-    link.setParent(next);
-    }
-    link.setChild(child);
-    setOfLinks.add(link);
-    }
-    }
-    if(status.get().equals(JOIN)){
-    setOfLinks.clear();
-    
-    for(JobType0Model parent:parents){
-    LinkModel link=new LinkModel();
-    link.setParent(parent);
-    for (Iterator<JobType0Model> iterator = children.iterator(); iterator.hasNext();) {
-    JobType0Model next = iterator.next();
-    link.setChild(next);
-    }
-    setOfLinks.add(link);
-    }
-    
-    }
-    }*/
+   
 
    public void createLink(JobType0Model parent, JobType0Model child) {
         LinkModel lm=new LinkModel();
@@ -282,7 +172,11 @@ public class DotModel {
         setOfLinks.add(lm);
         parentSet.add(parent);
         childSet.add(child);
-        statusProperty.set(!statusProperty.get());
+        parent.addChild(child);
+        child.addParent(parent);
+        workspaceModel=parent.getWorkspaceModel();
+        System.out.println("fend.dot.DotModel.createLink(): link was created");
+        linkWasCreated.set(!linkWasCreated.get());
     }
     
    
@@ -295,7 +189,7 @@ public class DotModel {
             join=false;
             enableFurtherLinks=true;
             status.set(this.NJS);
-
+            
 
             }
             else if(parentSet.size()==1 && childSet.size()>1){
@@ -326,16 +220,61 @@ public class DotModel {
    
    
    
+ 
+    
+    
+
+    public StringProperty getFunction() {
+        return function;
+    }
+
+    public void setFormula(String formula) {
+        this.function.set(formula);
+    }
+
+    public DoubleProperty getError() {
+        return error;
+    }
+
+    public void setError(Double error) {
+        this.error.set(error);
+    }
+
+    public DoubleProperty getTolerance() {
+        return tolerance;
+    }
+
+    public void setTolerance(Double tolerance) {
+        this.tolerance.set(tolerance);
+    }
+
    
+    
+    
+     
    final private ChangeListener<Boolean> statusChangeListener=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("DotModel.changed(): link changed Property "+newValue);
             updateStatus();
         }
 
         
     };
+
+    public BooleanProperty getLinkWasCreated() {
+        return linkWasCreated;
+    }
+
+    public VariableArgumentModel getVariableArgumentModel() {
+        return variableArgumentModel;
+    }
+
+    void toggleLinkWasCreated() {
+        linkWasCreated.set(!linkWasCreated.get());
+    }
+
    
-   
+  
    
 }

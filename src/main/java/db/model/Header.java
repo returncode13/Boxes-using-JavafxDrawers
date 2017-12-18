@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -30,7 +31,7 @@ import org.hibernate.annotations.Columns;
 public class Header implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long headerId;
     
     @ManyToOne
     @JoinColumn(name="volume_fk",nullable = false)
@@ -40,9 +41,9 @@ public class Header implements Serializable{
     @JoinColumn(name="job_fk",nullable = false)
     private Job job;
     
+     
     
-    
-    @OneToMany(mappedBy = "header",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "header")
     private Set<Log> logs;
     
     /*@OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)
@@ -52,11 +53,14 @@ public class Header implements Serializable{
     private Set<QcTable> qctable;*/
     
     
-   
+    @ManyToOne
+    @JoinColumns({@JoinColumn(name="job_id",nullable=false),
+                  @JoinColumn(name="id",nullable=false)})
+    private SubsurfaceJob subsurfaceJob;
     
 
     
-    @ManyToOne
+     @ManyToOne
     @JoinColumn(name="subsurface_fk",nullable = false)
     private Subsurface subsurface;
     
@@ -161,8 +165,8 @@ public class Header implements Serializable{
     
     
 
-    /*public Header(Long id, Volume volume, Long sequence, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
-    this.id = id;
+    /*public Header(Long headerId, Volume volume, Long sequence, String subsurface, String timeStamp, Long traceCount, Long inlineMax, Long inlineMin, Long inlineInc, Long xlineMax, Long xlineMin, Long xlineInc, Long dugShotMax, Long dugShotMin, Long dugShotInc, Long dugChannelMax, Long dugChannelMin, Long dugChannelInc, Long offsetMax, Long offsetMin, Long offsetInc, Long cmpMax, Long cmpMin, Long cmpInc,Boolean modified,Boolean deleted,Long version) {
+    this.headerId = headerId;
     this.volume = volume;
     this.sequence = sequence;
     this.subsurface = subsurface;
@@ -234,15 +238,15 @@ public class Header implements Serializable{
             return false;
         }
         final Header other = (Header) obj;
-        if (!Objects.equals(this.id, other.id)) {
+        if (!Objects.equals(this.headerId, other.headerId)) {
             return false;
         }
         if (!Objects.equals(this.volume, other.volume)) {
             return false;
         }
         
-        if (!Objects.equals(this.subsurface, other.subsurface)) {
-            return false;
+         if (!Objects.equals(this.subsurface, other.subsurface)) {
+        return false;
         }
         if (!Objects.equals(this.timeStamp, other.timeStamp)) {
             return false;
@@ -329,12 +333,12 @@ public class Header implements Serializable{
 
     
     
-    public Long getId() {
-        return id;
+    public Long getHeaderId() {
+        return headerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setHeaderId(Long headerId) {
+        this.headerId = headerId;
     }
 
     public Volume getVolume() {
@@ -364,11 +368,11 @@ public class Header implements Serializable{
     
 
     public Subsurface getSubsurface() {
-        return subsurface;
+    return subsurface;
     }
-
+    
     public void setSubsurface(Subsurface subsurface) {
-        this.subsurface = subsurface;
+    this.subsurface = subsurface;
     }
     
     
@@ -597,11 +601,11 @@ public class Header implements Serializable{
     }
 
     public Job getJob() {
-        return job;
+    return job;
     }
-
+    
     public void setJob(Job job) {
-        this.job = job;
+    this.job = job;
     }
 
     public Set<Log> getLogs() {
@@ -626,6 +630,14 @@ public class Header implements Serializable{
 
     public void setChosen(Boolean chosen) {
         this.chosen = chosen;
+    }
+
+    public SubsurfaceJob getSubsurfaceJob() {
+        return subsurfaceJob;
+    }
+
+    public void setSubsurfaceJob(SubsurfaceJob subsurfaceJob) {
+        this.subsurfaceJob = subsurfaceJob;
     }
     
     

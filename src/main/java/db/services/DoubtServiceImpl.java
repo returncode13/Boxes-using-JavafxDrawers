@@ -7,13 +7,17 @@ package db.services;
 
 import db.dao.DoubtDAO;
 import db.dao.DoubtDAOImpl;
+import db.model.Dot;
 import db.model.Doubt;
 
 import db.model.DoubtType;
+import db.model.Job;
 
 import db.model.Link;
+import db.model.Subsurface;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -66,9 +70,19 @@ public class DoubtServiceImpl implements DoubtService{
     return dsDAO.getDoubtListForJobInSession(hd);
     }*/
 
-    @Override
+    /*  @Override
     public List<Doubt> getDoubtsForLink(Link link) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }*/
+
+    @Override
+    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(sub, job, dot, doubtType);
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
+        return dsDAO.getDoubtFor(sub, job, dot);
     }
     
 }

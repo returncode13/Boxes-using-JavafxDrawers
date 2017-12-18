@@ -8,7 +8,9 @@ package middleware.dugex;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.model.Volume;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -16,6 +18,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
 import db.services.LogServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
@@ -33,10 +37,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import middleware.sequences.SubsurfaceHeaders;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -44,7 +50,9 @@ import middleware.sequences.SubsurfaceHeaders;
  */
 public class HeaderExtractor {
     JobType0Model job;
+    Job dbjob;
     SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     HeaderService headerService=new HeaderServiceImpl();
     VolumeService volumeService=new VolumeServiceImpl();
     LogService logService=new LogServiceImpl();
@@ -56,10 +64,13 @@ public class HeaderExtractor {
     public HeaderExtractor(JobType0Model j){
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
-        Job dbjob=jobService.getJob(job.getId());
+        dbjob=jobService.getJob(job.getId());
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
+        Set<SubsurfaceJob> setOfSubsurfaceJobs=new HashSet<>();
+        
+        //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type1 extraction
         if(job.getType().equals(JobType0Model.PROCESS_2D)){
            
@@ -70,37 +81,56 @@ public class HeaderExtractor {
               //Job dbjob=dbvol.getJob();
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
-                  Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName().get());
+                  Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                  Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
-                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName().get());
+                  SubsurfaceJob dbSubjob;
+                  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
+                      dbSubjob=new SubsurfaceJob();
+                      dbSubjob.setJob(dbjob);
+                      dbSubjob.setSubsurface(dbsub);
+                      subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+                  }
+                  dbjob.getSubsurfaceJobs().add(dbSubjob);
+                  //jobService.updateJob(dbjob.getId(), dbjob);
+                  //setOfSequencesInJob.add(dbseq);
+                          
+                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
                 
                   
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
-                  String latestTimestamp=sub.getTimeStamp().get();
+                  String latestTimestamp=sub.getTimeStamp();
                   if(headerService.getHeadersFor(dbvol,dbsub,latestTimestamp)==null){
                       System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
                       Header header=new Header();
                       header.setJob(dbvol.getJob());
+                      header.setSubsurfaceJob(dbSubjob);
                       header.setVolume(dbvol);
                       header.setSubsurface(dbsub);
                       header.setTimeStamp(latestTimestamp);
                       //header.setSequence(dbsub.getSequence());
                     populate(header);
                     setOfHeadersInJob.add(header);
-                      
+                     
+                    //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+                    //dbjob.getSubsurfaceJobs().add(dbSubjob);
+                   // dbjob.setSequences(setOfSequencesInJob);
+                    dbjob.setHeaders(setOfHeadersInJob);
+                    jobService.updateJob(dbjob.getId(), dbjob);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                        headerService.getMultipleInstances(dbjob, dbsub);
                   }else{
                       System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
-                     
+                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                        headerService.getMultipleInstances(dbjob, dbsub);
                   }
                   
               }
           }
+         
           
-          dbjob.setSubsurfaces(setOfSubsurfacesInJob);
-          dbjob.setHeaders(setOfHeadersInJob);
-          jobService.updateJob(dbjob.getId(), dbjob);
-           System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
-               //   headerService.getMultipleInstances(dbjob, dbsub);
+          // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                
                    ((JobType1Model)job).setHeadersCommited(true);
           
         }
@@ -108,135 +138,143 @@ public class HeaderExtractor {
 
     private void populate(Header hdr) {
         
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        executorService.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-               
-         
-        System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getId());
-        Long traceCount=0L;
-                                     Long cmpMax=0L;
-                                     Long cmpMin=0L;
-                                     Long cmpInc=0L;
-                                     
-                                     Long inlineMax=0L;
-                                     Long inlineMin=0L;
-                                     Long inlineInc=0L;
-                                     Long xlineMax=0L;
-                                     Long xlineMin=0L;
-                                     Long xlineInc=0L;
-                                     Long dugShotMax=0L;
-                                     Long dugShotMin=0L;
-                                     Long dugShotInc=0L;
-                                     Long dugChannelMax=0L;
-                                     Long dugChannelMin=0L;
-                                     Long dugChannelInc=0L;
-                                     Long offsetMax=0L;
-                                     Long offsetMin=0L;
-                                     Long offsetInc=0L;
-        
-        
-        
-        
-       if(hdr.getVolume().getVolumeType().equals(1L)){
-                                         try{
-                                            traceCount=Long.valueOf(forTraces(hdr));
-                                            cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
-                                            cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
-                                            cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+        try {
+            ExecutorService executorService = Executors.newCachedThreadPool();
+            executorService.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    
+                    
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getHeaderId());
+                    Long traceCount=0L;
+                    Long cmpMax=0L;
+                    Long cmpMin=0L;
+                    Long cmpInc=0L;
+                    
+                    Long inlineMax=0L;
+                    Long inlineMin=0L;
+                    Long inlineInc=0L;
+                    Long xlineMax=0L;
+                    Long xlineMin=0L;
+                    Long xlineInc=0L;
+                    Long dugShotMax=0L;
+                    Long dugShotMin=0L;
+                    Long dugShotInc=0L;
+                    Long dugChannelMax=0L;
+                    Long dugChannelMin=0L;
+                    Long dugChannelInc=0L;
+                    Long offsetMax=0L;
+                    Long offsetMin=0L;
+                    Long offsetInc=0L;
+                    
+                    
+                    
+                    
+                    if(hdr.getVolume().getVolumeType().equals(1L)){
+                        try{
+                            traceCount=Long.valueOf(forTraces(hdr));
+                            cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                            cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                            cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                            
+                            inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                            inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                            inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                            xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                            xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                            xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                            dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                            dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                            dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                            dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                            dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                            dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                            offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                            offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                            offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                            
+                        }catch(NumberFormatException nfe){
+                            traceCount=-1L;
+                            cmpMax=-1L;
+                            cmpMin=-1L;
+                            cmpInc=-1L;
+                            
+                            inlineMax=-1L;
+                            inlineMin=-1L;
+                            inlineInc=-1L;
+                            xlineMax=-1L;
+                            xlineMin=-1L;
+                            xlineInc=-1L;
+                            dugShotMax=-1L;
+                            dugShotMin=-1L;
+                            dugShotInc=-1L;
+                            dugChannelMax=-1L;
+                            dugChannelMin=-1L;
+                            dugChannelInc=-1L;
+                            offsetMax=-1L;
+                            offsetMin=-1L;
+                            offsetInc=-1L;
+                        }catch(IOException ioe){
+                            System.out.println("middleware.dugex.HeaderExtractor.populate(): IOException: "+ioe.getMessage());
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    
+                    hdr.setTraceCount(traceCount);
+                    hdr.setCmpMax(cmpMax);
+                    hdr.setCmpMin(cmpMin);
+                    hdr.setCmpInc(cmpInc);
+                    hdr.setInlineMax(inlineMax);
+                    hdr.setInlineMin(inlineMin);
+                    hdr.setInlineInc(inlineInc);
+                    hdr.setXlineMax(xlineMax);
+                    hdr.setXlineMin(xlineMin);
+                    hdr.setXlineInc(xlineInc);
+                    hdr.setDugShotMax(dugShotMax);
+                    hdr.setDugShotMin(dugShotMin);
+                    hdr.setDugShotInc(dugShotInc);
+                    hdr.setDugChannelMax(dugChannelMax);
+                    hdr.setDugChannelMin(dugChannelMin);
+                    hdr.setDugChannelInc(dugChannelInc);
+                    hdr.setOffsetMax(offsetMax);
+                    hdr.setOffsetMin(offsetMin);
+                    hdr.setOffsetInc(offsetInc);
+                    
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
+                    Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
+                    hdr.setInsightVersion(latestLog.getInsightVersion());
+                    hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
+                    hdr.setNumberOfRuns(latestLog.getVersion()+1);
+                    
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
+                    
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
+                    headerService.createHeader(hdr);
+                    
+                    List<Log> logsForHeader=logService.getLogsFor(hdr.getVolume(), hdr.getSubsurface());
+                    Set<Log> setOfLogsForHeader=new HashSet<>(logsForHeader);
+                    hdr.setLogs(setOfLogsForHeader);
+                    
+                    for(Log l:setOfLogsForHeader){
+                        l.setHeader(hdr);
+                        logService.updateLogs(l.getIdLogs(), l);
+                    }
+                    headerService.updateHeader(hdr.getHeaderId(), hdr);
+                    
+//                headerService.getMultipleInstances(dbjob, hdr.getSubsurface());
 
-                                            inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
-                                            inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
-                                            inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
-                                            xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
-                                            xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
-                                            xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
-                                            dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
-                                            dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
-                                            dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
-                                            dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
-                                            dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
-                                            dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
-                                            offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
-                                            offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
-                                            offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
-                        
-                                    }catch(NumberFormatException nfe){
-                                            traceCount=-1L;
-                                            cmpMax=-1L;
-                                            cmpMin=-1L;
-                                            cmpInc=-1L;
 
-                                            inlineMax=-1L;
-                                            inlineMin=-1L;
-                                            inlineInc=-1L;
-                                            xlineMax=-1L;
-                                            xlineMin=-1L;
-                                            xlineInc=-1L;
-                                            dugShotMax=-1L;
-                                            dugShotMin=-1L;
-                                            dugShotInc=-1L;
-                                            dugChannelMax=-1L;
-                                            dugChannelMin=-1L;
-                                            dugChannelInc=-1L;
-                                            offsetMax=-1L;
-                                            offsetMin=-1L;
-                                            offsetInc=-1L;
-                                    }catch(IOException ioe){
-                                             System.out.println("middleware.dugex.HeaderExtractor.populate(): IOException: "+ioe.getMessage());
-                                    }
-             }
-       
-       
-       
-       
-       
-             hdr.setTraceCount(traceCount);
-             hdr.setCmpMax(cmpMax);
-             hdr.setCmpMin(cmpMin);
-             hdr.setCmpInc(cmpInc);
-             hdr.setInlineMax(inlineMax);
-             hdr.setInlineMin(inlineMin);
-             hdr.setInlineInc(inlineInc);
-             hdr.setXlineMax(xlineMax);
-             hdr.setXlineMin(xlineMin);
-             hdr.setXlineInc(xlineInc);
-             hdr.setDugShotMax(dugShotMax);
-             hdr.setDugShotMin(dugShotMin);
-             hdr.setDugShotInc(dugShotInc);
-             hdr.setDugChannelMax(dugChannelMax);
-             hdr.setDugChannelMin(dugChannelMin);
-             hdr.setDugChannelInc(dugChannelInc);
-             hdr.setOffsetMax(offsetMax);
-             hdr.setOffsetMin(offsetMin);
-             hdr.setOffsetInc(offsetInc);
-                
-             System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
-             Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
-             hdr.setInsightVersion(latestLog.getInsightVersion());
-             hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
-             hdr.setNumberOfRuns(latestLog.getVersion()+1);
-               
-                System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
-             
-                         System.out.println("dugex.DugioHeaderValuesExtractor.calculateRemainingHeaders(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
-                         headerService.createHeader(hdr);
-                         
-                List<Log> logsForHeader=logService.getLogsFor(hdr.getVolume(), hdr.getSubsurface());
-                Set<Log> setOfLogsForHeader=new HashSet<>(logsForHeader);
-                hdr.setLogs(setOfLogsForHeader);
-                for(Log l:setOfLogsForHeader){
-                    l.setHeader(hdr);
-                    logService.updateLogs(l.getIdLogs(), l);
+return null;
                 }
-                
-                headerService.updateHeader(hdr.getId(), hdr);
-                
-                           
-            return null;
-            }
-        });
+            }).get();
+        } catch (InterruptedException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (ExecutionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
                          
          
                          

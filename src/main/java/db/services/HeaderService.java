@@ -36,7 +36,8 @@ public interface HeaderService {
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume next);
 
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String latestTimestamp);
-    public List<Header> getMultipleInstances(Job job,Subsurface sub);
+    public Set<Header> getMultipleInstances(Job job,Subsurface sub);
+    public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
     
     
 }

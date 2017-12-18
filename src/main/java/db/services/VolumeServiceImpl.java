@@ -7,6 +7,7 @@ package db.services;
 
 import db.dao.VolumeDAO;
 import db.dao.VolumeDAOImpl;
+import db.model.Job;
 import java.util.List;
 
 import db.model.Volume;
@@ -58,6 +59,11 @@ public class VolumeServiceImpl implements VolumeService{
     @Override
     public void resetHeaderExtractionFlag(Volume v) {
         volDao.resetHeaderExtractionFlag(v);
+    }
+
+    @Override
+    public List<Volume> getVolumesForJob(Job dbjob) {
+        return volDao.getVolumesForJob(dbjob);
     }
 
     

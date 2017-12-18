@@ -5,8 +5,13 @@
  */
 package db.dao;
 
+import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
+import db.model.Workspace;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -17,5 +22,6 @@ public interface LinkDAO {
     public Link getLink(Long id);
     public void deleteLink(Long id);
     public void updateLink(Long id,Link newLink);
-    public void clearLinksforJob(Job job);      //clear links where either child=job or parent=job
+    public void clearLinksforJob(Job job,Dot dot);      //clear links where either child=job or parent=job
+    
 }

@@ -9,7 +9,7 @@
    <children>
       <VBox>
          <children>
-            <JFXButton fx:id="addQcType" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#addNewQcType" text="Add a new Qc Type" />
+            <JFXButton fx:id="addQcType" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#addNewQcType" text="Add a Qc Type" />
             <JFXListView fx:id="qcListView" prefHeight="400.0" prefWidth="208.0" />
          </children>
       </VBox>

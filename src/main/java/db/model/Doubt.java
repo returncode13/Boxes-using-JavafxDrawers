@@ -5,13 +5,17 @@
  */
 package db.model;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -48,9 +52,33 @@ public class Doubt {
     private User user;
     
         
-    @ManyToOne
+    /*  @ManyToOne
     @JoinColumn(name="link_fk")
     private Link link;                              //several doubts maybe associated to a single link.
+    */
+    
+    @ManyToOne
+    @JoinColumn(name="dot_fk")                      //several  with the same dot
+    private Dot dot;
+    
+    @ManyToOne
+    @JoinColumn(name="child_job_fk")
+    private Job childJob;
+    
+    @ManyToOne
+    @JoinColumn(name="seq_fk")
+    private Sequence sequence;
+    
+    @OneToMany(mappedBy = "doubt",fetch = FetchType.EAGER)
+    private Set<DoubtStatus> doubtStatuses;
+    
+    @ManyToOne
+    @JoinColumn(name = "doubt_cause_id")
+    private Doubt doubtCause;
+    
+    @OneToMany(mappedBy = "doubtCause",fetch=FetchType.EAGER)
+    private Set<Doubt> inheritedDoubts=new HashSet<>();
+    
     /*
     @ManyToOne
     @JoinColumn(name="user_fk",nullable=true)
@@ -61,27 +89,27 @@ public class Doubt {
     private Long childSessionDetailsId;
     */
     
-    @Column(name="status")
+    /*@Column(name="status")
     private String status;
     
     @Column(name="errorMessage")
     private String errorMessage;
-
+    
     public String getStatus() {
-        return status;
+    return status;
     }
-
+    
     public void setStatus(String status) {
-        this.status = status;
+    this.status = status;
     }
-
+    
     public String getErrorMessage() {
-        return errorMessage;
+    return errorMessage;
     }
-
+    
     public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+    this.errorMessage = errorMessage;
+    }*/
 
     /*public Long getChildSessionDetailsId() {
     return childSessionDetailsId;
@@ -151,13 +179,74 @@ public class Doubt {
         this.user = user;
     }
 
-    public Link getLink() {
-        return link;
+    /*  public Link getLink() {
+    return link;
+    }
+    
+    public void setLink(Link link) {
+    this.link = link;
+    }*/
+
+    public Dot getDot() {
+        return dot;
     }
 
-    public void setLink(Link link) {
-        this.link = link;
+    public void setDot(Dot dot) {
+        this.dot = dot;
     }
+
+    public Job getChildJob() {
+        return childJob;
+    }
+
+    public void setChildJob(Job childJob) {
+        this.childJob = childJob;
+    }
+
+    public Set<DoubtStatus> getDoubtStatuses() {
+        return doubtStatuses;
+    }
+
+    public void setDoubtStatuses(Set<DoubtStatus> doubtStatuses) {
+        this.doubtStatuses = doubtStatuses;
+    }
+    
+    public void addToDoubtStatuses(DoubtStatus doubtStatus) {
+        if(this.doubtStatuses==null) this.doubtStatuses=new HashSet<>();
+        this.doubtStatuses.add(doubtStatus);
+                
+    }
+
+    public Doubt getDoubtCause() {
+        return doubtCause;
+    }
+
+    public void setDoubtCause(Doubt doubtCause) {
+        this.doubtCause = doubtCause;
+    }
+
+    public Set<Doubt> getInheritedDoubts() {
+        return inheritedDoubts;
+    }
+
+    public void setInheritedDoubts(Set<Doubt> inheritedDoubts) {
+        this.inheritedDoubts = inheritedDoubts;
+    }
+
+    public void addToInheritedDoubts(Doubt inheritedDoubt) {
+        this.inheritedDoubts.add(inheritedDoubt);
+    }
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Sequence sequence) {
+        this.sequence = sequence;
+    }
+
+    
+    
     
     
     

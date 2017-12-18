@@ -59,6 +59,11 @@ public class DotDAOImpl implements DotDAO{
              Dot l= (Dot) session.get(Dot.class, id);
              l.setStatus(newDot.getStatus());
              l.setLinks(newDot.getLinks());
+             l.setVariableArguments(newDot.getVariableArguments());
+             l.setFunction(newDot.getFunction());
+             l.setTolerance(newDot.getTolerance());
+             l.setError(newDot.getError());
+             l.setDoubts(newDot.getDoubts());
              
             session.update(l);
             

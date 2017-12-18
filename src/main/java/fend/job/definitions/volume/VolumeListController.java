@@ -8,6 +8,12 @@ package fend.job.definitions.volume;
 import fend.workspace.WorkspaceModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import db.model.Job;
+import db.model.Volume;
+import db.services.JobService;
+import db.services.JobServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
 import java.io.File;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -24,6 +30,8 @@ import javafx.stage.FileChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -36,6 +44,10 @@ public class VolumeListController {
     private VolumeListView view;
     private Long type;              //the type of job and volume
     private JobType0Model parentjob;
+    private Job dbjob;
+    private VolumeService volumeService=new VolumeServiceImpl();
+    private JobService jobService=new JobServiceImpl();
+    
      @FXML
     private JFXListView<Volume0> volumeListView;
      
@@ -54,11 +66,22 @@ public class VolumeListController {
             System.out.println("box.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
             return;
         }
+        
+        
+        Volume vol=new Volume();
+        vol.setNameVolume(f.getName());
+        vol.setPathOfVolume(f.getAbsolutePath());
+        vol.setVolumeType(type);
+        vol.setJob(dbjob);
+        volumeService.createVolume(vol);
+        
         //type=1L;  <--for demo
         if(type.equals(JobType0Model.PROCESS_2D)){
             Volume1 volume1=new Volume1(parentjob);
+            volume1.setId(vol.getId());
             volume1.setName(f.getName());
             volume1.setVolume(f);
+           
             model.addToVolumeList(volume1);
         }
     }
@@ -71,6 +94,21 @@ public class VolumeListController {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
+        dbjob=jobService.getJob(parentjob.getId());
+        
+        
+        Set<Volume> dbVolumesInJob=dbjob.getVolumes();
+        for(Volume dbVol:dbVolumesInJob){
+            Volume0 fevol;
+            if(type.equals(JobType0Model.PROCESS_2D)){
+                fevol=new Volume1(parentjob);
+                fevol.setId(dbVol.getId());
+                fevol.setName(dbVol.getNameVolume());
+                File volumeOnDisk=new File(dbVol.getPathOfVolume());
+                fevol.setVolume(volumeOnDisk);
+                model.addToVolumeList(fevol);
+            }
+        }
         
     }
 

@@ -35,10 +35,23 @@ public class Dot {
     @JoinColumn(name="workspace_fk",nullable=false)
     private Workspace workspace;
     
+    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    private Set<VariableArgument> variableArguments;
+    
+    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    private Set<Doubt> doubts;
     
     @Column(name="status")
     private String status;
     
+    @Column(name="function")
+    private String function;
+    
+    @Column(name="tolerance")
+    private Double tolerance=0.0;
+    
+    @Column(name="error")
+    private Double error=0.0;
     
     public Dot() {
     }
@@ -104,6 +117,48 @@ public class Dot {
         this.status = status;
     }
 
+    public Set<VariableArgument> getVariableArguments() {
+        return variableArguments;
+    }
+
+    public void setVariableArguments(Set<VariableArgument> variableArguments) {
+        this.variableArguments = variableArguments;
+    }
+
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public Double getTolerance() {
+        return tolerance;
+    }
+
+    public void setTolerance(Double tolerance) {
+        this.tolerance = tolerance;
+    }
+
+    public Double getError() {
+        return error;
+    }
+
+    public void setError(Double error) {
+        this.error = error;
+    }
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+
+    
+    
     
     
     

@@ -44,10 +44,11 @@ private Set<Subsurface> subsurfaces;
 private Set<Acquisition> acquisition;
 
 
+@OneToMany(mappedBy = "sequence")
+private Set<Summary> summaries;
 
-
-
-
+@OneToMany(mappedBy = "sequence")
+private Set<Doubt> doubts;
 
     public Set<Acquisition> getAcquisition() {
         return acquisition;
@@ -93,6 +94,28 @@ private Set<Acquisition> acquisition;
     public void setRealLineName(String realLineName) {
         this.realLineName = realLineName;
     }
+
+    public Set<Summary> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(Set<Summary> summaries) {
+        this.summaries = summaries;
+    }
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+
+    
+    
+    
+    
+    
 
     public Sequence() {
     }

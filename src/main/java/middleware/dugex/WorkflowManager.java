@@ -135,7 +135,7 @@ public class WorkflowManager {
                 }
                 
              //   mlogwfholder.put(next, workflowHolder);
-                    
+                    System.out.println("watcher.WorkflowWatcher.init<>.call(): updating logs");
             lserv.updateLogs(next.getIdLogs(), next);       //update all these logs . all logs now have a workflow assigned
              }
                 return null;

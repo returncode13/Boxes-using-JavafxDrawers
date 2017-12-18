@@ -5,7 +5,7 @@
  */
 package fend.dot;
 
-import fend.dot.anchor.AnchorNode;
+import fend.dot.anchor.AnchorView;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +31,8 @@ public class DotView extends Circle{
     
     
     public DotView(DotModel item,AnchorPane interactivePane){
-        this.location=getClass().getClassLoader().getResource("fxml/dot.fxml"); 
+        model=item;
+        this.location=getClass().getClassLoader().getResource("fxml/dot/dot.fxml"); 
         this.interactivePane=interactivePane;
           
            fXMLLoader=new FXMLLoader();
@@ -50,7 +51,7 @@ public class DotView extends Circle{
                 //setId((new UID()).toString());
                 
                 
-                controller.setModel(item);
+                controller.setModel(model);
                 controller.setView(this,this.interactivePane) ;
                
                 

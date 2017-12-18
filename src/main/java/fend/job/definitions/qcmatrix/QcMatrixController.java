@@ -15,7 +15,7 @@ import db.services.JobServiceImpl;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTypeService;
 import db.services.QcTypeServiceImpl;
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 
 import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeModel;
 import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeNode;
@@ -88,7 +88,7 @@ public class QcMatrixController {
                 qcrw.setId(qcmatrixRow.getId());
                 qcrw.setName(qcmatrixRow.getQctype().getName());
                 System.out.println("fend.job.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
-                qcrw.setChecked(qcmatrixRow.getPresent());
+                qcrw.setCheckedByUser(qcmatrixRow.getPresent());
                 
                 qcMatrixModel.addQcMatrixRow(qcrw);
             }

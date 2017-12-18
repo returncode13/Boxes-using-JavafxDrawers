@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<fx:root id="AnchorPane" prefHeight="309.0" prefWidth="688.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.dot.formulaField.FormulaFieldController">
+   <children>
+      <GridPane layoutX="100.0" layoutY="-185.0" prefHeight="309.0" prefWidth="652.0" style="-fx-background-color: White;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="465.0" minWidth="10.0" prefWidth="445.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="0.0" prefWidth="11.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.0" minWidth="10.0" prefWidth="92.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.0" minWidth="3.0" prefWidth="20.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="90.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="30.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <JFXButton fx:id="okButton" buttonType="RAISED" maxWidth="1.7976931348623157E308" onAction="#okClicked" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Ok" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
+            <JFXTextField fx:id="function" alignment="CENTER" promptText="y=f(x1,x2,..,xn)" GridPane.rowIndex="2" />
+            <JFXTextArea fx:id="textArea" editable="false" />
+            <JFXButton fx:id="cancel" buttonType="RAISED" layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" onAction="#cancel" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Cancel" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" promptText="tolerance %" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </JFXTextField>
+            <JFXTextField fx:id="error" alignment="CENTER" layoutX="466.0" layoutY="263.0" maxWidth="1.7976931348623157E308" promptText="error %" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+         </children>
+      </GridPane>
+   </children>
+</fx:root>

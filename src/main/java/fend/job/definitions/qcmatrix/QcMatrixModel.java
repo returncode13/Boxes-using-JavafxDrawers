@@ -6,7 +6,7 @@
 package fend.job.definitions.qcmatrix;
 
  
-import fend.job.definitions.qcmatrix.qctype.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,15 +60,15 @@ public class QcMatrixModel {
         public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
             while(c.next()){
                 for(QcMatrixRowModel q:c.getAddedSubList()){
-                     System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.added() "+q.getName().get()+" selected? "+q.isChecked());
+                     System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.added() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      addToParentJob(q);
                 }
                 for(QcMatrixRowModel q:c.getRemoved()){
-                     System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.removed() "+q.getName().get()+" selected? "+q.isChecked());
+                     System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.removed() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      removeFromParentJob(q);
                 }
                 if(c.wasUpdated()){
-                    System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.updated() "+c.getList().get(c.getFrom()).getName().get()+" selected? "+c.getList().get(c.getFrom()).isChecked());
+                    System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.updated() "+c.getList().get(c.getFrom()).getName().get()+" selected? "+c.getList().get(c.getFrom()).getCheckedByUser());
                     
                 }
             }

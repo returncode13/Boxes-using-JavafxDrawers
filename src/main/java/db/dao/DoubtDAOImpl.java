@@ -11,7 +11,10 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Link;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Dot;
+import db.model.Subsurface;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -46,13 +49,21 @@ public class DoubtDAOImpl implements DoubtDAO{
             transaction=session.beginTransaction();
             Doubt ll=(Doubt) session.get(Doubt.class,dsid);
             ll.setDoubtType(newds.getDoubtType());
-            ll.setErrorMessage(newds.getErrorMessage());
+            //ll.setErrorMessage(newds.getErrorMessage());
             //ll.setHeaders(newds.getHeaders());
             //ll.setParentSessionDetails(newds.getParentSessionDetails());
+            //ll.setSubsurface(newds.getSubsurface());
+            //ll.setLink(newds.getLink());
+            //ll.setStatus(newds.getStatus());
+            ll.setChildJob(newds.getChildJob());
+            ll.setDot(newds.getDot());
             ll.setSubsurface(newds.getSubsurface());
-            ll.setLink(newds.getLink());
-            ll.setStatus(newds.getStatus());
             ll.setUser(newds.getUser());
+            ll.setDoubtStatuses(newds.getDoubtStatuses());
+            ll.setInheritedDoubts(newds.getInheritedDoubts());
+            ll.setDoubtCause(newds.getDoubtCause());
+            ll.setSequence(newds.getSequence());
+            
             session.update(ll);
             
             
@@ -95,25 +106,25 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
 
     
-     @Override
+    /*   @Override
     public List<Doubt> getDoubtsForLink(Link link) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<Doubt> result=null;
-        try{
-            transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Doubt.class);
-            criteria.add(Restrictions.eq("link", link));
-            
-            result=criteria.list();
-            transaction.commit();
-        }catch(Exception e){
-            e.printStackTrace();
-        }finally{
-            session.close();
-        }
-        return result;
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<Doubt> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(Doubt.class);
+    criteria.add(Restrictions.eq("link", link));
+    
+    result=criteria.list();
+    transaction.commit();
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
     }
+    return result;
+    }*/
     
     
     /* @Override
@@ -221,6 +232,71 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
     return result;
     }*/
+
+    @Override
+    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("childJob", job));
+            criteria.add(Restrictions.eq("dot", dot));
+            criteria.add(Restrictions.eq("doubtType",doubtType));
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>1){
+            return null;
+        }else if(result.isEmpty()){
+                return null;
+                }
+        else if (result.size()==1){
+                return  result.get(0);
+                }else{
+            return null;
+        }
+               
+        
+        
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("childJob", job));
+            criteria.add(Restrictions.eq("dot", dot));
+           
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>=1){
+            return result;
+        }else {
+            return null;
+        
+        }
+    }
 
    
     

@@ -31,6 +31,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.joda.time.DateTime;
@@ -106,7 +110,7 @@ public class DugLogManager {
                 
             List<Log> listOfdbLogsForSubInJob=logsService.getLogsByTimeFor(dbJob,sub);                   //ascending order by time. element zero is version 0;
             for(int i=0;i<listOfdbLogsForSubInJob.size();i++){
-                //System.out.println("middleware.dugex.DugLogManager.<init>(): version "+i+" time: "+listOfdbLogsForSubInJob.get(i).getTimestamp()+" file: "+listOfdbLogsForSubInJob.get(i).getLogpath());
+                System.out.println("middleware.dugex.DugLogManager.<init>(): version "+i+" time: "+listOfdbLogsForSubInJob.get(i).getTimestamp()+" file: "+listOfdbLogsForSubInJob.get(i).getLogpath());
                 Log ll=listOfdbLogsForSubInJob.get(i);
                 Long ver=Long.valueOf(i);
                 ll.setVersion(ver);
@@ -128,34 +132,51 @@ public class DugLogManager {
 
     private List<LogInformation> extractInformation(List<FileWrapper> filesToCommit) {
         List<FileWrapper> listOfPendingFiles=new ArrayList<>();
-        List<LogInformation> logInformation=new ArrayList<>();
+        final List<LogInformation> logInformation=new ArrayList<>();
         
         for(FileWrapper fw:filesToCommit){
             try {
-                
-                // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager
-                
-                
-                Process process=new ProcessBuilder(dugioScripts.getSubsurfaceInsightVersionForLog().getAbsolutePath(),fw.fwrap.getAbsolutePath()).start();
-                InputStream is = process.getInputStream();
-                InputStreamReader isr=new InputStreamReader(is);
-                BufferedReader br=new BufferedReader(isr);
-                
-                String value;
-                while((value=br.readLine())!=null){
-                    //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
-                    String linename=value.substring(9,value.indexOf(" "));
-                    String insight=value.substring(value.indexOf(" ")+9);
-                    //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
+                ExecutorService executorService=Executors.newCachedThreadPool();
+                executorService.submit(new Callable<Void>(){
+                    @Override
+                    public Void call() throws Exception {
+                        
+                        
+                        try {
+                            
+                            // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager
+                            
+                            
+                            Process process=new ProcessBuilder(dugioScripts.getSubsurfaceInsightVersionForLog().getAbsolutePath(),fw.fwrap.getAbsolutePath()).start();
+                            InputStream is = process.getInputStream();
+                            InputStreamReader isr=new InputStreamReader(is);
+                            BufferedReader br=new BufferedReader(isr);
+                            
+                            String value;
+                            while((value=br.readLine())!=null){
+                                //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                                String linename=value.substring(9,value.indexOf(" "));
+                                String insight=value.substring(value.indexOf(" ")+9);
+                                //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
+                                
+                                LogInformation li=new LogInformation();
+                                li.log=fw.fwrap;
+                                li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                                li.insightVersion=insight;
+                                li.timestamp=hackTimeStamp(fw.fwrap);
+                                logInformation.add(li);
+                            }
+                        } catch (IOException ex) {
+                            Exceptions.printStackTrace(ex);
+                        }
+                        
+                        return null;
+                    }
                     
-                    LogInformation li=new LogInformation();
-                    li.log=fw.fwrap;
-                    li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
-                    li.insightVersion=insight;
-                    li.timestamp=hackTimeStamp(fw.fwrap);
-                    logInformation.add(li);
-                }
-            } catch (IOException ex) {
+                }).get();
+            } catch (InterruptedException ex) {
+                Exceptions.printStackTrace(ex);
+            } catch (ExecutionException ex) {
                 Exceptions.printStackTrace(ex);
             }
             

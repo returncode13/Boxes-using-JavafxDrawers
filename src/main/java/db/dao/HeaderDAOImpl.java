@@ -18,8 +18,10 @@ import db.model.Subsurface;
 import db.model.Volume;
 //import fend.session.node.headers.SubSurfaceHeaders;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -98,6 +100,7 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setTextfilepath(newH.getTextfilepath());
             h.setMultipleInstances(newH.getModified());
             h.setChosen(newH.getChosen());
+            h.setLogs(newH.getLogs());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
@@ -155,7 +158,21 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public List<Header> getHeadersFor(Job job) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Header> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Header.class);
+            criteria.add(Restrictions.eq("job", job));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
     @Override
@@ -467,24 +484,37 @@ public class HeaderDAOImpl implements HeaderDAO{
     }
 
     @Override
-    public List<Header> getMultipleInstances(Job job, Subsurface sub) {
+    public Set<Header> getMultipleInstances(Job job, Subsurface sub) {
         Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
-            List<Header> result=null;
+            Set<Header> result=null;
             try{
                 transaction=session.beginTransaction();
                 Criteria criteria=session.createCriteria(Header.class);
-                criteria.add(Restrictions.eq("job", job));
-                criteria.add(Restrictions.eq("subsurface", sub));
+                criteria.createAlias("subsurfaceJob", "sj");
+                criteria.add(Restrictions.eq("sj.pk.job", job));
+                criteria.add(Restrictions.eq("sj.pk.subsurface", sub));
+                //Criterion rest1=Restrictions.eq("job_id", job);
+               // Criterion rest2=Restrictions.eq("id", sub);
                 
+                //criteria.add(Restrictions.and(rest1,rest2));
+               
                 
-                result=criteria.list();
+             //   Query query=session.createQuery("from obpmanager.subsurface_job where job_id = :jobid and id =:subid");
+//                "select * from obpmanager.header INNER JOIN obpmanager.job on obpmanager.header.job_fk=obpmanager.job.job_id INNER JOIN public.subsurface on obpmanager.header.subsurface_fk=public.subsurface.id AND chosen=false WHERE public.subsurface.id=16062 AND obpmanager.job.job_id=91;"
+/*  Query query=session.createQuery("from Header INNER JOIN Job on Header.job.id=Job.id INNER JOIN Subsurface on Header.subsurface.id=Subsurface.id  WHERE Subsurface.id =:subid AND Job.id =:jobid");
+query.setParameter("jobid", job);
+query.setParameter("subid", sub);
+*/
+                result=new LinkedHashSet(criteria.list());
                 transaction.commit();
                 
                 if(result.size()>1){
                     System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): result.size() for job "+job.getId()+" sub: "+sub.getId()+ " result.size(): "+result.size());
                 for(Header h:result){
-                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getId() +" subsurface ID: "+h.getSubsurface().getId()+" job: "+h.getJob().getId());
+                    transaction=null;
+                    
+                    System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances(): updating header "+h.getHeaderId()+" subsurface ID: "+h.getSubsurface().getId()+" job: "+h.getJob().getId());
                     h.setMultipleInstances(true);
                     h.setChosen(false);
                     transaction=session.beginTransaction();
@@ -506,6 +536,48 @@ public class HeaderDAOImpl implements HeaderDAO{
                 return null;
             }else{
                 return result;  //should be of size 1
+            }
+    }
+
+    @Override
+    public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
+         Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = null;
+            Set<Header> result=null;
+            try{
+                transaction=session.beginTransaction();
+                Criteria criteria=session.createCriteria(Header.class);
+                /*criteria.add(Restrictions.eq("job.id", job.getId()));
+                criteria.add(Restrictions.eq("subsurface.id", sub.getId()));*/
+                //criteria.add(Restrictions.eq("chosen", true));
+                 Criterion rest1=Restrictions.eq("job", job);
+                Criterion rest2=Restrictions.eq("subsurface", sub);
+                Criterion rest3=Restrictions.eq("chosen", true);
+                criteria.add(Restrictions.and(rest1,rest2,rest3));
+                
+                
+                
+                result=new LinkedHashSet(criteria.list());
+                transaction.commit();
+                }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                session.close();
+            }
+            
+            if(result.isEmpty())
+            {
+                return null;
+            }
+            else if(result.size()>1){
+                throw new Exception("More than one chosen header found!!. Please choose a single header for "+job.getNameJobStep()+" : sub: "+sub.getSubsurface());
+            }
+            else if(result.size()==1)
+            {
+                return new ArrayList<>(result).get(0);
+            }
+            else{
+                return null;
             }
     }
 

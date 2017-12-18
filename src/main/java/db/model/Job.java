@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -53,6 +54,8 @@ public class Job implements Serializable{
     /*@Column(name = "type",nullable=false)
     private Long type;*/
     
+    @Column(name="depth",nullable=false)
+    private Long depth;
    
     
     @ManyToOne
@@ -102,12 +105,27 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "child",fetch=FetchType.EAGER)
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
+    @OneToMany(mappedBy = "argument",fetch = FetchType.EAGER)
+    private Set<VariableArgument> variableArguments;
     
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
+     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
     private Set<Subsurface> subsurfaces;
+    /*
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
+    private Set<Sequence> sequences;*/
      
+    @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
+    private Set<SubsurfaceJob> subsurfaceJobs=new HashSet<>();
+    
+    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    private Set<Summary> summaries;
+    
+    
+    @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
+    private Set<Doubt> doubts;
+    
     /*public Job(String nameJobStep, Boolean alert,String insightVersion,Long type) {
     this.nameJobStep = nameJobStep;
     this.alert = alert;
@@ -269,11 +287,11 @@ public class Job implements Serializable{
     }
 
     public Set<Header> getHeaders() {
-        return headers;
+    return headers;
     }
-
+    
     public void setHeaders(Set<Header> headers) {
-        this.headers = headers;
+    this.headers = headers;
     }
 
     public Set<Ancestor> getAncestors() {
@@ -309,14 +327,69 @@ public class Job implements Serializable{
     }
 
     
-    public Set<Subsurface> getSubsurfaces() {
-        return subsurfaces;
+     public Set<Subsurface> getSubsurfaces() {
+    return subsurfaces;
     }
-
+    
     public void setSubsurfaces(Set<Subsurface> subsurfaces) {
-        this.subsurfaces = subsurfaces;
+    this.subsurfaces = subsurfaces;
     }
 
+    public Set<VariableArgument> getVariableArguments() {
+        return variableArguments;
+    }
+
+    public void setVariableArguments(Set<VariableArgument> variableArguments) {
+        this.variableArguments = variableArguments;
+    }
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+
+    public Long getDepth() {
+        return depth;
+    }
+
+    public void setDepth(Long depth) {
+        this.depth = depth;
+    }
+
+    public Set<Summary> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(Set<Summary> summaries) {
+        this.summaries = summaries;
+    }
+
+    /* public Set<Sequence> getSequences() {
+    return sequences;
+    }
+    
+    public void setSequences(Set<Sequence> sequences) {
+    this.sequences = sequences;
+    }*/
+
+    public Set<SubsurfaceJob> getSubsurfaceJobs() {
+        return subsurfaceJobs;
+    }
+
+    public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
+        this.subsurfaceJobs = subsurfaceJobs;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -341,6 +414,8 @@ public class Job implements Serializable{
         }
         return true;
     }
+
+    
 
     
    
