@@ -8,6 +8,7 @@ package middleware.dugex;
 import db.model.Header;
 import db.model.Job;
 import db.model.Sequence;
+import db.model.Subsurface;
 import db.model.Volume;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -45,7 +46,11 @@ public class HeaderLoader {
 //        List<Header> headersInJob=headerService.getHeadersFor(dbjob);
         Set<Header> headersInJob=dbjob.getHeaders();
         List<Volume0> feVolsInJob=job.getVolumes();
-        
+        Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+        System.out.println("middleware.dugex.HeaderLoader.<init>(): Listing all subs in the job.. "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
+        for(Subsurface s:subsinJob){
+            System.err.println(""+s.getSubsurface());
+        }
         Map<Long,Volume0> feVolMap=new HashMap<>();
             for(Volume0 v:feVolsInJob){
                 feVolMap.put(v.getId(), v);
@@ -55,7 +60,7 @@ public class HeaderLoader {
             //headerService.getMultipleInstances(dbjob, h.getSubsurface());
             System.out.println("Seq: "+h.getSubsurface().getSequence().getSequenceno()+" sub: "+h.getSubsurface().getSubsurface()+" id:  "+h.getSubsurface().getId()+" duplicate: "+h.getMultipleInstances()+" chosen: "+h.getChosen() +"  Volume: "+h.getVolume().getNameVolume());
             SubsurfaceHeaders sub=new SubsurfaceHeaders(feVolMap.get(h.getVolume().getId()));
-                sub.setId(h.getId());
+                sub.setId(h.getHeaderId());
                 sub.setSubsurface(h.getSubsurface());
                 sub.setSubsurfaceName(h.getSubsurface().getSubsurface());
                 sub.setTimeStamp(h.getTimeStamp());

@@ -10,6 +10,7 @@ import db.model.Job;
 import db.model.Log;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.model.Volume;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -17,6 +18,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
 import db.services.LogServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
@@ -49,6 +52,7 @@ public class HeaderExtractor {
     JobType0Model job;
     Job dbjob;
     SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     HeaderService headerService=new HeaderServiceImpl();
     VolumeService volumeService=new VolumeServiceImpl();
     LogService logService=new LogServiceImpl();
@@ -64,7 +68,9 @@ public class HeaderExtractor {
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
-        Set<Sequence> setOfSequencesInJob=new HashSet<>();
+        Set<SubsurfaceJob> setOfSubsurfaceJobs=new HashSet<>();
+        
+        //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type1 extraction
         if(job.getType().equals(JobType0Model.PROCESS_2D)){
            
@@ -78,7 +84,16 @@ public class HeaderExtractor {
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                   Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
-                  setOfSequencesInJob.add(dbseq);
+                  SubsurfaceJob dbSubjob;
+                  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
+                      dbSubjob=new SubsurfaceJob();
+                      dbSubjob.setJob(dbjob);
+                      dbSubjob.setSubsurface(dbsub);
+                      subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+                  }
+                  dbjob.getSubsurfaceJobs().add(dbSubjob);
+                  //jobService.updateJob(dbjob.getId(), dbjob);
+                  //setOfSequencesInJob.add(dbseq);
                           
                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
                 
@@ -89,12 +104,19 @@ public class HeaderExtractor {
                       System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
                       Header header=new Header();
                       header.setJob(dbvol.getJob());
+                      header.setSubsurfaceJob(dbSubjob);
                       header.setVolume(dbvol);
                       header.setSubsurface(dbsub);
                       header.setTimeStamp(latestTimestamp);
                       //header.setSequence(dbsub.getSequence());
                     populate(header);
                     setOfHeadersInJob.add(header);
+                     
+                    //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+                    //dbjob.getSubsurfaceJobs().add(dbSubjob);
+                   // dbjob.setSequences(setOfSequencesInJob);
+                    dbjob.setHeaders(setOfHeadersInJob);
+                    jobService.updateJob(dbjob.getId(), dbjob);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                         headerService.getMultipleInstances(dbjob, dbsub);
                   }else{
@@ -105,11 +127,8 @@ public class HeaderExtractor {
                   
               }
           }
+         
           
-          dbjob.setSubsurfaces(setOfSubsurfacesInJob);
-          dbjob.setSequences(setOfSequencesInJob);
-          dbjob.setHeaders(setOfHeadersInJob);
-          jobService.updateJob(dbjob.getId(), dbjob);
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 
                    ((JobType1Model)job).setHeadersCommited(true);
@@ -126,7 +145,7 @@ public class HeaderExtractor {
                 public Void call() throws Exception {
                     
                     
-                    System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getId());
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getHeaderId());
                     Long traceCount=0L;
                     Long cmpMax=0L;
                     Long cmpMin=0L;
@@ -243,7 +262,7 @@ public class HeaderExtractor {
                         l.setHeader(hdr);
                         logService.updateLogs(l.getIdLogs(), l);
                     }
-                    headerService.updateHeader(hdr.getId(), hdr);
+                    headerService.updateHeader(hdr.getHeaderId(), hdr);
                     
 //                headerService.getMultipleInstances(dbjob, hdr.getSubsurface());
 

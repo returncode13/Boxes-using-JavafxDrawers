@@ -12,15 +12,16 @@ public abstract class Header_ {
 	public static volatile SingularAttribute<Header, Long> xlineMax;
 	public static volatile SingularAttribute<Header, Long> xlineInc;
 	public static volatile SingularAttribute<Header, Long> dugShotMax;
+	public static volatile SingularAttribute<Header, Long> headerId;
 	public static volatile SingularAttribute<Header, String> insightVersion;
 	public static volatile SingularAttribute<Header, Long> cmpMin;
 	public static volatile SingularAttribute<Header, String> textfilepath;
 	public static volatile SingularAttribute<Header, Long> dugShotInc;
 	public static volatile SingularAttribute<Header, Long> traceCount;
 	public static volatile SingularAttribute<Header, Long> inlineMax;
+	public static volatile SingularAttribute<Header, SubsurfaceJob> subsurfaceJob;
 	public static volatile SingularAttribute<Header, Long> inlineInc;
 	public static volatile SingularAttribute<Header, Boolean> modified;
-	public static volatile SingularAttribute<Header, Long> id;
 	public static volatile SingularAttribute<Header, Long> cmpInc;
 	public static volatile SetAttribute<Header, Log> logs;
 	public static volatile SingularAttribute<Header, Long> dugShotMin;

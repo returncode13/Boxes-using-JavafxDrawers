@@ -37,19 +37,19 @@ public class Summary {
     private Long depth;
     
     @Column(name="time_summary")
-    private Boolean timeSummary;
+    private Boolean timeSummary=false;
     
     @Column(name="trace_summary")
-    private Boolean traceSummary;
+    private Boolean traceSummary=false;
     
     @Column(name="qc_summary")
-    private Boolean qcSummary;
+    private Boolean qcSummary=false;
     
     @Column(name="insight_summary")
-    private Boolean insightSummary;
+    private Boolean insightSummary=false;
     
     @Column(name="inheritance_summary")
-    private Boolean inheritanceSummary;
+    private Boolean inheritanceSummary=false;
 
     public Summary() {
     }

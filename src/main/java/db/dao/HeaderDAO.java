@@ -39,7 +39,7 @@ public interface HeaderDAO {
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume next);
 
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp);
-    public List<Header> getMultipleInstances(Job job,Subsurface sub);
+    public Set<Header> getMultipleInstances(Job job,Subsurface sub);
 
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
     

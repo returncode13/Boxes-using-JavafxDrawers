@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -107,14 +108,16 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "argument",fetch = FetchType.EAGER)
     private Set<VariableArgument> variableArguments;
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
-    private Set<Subsurface> subsurfaces;
-    
      @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs. 
-    private Set<Sequence> sequences;
+    @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
+    private Set<Subsurface> subsurfaces;
+    /*
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
+    private Set<Sequence> sequences;*/
      
+    @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
+    private Set<SubsurfaceJob> subsurfaceJobs=new HashSet<>();
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Summary> summaries;
@@ -284,11 +287,11 @@ public class Job implements Serializable{
     }
 
     public Set<Header> getHeaders() {
-        return headers;
+    return headers;
     }
-
+    
     public void setHeaders(Set<Header> headers) {
-        this.headers = headers;
+    this.headers = headers;
     }
 
     public Set<Ancestor> getAncestors() {
@@ -324,12 +327,12 @@ public class Job implements Serializable{
     }
 
     
-    public Set<Subsurface> getSubsurfaces() {
-        return subsurfaces;
+     public Set<Subsurface> getSubsurfaces() {
+    return subsurfaces;
     }
-
+    
     public void setSubsurfaces(Set<Subsurface> subsurfaces) {
-        this.subsurfaces = subsurfaces;
+    this.subsurfaces = subsurfaces;
     }
 
     public Set<VariableArgument> getVariableArguments() {
@@ -364,12 +367,20 @@ public class Job implements Serializable{
         this.summaries = summaries;
     }
 
-    public Set<Sequence> getSequences() {
-        return sequences;
+    /* public Set<Sequence> getSequences() {
+    return sequences;
+    }
+    
+    public void setSequences(Set<Sequence> sequences) {
+    this.sequences = sequences;
+    }*/
+
+    public Set<SubsurfaceJob> getSubsurfaceJobs() {
+        return subsurfaceJobs;
     }
 
-    public void setSequences(Set<Sequence> sequences) {
-        this.sequences = sequences;
+    public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
+        this.subsurfaceJobs = subsurfaceJobs;
     }
     
     

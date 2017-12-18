@@ -99,7 +99,7 @@ public class LineTableController extends Stage{
              Subsurface sub=subsurfaceService.getSubsurface(id);*/
              Header h=headerService.getHeader(id);
              h.setChosen(true);
-             headerService.updateHeader(h.getId(), h);
+             headerService.updateHeader(h.getHeaderId(), h);
              
          });
          

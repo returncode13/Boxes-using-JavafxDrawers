@@ -11,6 +11,7 @@ import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.model.Workspace;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +59,9 @@ public class LinkServiceImpl implements LinkService {
             Set<Link> linksinDot=dot.getLinks();
             for(Link l:linksinDot){
                 Set<Subsurface> parentSubsurfaces=l.getParent().getSubsurfaces();
+               //Set<SubsurfaceJob> parentSubsurfaces=l.getParent().getSubsurfaceJobs();
                 if(!parentSubsurfaces.contains(s)){
+                //if(!parentSubsurfaces.){
                     continue;
                 }else{
                     if(l.getChild().getSubsurfaces().contains(s)){

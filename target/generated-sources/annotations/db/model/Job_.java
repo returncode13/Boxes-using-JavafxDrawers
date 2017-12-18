@@ -15,11 +15,11 @@ public abstract class Job_ {
 	public static volatile SetAttribute<Job, Ancestor> currentJobInAncestor;
 	public static volatile SetAttribute<Job, Link> linksWithJobAsChild;
 	public static volatile SetAttribute<Job, VariableArgument> variableArguments;
+	public static volatile SetAttribute<Job, SubsurfaceJob> subsurfaceJobs;
 	public static volatile SingularAttribute<Job, NodeType> nodetype;
 	public static volatile SingularAttribute<Job, String> nameJobStep;
 	public static volatile SetAttribute<Job, Volume> volumes;
 	public static volatile SetAttribute<Job, QcMatrixRow> qcmatrix;
-	public static volatile SetAttribute<Job, Sequence> sequences;
 	public static volatile SetAttribute<Job, Descendant> descendants;
 	public static volatile SetAttribute<Job, Descendant> currentJobInDescendant;
 	public static volatile SingularAttribute<Job, Long> depth;

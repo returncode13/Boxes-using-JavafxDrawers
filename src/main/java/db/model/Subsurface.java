@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -42,12 +43,7 @@ public class Subsurface implements Serializable {
     private Set<Acquisition> acquisition;
     
     
-    
-    /***
-     * These mappings are not present in the Database public.Subsurface.
-     * 
-     */
-    
+
     
     
     
@@ -63,6 +59,8 @@ public class Subsurface implements Serializable {
     @OneToMany(mappedBy = "subsurface")
     private Set<Log> logs ;
     
+    @OneToMany(mappedBy ="pk.subsurface")
+    private Set<SubsurfaceJob> subsurfaceJobs=new HashSet<>();
     
     public Subsurface() {
     }
@@ -84,13 +82,12 @@ public class Subsurface implements Serializable {
     }
 
     public Set<Header> getHeaders() {
-        return headers;
+    return headers;
     }
-
+    
     public void setHeaders(Set<Header> headers) {
-        this.headers = headers;
+    this.headers = headers;
     }
-
     
     
     public String getSubsurface() {
@@ -130,6 +127,16 @@ public class Subsurface implements Serializable {
     public void setLogs(Set<Log> logs) {
         this.logs = logs;
     }
+
+    public Set<SubsurfaceJob> getSubsurfaceJobs() {
+        return subsurfaceJobs;
+    }
+
+    public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
+        this.subsurfaceJobs = subsurfaceJobs;
+    }
+    
+    
 
     @Override
     public int hashCode() {

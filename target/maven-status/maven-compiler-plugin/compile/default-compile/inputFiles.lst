@@ -24,8 +24,10 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job0/JobType0Model.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobDAOImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SubsurfaceJobService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/seq/sub/QcTableSubsurface.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SummaryServiceImpl.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/SubsurfaceJobId.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/User.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/workspace/WorkspaceController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/WorkflowManager.java
@@ -54,6 +56,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/job0/JobType0Controller.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/qctable/QcTableController.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Item.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/SubsurfaceJobServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/edge/EdgeView.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodePropertyValueServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/job/table/lineTable/LineTableModel.java
@@ -95,6 +98,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/NodeTypeService.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/app/connections/hibernate/HibernateUtil.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/JobVolumeMapDAO.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceJobDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/VariableArgumentDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/UserDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/VolumeServiceImpl.java
@@ -160,6 +164,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/QcTableDAO.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Dot.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/middleware/dugex/HeaderLoader.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/SubsurfaceJob.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Doubt.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/HeaderDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/UserService.java
@@ -198,6 +203,7 @@
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/QcTable.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/fend/edge/dotjobedge/DotJobEdgeModel.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/JobVolumeMap.java
+/d/home/adira0150/NetBeansProjects/Box/src/main/java/db/dao/SubsurfaceJobDAOImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/HeaderServiceImpl.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/model/Summary.java
 /d/home/adira0150/NetBeansProjects/Box/src/main/java/db/services/DoubtStatusService.java

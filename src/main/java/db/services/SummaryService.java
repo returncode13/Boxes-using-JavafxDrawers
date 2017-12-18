@@ -5,7 +5,10 @@
  */
 package db.services;
 
+import db.model.Job;
+import db.model.Sequence;
 import db.model.Summary;
+import db.model.Workspace;
 
 /**
  *
@@ -16,4 +19,6 @@ public interface SummaryService {
  public Summary getSummary(Long id);
  public void deleteSummary(Long id);
  public void updateSummary(Long id,Summary newSummary);
+
+ public Summary getSummaryFor(Sequence sequence,Job job);
 }

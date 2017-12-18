@@ -78,7 +78,7 @@ public class JobDAOImpl implements JobDAO{
             oldJs.setAlert(newJs.isAlert());
            // oldJs.setJobVolumeMap(newJs.getJobVolumeMap());
             oldJs.setInsightVersions(newJs.getInsightVersions());
-            oldJs.setSubsurfaces(newJs.getSubsurfaces());
+            
             oldJs.setHeaders(newJs.getHeaders());
             oldJs.setDescendants(newJs.getDescendants());
             oldJs.setAncestors(newJs.getAncestors());
@@ -90,8 +90,11 @@ public class JobDAOImpl implements JobDAO{
             oldJs.setVariableArguments(newJs.getVariableArguments());
             oldJs.setDoubts(newJs.getDoubts());
             oldJs.setSummaries(newJs.getSummaries());
-            oldJs.setSequences(newJs.getSequences());
+            //oldJs.setSequences(newJs.getSequences());
+            oldJs.setSubsurfaceJobs(newJs.getSubsurfaceJobs());
+            oldJs.setSubsurfaces(newJs.getSubsurfaces());
             oldJs.setDepth(newJs.getDepth());
+            
             session.update(oldJs);
             
             transaction.commit();

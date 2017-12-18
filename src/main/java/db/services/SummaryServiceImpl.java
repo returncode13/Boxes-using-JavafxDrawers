@@ -7,6 +7,8 @@ package db.services;
 
 import db.dao.SummaryDAO;
 import db.dao.SummaryDAOImpl;
+import db.model.Job;
+import db.model.Sequence;
 import db.model.Summary;
 
 /**
@@ -36,6 +38,11 @@ public class SummaryServiceImpl implements SummaryService{
     @Override
     public void updateSummary(Long id, Summary newSummary) {
         summaryDao.updateSummary(id, newSummary);
+    }
+
+    @Override
+    public Summary getSummaryFor(Sequence sequence,Job job) {
+        return summaryDao.getSummaryFor(sequence,job);
     }
     
 }

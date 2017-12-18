@@ -6,9 +6,14 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
+import db.model.Sequence;
 import db.model.Summary;
+import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -87,6 +92,36 @@ public class SummaryDAOImpl implements  SummaryDAO{
        }finally{
            session.close();
        }
+    }
+
+    @Override
+    public Summary getSummaryFor(Sequence sequence,Job job ) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         List<Summary> result=null;
+         
+         try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Summary.class);
+            criteria.add(Restrictions.eq("sequence", sequence));
+            criteria.add(Restrictions.eq("job", job));
+            result=criteria.list();
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         if(result.size()>1){
+             return null;
+         }else if(result.size()==0){
+             return null;
+         }else{
+             return result.get(0);
+         }
+         
+         
+         
     }
     
 }

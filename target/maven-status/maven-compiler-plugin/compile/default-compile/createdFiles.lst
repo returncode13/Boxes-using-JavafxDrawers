@@ -17,6 +17,7 @@ db/dao/HeaderDAOImpl.class
 fend/edge/edge/EdgeModel.class
 middleware/dugex/HeaderExtractor.class
 fend/dot/DotController$4.class
+db/services/SubsurfaceJobServiceImpl.class
 middleware/dugex/LogStatusManager.class
 db/services/SubsurfaceServiceImpl.class
 db/model/Sequence_.class
@@ -36,6 +37,7 @@ db/services/JobVolumeMapService.class
 db/dao/QcTypeDAOImpl.class
 middleware/core/Sub.class
 db/services/HeaderService.class
+db/model/SubsurfaceJobId_.class
 db/services/WorkflowService.class
 db/services/SummaryService.class
 db/dao/NodePropertyValueDAO.class
@@ -51,6 +53,7 @@ db/dao/DescendantDAO.class
 fend/job/definitions/JobDefinitionsModel.class
 db/model/VariableArgument_.class
 app/connections/hibernate/HibernateUtil.class
+db/model/SubsurfaceJob_.class
 fend/edge/dotjobedge/DotJobEdgeController$1.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.class
 db/dao/NodePropertyDAO.class
@@ -89,6 +92,7 @@ db/services/VariableArgumentServiceImpl.class
 fend/dot/formulaField/FormulaFieldController.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class
 fend/edge/parentchildedge/ParentChildEdgeView.class
+db/model/SubsurfaceJob.class
 fend/job/definitions/insight/InsightListCell$1.class
 fend/dot/anchor/AnchorView.class
 db/dao/DoubtStatusDAOImpl.class
@@ -107,6 +111,7 @@ fend/job/definitions/qcmatrix/QcMatrixListCell.class
 db/services/NodePropertyValueService.class
 fend/dot/anchor/AnchorController.class
 db/services/VolumeServiceImpl.class
+db/services/SubsurfaceJobService.class
 fend/app/AppView.class
 db/model/QcMatrixRow.class
 fend/app/loading/LoadWorkspaceController.class
@@ -224,6 +229,7 @@ db/model/Workflow.class
 db/model/PropertyType.class
 fend/job/table/qctable/QcTableController$2.class
 middleware/dugex/WorkflowManager$2.class
+db/dao/SubsurfaceJobDAO.class
 db/services/SequenceService.class
 fend/dot/formulaField/FormulaFieldModel$2.class
 fend/job/definitions/qcmatrix/QcMatrixController.class
@@ -305,6 +311,7 @@ db/model/Job_.class
 db/model/Header_.class
 fend/dot/DotModel$1.class
 fend/job/definitions/qcmatrix/QcMatrixModel.class
+db/model/SubsurfaceJobId.class
 fend/dot/DotController$1.class
 db/dao/JobDAO.class
 db/dao/SubsurfaceDAOImpl.class
@@ -337,5 +344,6 @@ fend/job/job1/JobType1Controller$1.class
 db/dao/DoubtTypeDAO.class
 db/dao/VariableArgumentDAOImpl.class
 db/services/WorkspaceServiceImpl.class
+db/dao/SubsurfaceJobDAOImpl.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$2.class
 fend/job/job1/JobType1Model$2.class
