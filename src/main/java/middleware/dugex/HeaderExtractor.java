@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import middleware.sequences.SubsurfaceHeaders;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -271,9 +271,11 @@ return null;
                 }
             }).get();
         } catch (InterruptedException ex) {
-            Exceptions.printStackTrace(ex);
+            //Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         } catch (ExecutionException ex) {
-            Exceptions.printStackTrace(ex);
+            //Exceptions.printStackTrace(ex);
+            ex.printStackTrace();
         }
                          
          

@@ -41,7 +41,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -167,7 +167,8 @@ public class DugLogManager {
                                 logInformation.add(li);
                             }
                         } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
+                            ex.printStackTrace();
+                            //Exceptions.printStackTrace(ex);
                         }
                         
                         return null;
@@ -175,9 +176,11 @@ public class DugLogManager {
                     
                 }).get();
             } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
+                ex.printStackTrace();
+                //Exceptions.printStackTrace(ex);
             } catch (ExecutionException ex) {
-                Exceptions.printStackTrace(ex);
+                ex.printStackTrace();
+                //Exceptions.printStackTrace(ex);
             }
             
         }

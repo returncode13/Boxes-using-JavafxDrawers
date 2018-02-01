@@ -29,7 +29,7 @@ import javafx.scene.input.MouseEvent;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -202,7 +202,8 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qcTableService.createQcTable(qctable);
                         }
                     } catch (Exception ex) {
-                        Exceptions.printStackTrace(ex);
+                        //Exceptions.printStackTrace(ex);
+                        ex.printStackTrace();
                     }
                     
                     
@@ -296,7 +297,8 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qcTableService.createQcTable(qctable);
                         }
                     } catch (Exception ex) {
-                        Exceptions.printStackTrace(ex);
+                       // Exceptions.printStackTrace(ex);
+                       ex.printStackTrace();
                     }
                     
                     

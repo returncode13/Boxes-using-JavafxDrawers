@@ -10,6 +10,8 @@ import fend.dot.anchor.AnchorView;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.edge.edge.EdgeController;
+import fend.edge.edge.arrow.Arrow;
+import fend.edge.parentchildedge.ParentChildEdgeController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
 import javafx.beans.property.DoubleProperty;
@@ -22,6 +24,8 @@ import javafx.scene.shape.StrokeLineCap;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
 import fend.job.job1.JobType1View;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -58,6 +62,8 @@ public class DotJobEdgeController implements EdgeController {
     @FXML
     private CubicCurve curve;
    
+    private Arrow arrowEnd;
+    
     void setModel(DotJobEdgeModel item) {
         model=item;
         dotmodel=model.getDotModel();
@@ -75,6 +81,8 @@ public class DotJobEdgeController implements EdgeController {
         
         anchor=new AnchorView(anchorModel,this.interactivePane);
 //        dotnode=new DotView(dotmodel);
+        anchor.centerXProperty().addListener(UPDATE_ARROW_LISTENER);
+        anchor.centerYProperty().addListener(UPDATE_ARROW_LISTENER);
         this.interactivePane=interactivePane;
         dotnode=commonDot;
         
@@ -92,7 +100,10 @@ public class DotJobEdgeController implements EdgeController {
         constraintCurve();
         overrideAnchorBehaviour();
       
+        double[] arrowShape=new double[]{0,0,10,20,-10,20};
+        arrowEnd=new Arrow(curve, 1f, arrowShape);
         
+        node.getChildren().add(0,arrowEnd);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,anchor);
         //node.getChildren().add(dotnode);
@@ -111,8 +122,8 @@ public class DotJobEdgeController implements EdgeController {
         curve.setControlY2(50);
         curve.setEndX(350);
         curve.setEndY(150);
-        curve.setStroke(Color.RED);
-        curve.setStrokeWidth(4);
+        curve.setStroke(Color.BLACK);
+        curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
        // curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
         return curve;
@@ -197,6 +208,9 @@ public class DotJobEdgeController implements EdgeController {
                 anchor.setCenterY(newY);
             }
             
+            
+            //update arrow
+            arrowEnd.update();
            e.consume();
         
         });
@@ -206,6 +220,9 @@ public class DotJobEdgeController implements EdgeController {
            if(!node.getDropReceived()){
                node.toFront();
                node.requestFocus();
+           }else{
+               //reduce the anchors radius to zero once it's dropped on a node
+               anchor.setRadius(0);
            }
            
         });
@@ -217,9 +234,11 @@ public class DotJobEdgeController implements EdgeController {
          JobType0Model job=childJobView.getController().getModel();
         Long type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {
-            anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
-            anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
-       
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+            anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+            anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));
+            //anchor.setRadius(0);
         }
          this.node.toBack();
          
@@ -234,4 +253,8 @@ public class DotJobEdgeController implements EdgeController {
        private class Delta{
         double x,y;
     }
+       
+        private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+        DotJobEdgeController.this.arrowEnd.update();
+    };
 }

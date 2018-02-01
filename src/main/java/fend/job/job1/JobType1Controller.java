@@ -212,8 +212,10 @@ parent.addChild(model);*/
                     
                     parentChildEdgeModel.setChildJob(model);
                     parentChildEdgeNode.setDropReceived(true);
-                    droppedAnchor.centerXProperty().bind(node.layoutXProperty());
-                    droppedAnchor.centerYProperty().bind(node.layoutYProperty());
+                    /* droppedAnchor.centerXProperty().bind(node.layoutXProperty());
+                    droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
+                    droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
+                    droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                 
                 }
               

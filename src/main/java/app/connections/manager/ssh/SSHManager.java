@@ -124,6 +124,7 @@ import java.util.Properties;
   {
       String errorMessage = "success"; 
       
+      
       if(sesConnection.isConnected()){
           try {
               sesConnection.setPortForwardingL(sshLocalPort, strConnectionIP, dbPort);
