@@ -72,6 +72,8 @@ public class ParentChildEdgeController implements EdgeController{
     
     private Arrow arrowEnd;
     private Arrow arrowStart;
+    private Arrow arrowBeforeDot;
+    private Arrow arrowAfterDot;
     
 
     void setModel(ParentChildEdgeModel item) {
@@ -113,11 +115,15 @@ public class ParentChildEdgeController implements EdgeController{
         
         double[] arrowShape=new double[]{0,0,7,13,-7,13};
         arrowEnd=new Arrow(curve, 0.90f, arrowShape);
+        arrowBeforeDot=new Arrow(curve,0.40f,arrowShape);
+        arrowAfterDot=new Arrow(curve,0.60f,arrowShape);
         arrowStart=new Arrow(curve, 0.20f, arrowShape);
         curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
         curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
         
         node.getChildren().add(0,arrowEnd);
+        node.getChildren().add(0,arrowBeforeDot);
+        node.getChildren().add(0,arrowAfterDot);
         node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,childAnchor);
@@ -322,6 +328,8 @@ public class ParentChildEdgeController implements EdgeController{
     private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
         //System.out.println("Arrow updating "+oldValue.doubleValue()+" -> "+newValue.doubleValue());
         ParentChildEdgeController.this.arrowEnd.update();
+        ParentChildEdgeController.this.arrowBeforeDot.update();
+        ParentChildEdgeController.this.arrowAfterDot.update();
         ParentChildEdgeController.this.arrowStart.update();
     };
       

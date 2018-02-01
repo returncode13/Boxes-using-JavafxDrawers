@@ -63,6 +63,7 @@ public class DotJobEdgeController implements EdgeController {
     private CubicCurve curve;
    
     private Arrow arrowEnd;
+    private Arrow arrowStart;
     
     void setModel(DotJobEdgeModel item) {
         model=item;
@@ -100,9 +101,14 @@ public class DotJobEdgeController implements EdgeController {
         constraintCurve();
         overrideAnchorBehaviour();
       
-        double[] arrowShape=new double[]{0,0,10,20,-10,20};
-        arrowEnd=new Arrow(curve, 1f, arrowShape);
+        double[] arrowShape=new double[]{0,0,7,13,-7,13};
+        arrowEnd=new Arrow(curve, 0.90f, arrowShape);
+        arrowStart=new Arrow(curve, 0.20f, arrowShape);
         
+        curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
+        curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
+        
+        node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,arrowEnd);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,anchor);
@@ -141,7 +147,7 @@ public class DotJobEdgeController implements EdgeController {
         mControloffY.set(50.0);
         
         
-        mControlDirX1.bind(new When(
+        /*mControlDirX1.bind(new When(
         curve.startXProperty().greaterThan(curve.endXProperty()))
         .then(-1.0).otherwise(1.0)
         );
@@ -149,6 +155,16 @@ public class DotJobEdgeController implements EdgeController {
         
         mControlDirX2.bind(new When(
         curve.startXProperty().greaterThan(curve.endXProperty()))
+        .then(1.0).otherwise(-1.0)
+        );*/
+        
+         mControlDirY1.bind(new When(
+        curve.startYProperty().greaterThan(curve.endYProperty()))
+        .then(-1.0).otherwise(1.0)
+        );
+        
+         mControlDirY2.bind(new When(
+        curve.startYProperty().greaterThan(curve.endYProperty()))
         .then(1.0).otherwise(-1.0)
         );
         
@@ -236,9 +252,11 @@ public class DotJobEdgeController implements EdgeController {
          if(type.equals(JobType0Model.PROCESS_2D)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
              anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
-            anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
-            anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));
-            //anchor.setRadius(0);
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
         }
          this.node.toBack();
          
@@ -256,5 +274,6 @@ public class DotJobEdgeController implements EdgeController {
        
         private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
         DotJobEdgeController.this.arrowEnd.update();
+        DotJobEdgeController.this.arrowStart.update();
     };
 }

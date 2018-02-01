@@ -261,8 +261,10 @@ parent.addChild(model);*/
                     
                     parentNode.setDropReceived(true);
                     parentModel.setChildJob(model);
-                    droppedAnchor.centerXProperty().bind(node.layoutXProperty());
-                    droppedAnchor.centerYProperty().bind(node.layoutYProperty());
+                    /*droppedAnchor.centerXProperty().bind(node.layoutXProperty());
+                    droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
+                    droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
+                    droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                 }
              
          });
