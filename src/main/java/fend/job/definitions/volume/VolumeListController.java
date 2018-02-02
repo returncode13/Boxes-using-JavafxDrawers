@@ -5,7 +5,6 @@
  */
 package fend.job.definitions.volume;
 
-import fend.workspace.WorkspaceModel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import db.model.Job;
@@ -15,22 +14,13 @@ import db.services.JobServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import java.io.File;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.shape.Box;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
-import java.util.List;
+import fend.volume.volume2.Volume2;
 import java.util.Set;
 
 
@@ -84,6 +74,36 @@ public class VolumeListController {
            
             model.addToVolumeList(volume1);
         }
+        if(type.equals(JobType0Model.SEGD_LOAD)){
+            Volume2 volume2=new Volume2(parentjob);
+            volume2.setId(vol.getId());
+            volume2.setName(f.getName());
+            volume2.setVolume(f);
+           
+            model.addToVolumeList(volume2);
+        }
+        if(type.equals(JobType0Model.ACQUISITION)){
+            //TO DO.
+            
+            
+            /*Volume2 volume2=new Volume2(parentjob);
+            volume2.setId(vol.getId());
+            volume2.setName(f.getName());
+            volume2.setVolume(f);
+            
+            model.addToVolumeList(volume2);*/
+        }
+        if(type.equals(JobType0Model.TEXT)){
+            //TO DO.
+            
+            
+            /*Volume2 volume2=new Volume2(parentjob);
+            volume2.setId(vol.getId());
+            volume2.setName(f.getName());
+            volume2.setVolume(f);
+            
+            model.addToVolumeList(volume2);*/
+        }
     }
     
      
@@ -107,6 +127,34 @@ public class VolumeListController {
                 File volumeOnDisk=new File(dbVol.getPathOfVolume());
                 fevol.setVolume(volumeOnDisk);
                 model.addToVolumeList(fevol);
+            }
+             if(type.equals(JobType0Model.SEGD_LOAD)){
+                fevol=new Volume2(parentjob);
+                fevol.setId(dbVol.getId());
+                fevol.setName(dbVol.getNameVolume());
+                File volumeOnDisk=new File(dbVol.getPathOfVolume());
+                fevol.setVolume(volumeOnDisk);
+                model.addToVolumeList(fevol);
+            }
+             if(type.equals(JobType0Model.ACQUISITION)){
+                 //TO DO
+                 
+                 /*fevol=new Volume2(parentjob);
+                 fevol.setId(dbVol.getId());
+                 fevol.setName(dbVol.getNameVolume());
+                 File volumeOnDisk=new File(dbVol.getPathOfVolume());
+                 fevol.setVolume(volumeOnDisk);
+                 model.addToVolumeList(fevol);*/
+            }
+             if(type.equals(JobType0Model.TEXT)){
+                 //TO DO
+                 
+                 /*fevol=new Volume2(parentjob);
+                 fevol.setId(dbVol.getId());
+                 fevol.setName(dbVol.getNameVolume());
+                 File volumeOnDisk=new File(dbVol.getPathOfVolume());
+                 fevol.setVolume(volumeOnDisk);
+                 model.addToVolumeList(fevol);*/
             }
         }
         

@@ -81,8 +81,15 @@ import fend.job.definitions.volume.VolumeListModel;
 import fend.job.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
+import fend.job.job2.JobType2Model;
+import fend.job.job2.JobType2View;
+import fend.job.job3.JobType3Model;
+import fend.job.job3.JobType3View;
+import fend.job.job4.JobType4Model;
+import fend.job.job4.JobType4View;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
+import fend.volume.volume2.Volume2;
 import fend.workspace.saveworkspace.SaveWorkSpaceView;
 import fend.workspace.saveworkspace.SaveWorkspaceModel;
 import java.io.File;
@@ -162,9 +169,18 @@ public class WorkspaceController {
 
     @FXML
     private Button add;
+    
+    @FXML
+    private Button segdbtn;
+    
+    @FXML
+    private Button acqbtn;
 
     @FXML
-    private JFXButton summaryButton;
+    private Button textBtn;
+    
+    @FXML
+    private Button summaryButton;
 
     @FXML
     void addBox(ActionEvent event) {
@@ -189,7 +205,76 @@ public class WorkspaceController {
 //        System.out.println("workspace.WorkspaceController.addBox(): "+job.getId()%100);
 
     }
+    
+    @FXML
+    void addSEGD(ActionEvent event) {
+        Job dbjob = new Job();
+        Long typeOfJob = JobType0Model.SEGD_LOAD;
+        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+        dbjob.setNodetype(nodetype);
+        dbjob.setWorkspace(dbWorkspace);
 
+        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+        jobService.createJob(dbjob);
+
+        JobType2Model job = new JobType2Model(this.model);
+        job.setId(dbjob.getId());
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        changeProperty.bind(job.getChangeProperty());
+        changeProperty.addListener(workspaceChangedListener);
+
+        changePropertyList.add(changeProperty);
+        JobType2View jobview = new JobType2View(job, interactivePane);
+        interactivePane.getChildren().add(jobview);
+    }
+
+    @FXML
+    void addAcq(ActionEvent event) {
+        Job dbjob = new Job();
+        Long typeOfJob = JobType0Model.ACQUISITION;
+        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+        dbjob.setNodetype(nodetype);
+        dbjob.setWorkspace(dbWorkspace);
+
+        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+        jobService.createJob(dbjob);
+
+        JobType3Model job = new JobType3Model(this.model);
+        job.setId(dbjob.getId());
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        changeProperty.bind(job.getChangeProperty());
+        changeProperty.addListener(workspaceChangedListener);
+
+        changePropertyList.add(changeProperty);
+        JobType3View jobview = new JobType3View(job, interactivePane);
+        interactivePane.getChildren().add(jobview);
+    }
+    
+    @FXML
+    void addText(ActionEvent event) {
+        Job dbjob = new Job();
+        Long typeOfJob = JobType0Model.TEXT;
+        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+        dbjob.setNodetype(nodetype);
+        dbjob.setWorkspace(dbWorkspace);
+
+        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+        jobService.createJob(dbjob);
+
+        JobType4Model job = new JobType4Model(this.model);
+        job.setId(dbjob.getId());
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        changeProperty.bind(job.getChangeProperty());
+        changeProperty.addListener(workspaceChangedListener);
+
+        changePropertyList.add(changeProperty);
+        JobType4View jobview = new JobType4View(job, interactivePane);
+        interactivePane.getChildren().add(jobview);
+
+    }
+
+    
+    
     @FXML
     void getSummary(ActionEvent event) throws Exception {
 
@@ -832,6 +917,33 @@ public class WorkspaceController {
                 System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
 
             }
+            if (type.equals(JobType0Model.SEGD_LOAD)) {
+                fejob = new JobType2Model(model);
+                fejob.setId(dbj.getId());
+                fejob.setNameproperty(dbj.getNameJobStep());
+                fejob.setDepth(dbj.getDepth());
+
+                System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
+
+            }
+            if (type.equals(JobType0Model.ACQUISITION)) {
+                fejob = new JobType3Model(model);
+                fejob.setId(dbj.getId());
+                fejob.setNameproperty(dbj.getNameJobStep());
+                fejob.setDepth(dbj.getDepth());
+
+                System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
+
+            }
+             if (type.equals(JobType0Model.TEXT)) {
+                fejob = new JobType4Model(model);
+                fejob.setId(dbj.getId());
+                fejob.setNameproperty(dbj.getNameJobStep());
+                fejob.setDepth(dbj.getDepth());
+
+                System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
+
+            }
 
             Set<Volume> dbvols = dbj.getVolumes();
             List<Volume0> frontEndVolumeModels = new ArrayList<>();
@@ -841,6 +953,15 @@ public class WorkspaceController {
 
                 if (vtype.equals(Volume0.PROCESS_2D)) {
                     fevol = new Volume1(fejob);                  //parent job and id set in contructor
+
+                    fevol.setId(dbv.getId());
+                    fevol.setName(dbv.getNameVolume());
+                    File volumeOnDisk = new File(dbv.getPathOfVolume());
+                    fevol.setVolume(volumeOnDisk);
+                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
+                }
+                if (vtype.equals(Volume0.SEGD_LOAD)) {
+                    fevol = new Volume2(fejob);                  //parent job and id set in contructor
 
                     fevol.setId(dbv.getId());
                     fevol.setName(dbv.getNameVolume());
@@ -1002,6 +1123,49 @@ public class WorkspaceController {
                 interactivePane.getChildren().add(jv);
                  System.out.println("fend.workspace.WorkspaceController.inflateFrontEndViews(): name: "+job.getNameproperty().get()+" y,x: "+jv.getHeight()+","+jv.getWidth()+jv.getBoundsInLocal().getHeight()+","+jv.getBoundsInLocal().getMaxX()+","+jv.getBoundsInParent().getMaxX()+","+jv.getLayoutBounds().getMaxX());
             }
+            if (job.getType().equals(JobType0Model.SEGD_LOAD)) {
+                JobType2View jv = new JobType2View((JobType2Model) job, interactivePane);
+                   
+                /**
+                 * Attach Listeners to save workspace
+                 */
+                BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+                changeProperty.bind(job.getChangeProperty());
+                changeProperty.addListener(workspaceChangedListener);
+                changePropertyList.add(changeProperty);
+                idFrontEndJobMap.put(job.getId(), jv);
+                interactivePane.getChildren().add(jv);
+                 System.out.println("fend.workspace.WorkspaceController.inflateFrontEndViews(): name: "+job.getNameproperty().get()+" y,x: "+jv.getHeight()+","+jv.getWidth()+jv.getBoundsInLocal().getHeight()+","+jv.getBoundsInLocal().getMaxX()+","+jv.getBoundsInParent().getMaxX()+","+jv.getLayoutBounds().getMaxX());
+            }
+            if (job.getType().equals(JobType0Model.ACQUISITION)) {
+                JobType3View jv = new JobType3View((JobType3Model) job, interactivePane);
+                   
+                /**
+                 * Attach Listeners to save workspace
+                 */
+                BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+                changeProperty.bind(job.getChangeProperty());
+                changeProperty.addListener(workspaceChangedListener);
+                changePropertyList.add(changeProperty);
+                idFrontEndJobMap.put(job.getId(), jv);
+                interactivePane.getChildren().add(jv);
+                 System.out.println("fend.workspace.WorkspaceController.inflateFrontEndViews(): name: "+job.getNameproperty().get()+" y,x: "+jv.getHeight()+","+jv.getWidth()+jv.getBoundsInLocal().getHeight()+","+jv.getBoundsInLocal().getMaxX()+","+jv.getBoundsInParent().getMaxX()+","+jv.getLayoutBounds().getMaxX());
+            }
+             if (job.getType().equals(JobType0Model.TEXT)) {
+                JobType4View jv = new JobType4View((JobType4Model) job, interactivePane);
+                   
+                /**
+                 * Attach Listeners to save workspace
+                 */
+                BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+                changeProperty.bind(job.getChangeProperty());
+                changeProperty.addListener(workspaceChangedListener);
+                changePropertyList.add(changeProperty);
+                idFrontEndJobMap.put(job.getId(), jv);
+                interactivePane.getChildren().add(jv);
+                 System.out.println("fend.workspace.WorkspaceController.inflateFrontEndViews(): name: "+job.getNameproperty().get()+" y,x: "+jv.getHeight()+","+jv.getWidth()+jv.getBoundsInLocal().getHeight()+","+jv.getBoundsInLocal().getMaxX()+","+jv.getBoundsInParent().getMaxX()+","+jv.getLayoutBounds().getMaxX());
+            }
+            
         }
         return idFrontEndJobMap;
     }

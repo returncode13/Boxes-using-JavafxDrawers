@@ -24,6 +24,9 @@ import javafx.scene.shape.StrokeLineCap;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
 import fend.job.job1.JobType1View;
+import fend.job.job2.JobType2View;
+import fend.job.job3.JobType3View;
+import fend.job.job4.JobType4View;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -256,6 +259,33 @@ public class DotJobEdgeController implements EdgeController {
              anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
               anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.SEGD_LOAD)) {
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.ACQUISITION)) {
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.TEXT)) {
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
         }
          this.node.toBack();

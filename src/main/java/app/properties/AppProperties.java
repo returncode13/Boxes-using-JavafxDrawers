@@ -14,7 +14,7 @@ import java.util.List;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="7.0.1";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="7.1.0";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.

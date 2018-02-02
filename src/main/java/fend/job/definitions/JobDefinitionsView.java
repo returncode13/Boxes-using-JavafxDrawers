@@ -7,6 +7,7 @@ package fend.job.definitions;
 
 import fend.job.job1.JobType1Model;
 import com.jfoenix.controls.JFXDrawersStack;
+import fend.job.job0.JobType0Model;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +19,7 @@ import javafx.scene.layout.StackPane;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobDefinitionsView extends JFXDrawersStack {
-    private JobType1Model parentBox;
+    private JobType0Model parentBox;
     private  JobDefinitionsModel model;
     private JobDefinitionsController  controller;
    
@@ -26,7 +27,7 @@ public class JobDefinitionsView extends JFXDrawersStack {
     private final URL location;
     
     
-    public JobDefinitionsView(JobDefinitionsModel item,JobType1Model parentBox){
+    public JobDefinitionsView(JobDefinitionsModel item,JobType0Model parentBox){
         this.model=item;
         this.parentBox=parentBox;
         this.location=getClass().getClassLoader().getResource("fxml/jobdefinitions.fxml"); 

@@ -17,6 +17,7 @@ import fend.job.definitions.insight.InsightListModel;
 import fend.job.definitions.insight.InsightListView;
 import fend.job.definitions.qcmatrix.QcMatrixModel;
 import fend.job.definitions.qcmatrix.QcMatrixView;
+import fend.job.job0.JobType0Model;
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
@@ -35,7 +36,7 @@ public class JobDefinitionsController {
     final String insightExpand="Insight >";
     final String insightCollapse="Insight <";
     
-    JobType1Model parentBox;
+    JobType0Model parentBox;
     JobDefinitionsModel model;
     JobDefinitionsView view;
     JFXDrawer qmatrixDrawer=new JFXDrawer();
@@ -56,7 +57,7 @@ public class JobDefinitionsController {
 
 
 
-    void setModel(JobDefinitionsModel item,JobType1Model parentBox) {
+    void setModel(JobDefinitionsModel item,JobType0Model parentBox) {
         model=item;
         this.parentBox=parentBox;
     }
