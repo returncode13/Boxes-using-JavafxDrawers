@@ -20,4 +20,6 @@ public interface UserDAO {
     public void deleteUser(Long uid);
     
   // public List<User> getUsersForSession(Sessions sessions);  //get users for current session
+
+    public User getUserWithInitials(String ini);
 }

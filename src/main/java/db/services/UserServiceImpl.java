@@ -39,5 +39,10 @@ public class UserServiceImpl implements UserService {
         uDao.deleteUser(uid);
     }
 
+    @Override
+    public User getUserWithInitials(String ini) {
+        return uDao.getUserWithInitials(ini);
+    }
+
     
 }

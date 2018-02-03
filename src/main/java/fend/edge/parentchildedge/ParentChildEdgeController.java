@@ -206,6 +206,14 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
         }
+         if(type.equals(JobType0Model.TEXT)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        }
           
           }
         else{                                    //this is when the dot exists. and when it needs to be "joined" to.

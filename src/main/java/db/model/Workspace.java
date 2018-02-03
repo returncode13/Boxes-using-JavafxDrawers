@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -36,6 +38,9 @@ public class Workspace implements Serializable{
     @Column(name = "name",length = 1025)
     private String name;
     
+    @ManyToOne
+    @JoinColumn(name="owner")
+    private User owner;
     /* @Column(name = "hashSessions",length = 1025)
     private String hashSessions;*/
     
@@ -45,9 +50,15 @@ public class Workspace implements Serializable{
      @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
     private Set<Dot> dots;
   
-    @ManyToOne
-    @JoinColumn(name="user_fk")
-    private User user;
+     @ManyToMany(mappedBy = "workspaces",fetch = FetchType.EAGER)
+     private Set<User> users=new HashSet<>();
+     
+     
+     @OneToMany(mappedBy = "pk.workspace",fetch = FetchType.EAGER)
+     private Set<UserWorkspace> userWorkspaces=new HashSet<>();
+     /*@ManyToOne
+     @JoinColumn(name="user_fk")
+     private User user;*/
    
    /*@OneToMany(mappedBy = "sessions",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<QcType> qcTypes;*/
@@ -117,13 +128,13 @@ public class Workspace implements Serializable{
     this.qcTypes = qcTypes;
     }*/
 
-    public User getUser() {
-        return user;
+    /* public User getUser() {
+    return user;
     }
-
+    
     public void setUser(User user) {
-        this.user = user;
-    }
+    this.user = user;
+    }*/
 
     public Set<Dot> getDots() {
         return dots;
@@ -136,6 +147,40 @@ public class Workspace implements Serializable{
     public void addToDots(Dot dbDot) {
         this.dots.add(dbDot);
     }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    
+    public void addToUsers(User user) {
+        this.users.add(user);
+    }
+    
+    public void removeUser(User user){
+        this.users.remove(user);
+    }
+    
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Set<UserWorkspace> getUserWorkspaces() {
+        return userWorkspaces;
+    }
+
+    public void setUserWorkspaces(Set<UserWorkspace> userWorkspaces) {
+        this.userWorkspaces = userWorkspaces;
+    }
+    
     
     
     

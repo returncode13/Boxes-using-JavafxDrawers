@@ -5,6 +5,7 @@ db/services/NodePropertyService.class
 db/dao/QcTableDAOImpl.class
 fend/workspace/WorkspaceController$2.class
 middleware/dugex/WorkflowHolder.class
+fend/user/newUser/NewUserController.class
 db/model/NodeType_.class
 fend/job/job1/JobType1Controller$2.class
 fend/job/job1/JobType1Model$1.class
@@ -46,6 +47,7 @@ db/model/QcType_.class
 fend/app/loading/LoadWorkspaceController$1.class
 db/dao/NodeTypeDAO.class
 db/model/QcType.class
+db/model/UserWorkspaceId.class
 fend/job/job3/JobType3Controller$3.class
 db/model/User.class
 middleware/dugex/LogStatusManager$1.class
@@ -70,6 +72,7 @@ db/services/UserService.class
 fend/app/loading/LoadWorkspaceController.class
 fend/job/table/qctable/QcTableController.class
 fend/job/definitions/insight/InsightListView.class
+db/dao/UserWorkspaceDAOImpl.class
 db/dao/LogDAO.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.class
 fend/job/job2/JobType2Controller.class
@@ -103,7 +106,6 @@ app/settings/ssh/SShSettingsNode.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$1.class
 fend/dot/LinkModel.class
 db/services/PropertyTypeService.class
-db/model/Item.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class
 db/services/NodePropertyServiceImpl.class
@@ -115,6 +117,7 @@ db/dao/WorkspaceDAO.class
 middleware/doubt/DoubtStatusModel.class
 app/settings/database/DbListNode.class
 fend/job/table/lineTable/LineTableModel.class
+db/services/UserWorkspaceService.class
 fend/job/job1/JobType1Model$4.class
 fend/job/job4/JobType4Model$2.class
 db/services/DotService.class
@@ -146,6 +149,7 @@ db/dao/SummaryDAOImpl.class
 fend/volume/volume1/Volume1.class
 fend/job/job2/JobType2Model$6.class
 db/services/DescendantServiceImpl.class
+fend/user/newUser/NewUserView.class
 fend/job/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel$1.class
 db/dao/VariableArgumentDAO.class
 fend/job/table/qctable/QcTableController$3.class
@@ -217,10 +221,13 @@ fend/dot/DotController$5.class
 fend/app/loading/LoadWorkspaceModel.class
 db/model/VariableArgument_.class
 fend/job/definitions/JobDefinitionsModel.class
+db/model/UserWorkspace.class
 db/model/SubsurfaceJob_.class
 app/connections/hibernate/HibernateUtil.class
 fend/job/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.class
+fend/user/UserView.class
 db/model/QcMatrixRow_.class
+fend/user/UserController.class
 db/services/SummaryServiceImpl.class
 middleware/dugex/DugLogManager$1.class
 db/model/Header.class
@@ -232,6 +239,7 @@ fend/workspace/WorkspaceController$3.class
 db/services/SequenceServiceImpl.class
 fend/job/definitions/volume/VolumeListModel$1.class
 fend/job/definitions/volume/VolumeListCell.class
+db/model/UserWorkspaceId_.class
 fend/dot/formulaField/FormulaFieldModel$3.class
 middleware/dugex/WorkflowManager.class
 fend/job/definitions/insight/InsightListCell.class
@@ -243,7 +251,6 @@ fend/edge/parentchildedge/ParentChildEdgeView.class
 db/model/SubsurfaceJob.class
 db/dao/DoubtStatusDAOImpl.class
 db/services/QcMatrixRowService.class
-db/model/Cart.class
 app/settings/database/DataBaseSettingsNode.class
 fend/job/job1/JobType1Model.class
 db/services/VariableArgumentService.class
@@ -274,9 +281,11 @@ db/model/Acquisition_.class
 fend/job/job4/JobType4Controller$3.class
 db/dao/JobVolumeMapDAO.class
 db/services/LinkServiceImpl.class
+db/model/UserWorkspace_.class
 db/dao/QcMatrixRowDAOImpl.class
 db/services/AncestorServiceImpl.class
 db/services/LinkService.class
+fend/user/UserModel.class
 db/services/JobVolumeMapServiceImpl.class
 db/model/Descendant.class
 fend/job/job3/JobType3Model.class
@@ -305,6 +314,7 @@ fend/volume/volume2/Volume2$1.class
 db/model/Workspace_.class
 db/model/Workspace.class
 fend/job/job2/JobType2Model$1.class
+fend/user/newUser/NewUserModel.class
 middleware/dugex/WorkflowManager$1.class
 fend/dot/formulaField/FormulaFieldModel$1.class
 fend/job/table/lineTable/LineTableController.class
@@ -354,6 +364,7 @@ db/model/Link_.class
 db/dao/SequenceDAO.class
 fend/job/job4/JobType4Model.class
 db/services/DotServiceImpl.class
+db/dao/UserWorkspaceDAO.class
 db/model/Link.class
 fend/job/job1/JobType1Controller$3.class
 db/dao/NodeTypeDAOImpl.class
@@ -377,6 +388,7 @@ db/dao/JobDAO.class
 fend/dot/DotController$1.class
 db/services/JobService.class
 fend/edge/parentchildedge/ParentChildEdgeModel.class
+db/services/UserWorkspaceServiceImpl.class
 db/dao/NodePropertyValueDAOImpl.class
 db/services/JobServiceImpl.class
 db/model/DoubtType_.class
