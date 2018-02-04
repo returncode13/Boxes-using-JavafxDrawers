@@ -6,7 +6,6 @@
 package fend.user;
 
 import db.model.User;
-import db.services.UserService;
 import db.services.UserServiceImpl;
 import fend.user.newUser.NewUserModel;
 import fend.user.newUser.NewUserView;
@@ -17,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import db.services.UserService;
 
 /**
  *

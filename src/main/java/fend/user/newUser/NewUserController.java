@@ -7,13 +7,13 @@ package fend.user.newUser;
 
 import com.jfoenix.controls.JFXTextField;
 import db.model.User;
-import db.services.UserService;
 import db.services.UserServiceImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import db.services.UserService;
 
 /**
  *
@@ -48,7 +48,7 @@ public class NewUserController extends Stage{
         userService.createUser(user);
         }
         else{
-            System.out.println("fend.user.newUser.NewUserController.addNewUser(): Error: User "+user.getFullName()+" with initials "+user.getInitials()+" present in the system id: "+user.getUser_id());
+            System.out.println("fend.user.newUser.NewUserController.addNewUser(): Error: User "+user.getFullName()+" with initials "+user.getInitials()+" present in the system id: "+user.getId());
         }
         close();
     }

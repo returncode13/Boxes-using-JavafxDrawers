@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -20,19 +21,21 @@ import javax.persistence.Transient;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 @Entity
-@Table(name="user_workspace",schema="obpmanager")
+@Table(name="workspace_user",schema="obpmanager")
 @AssociationOverrides({
     @AssociationOverride(name="pk.user",joinColumns= @JoinColumn(name="user_id")),
-    @AssociationOverride(name="pk.workspace",joinColumns= @JoinColumn(name="id"))
+    @AssociationOverride(name="pk.workspace",joinColumns= @JoinColumn(name="workspace_id"))
 })
 public class UserWorkspace implements Serializable {
     @EmbeddedId
     private UserWorkspaceId pk=new UserWorkspaceId();
     
-    @Transient
+    //@Transient
+    //@Column(name="userid")
     private User user;
     
-    @Transient
+    //@Transient
+    //@Column(name="workspace")
     private Workspace workspace;
 
     public UserWorkspace() {
@@ -42,9 +45,9 @@ public class UserWorkspace implements Serializable {
         return pk;
     }
 
-    public void setPk(UserWorkspaceId pk) {
-        this.pk = pk;
-    }
+    /* public void setPk(UserWorkspaceId pk) {
+    this.pk = pk;
+    }*/
 
     public User getUser() {
         return user;

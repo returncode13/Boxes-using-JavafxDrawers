@@ -52,7 +52,7 @@ public class HibernateUtil {
      private static String password = "651201313";
      private static String connectionIP = "localhost";     
      private static SSHManager instance; 
-     private static int sshLocalPort=5433;    //Cannot bind to 5432 on Kiba. Permission issues??
+     private static int sshLocalPort=5434;    //Cannot bind to 5432 on Kiba. Permission issues??
      private static int dbPort=5432;
      private static String strDbUSer="sharath";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
      private static String DBPass="";  //Kiba      CHANGE this in the file hibernate.cfg.xml

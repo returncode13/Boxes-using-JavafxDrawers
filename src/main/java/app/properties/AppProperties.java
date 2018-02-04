@@ -14,7 +14,7 @@ import java.util.List;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="8.0.0";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="8.1.0";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
@@ -24,8 +24,9 @@ public class AppProperties {
     //public static final String INSIGHT_LOCATION="/d/sw/Insight";
     public static final String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
+    public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
-    private String sessionName=new String("unknown session");
+    private String workspaceName=new String("unknown session");
     private String irdbHost=new String("no host assigned");
     
     
@@ -37,12 +38,12 @@ public class AppProperties {
         AppProperties.project = project;
     }
 
-    public String getSessionName() {
-        return sessionName;
+    public String getWorkspaceName() {
+        return workspaceName;
     }
 
-    public void setSessionName(String sessionName) {
-        this.sessionName = sessionName;
+    public void setWorkspaceName(String WorkspaceName) {
+        this.workspaceName = WorkspaceName;
     }
 
     public String getIrdbHost() {

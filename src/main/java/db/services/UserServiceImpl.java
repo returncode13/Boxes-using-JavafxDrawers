@@ -5,11 +5,11 @@
  */
 package db.services;
 
-import db.dao.UserDAO;
 import db.dao.UserDAOImpl;
 
 import db.model.User;
 import java.util.List;
+import db.dao.UserDAO;
 
 /**
  *

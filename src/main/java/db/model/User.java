@@ -28,11 +28,12 @@ import javax.persistence.Table;
  * @author sharath nair
  */
 @Entity
-@Table(name="User",schema="obpmanager")
+@Table(name="PQUser",schema="obpmanager")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+     @Column(name = "user_id",nullable=false)
+    private Long id;
     
     @Column(name="fullName",nullable=false,length=2048)
     private String fullName;
@@ -47,17 +48,18 @@ public class User implements Serializable {
     /* @OneToMany(mappedBy ="user")
     private Set<Workspace> workspaces;*/
     
-     @ManyToMany(fetch = FetchType.EAGER)
+    /* @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_workspace", 
-        joinColumns = { @JoinColumn(name = "user_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "id") }
-        
-    )
+    name = "user_workspace",
+    joinColumns = { @JoinColumn(name = "id") },
+    inverseJoinColumns = { @JoinColumn(name = "id") }
+    
+    )*/
+    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
     private Set<Workspace> workspaces = new HashSet<>();
 
-    @OneToMany(mappedBy ="pk.user",fetch=FetchType.EAGER)
-    private Set<UserWorkspace> userWorkspaces=new HashSet<>();
+    /* @OneToMany(mappedBy ="pk.userid",fetch=FetchType.EAGER)
+    private Set<UserWorkspace> userWorkspaces=new HashSet<>();*/
     
     @OneToMany(mappedBy ="user")
     private Set<QcTable> qctables;
@@ -65,8 +67,8 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private Set<DoubtStatus> doubtStatuses;
     
-    public Long getUser_id() {
-        return user_id;
+    public Long getId() {
+        return id;
     }
     
     /* public Set<Workspace> getWorkspaces() {
@@ -142,18 +144,18 @@ public class User implements Serializable {
         this.ownedWorkspaces.remove(workspace);
     }
     
-    public Set<UserWorkspace> getUserWorkspaces() {
-        return userWorkspaces;
-    }
-
-    public void setUserWorkspaces(Set<UserWorkspace> userWorkspaces) {
-        this.userWorkspaces = userWorkspaces;
-    }
+     /* public Set<UserWorkspace> getUserWorkspaces() {
+     return userWorkspaces;
+     }
+     
+     public void setUserWorkspaces(Set<UserWorkspace> userWorkspaces) {
+     this.userWorkspaces = userWorkspaces;
+     }*/
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 31 * hash + Objects.hashCode(this.user_id);
+        hash = 31 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -169,7 +171,7 @@ public class User implements Serializable {
             return false;
         }
         final User other = (User) obj;
-        if (!Objects.equals(this.user_id, other.user_id)) {
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
