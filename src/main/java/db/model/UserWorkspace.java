@@ -30,11 +30,11 @@ public class UserWorkspace implements Serializable {
     @EmbeddedId
     private UserWorkspaceId pk=new UserWorkspaceId();
     
-    //@Transient
+    @Transient
     //@Column(name="userid")
     private User user;
     
-    //@Transient
+    @Transient
     //@Column(name="workspace")
     private Workspace workspace;
 

@@ -8,9 +8,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(UserWorkspace.class)
 public abstract class UserWorkspace_ {
 
-	public static volatile SingularAttribute<UserWorkspace, Workspace> workspace;
 	public static volatile SingularAttribute<UserWorkspace, UserWorkspaceId> pk;
-	public static volatile SingularAttribute<UserWorkspace, User> user;
 
 }
 

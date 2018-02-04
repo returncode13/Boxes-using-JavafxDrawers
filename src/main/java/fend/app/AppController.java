@@ -107,7 +107,9 @@ public class AppController extends Stage{
 
     @FXML
     void exitTheProgram(ActionEvent event) {
-
+        if(currentUser!=null) previousUser=currentUser;
+        logout();
+        close();
     }
 
     @FXML
@@ -287,7 +289,7 @@ public class AppController extends Stage{
                             Set<User> us=dbWorkspace.getUsers();
                             us.add(u);
                             dbWorkspace.setUsers(us);
-                            //u.addToWorkspaces(dbWorkspace);
+                            u.addToWorkspaces(dbWorkspace);
                             workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
                     
                      }
@@ -393,6 +395,13 @@ public class AppController extends Stage{
             w.setOwner(u);
            
         }
+        if(w==null) return;
+        System.out.println("fend.app.AppController.login(): Users present in the workspace currently: ");
+         List<User> usersInWorkspace=new ArrayList<>(w.getUsers());
+        for(int i=0;i<w.getUsers().size();i++){
+            //usersInWorkspace.get(i)
+                    System.err.println(usersInWorkspace.get(i).getInitials());
+        }
         System.out.println("fend.app.AppController.login(): adding user: "+u.getInitials()+" to currentWorkspace "+w.getName()+""
                 + " sizeofUserList: "+w.getUsers().size());
         w.addToUsers(u);
@@ -419,14 +428,22 @@ public class AppController extends Stage{
         System.out.println("fend.app.AppController.logout(): removing user: "+u.getInitials()+" from workspace: "+w.getName());
         w.removeUser(u);
         u.removeFromWorkspaces(w);
+        workspaceService.updateWorkspace(w.getId(), w);
+        currentWorkspace=w;
         if(u.equals(w.getOwner())){
             
             System.out.println("fend.app.AppController.logout(): elevating a guest to an owner");
             workspaceService.updateWorkspace(w.getId(), w);
             int i=elevation();
+            w=workspaceService.getWorkspace(w.getId());
             if(i==0){
                 w.setOwner(null);
                 workspaceService.updateWorkspace(w.getId(), w);
+                currentWorkspace=w;
+                this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" No more owners");
+            }else{
+                currentWorkspace=w;
+                this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
             }
                 
         }
