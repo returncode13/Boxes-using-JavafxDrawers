@@ -76,7 +76,7 @@ import fend.job.job1.JobType1View;
 import fend.job.definitions.JobDefinitionsModel;
 import fend.job.definitions.JobDefinitionsView;
 import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.definitions.volume.VolumeListModel;
 import fend.job.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
@@ -635,6 +635,7 @@ public class WorkspaceController {
         File insightLocation = new File(AppProperties.INSIGHT_LOCATION);
         File[] insights = insightLocation.listFiles(insightFilter);
         List<String> insightVersionStrings = new ArrayList<>();
+        System.out.println("fend.workspace.WorkspaceController.setModel(): No of insights found: "+insightVersionStrings.size());
         for (File insight : insights) {
             System.out.println("fend.workspace.WorkspaceController.setModel(): insightVersions Found: " + insight.getName());
             insightVersionStrings.add(insight.getName());

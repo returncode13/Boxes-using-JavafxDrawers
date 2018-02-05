@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.definitions.qcmatrix.qcmatrixrow;
+package fend.job.job1.definitions.qcmatrix.qcmatrixrow;
 
 import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -21,7 +22,7 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixRowModel {
+public class QcMatrixRowModel extends QcMatrixRowModelParent{
     public static final String INDETERMINATE="indeterminate";
     public static final String SELECTED="selected";
     public static final String UNSELECTED="unselected";
@@ -52,23 +53,28 @@ public class QcMatrixRowModel {
     
     
     
+    @Override
     public StringProperty getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name.set(name);
     }
 
+    @Override
     public BooleanProperty checkedProperty() {
         return checkedByUser;
     }
 
     
+    @Override
     public Boolean getCheckedByUser() {
         return checkedByUser.get();
     }
 
+    @Override
     public void setCheckedByUser(Boolean checked) {
         if(checked==null)checked=false;
         this.checkedByUser.set(checked);
@@ -79,34 +85,42 @@ public class QcMatrixRowModel {
         return name.get();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public QcType getQctype() {
         return qctype;
     }
 
+    @Override
     public void setQctype(QcType qctype) {
         this.qctype = qctype;
     }
 
+    @Override
     public BooleanProperty getCheckUncheckProperty() {
         return checkUncheckProperty;
     }
 
+    @Override
     public void setCheckUncheckProperty(Boolean checkUncheck) {
         this.checkUncheckProperty.set(checkUncheck);
     }
 
+    @Override
     public BooleanProperty getIndeterminateProperty() {
         return indeterminateProperty;
     }
 
+    @Override
     public void setIndeterminateProperty(Boolean isIndeterminate) {
         this.indeterminateProperty.set(isIndeterminate);
     }
@@ -144,6 +158,7 @@ public class QcMatrixRowModel {
      
     private final StringProperty passQc = new SimpleStringProperty();
     
+    @Override
     public String isPassQc() {
      if(indeterminateProperty.get()){
          passQc.set(INDETERMINATE);
@@ -159,6 +174,7 @@ public class QcMatrixRowModel {
      return passQc.get();
     }
     
+    @Override
     public void setPassQc(String value) {
          if(value.equals(INDETERMINATE)){
              indeterminateProperty.set(true);
@@ -172,6 +188,7 @@ public class QcMatrixRowModel {
          }
     }
     
+    @Override
     public StringProperty passQcProperty() {
         
         if(indeterminateProperty.get()){

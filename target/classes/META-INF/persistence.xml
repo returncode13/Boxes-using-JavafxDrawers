@@ -3,7 +3,7 @@
   <persistence-unit name="PQMan" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5434/testsn1"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/testsn1"/>
       <property name="javax.persistence.jdbc.user" value="sharath"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <property name="javax.persistence.jdbc.password" value=""/>

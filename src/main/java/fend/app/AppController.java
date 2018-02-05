@@ -412,6 +412,7 @@ public class AppController extends Stage{
         System.out.println("fend.app.AppController.login(): after addition sizeOfWorkspaceList "+u.getWorkspaces().size());
         workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
+        this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
     }
 
     private void logout() {

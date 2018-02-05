@@ -9,7 +9,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.QcMatrixRow;
 import db.model.Sequence;
 import db.model.Subsurface;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.InvalidationListener;
@@ -29,8 +29,8 @@ import javafx.collections.ObservableList;
 public class QcTableSequence  {
     private Sequence sequence;
     private Subsurface subsurface;
-    List<QcMatrixRowModel> qcmatrix=new ArrayList<>();
-    ObservableList<QcMatrixRowModel> observableQcMatrix;
+    List<QcMatrixRowModelParent> qcmatrix=new ArrayList<>();
+    ObservableList<QcMatrixRowModelParent> observableQcMatrix;
     ObservableList<QcTableSequence> children;
     List<StringProperty> changedProperty=new ArrayList<>();
     
@@ -58,13 +58,13 @@ public class QcTableSequence  {
         this.subsurface = subsurface;
     }
 
-    public ObservableList<QcMatrixRowModel> getQcmatrix() {
+    public ObservableList<QcMatrixRowModelParent> getQcmatrix() {
         return observableQcMatrix;
     }
 
-    public void setQcmatrix(List<QcMatrixRowModel> qcmatrix) {
-        for(QcMatrixRowModel q:qcmatrix){
-            QcMatrixRowModel nq=new QcMatrixRowModel();
+    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix) {
+        for(QcMatrixRowModelParent q:qcmatrix){
+            QcMatrixRowModelParent nq=new QcMatrixRowModelParent();
             nq.setCheckUncheckProperty(q.getCheckUncheckProperty().get());
             nq.setIndeterminateProperty(q.getIndeterminateProperty().get());
             nq.setCheckedByUser(q.getCheckedByUser());

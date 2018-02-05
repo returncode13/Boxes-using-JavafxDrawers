@@ -14,7 +14,7 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.List;
 
@@ -57,12 +57,12 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
           
           String passQcString=new String();
           if(newValue){
-              passQcString=QcMatrixRowModel.SELECTED;
+              passQcString=QcMatrixRowModelParent.SELECTED;
           }else{
-              passQcString=QcMatrixRowModel.UNSELECTED;
+              passQcString=QcMatrixRowModelParent.UNSELECTED;
           }
           
-          String indString=QcMatrixRowModel.INDETERMINATE;
+          String indString=QcMatrixRowModelParent.INDETERMINATE;
           
           int sel=getTreeTableRow().getIndex();
           String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
@@ -84,7 +84,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
       
        checkBox.indeterminateProperty().addListener((observable,oldValue,newValue)->{
            //System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>() indeterminate: old: "+oldValue+" new: "+newValue);
-          String indeterminateString=QcMatrixRowModel.INDETERMINATE;
+          String indeterminateString=QcMatrixRowModelParent.INDETERMINATE;
           int sel=getTreeTableRow().getIndex();
           String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           selectedItem=this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
@@ -170,17 +170,17 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
     }
     
      private void updateUpwards(String updateTime){
-             String indString=QcMatrixRowModel.INDETERMINATE;
+             String indString=QcMatrixRowModelParent.INDETERMINATE;
              String passQcString=new String();
-                    QcMatrixRowModel qmr=selectedItem.getQcmatrix().get(index);
+                    QcMatrixRowModelParent qmr=selectedItem.getQcmatrix().get(index);
                    String result=qmr.isPassQc();
                    Long qcmrId=qmr.getId();
                      Subsurface childsub=selectedItem.getSubsurface();
                   //   System.out.println("updating dbentry for "+childsub.getSubsurface()+" : QM "+qcmrId+"  "+" "+qmr.getName().get()+" "+qmr.isPassQc());
                      
                      Boolean resForDb=null;
-                            if(result.equals(QcMatrixRowModel.INDETERMINATE)) resForDb=null;
-                            else if(result.equals(QcMatrixRowModel.SELECTED)) {resForDb=true;}
+                            if(result.equals(QcMatrixRowModelParent.INDETERMINATE)) resForDb=null;
+                            else if(result.equals(QcMatrixRowModelParent.SELECTED)) {resForDb=true;}
                             else{resForDb=false;}
                      
                      
@@ -226,13 +226,13 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                      parent.setUpdateTime(updateTime);
                 }
                 else if(indeterminateCount==0 && selectedCount==children.size()){
-                    passQcString=QcMatrixRowModel.SELECTED;
+                    passQcString=QcMatrixRowModelParent.SELECTED;
                     parent.getQcmatrix().get(index).getIndeterminateProperty().set(false);
                     parent.getQcmatrix().get(index).getCheckUncheckProperty().set(true);
                     parent.getQcmatrix().get(index).setPassQc(passQcString);
                     parent.setUpdateTime(updateTime);
                 }else{
-                    passQcString=QcMatrixRowModel.UNSELECTED;
+                    passQcString=QcMatrixRowModelParent.UNSELECTED;
                     parent.getQcmatrix().get(index).getIndeterminateProperty().set(false);
                     parent.getQcmatrix().get(index).getCheckUncheckProperty().set(false);
                     parent.getQcmatrix().get(index).setPassQc(passQcString);
@@ -250,12 +250,12 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
             String passQcString=new String();
             if(!selectedItem.getQcmatrix().get(index).getIndeterminateProperty().get()){
                     if(selectedItem.getQcmatrix().get(index).getCheckUncheckProperty().get()){
-                        passQcString=QcMatrixRowModel.SELECTED;
+                        passQcString=QcMatrixRowModelParent.SELECTED;
                     }else{
-                        passQcString=QcMatrixRowModel.UNSELECTED;
+                        passQcString=QcMatrixRowModelParent.UNSELECTED;
                     }
                 }else{
-                passQcString=QcMatrixRowModel.INDETERMINATE;
+                passQcString=QcMatrixRowModelParent.INDETERMINATE;
             }
              if(selectedItem.isParent() && selectedItem.updateChildren ){
                      
@@ -264,7 +264,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                    child.getQcmatrix().get(index).getIndeterminateProperty().set(selectedItem.getQcmatrix().get(index).getIndeterminateProperty().get());
                    child.getQcmatrix().get(index).setPassQc(passQcString);
                    child.setUpdateTime(updateTime);
-                   QcMatrixRowModel qmr=child.getQcmatrix().get(index);
+                   QcMatrixRowModelParent qmr=child.getQcmatrix().get(index);
                    String result=qmr.isPassQc();
                    Long qcmrId=qmr.getId();
                      Subsurface childsub=child.getSubsurface();
@@ -274,8 +274,8 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                     
                     //
                      Boolean resForDb=null;
-                            if(result.equals(QcMatrixRowModel.INDETERMINATE)) resForDb=null;
-                            else if(result.equals(QcMatrixRowModel.SELECTED)) {resForDb=true;}
+                            if(result.equals(QcMatrixRowModelParent.INDETERMINATE)) resForDb=null;
+                            else if(result.equals(QcMatrixRowModelParent.SELECTED)) {resForDb=true;}
                             else{resForDb=false;}
                      
                      

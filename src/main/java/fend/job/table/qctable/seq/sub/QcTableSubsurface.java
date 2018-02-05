@@ -11,7 +11,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +33,8 @@ import javafx.collections.ObservableList;
 public class QcTableSubsurface extends QcTableSequence{
      private Sequence sequence;
     private Subsurface subsurface;
-    List<QcMatrixRowModel> qcmatrix=new ArrayList<>();
-    ObservableList<QcMatrixRowModel> observableQcMatrix;
+    List<QcMatrixRowModelParent> qcmatrix=new ArrayList<>();
+    ObservableList<QcMatrixRowModelParent> observableQcMatrix;
     QcTableSequence parent;
     private QcTableService qcTableService=new QcTableServiceImpl();
     private String updateTime=new String();
@@ -69,18 +69,18 @@ public class QcTableSubsurface extends QcTableSequence{
     }
 
      @Override
-    public ObservableList<QcMatrixRowModel> getQcmatrix() {
+    public ObservableList<QcMatrixRowModelParent> getQcmatrix() {
         return observableQcMatrix;
     }
 
      @Override
-    public void setQcmatrix(List<QcMatrixRowModel> qcmatrix) {
+    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix) {
         changedList.clear();
         changedListProperty.clear();
         changedListProperty.unbind();
         
-         for(QcMatrixRowModel q:qcmatrix){
-            QcMatrixRowModel nq=new QcMatrixRowModel();
+         for(QcMatrixRowModelParent q:qcmatrix){
+            QcMatrixRowModelParent nq=new QcMatrixRowModelParent();
             nq.setId(q.getId());
              //System.out.println("loading result for QMid: "+nq.getId()+" Subid: "+subsurface.getId()+" - "+subsurface.getSubsurface());
              try{
@@ -91,11 +91,11 @@ public class QcTableSubsurface extends QcTableSequence{
                  }else{
                         Boolean result=qcTableFromDb.getResult();
                         if(result==null){
-                            nq.setPassQc(QcMatrixRowModel.INDETERMINATE);
+                            nq.setPassQc(QcMatrixRowModelParent.INDETERMINATE);
                         }else if(result){
-                            nq.setPassQc(QcMatrixRowModel.SELECTED);
+                            nq.setPassQc(QcMatrixRowModelParent.SELECTED);
                         }else{
-                            nq.setPassQc(QcMatrixRowModel.UNSELECTED);
+                            nq.setPassQc(QcMatrixRowModelParent.UNSELECTED);
                         }
                  }
                  

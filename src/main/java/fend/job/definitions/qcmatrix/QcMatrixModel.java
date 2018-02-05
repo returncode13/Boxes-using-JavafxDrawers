@@ -6,7 +6,7 @@
 package fend.job.definitions.qcmatrix;
 
  
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ import javafx.collections.ObservableList;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcMatrixModel {
-    List<QcMatrixRowModel> qcMatrixRows;
-    ObservableList<QcMatrixRowModel> observableQcMatrixRows;
+    List<QcMatrixRowModelParent> qcMatrixRows;
+    ObservableList<QcMatrixRowModelParent> observableQcMatrixRows;
     JobType0Model parentjob;
     List<BooleanProperty> changePropertyList;
     
@@ -36,15 +36,15 @@ public class QcMatrixModel {
        
     }
 
-    public ObservableList<QcMatrixRowModel> getMatrixRows() {
+    public ObservableList<QcMatrixRowModelParent> getMatrixRows() {
         return observableQcMatrixRows;
     }
 
-    public void setQcMatrixRows(List<QcMatrixRowModel> qcMatrixRows) {
+    public void setQcMatrixRows(List<QcMatrixRowModelParent> qcMatrixRows) {
         this.observableQcMatrixRows=FXCollections.observableArrayList(qcMatrixRows);
     }
     
-    public void addQcMatrixRow(QcMatrixRowModel qcmatrixrowmodel){
+    public void addQcMatrixRow(QcMatrixRowModelParent qcmatrixrowmodel){
         this.observableQcMatrixRows.add(qcmatrixrowmodel);
         BooleanProperty changed=qcmatrixrowmodel.checkedProperty();
         //changed.addListener();
@@ -55,15 +55,15 @@ public class QcMatrixModel {
      * Listeners
      *
      */
-    final private ListChangeListener<QcMatrixRowModel> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowModel>() {
+    final private ListChangeListener<QcMatrixRowModelParent> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowModelParent>() {
         @Override
-        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
+        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModelParent> c) {
             while(c.next()){
-                for(QcMatrixRowModel q:c.getAddedSubList()){
+                for(QcMatrixRowModelParent q:c.getAddedSubList()){
                      System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.added() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      addToParentJob(q);
                 }
-                for(QcMatrixRowModel q:c.getRemoved()){
+                for(QcMatrixRowModelParent q:c.getRemoved()){
                      System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.removed() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      removeFromParentJob(q);
                 }
@@ -84,11 +84,11 @@ public class QcMatrixModel {
      * private implementations
      */
     
-     private void addToParentJob(QcMatrixRowModel qcmr) {
+     private void addToParentJob(QcMatrixRowModelParent qcmr) {
          parentjob.addQcMatrixRow(qcmr);
      }
      
-      private void removeFromParentJob(QcMatrixRowModel q) {
+      private void removeFromParentJob(QcMatrixRowModelParent q) {
           parentjob.removeQcMatrixRow(q);
       }
 

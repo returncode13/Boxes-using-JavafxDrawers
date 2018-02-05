@@ -15,7 +15,7 @@ import db.services.JobServiceImpl;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTypeService;
 import db.services.QcTypeServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 
 import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeModel;
 import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeNode;
@@ -43,7 +43,7 @@ public class QcMatrixController {
     private JFXButton addQcType;
 
     @FXML
-    private JFXListView<QcMatrixRowModel> qcListView;
+    private JFXListView<QcMatrixRowModelParent> qcListView;
 
     @FXML
     void addNewQcType(ActionEvent event) {
@@ -60,7 +60,7 @@ public class QcMatrixController {
             dbnewQcMatrixRow.setQctype(qctype);
             qcMatrixService.createQcMatrixRow(dbnewQcMatrixRow);
             
-            QcMatrixRowModel qcMatrixRow=new QcMatrixRowModel();
+            QcMatrixRowModelParent qcMatrixRow=new QcMatrixRowModelParent();
             qcMatrixRow.setId(dbnewQcMatrixRow.getId());
             qcMatrixRow.setName(name);
             qcMatrixRow.setQctype(qctype);
@@ -84,7 +84,7 @@ public class QcMatrixController {
             parentJob=jobService.getJob(qcMatrixModel.getParentjob().getId());
             List<QcMatrixRow> qcMatrixForJob=qcMatrixService.getQcMatrixForJob(parentJob);
             for(QcMatrixRow qcmatrixRow:qcMatrixForJob){
-                QcMatrixRowModel qcrw=new QcMatrixRowModel();
+                QcMatrixRowModelParent qcrw=new QcMatrixRowModelParent();
                 qcrw.setId(qcmatrixRow.getId());
                 qcrw.setName(qcmatrixRow.getQctype().getName());
                 System.out.println("fend.job.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
