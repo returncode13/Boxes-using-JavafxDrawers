@@ -82,7 +82,7 @@ public class SShSettingsController extends Stage {
 
     @FXML
     void cancel(ActionEvent event) {
-        System.out.println("landing.settings.ssh.SShSettingsController.cancel(): Use Existing settings");
+        System.out.println("app.settings.ssh.SShSettingsController.cancel(): Use Existing settings");
         close();    
     }
 

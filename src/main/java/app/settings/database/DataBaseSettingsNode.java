@@ -24,7 +24,7 @@ public class DataBaseSettingsNode extends AnchorPane{
     private DataBaseSettingsController dsc;
     
     public DataBaseSettingsNode(DataBaseSettings dbm){
-        this.location=getClass().getClassLoader().getResource("fxml/databaseSettings.fxml");
+        this.location=getClass().getClassLoader().getResource("fxml/settings/database/databaseSettings.fxml");
         System.out.println("landing.settings.database.DataBaseSettingsNode.<init>(): "+location.toString());
         fXMLLoader=new FXMLLoader();
         fXMLLoader.setLocation(location);
