@@ -20,7 +20,7 @@ import java.util.List;
 import db.services.LogService;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -197,7 +197,7 @@ public class DugLogManager {
            try {
               attr=Files.readAttributes(Paths.get(fwrap.getAbsolutePath()),BasicFileAttributes.class);
            } catch (IOException ex) {
-               Logger.getLogger(Volume1.class.getName()).log(Level.SEVERE, null, ex);
+               Logger.getLogger(Volume4.class.getName()).log(Level.SEVERE, null, ex);
            }
                     
                     DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");

@@ -19,7 +19,7 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import fend.volume.volume2.Volume2;
 import java.util.Set;
 
@@ -68,7 +68,7 @@ public class VolumeListController {
         
         //type=1L;  <--for demo
         if(type.equals(JobType0Model.PROCESS_2D)){
-            Volume1 volume1=new Volume1(parentjob);
+            Volume4 volume1=new Volume4(parentjob);
             volume1.setId(vol.getId());
             volume1.setName(f.getName());
             volume1.setVolume(f);
@@ -122,7 +122,7 @@ public class VolumeListController {
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
             /*if(type.equals(JobType0Model.PROCESS_2D)){
-            fevol=new Volume1(parentjob);
+            fevol=new Volume4(parentjob);
             fevol.setId(dbVol.getId());
             fevol.setName(dbVol.getNameVolume());
             File volumeOnDisk=new File(dbVol.getPathOfVolume());

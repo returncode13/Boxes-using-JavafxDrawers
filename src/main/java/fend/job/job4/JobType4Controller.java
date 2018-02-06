@@ -7,8 +7,7 @@ package fend.job.job4;
 
 
 import fend.dot.anchor.AnchorView;
-import fend.job.definitions.JobDefinitionsModel;
-import fend.job.definitions.JobDefinitionsView;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
@@ -40,6 +39,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
+import fend.job.job4.definitions.JobDefinitionsModel;
+import fend.job.job4.definitions.JobDefinitionsView;
 import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
@@ -111,7 +112,7 @@ public class JobType4Controller implements JobType0Controller{
         drawer.setDefaultDrawerSize(bdview.computeAreaInScreen());
         drawer.setOverLayVisible(false);
         drawer.setResizableOnDrag(true);
-        drawer.setTranslateX(150);
+        drawer.setTranslateX(165);
         drawer.setTranslateY(0);
         name.setText(model.getNameproperty().get());
         name.textProperty().addListener(nameChangeListener);

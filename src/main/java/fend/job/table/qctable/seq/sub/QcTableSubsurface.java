@@ -11,7 +11,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.ArrayList;
 import java.util.List;

@@ -9,7 +9,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.QcMatrixRow;
 import db.model.Sequence;
 import db.model.Subsurface;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.InvalidationListener;

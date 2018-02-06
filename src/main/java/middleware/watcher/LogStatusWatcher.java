@@ -12,10 +12,10 @@ import db.services.LogServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import middleware.dugex.DugioScripts;
 //import fend.session.node.volumes.type0.Volume0;
-/*import fend.session.node.volumes.type1.Volume1;
+/*import fend.session.node.volumes.type1.Volume4;
 import fend.session.node.volumes.type2.VolumeSelectionModelType2;*/
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,8 +66,8 @@ public class LogStatusWatcher {
     
     public LogStatusWatcher(Volume0 volselmod){
         
-        if(volselmod instanceof Volume1){
-            this.volselmodel=(Volume1) volselmod;
+        if(volselmod instanceof Volume4){
+            this.volselmodel=(Volume4) volselmod;
         dugioscripts=new DugioScripts();
         volume = volserv.getVolume(this.volselmodel.getId());
         

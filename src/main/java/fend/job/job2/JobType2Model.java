@@ -14,7 +14,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -38,8 +38,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.property.JobModelProperty;
+import fend.job.job2.properties.JobType2Properties;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import java.util.logging.LogManager;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -81,6 +83,8 @@ public class JobType2Model implements JobType0Model {
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
     private BooleanProperty listenToDepthChange;
+    private List<JobModelProperty> jobProperties;
+
             
     public JobType2Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
@@ -131,6 +135,15 @@ public class JobType2Model implements JobType0Model {
         finishedCheckingLogs.addListener(checkLogsListener);
         
         listenToDepthChange=new SimpleBooleanProperty(false);
+        jobProperties=new ArrayList<>();
+        JobType2Properties namesOfProperties=new JobType2Properties();
+        List<String> names=namesOfProperties.getProperties();
+        for(String name:names){
+            JobModelProperty jobModelProperty=new JobModelProperty();
+            jobModelProperty.setPropertyName(name);
+            this.jobProperties.add(jobModelProperty);
+        }
+        
         
     }
 
@@ -592,7 +605,16 @@ public class JobType2Model implements JobType0Model {
     }
      
     
-    
+     @Override
+    public List<JobModelProperty> getJobProperties() {
+        return jobProperties;
+                
+    }
+
+    @Override
+    public void setJobProperties(List<JobModelProperty> jobModelProperties) {
+        this.jobProperties=jobModelProperties;
+    }
     
    
 }

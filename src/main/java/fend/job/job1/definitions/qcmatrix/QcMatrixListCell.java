@@ -5,7 +5,6 @@
  */
 package fend.job.job1.definitions.qcmatrix;
 
-import fend.job.definitions.qcmatrix.*;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
 import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;

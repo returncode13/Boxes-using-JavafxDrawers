@@ -82,7 +82,7 @@ public class Volume2 implements Volume0{
     @Override
     public void setVolume(File f) {
        this.volume=f;
-        if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
+        if(WorkspaceModel.DEBUG)System.out.println("volume.volume2.Volume2.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
        
         
         
@@ -215,7 +215,7 @@ public class Volume2 implements Volume0{
 
     @Override
     public File getLogFolder() {
-        System.out.println("fend.volume.volume1.Volume1.getLogFolder(): returning file pointing to : "+volume.getAbsolutePath()+LOGPATH);
+        System.out.println("fend.volume.volume2.Volume2.getLogFolder(): returning file pointing to : "+volume.getAbsolutePath()+LOGPATH);
         return new File(volume.getAbsolutePath()+LOGPATH);
     }
 }

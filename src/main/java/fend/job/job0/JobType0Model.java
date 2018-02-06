@@ -6,9 +6,10 @@
 package fend.job.job0;
 
 
-import fend.job.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.property.JobModelProperty;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -64,6 +65,8 @@ public interface JobType0Model {
     public ObservableSet<JobType0Model> getDescendants();
    
     public ObservableList<SequenceHeaders> getSequenceHeaders();  
+    public List<JobModelProperty> getJobProperties();
+    public void setJobProperties(List<JobModelProperty> jobProperties);
     
     
     @Override

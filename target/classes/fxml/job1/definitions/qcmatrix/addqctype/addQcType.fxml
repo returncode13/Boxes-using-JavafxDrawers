@@ -24,12 +24,12 @@
          <children>
             <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <Button fx:id="doneBtn" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onDone" styleClass="primary" stylesheets="@../../../../../styles/bootstrap3.css" text="done">
+                  <Button fx:id="doneBtn" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#onDone" style="-fx-background-color: #515960;" styleClass="primary" stylesheets="@../../../../../styles/bootstrap3.css" text="done">
                      <HBox.margin>
                         <Insets right="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="cancel" alignment="CENTER_RIGHT" layoutX="330.0" layoutY="17.0" mnemonicParsing="false" onAction="#onCancel" styleClass="primary" stylesheets="@../../../../../styles/bootstrap3.css" text="cancel" />
+                  <Button fx:id="cancel" alignment="CENTER_RIGHT" layoutX="330.0" layoutY="17.0" mnemonicParsing="false" onAction="#onCancel" style="-fx-background-color: #515960;" styleClass="primary" stylesheets="@../../../../../styles/bootstrap3.css" text="cancel" />
                </children>
                <opaqueInsets>
                   <Insets />

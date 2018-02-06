@@ -6,7 +6,6 @@
 package fend.job.job1.definitions.qcmatrix;
 
  
-import fend.job.definitions.qcmatrix.*;
 //import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
 import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;

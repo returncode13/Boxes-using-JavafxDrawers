@@ -13,8 +13,17 @@ import app.settings.database.DataBaseSettingsNode;
 import app.settings.ssh.SShSettings;
 import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
+import db.model.NodeProperty;
+import db.model.NodeType;
+import db.model.PropertyType;
 import db.model.User;
 import db.model.Workspace;
+import db.services.NodePropertyService;
+import db.services.NodePropertyServiceImpl;
+import db.services.NodeTypeService;
+import db.services.NodeTypeServiceImpl;
+import db.services.PropertyTypeService;
+import db.services.PropertyTypeServiceImpl;
 import db.services.UserServiceImpl;
 import db.services.WorkspaceService;
 import db.services.WorkspaceServiceImpl;
@@ -46,12 +55,19 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import db.services.UserService;
+import fend.job.job0.JobType0Model;
+import fend.job.job0.property.properties.JobType0Properties;
+import fend.job.job1.properties.JobType1Properties;
+import fend.job.job2.properties.JobType2Properties;
+import fend.job.job3.properties.JobType3Properties;
+import fend.job.job4.properties.JobType4Properties;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
@@ -71,6 +87,9 @@ public class AppController extends Stage{
     private Workspace currentWorkspace=null;
     private User currentUser=null;
     private User previousUser=null;
+    private NodeTypeService nodeTypeService=new NodeTypeServiceImpl();
+    private NodePropertyService nodePropertyService=new NodePropertyServiceImpl();
+    private PropertyTypeService propertyTypeService=new PropertyTypeServiceImpl();
     
      @FXML
     private MenuBar menubar;
@@ -474,9 +493,91 @@ public class AppController extends Stage{
                     System.out.println("fend.app.AppController.startNewWorkspace(): "+currentWorkspace.getName()+" has "+currentWorkspace.getUsers().size()+" users");
                     AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
                     }
+                    
+                    checkForJobPropertiesForJobType(JobType0Model.PROCESS_2D);
+                    checkForJobPropertiesForJobType(JobType0Model.SEGD_LOAD);
+                    checkForJobPropertiesForJobType(JobType0Model.ACQUISITION);
+                    checkForJobPropertiesForJobType(JobType0Model.TEXT);
+                    
+                    
+                    
+               
+        
+                    
+                    
+                    
                 }else{
                     return;
                 }
+            }
+            
+            
+            /**
+             * Check if the job types and properties (x,y) for each job type exists in the database.
+             * If they dont exist then create
+             **/
+            private void checkForJobPropertiesForJobType(Long type) {
+              //  if(type.equals(JobType0Model.TEXT)){
+                         // Set up properties for each jobtype .
+                    //if defined then skip
+                    // else create                    
+                    //check if a type JobType0Model.Type exists in the nodeType table 
+                    //if not then create it
+                    if(nodeTypeService.getNodeTypeObjForType(type)==null){
+                        NodeType n=new NodeType();
+                        n.setActualnodeid(type);
+                        if(type.equals(JobType0Model.ACQUISITION)) n.setName("Acquisition");
+                        else if(type.equals(JobType0Model.PROCESS_2D)) n.setName("2DProcess");
+                        else if(type.equals(JobType0Model.SEGD_LOAD))n.setName("SEGD_LOAD");
+                        else if(type.equals(JobType0Model.TEXT))n.setName("Text");
+                        
+                        nodeTypeService.createNodeType(n);
+                    }
+                    
+                    //check if property type exists for JobType0Model.Type. defined in class JobType<TYPE>Properties();
+                    JobType0Properties jstmp=null;
+                    if(type.equals(JobType0Model.ACQUISITION)){
+                        jstmp=new JobType3Properties();
+                    }
+                        else if(type.equals(JobType0Model.PROCESS_2D)){
+                           jstmp=new JobType1Properties();
+                        }
+                        else if(type.equals(JobType0Model.SEGD_LOAD)){
+                            jstmp=new JobType2Properties();
+                        }
+                        else if(type.equals(JobType0Model.TEXT)){
+                           jstmp=new JobType4Properties();
+                        }
+                   
+                    List<String> jobProperties=jstmp.getProperties();
+                    for (Iterator<String> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                        String jprop = iterator.next();
+                        if(propertyTypeService.getPropertyTypeObjForName(jprop)==null){
+                            PropertyType prop=new PropertyType();
+                            prop.setName(jprop);
+                            propertyTypeService.createPropertyType(prop);
+                        }
+                    }
+                    
+                     //check if the nodepropertydefinitions table entries exist. i.e. check if entries like 
+                    /// type 4 job has the property "to"
+                    //type 4 job has the property "from" in the database
+                    //if not create
+                    //
+                    NodeType nodeType=nodeTypeService.getNodeTypeObjForType(type);
+                    if(nodePropertyService.getPropertyTypesFor(nodeType).isEmpty()){
+
+                        for (Iterator<String> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                             NodeProperty nodeProperty=new NodeProperty();
+                            nodeProperty.setNodeType(nodeType);
+                            String j4prop = iterator.next();
+                            PropertyType prop=propertyTypeService.getPropertyTypeObjForName(j4prop);
+                            nodeProperty.setPropertyType(prop);
+
+                            nodePropertyService.createNodeProperty(nodeProperty);
+                        }
+                    }
+              //  }
             }
            
        });

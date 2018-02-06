@@ -13,7 +13,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.JobType0Model;
 import fend.job.table.qctable.seq.QcTableSequence;
 import fend.job.table.qctable.seq.sub.QcTableSubsurface;

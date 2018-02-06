@@ -9,7 +9,7 @@ import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

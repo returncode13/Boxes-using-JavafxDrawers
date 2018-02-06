@@ -7,8 +7,8 @@ package fend.job.job3;
 
 
 import fend.dot.anchor.AnchorView;
-import fend.job.definitions.JobDefinitionsModel;
-import fend.job.definitions.JobDefinitionsView;
+import fend.job.job0.definitions.JobDefinitionsModel;
+import fend.job.job0.definitions.JobDefinitionsView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;

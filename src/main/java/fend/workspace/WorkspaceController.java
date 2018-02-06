@@ -16,7 +16,10 @@ import db.model.DoubtType;
 import db.model.Header;
 import db.model.Job;
 import db.model.Link;
+import db.model.NodeProperty;
+import db.model.NodePropertyValue;
 import db.model.NodeType;
+import db.model.PropertyType;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Subsurface;
@@ -44,8 +47,14 @@ import db.services.JobVolumeMapService;
 import db.services.JobVolumeMapServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.NodePropertyService;
+import db.services.NodePropertyServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
 import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
+import db.services.PropertyTypeService;
+import db.services.PropertyTypeServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
@@ -73,14 +82,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import fend.job.job1.JobType1Model;
 import fend.job.job1.JobType1View;
-import fend.job.definitions.JobDefinitionsModel;
-import fend.job.definitions.JobDefinitionsView;
-import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
-import fend.job.definitions.volume.VolumeListModel;
-import fend.job.definitions.volume.VolumeListView;
+import fend.job.job0.definitions.JobDefinitionsModel;
+import fend.job.job0.definitions.JobDefinitionsView;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.volume.VolumeListModel;
+import fend.job.job0.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
+import fend.job.job0.property.JobModelProperty;
 import fend.job.job2.JobType2Model;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3Model;
@@ -88,7 +98,7 @@ import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4Model;
 import fend.job.job4.JobType4View;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import fend.volume.volume2.Volume2;
 import fend.workspace.saveworkspace.SaveWorkSpaceView;
 import fend.workspace.saveworkspace.SaveWorkspaceModel;
@@ -142,6 +152,9 @@ public class WorkspaceController {
     private VolumeService volumeService = new VolumeServiceImpl();
     private JobVolumeMapService jobVolumeMapService = new JobVolumeMapServiceImpl();
     private NodeTypeService nodeTypeService = new NodeTypeServiceImpl();
+    private PropertyTypeService propertyTypeService=new PropertyTypeServiceImpl();
+    private NodePropertyService nodePropertyService=new NodePropertyServiceImpl();
+    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
     private AncestorService ancestorService = new AncestorServiceImpl();
     private DescendantService descendantService = new DescendantServiceImpl();
     private LinkService linkService = new LinkServiceImpl();
@@ -193,8 +206,30 @@ public class WorkspaceController {
         dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
         jobService.createJob(dbjob);
 
+        
+        
+        
+        
         JobType1Model job = new JobType1Model(this.model);
         job.setId(dbjob.getId());
+        
+        List<JobModelProperty> jobProperties=job.getJobProperties();
+        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+            JobModelProperty jobProperty = iterator.next();
+            NodePropertyValue npv=new NodePropertyValue();
+            npv.setJob(dbjob);
+            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+            npv.setNodeProperty(nodeProperty);
+            npv.setValue(jobProperty.getPropertyValue());
+            nodePropertyValueService.createNodePropertyValue(npv);
+            
+            
+            
+        }
+        
+        
+        
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
@@ -203,6 +238,9 @@ public class WorkspaceController {
         JobType1View jobview = new JobType1View(job, interactivePane);
         interactivePane.getChildren().add(jobview);
 //        System.out.println("workspace.WorkspaceController.addBox(): "+job.getId()%100);
+
+            
+            
 
     }
     
@@ -219,6 +257,23 @@ public class WorkspaceController {
 
         JobType2Model job = new JobType2Model(this.model);
         job.setId(dbjob.getId());
+        
+         List<JobModelProperty> jobProperties=job.getJobProperties();
+        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+            JobModelProperty jobProperty = iterator.next();
+            NodePropertyValue npv=new NodePropertyValue();
+            npv.setJob(dbjob);
+            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+            npv.setNodeProperty(nodeProperty);
+            npv.setValue(jobProperty.getPropertyValue());
+            nodePropertyValueService.createNodePropertyValue(npv);
+            
+            
+            
+        }
+        
+        
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
@@ -239,8 +294,26 @@ public class WorkspaceController {
         dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
         jobService.createJob(dbjob);
 
+        
         JobType3Model job = new JobType3Model(this.model);
         job.setId(dbjob.getId());
+        
+         List<JobModelProperty> jobProperties=job.getJobProperties();
+        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+            JobModelProperty jobProperty = iterator.next();
+            NodePropertyValue npv=new NodePropertyValue();
+            npv.setJob(dbjob);
+            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+            npv.setNodeProperty(nodeProperty);
+            npv.setValue(jobProperty.getPropertyValue());
+            nodePropertyValueService.createNodePropertyValue(npv);
+            
+            
+            
+        }
+        
+        
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
@@ -263,6 +336,22 @@ public class WorkspaceController {
 
         JobType4Model job = new JobType4Model(this.model);
         job.setId(dbjob.getId());
+        
+         List<JobModelProperty> jobProperties=job.getJobProperties();
+        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+            JobModelProperty jobProperty = iterator.next();
+            NodePropertyValue npv=new NodePropertyValue();
+            npv.setJob(dbjob);
+            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+            npv.setNodeProperty(nodeProperty);
+            npv.setValue(jobProperty.getPropertyValue());
+            nodePropertyValueService.createNodePropertyValue(npv);
+            
+            
+            
+        }
+        
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
@@ -711,10 +800,28 @@ public class WorkspaceController {
 
                     //nodetype is set up during install.
                 } else {
-
+                        
                     dbjob = jobService.getJob(currentJobId);                                               // else get the instance of the previously saved job
                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Fetched job " + dbjob.getNameJobStep() + " id: " + dbjob.getId());
                     dbjob.setNameJobStep(fejob.getNameproperty().get());
+                    
+                    List<NodePropertyValue> npValues=nodePropertyValueService.getNodePropertyValuesFor(dbjob);
+                   
+                    List<JobModelProperty> jobproperties=fejob.getJobProperties();
+                    for (Iterator<JobModelProperty> iterator = jobproperties.iterator(); iterator.hasNext();) {
+                        JobModelProperty jobProperty = iterator.next();
+                         for (Iterator<NodePropertyValue> iterator1 = npValues.iterator(); iterator1.hasNext();) {
+                               NodePropertyValue npv = iterator1.next();
+                               if(npv.getNodeProperty().getPropertyType().getName().equals(jobProperty.getPropertyName())){
+                                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Before updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+                                    npv.setValue(jobProperty.getPropertyValue());
+                                    nodePropertyValueService.updateNodePropertyValue(npv.getIdNodePropertyValue(), npv);
+                                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): After updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+                                    
+                               }
+                         }
+                        
+                    }
 
                 }
 
@@ -953,7 +1060,7 @@ public class WorkspaceController {
                 Long vtype = dbv.getVolumeType();
 
                 if (vtype.equals(Volume0.PROCESS_2D)) {
-                    fevol = new Volume1(fejob);                  //parent job and id set in contructor
+                    fevol = new Volume4(fejob);                  //parent job and id set in contructor
 
                     fevol.setId(dbv.getId());
                     fevol.setName(dbv.getNameVolume());

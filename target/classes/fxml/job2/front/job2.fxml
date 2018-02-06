@@ -11,7 +11,7 @@
 
 <fx:root style="-fx-border-radius: 10px;" stylesheets="@../styles/bootstrap3.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job2.JobType2Controller">
    <children>
-      <JFXDrawersStack fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-width: 3px; -fx-border-style: solid; -fx-border-color: rgba(0, 0, 0, 0.6); -fx-border-radius: 10;" styleClass="container" stylesheets="@../styles/bootstrap3.css">
+      <JFXDrawersStack fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-width: 3px; -fx-border-style: solid; -fx-border-color: #f89406 #f89406; -fx-border-radius: 10;" styleClass="container" stylesheets="@../styles/bootstrap3.css">
          <children>
             <VBox fx:id="vbox" style="-fx-background-color: #f89406;" styleClass="container" stylesheets="@../styles/bootstrap3.css">
                <children>
