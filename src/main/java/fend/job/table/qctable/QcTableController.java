@@ -11,7 +11,7 @@ import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.QcMatrixRow;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -71,7 +71,7 @@ public class QcTableController extends Stage{
         
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of sequenceList received: "+sequences.size());
         List<TreeTableColumn<QcTableSequence,Boolean>> columns=new ArrayList<>();
-        ObservableList<QcMatrixRowModel> qcMatrixForCols=sequences.get(0).getQcmatrix();
+        ObservableList<QcMatrixRowModelParent> qcMatrixForCols=sequences.get(0).getQcmatrix();
         
         //JFXTreeTableColumn<QcTableSequence,Long> seqCol=new JFXTreeTableColumn<>();
         
@@ -106,7 +106,7 @@ public class QcTableController extends Stage{
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of qcmatrix (number of qctypes):  "+qcMatrixForCols.size());
         
         for(int i=0;i<qcMatrixForCols.size();i++){
-            QcMatrixRowModel qcrow=qcMatrixForCols.get(i);
+            QcMatrixRowModelParent qcrow=qcMatrixForCols.get(i);
             final int index=i;
             TreeTableColumn<QcTableSequence,Boolean> qcCol=new TreeTableColumn<>(qcrow.getName().get());
             qcCol.setText(qcrow.getName().get());

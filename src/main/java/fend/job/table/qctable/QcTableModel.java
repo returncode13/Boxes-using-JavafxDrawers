@@ -13,7 +13,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.JobType0Model;
 import fend.job.table.qctable.seq.QcTableSequence;
 import fend.job.table.qctable.seq.sub.QcTableSubsurface;
@@ -49,19 +49,19 @@ public class QcTableModel {
         qctableSequences=FXCollections.observableArrayList();
         List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(parentJob, true);
        // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+parentJob.getId()+" is "+qcmatrixForJob.size());
-        List<QcMatrixRowModel> feqcmr=new ArrayList<>();
+        List<QcMatrixRowModelParent> feqcmr=new ArrayList<>();
         
        
         Map<Sequence,List<QcTableSequence>> lookupmap=new HashMap<>();  //all subsurfaces grouped under the sequence key
         
         for(QcMatrixRow qcmrow:qcmatrixForJob){
             
-            QcMatrixRowModel femod=new QcMatrixRowModel();
+            QcMatrixRowModelParent femod=new QcMatrixRowModelParent();
             femod.setId(qcmrow.getId());
             femod.setName(qcmrow.getQctype().getName());
             femod.setQctype(qcmrow.getQctype());
             feqcmr.add(femod);
-         //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModel with id: "+femod.getId()+" name: "+femod.getName().get());
+         //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModelParent with id: "+femod.getId()+" name: "+femod.getName().get());
         }
         
         Set<Subsurface> subsinJob=parentJob.getSubsurfaces();

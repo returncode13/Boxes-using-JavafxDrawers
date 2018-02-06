@@ -43,9 +43,12 @@ public class UserDAOImpl implements UserDAO{
         try{
             transaction=session.beginTransaction();
             User ll=(User) session.get(User.class,uid);
-            ll.setWorkspaces(newUser.getWorkspaces());
+            //ll.setWorkspaces(newUser.getWorkspaces());
             ll.setQctables(newUser.getQctables());
             ll.setDoubtStatuses(newUser.getDoubtStatuses());
+            ll.setFullName(newUser.getFullName());
+            ll.setInitials(newUser.getInitials());
+            ll.setOwnedWorkspaces(newUser.getOwnedWorkspaces());
             session.update(ll);
             
             
@@ -85,6 +88,29 @@ public class UserDAOImpl implements UserDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public User getUserWithInitials(String ini) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<User> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(User.class);
+            criteria.add(Restrictions.eq("initials", ini));
+            
+            
+            result=criteria.list();
+            transaction.commit();
+            if(result==null || result.size()==0)
+                return null;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
     }
 
  

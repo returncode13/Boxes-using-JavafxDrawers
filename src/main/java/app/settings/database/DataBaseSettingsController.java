@@ -42,7 +42,7 @@ public class DataBaseSettingsController extends Stage{
     private static SSHManager instance;
     final private String urltemplate="jdbc:postgresql://localhost:5432/template1";
     final private String url="jdbc:postgresql://localhost:5432/";
-    private static int sshLocalPort=5432;   
+    private static int[] sshLocalPort={5432,5433,5444,5445,5446,5447,5448,5449,5450};   
     private static int dbPort=5432;
     
     private DataBaseSettings dbsmodel;
@@ -50,7 +50,7 @@ public class DataBaseSettingsController extends Stage{
     private DbListModel dbListModel=new DbListModel();
     DbListNode dbListnode;
     
-    private String dbUser="fgeo";
+    private String dbUser="sharath";
     private String dbPassword="";
     private String dbase;
     private ArrayList<String> dbList=new ArrayList<>();
@@ -97,7 +97,7 @@ public class DataBaseSettingsController extends Stage{
 
     @FXML
     void cancel(ActionEvent event) {
-        System.out.println("landing.settings.database.DataBaseSettingsController.cancel(): Use Existingsettings");
+        System.out.println("app.settings.database.DataBaseSettingsController.cancel(): Use Existing Settings.");
         close();    
     }
 
@@ -141,7 +141,7 @@ public class DataBaseSettingsController extends Stage{
        // fail();
                 }else
                    {
-         String errorMessage1=instance.setPortForwarding(sshLocalPort, dbPort);
+         String errorMessage1=instance.setPortForwarding(sshLocalPort[1], dbPort);
          System.out.println(errorMessage1);
      }
     }

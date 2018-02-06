@@ -25,7 +25,7 @@ public class SShSettingsNode extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/settings.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/settings/ssh/settings.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -51,7 +51,7 @@ public class SShSettingsNode extends AnchorPane{
                 
                
                
-                System.out.println("landing.loadingSession.LoadSessionNode.<init>()");
+                System.out.println("app.settings.ssh.SShSettingsNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);

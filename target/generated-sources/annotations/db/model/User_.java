@@ -11,8 +11,11 @@ public abstract class User_ {
 
 	public static volatile SetAttribute<User, DoubtStatus> doubtStatuses;
 	public static volatile SetAttribute<User, QcTable> qctables;
+	public static volatile SingularAttribute<User, String> initials;
+	public static volatile SingularAttribute<User, String> fullName;
 	public static volatile SingularAttribute<User, Long> id;
 	public static volatile SetAttribute<User, Workspace> workspaces;
+	public static volatile SetAttribute<User, Workspace> ownedWorkspaces;
 
 }
 

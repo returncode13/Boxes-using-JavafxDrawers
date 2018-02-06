@@ -24,7 +24,7 @@ public class DbListNode extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("landingResources/settings/database/databaseList.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/settings/database/databaseList.fxml");
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

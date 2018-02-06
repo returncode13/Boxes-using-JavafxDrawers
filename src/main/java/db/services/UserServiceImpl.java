@@ -5,11 +5,11 @@
  */
 package db.services;
 
-import db.dao.UserDAO;
 import db.dao.UserDAOImpl;
 
 import db.model.User;
 import java.util.List;
+import db.dao.UserDAO;
 
 /**
  *
@@ -37,6 +37,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long uid) {
         uDao.deleteUser(uid);
+    }
+
+    @Override
+    public User getUserWithInitials(String ini) {
+        return uDao.getUserWithInitials(ini);
     }
 
     

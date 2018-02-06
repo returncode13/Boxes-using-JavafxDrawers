@@ -20,7 +20,7 @@ import java.util.List;
 import db.services.LogService;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
-import org.openide.util.Exceptions;
+//import org.openide.util.Exceptions;
 
 /**
  *
@@ -167,7 +167,8 @@ public class DugLogManager {
                                 logInformation.add(li);
                             }
                         } catch (IOException ex) {
-                            Exceptions.printStackTrace(ex);
+                            ex.printStackTrace();
+                            //Exceptions.printStackTrace(ex);
                         }
                         
                         return null;
@@ -175,9 +176,11 @@ public class DugLogManager {
                     
                 }).get();
             } catch (InterruptedException ex) {
-                Exceptions.printStackTrace(ex);
+                ex.printStackTrace();
+                //Exceptions.printStackTrace(ex);
             } catch (ExecutionException ex) {
-                Exceptions.printStackTrace(ex);
+                ex.printStackTrace();
+                //Exceptions.printStackTrace(ex);
             }
             
         }
@@ -194,7 +197,7 @@ public class DugLogManager {
            try {
               attr=Files.readAttributes(Paths.get(fwrap.getAbsolutePath()),BasicFileAttributes.class);
            } catch (IOException ex) {
-               Logger.getLogger(Volume1.class.getName()).log(Level.SEVERE, null, ex);
+               Logger.getLogger(Volume4.class.getName()).log(Level.SEVERE, null, ex);
            }
                     
                     DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");

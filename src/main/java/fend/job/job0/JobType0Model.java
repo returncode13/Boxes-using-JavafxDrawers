@@ -6,8 +6,10 @@
 package fend.job.job0;
 
 
-import fend.job.definitions.qcmatrix.QcMatrixModel;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+//import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job0.property.JobModelProperty;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -26,6 +28,9 @@ import middleware.sequences.SequenceHeaders;
 public interface JobType0Model {
     public final static Long INITIAL_DEPTH=0L;
     public final static Long PROCESS_2D=1L;
+    public final static Long SEGD_LOAD=2L;
+    public final static Long ACQUISITION=3L;
+    public final static Long TEXT=4L;
     public Long getId();
     public void setId(Long id);
     public void setDepth(Long depth);
@@ -38,10 +43,10 @@ public interface JobType0Model {
     public void addVolume(Volume0 vol);
     public void removeVolume(Volume0 vol);
     
-    public ObservableList<QcMatrixRowModel> getQcMatrix();                   //shot <selected>,  stack <unselected>
-    public void setQcMatrix(List<QcMatrixRowModel> observableQcMatrixRows);
-    public void addQcMatrixRow(QcMatrixRowModel qcmrow);                     // shot<selected>
-    public void removeQcMatrixRow(QcMatrixRowModel qcmrow);
+    public ObservableList<QcMatrixRowModelParent> getQcMatrix();                   //shot <selected>,  stack <unselected>
+    public void setQcMatrix(List<QcMatrixRowModelParent> observableQcMatrixRows);
+    public void addQcMatrixRow(QcMatrixRowModelParent qcmrow);                     // shot<selected>
+    public void removeQcMatrixRow(QcMatrixRowModelParent qcmrow);
     
     public BooleanProperty  getListenToDepthChangeProperty();
     public void setListenToDepthChange(Boolean listenToDepthChange);
@@ -60,6 +65,8 @@ public interface JobType0Model {
     public ObservableSet<JobType0Model> getDescendants();
    
     public ObservableList<SequenceHeaders> getSequenceHeaders();  
+    public List<JobModelProperty> getJobProperties();
+    public void setJobProperties(List<JobModelProperty> jobProperties);
     
     
     @Override

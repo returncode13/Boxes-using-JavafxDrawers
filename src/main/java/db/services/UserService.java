@@ -18,6 +18,8 @@ public interface UserService {
     public void updateUser(Long uid,User newUser);
     public User getUser(Long uid);
     public void deleteUser(Long uid);
+
+    public User getUserWithInitials(String ini);
     
   
 }

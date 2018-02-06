@@ -10,6 +10,7 @@ import fend.dot.DotView;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorView;
 import fend.edge.edge.EdgeController;
+import fend.edge.edge.arrow.Arrow;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.When;
@@ -28,6 +29,16 @@ import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
 import fend.job.job1.JobType1Controller;
 import fend.job.job1.JobType1View;
+import fend.job.job2.JobType2View;
+import fend.job.job3.JobType3View;
+import fend.job.job4.JobType4View;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 
 /**
  *
@@ -60,7 +71,12 @@ public class ParentChildEdgeController implements EdgeController{
     
      @FXML
     private CubicCurve curve;
-
+     
+    
+    private Arrow arrowEnd;
+    private Arrow arrowStart;
+    private Arrow arrowBeforeDot;
+    private Arrow arrowAfterDot;
     
 
     void setModel(ParentChildEdgeModel item) {
@@ -75,22 +91,49 @@ public class ParentChildEdgeController implements EdgeController{
         this.interactivePane=interactivePane;
         
         childAnchor=new AnchorView(childAnchorModel, this.interactivePane);
-        
+        childAnchor.centerXProperty().addListener(UPDATE_ARROW_LISTENER);
+        childAnchor.centerYProperty().addListener(UPDATE_ARROW_LISTENER);
         curve=createStartingCurve();
+        
         JobType0Model job=this.jobView.getController().getModel();
         type=job.getType();
-        if(type.equals(1L)) {
-        curve.startXProperty().bind(((JobType1View)this.jobView).layoutXProperty());
-        curve.startYProperty().bind(((JobType1View)this.jobView).layoutYProperty());
+        if(type.equals(JobType0Model.PROCESS_2D)) {
+                        curve.startXProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutYProperty(),74));
         }
+        if(type.equals(JobType0Model.SEGD_LOAD)) {
+                        curve.startXProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutYProperty(),74));
+        }
+        if(type.equals(JobType0Model.ACQUISITION)) {
+           
+                        curve.startXProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutYProperty(),74));
+        }
+        if(type.equals(JobType0Model.TEXT)) {
+           
+                        curve.startXProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),74));
+        }
+        
         curve.endXProperty().bind(childAnchor.centerXProperty());
         curve.endYProperty().bind(childAnchor.centerYProperty());
         curve.setMouseTransparent(true);
         constraintCurve();
         overrideAnchorBehaviour();
         
+        double[] arrowShape=new double[]{0,0,7,13,-7,13};
+        arrowEnd=new Arrow(curve, 0.90f, arrowShape);
+        arrowBeforeDot=new Arrow(curve,0.40f,arrowShape);
+        arrowAfterDot=new Arrow(curve,0.60f,arrowShape);
+        arrowStart=new Arrow(curve, 0.20f, arrowShape);
+        curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
+        curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
         
-        
+        node.getChildren().add(0,arrowEnd);
+        node.getChildren().add(0,arrowBeforeDot);
+        node.getChildren().add(0,arrowAfterDot);
+        node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,childAnchor);
         this.interactivePane.getChildren().add(node);
@@ -108,10 +151,10 @@ public class ParentChildEdgeController implements EdgeController{
         curve.setControlY2(50);
         curve.setEndX(350);
         curve.setEndY(150);
-        curve.setStroke(Color.FORESTGREEN);
-        curve.setStrokeWidth(4);
+        curve.setStroke(Color.BLACK);
+        curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
-        curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        //curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
         return curve;
     }
 
@@ -140,11 +183,36 @@ public class ParentChildEdgeController implements EdgeController{
         node.setDropReceived(true);
         type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {
-             /*curve.endXProperty().bind(((JobType1View)childJobView).layoutXProperty());
-             curve.endYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
-        childAnchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
-        childAnchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());
-       
+            System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType1View)childJobView).getHeight()+" , Width: "+((JobType1View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.SEGD_LOAD)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType2View)childJobView).getHeight()+" , Width: "+((JobType2View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.ACQUISITION)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.TEXT)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
         }
           
           }
@@ -167,11 +235,11 @@ public class ParentChildEdgeController implements EdgeController{
         /**Curve Constraint Begin
          */
         
-        mControloffX.set(100.0);
-        mControloffY.set(50.0);
+        mControloffX.set(-50.0);
+        mControloffY.set(100.0);
         
         
-        mControlDirX1.bind(new When(
+        /* mControlDirX1.bind(new When(
         curve.startXProperty().greaterThan(curve.endXProperty()))
         .then(-1.0).otherwise(1.0)
         );
@@ -179,6 +247,16 @@ public class ParentChildEdgeController implements EdgeController{
         
         mControlDirX2.bind(new When(
         curve.startXProperty().greaterThan(curve.endXProperty()))
+        .then(1.0).otherwise(-1.0)
+        );
+        */
+        mControlDirY1.bind(new When(
+        curve.startYProperty().greaterThan(curve.endYProperty()))
+        .then(-1.0).otherwise(1.0)
+        );
+        
+         mControlDirY2.bind(new When(
+        curve.startYProperty().greaterThan(curve.endYProperty()))
         .then(1.0).otherwise(-1.0)
         );
         
@@ -238,6 +316,9 @@ public class ParentChildEdgeController implements EdgeController{
                 childAnchor.setCenterY(newY);
             }
             
+            //update Arrow
+            arrowEnd.update();
+            
            e.consume();
         
         });
@@ -247,6 +328,14 @@ public class ParentChildEdgeController implements EdgeController{
            if(!node.getDropReceived()){
                node.toFront();
                node.requestFocus();
+           }else{
+               
+               /* System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Y" +node.getBoundsInLocal().getMaxY()+","+node.getBoundsInLocal().getMinY()+" , X: "+node.getBoundsInLocal().getMinX()+","+node.getBoundsInLocal().getMaxX());
+               childAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
+               childAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));*/
+               //reduce the childanchors radius to zero once it's dropped on a node
+               
+               childAnchor.setRadius(5);
            }
            
         });
@@ -260,4 +349,16 @@ public class ParentChildEdgeController implements EdgeController{
       private class Delta{
         double x,y;
     }
+      
+      
+    private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+        //System.out.println("Arrow updating "+oldValue.doubleValue()+" -> "+newValue.doubleValue());
+        ParentChildEdgeController.this.arrowEnd.update();
+        ParentChildEdgeController.this.arrowBeforeDot.update();
+        ParentChildEdgeController.this.arrowAfterDot.update();
+        ParentChildEdgeController.this.arrowStart.update();
+    };
+      
+ 
+      
 }

@@ -14,7 +14,7 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
-import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.util.ArrayList;
@@ -38,8 +38,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.property.JobModelProperty;
+import fend.job.job1.properties.JobType1Properties;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
+import fend.volume.volume1.Volume4;
 import java.util.logging.LogManager;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -62,8 +64,8 @@ public class JobType1Model implements JobType0Model {
     private ObservableList<Volume0> observableVolumes;
     private ObservableList<SequenceHeaders> sequenceHeaders;
     
-    private List<QcMatrixRowModel> qcmatrix;
-    private ObservableList<QcMatrixRowModel> observableQcMatrix;
+    private List<QcMatrixRowModelParent> qcmatrix;
+    private ObservableList<QcMatrixRowModelParent> observableQcMatrix;
     
     private List<SubsurfaceHeaders> subsurfacesInJob;
     private Set<SubsurfaceHeaders> duplicatesInJob;
@@ -81,6 +83,7 @@ public class JobType1Model implements JobType0Model {
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
     private BooleanProperty listenToDepthChange;
+    private List<JobModelProperty> jobProperties;
             
     public JobType1Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
@@ -131,6 +134,16 @@ public class JobType1Model implements JobType0Model {
         finishedCheckingLogs.addListener(checkLogsListener);
         
         listenToDepthChange=new SimpleBooleanProperty(false);
+        
+        jobProperties=new ArrayList<>();
+        
+        JobType1Properties namesOfProperties=new JobType1Properties();
+        List<String> names=namesOfProperties.getProperties();
+        for(String name:names){
+            JobModelProperty jobModelProperty=new JobModelProperty();
+            jobModelProperty.setPropertyName(name);
+            this.jobProperties.add(jobModelProperty);
+        }
         
     }
 
@@ -377,14 +390,14 @@ public class JobType1Model implements JobType0Model {
  
     };
     
-    final private ListChangeListener<QcMatrixRowModel> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowModel>() {
+    final private ListChangeListener<QcMatrixRowModelParent> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowModelParent>() {
         @Override
-        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
+        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModelParent> c) {
                 while(c.next()){
-                    for(QcMatrixRowModel q:c.getAddedSubList()){
+                    for(QcMatrixRowModelParent q:c.getAddedSubList()){
                         System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().added() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
-                    for(QcMatrixRowModel q:c.getRemoved()){
+                    for(QcMatrixRowModelParent q:c.getRemoved()){
                         System.out.println("ob.job1.JobType1Model.qcmatrixChangeListener().removed() qcmatrixrow to qcmatrix: "+q.getName().get()+" is selected: "+q.getCheckedByUser());
                     }
                 }
@@ -544,22 +557,22 @@ public class JobType1Model implements JobType0Model {
     
 
     @Override
-    public ObservableList<QcMatrixRowModel> getQcMatrix() {
+    public ObservableList<QcMatrixRowModelParent> getQcMatrix() {
         return observableQcMatrix;
     }
 
     @Override
-    public void setQcMatrix(List<QcMatrixRowModel> qcMatrixRows) {
+    public void setQcMatrix(List<QcMatrixRowModelParent> qcMatrixRows) {
         this.observableQcMatrix=FXCollections.observableArrayList(qcMatrixRows);
     }
 
     @Override
-    public void addQcMatrixRow(QcMatrixRowModel qcmrow) {
+    public void addQcMatrixRow(QcMatrixRowModelParent qcmrow) {
         observableQcMatrix.add(qcmrow);
     }
 
     @Override
-    public void removeQcMatrixRow(QcMatrixRowModel qcmrow) {
+    public void removeQcMatrixRow(QcMatrixRowModelParent qcmrow) {
         observableQcMatrix.remove(qcmrow);
     }
 
@@ -589,6 +602,17 @@ public class JobType1Model implements JobType0Model {
 
     public void setListenToDepthChange(Boolean listenToDepthChange) {
         this.listenToDepthChange.set(listenToDepthChange);
+    }
+
+    @Override
+    public List<JobModelProperty> getJobProperties() {
+        return jobProperties;
+                
+    }
+
+    @Override
+    public void setJobProperties(List<JobModelProperty> jobModelProperties) {
+        this.jobProperties=jobModelProperties;
     }
      
     

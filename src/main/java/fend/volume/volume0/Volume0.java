@@ -19,6 +19,7 @@ import fend.job.job0.JobType0Model;
 public interface Volume0 {
 
     public static Long PROCESS_2D=1L;
+    public static Long SEGD_LOAD=2L;
     public Long getType();
     public Long getId();
     /**

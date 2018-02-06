@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="260.0" style="-fx-background-color: #3A3F44;" styleClass="container" stylesheets="@../../../../styles/bootstrap3.css" type="StackPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job2.definitions.qcmatrix.QcMatrixController">
+   <children>
+      <VBox style="-fx-background-color: #3A3F44;" stylesheets="@../../../../styles/bootstrap3.css">
+         <children>
+            <JFXButton fx:id="addQcType" buttonType="RAISED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#addNewQcType" style="-fx-background-color: #515960;" styleClass="primary" stylesheets="@../../../../styles/bootstrap3.css" text="Add a Qc" />
+            <JFXListView fx:id="qcListView" prefHeight="400.0" prefWidth="208.0" style="-fx-background-color: #f89406;" stylesheets="@../../../../styles/bootstrap3.css" />
+         </children>
+      </VBox>
+   </children>
+</fx:root>

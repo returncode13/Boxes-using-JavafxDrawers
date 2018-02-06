@@ -48,14 +48,14 @@ public class HibernateUtil {
      Kiba Params
      */
      private static String command = "ls";
-     private static String userName = "irdb";
-     private static String password = "rdV9BPk9WS";
-     private static String connectionIP = "192.168.56.101";     
+     private static String userName = "sharath";
+     private static String password = "651201313";
+     private static String connectionIP = "localhost";     
      private static SSHManager instance; 
-     private static int sshLocalPort=5432;    //Cannot bind to 5432 on Kiba. Permission issues??
+     private static int sshLocalPort=5435;    //Cannot bind to 5432 on Kiba. Permission issues??
      private static int dbPort=5432;
-     private static String strDbUSer="irdb";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
-     private static String DBPass="password";  //Kiba      CHANGE this in the file hibernate.cfg.xml
+     private static String strDbUSer="sharath";  //Kiba   . CHANGE this in the file hibernate.cfg.xml
+     private static String DBPass="";  //Kiba      CHANGE this in the file hibernate.cfg.xml
      
      private static String database="";
      

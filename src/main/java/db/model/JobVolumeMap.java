@@ -17,6 +17,8 @@ import javax.persistence.Table;
 /**
  *
  * @author sharath nair
+ * 
+ * Deprecated class.
  */
 @Entity
 @Table(name = "JobVolumeMap",schema = "obpmanager")
