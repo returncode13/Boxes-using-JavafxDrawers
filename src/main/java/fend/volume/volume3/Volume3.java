@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.volume.volume1;
+package fend.volume.volume3;
 
+import db.model.Acquisition;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
@@ -39,21 +40,23 @@ import fend.volume.volume0.Volume0;
  * @author sharath nair <sharath.nair@polarcus.com>
  * Type 1 Volumes. logs under ../200../logs
  */
-public class Volume4 implements Volume0{
+public class Volume3 implements Volume0{
     private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
-    private final Long type=1L;
+    private final Long type=Volume0.ACQUISITION;
     private Long id;
     private StringProperty name;
     private File volume;
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
+    private List<Acquisition> acquisitions;
     
-    public Volume4(JobType0Model parentBox) {
+    public Volume3(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();
         id=null;
         this.parentJob = parentBox;
         name=new SimpleStringProperty();
-        subsurfaces=new ArrayList<>();
+       subsurfaces=new ArrayList<>();
+      acquisitions=new ArrayList<>();
     }
     
     
@@ -81,8 +84,8 @@ public class Volume4 implements Volume0{
     
     @Override
     public void setVolume(File f) {
-       this.volume=f;
-        if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
+        /* this.volume=f;
+        if(WorkspaceModel.DEBUG)System.out.println("volume.volume.Volume3.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");*/
        
         
         
@@ -133,7 +136,7 @@ public class Volume4 implements Volume0{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Volume4 other = (Volume4) obj;
+        final Volume3 other = (Volume3) obj;
         if (!Objects.equals(this.type, other.type)) {
             return false;
         }
@@ -175,7 +178,7 @@ public class Volume4 implements Volume0{
            try {
               attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
            } catch (IOException ex) {
-               Logger.getLogger(Volume4.class.getName()).log(Level.SEVERE, null, ex);
+               Logger.getLogger(Volume3.class.getName()).log(Level.SEVERE, null, ex);
            }
             DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
             DateTime dt=formatter.parseDateTime(attr.creationTime().toString());

@@ -27,7 +27,7 @@ import db.services.VolumeServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.job.job1.JobType1Model;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,6 +133,28 @@ public class HeaderExtractor {
                 
                    ((JobType1Model)job).setHeadersCommited(true);
           
+        }
+        
+        
+        
+        //if Acquisition
+        if(job.getType().equals(JobType0Model.ACQUISITION)){
+            List<Subsurface> totalSubsurfacesTillNow=subsurfaceService.getSubsurfaceList();
+            for(Subsurface dbsub:totalSubsurfacesTillNow){
+                SubsurfaceJob dbSubjob;
+                  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //if there is no entry then create
+                      dbSubjob=new SubsurfaceJob();
+                      dbSubjob.setJob(dbjob);
+                      dbSubjob.setSubsurface(dbsub);
+                      subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+                      dbjob.getSubsurfaceJobs().add(dbSubjob);
+                      jobService.updateJob(dbjob.getId(), dbjob);
+                  }else{
+                      //do nothing
+                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+ dbjob.getNameJobStep()+" : "+dbsub.getSubsurface()+" already acccounted for");
+                  }
+                  
+            }
         }
     }
 

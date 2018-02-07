@@ -50,7 +50,7 @@ public class DataBaseSettingsController extends Stage{
     private DbListModel dbListModel=new DbListModel();
     DbListNode dbListnode;
     
-    private String dbUser="sharath";
+    private String dbUser="fgeo";
     private String dbPassword="";
     private String dbase;
     private ArrayList<String> dbList=new ArrayList<>();
@@ -141,7 +141,8 @@ public class DataBaseSettingsController extends Stage{
        // fail();
                 }else
                    {
-         String errorMessage1=instance.setPortForwarding(sshLocalPort[1], dbPort);
+         String errorMessage1=instance.setPortForwarding(sshLocalPort[0], dbPort);
+                       System.out.println("app.settings.database.DataBaseSettingsController.lookUpDatabases(): SSH CONNECTION ESTABLISHED ? "+errorMessage1 );
          System.out.println(errorMessage1);
      }
     }

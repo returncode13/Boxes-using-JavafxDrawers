@@ -46,5 +46,10 @@ public class AcquisitionServiceImpl implements AcquisitionService{
     public List<Long> getGuns() {
         return aDao.getGuns();
     }
+
+    @Override
+    public List<Acquisition> getEntireAcquistion() {
+        return aDao.getEntireAcquisition();
+    }
     
 }

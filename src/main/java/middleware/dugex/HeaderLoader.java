@@ -49,7 +49,7 @@ public class HeaderLoader {
         Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
         System.out.println("middleware.dugex.HeaderLoader.<init>(): Listing all subs in the job.. "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
         for(Subsurface s:subsinJob){
-            System.err.println(""+s.getSubsurface());
+            System.out.println(""+s.getSubsurface());
         }
         Map<Long,Volume0> feVolMap=new HashMap<>();
             for(Volume0 v:feVolsInJob){

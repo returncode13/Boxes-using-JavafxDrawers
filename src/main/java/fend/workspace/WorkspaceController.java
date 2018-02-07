@@ -98,7 +98,7 @@ import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4Model;
 import fend.job.job4.JobType4View;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
 import fend.workspace.saveworkspace.SaveWorkSpaceView;
 import fend.workspace.saveworkspace.SaveWorkspaceModel;
@@ -1060,7 +1060,7 @@ public class WorkspaceController {
                 Long vtype = dbv.getVolumeType();
 
                 if (vtype.equals(Volume0.PROCESS_2D)) {
-                    fevol = new Volume4(fejob);                  //parent job and id set in contructor
+                    fevol = new Volume1(fejob);                  //parent job and id set in contructor
 
                     fevol.setId(dbv.getId());
                     fevol.setName(dbv.getNameVolume());

@@ -41,22 +41,25 @@ import fend.job.job0.JobType0Model;
 import fend.job.job0.property.JobModelProperty;
 import fend.job.job3.properties.JobType3Properties;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
+import middleware.dugex.AcquisitionLoader;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderLoader;
 import middleware.sequences.SequenceHeaders;
+import middleware.sequences.acquisition.AcquisitionSequenceHeaders;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * Type 3 : Acquisition Job Model
  */
 public class JobType3Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
-    final private Long type=3L;
+    final private Long type=JobType0Model.ACQUISITION;
     private Long id;
     private LongProperty depth;
     private StringProperty nameproperty;
@@ -549,8 +552,14 @@ public class JobType3Model implements JobType0Model {
     }
     
      void retrieveHeaders() {
-        HeaderLoader headerloader=new HeaderLoader(this);
-        sequenceHeaders=headerloader.getSequenceHeaders();
+        //HeaderLoader headerloader=new HeaderLoader(this);
+         AcquisitionLoader acquisitionLoader=new AcquisitionLoader(this);
+        sequenceHeaders=acquisitionLoader.getSequenceHeaders();
+         System.out.println("fend.job.job3.JobType3Model.retrieveHeaders()");
+        for(SequenceHeaders s:sequenceHeaders){
+            AcquisitionSequenceHeaders aas=(AcquisitionSequenceHeaders) s;
+            System.out.println(""+aas.getSequence().getSequenceno()+" "+aas.getSequence().getRealLineName()+" "+aas.getSequence().getStatus()+" "+aas.getSubsurfaceName());
+        }
         
     }
     

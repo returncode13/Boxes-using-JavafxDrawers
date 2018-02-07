@@ -20,6 +20,7 @@ public interface Volume0 {
 
     public static Long PROCESS_2D=1L;
     public static Long SEGD_LOAD=2L;
+    public static Long ACQUISITION=3L;
     public Long getType();
     public Long getId();
     /**

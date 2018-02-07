@@ -19,7 +19,7 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class VolumeListController {
             return;
         }
         if(!f.getName().endsWith(".dugio")){
-            System.out.println("fend.job.job1.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
+            System.out.println("fend.job.job2.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
             return;
         }
         
@@ -67,15 +67,15 @@ public class VolumeListController {
         volumeService.createVolume(vol);
         
         //type=1L;  <--for demo
-        if(type.equals(JobType0Model.PROCESS_2D)){
-            Volume4 volume1=new Volume4(parentjob);
-            volume1.setId(vol.getId());
-            volume1.setName(f.getName());
-            volume1.setVolume(f);
-           
-            model.addToVolumeList(volume1);
-        }
-        /* if(type.equals(JobType0Model.SEGD_LOAD)){
+        /*if(type.equals(JobType0Model.PROCESS_2D)){
+        Volume4 volume1=new Volume4(parentjob);
+        volume1.setId(vol.getId());
+        volume1.setName(f.getName());
+        volume1.setVolume(f);
+        
+        model.addToVolumeList(volume1);
+        }*/
+         if(type.equals(JobType0Model.SEGD_LOAD)){
         Volume2 volume2=new Volume2(parentjob);
         volume2.setId(vol.getId());
         volume2.setName(f.getName());
@@ -83,6 +83,7 @@ public class VolumeListController {
         
         model.addToVolumeList(volume2);
         }
+         /*
         if(type.equals(JobType0Model.ACQUISITION)){
         //TO DO.
         

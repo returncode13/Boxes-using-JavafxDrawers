@@ -17,8 +17,8 @@ public class AppProperties {
                                                                     3. PATCH version when you make backwards-compatible bug fixes
                                                             */
     
-    //public static final String INSIGHT_LOCATION="/d/sw/Insight";
-    public static final String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
+    public static final String INSIGHT_LOCATION="/d/sw/Insight";
+    //public static final String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
