@@ -56,7 +56,7 @@ import middleware.sequences.SequenceHeaders;
  */
 public class JobType2Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
-    final private Long type=2L;
+    final private Long type=JobType0Model.SEGD_LOAD;
     private Long id;
     private LongProperty depth;
     private StringProperty nameproperty;

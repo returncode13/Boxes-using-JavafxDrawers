@@ -40,8 +40,8 @@ import fend.volume.volume0.Volume0;
  * Type 1 Volumes. logs under ../200../logs
  */
 public class Volume2 implements Volume0{
-    private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
-    private final Long type=2L;
+    private final String LOGPATH="/logs/";                      //location of logs relative to dugio
+    private final Long type=JobType0Model.SEGD_LOAD;
     private Long id;
     private StringProperty name;
     private File volume;

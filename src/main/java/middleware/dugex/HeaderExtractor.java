@@ -26,6 +26,7 @@ import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.job.job1.JobType1Model;
+import fend.job.job2.JobType2Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import java.io.BufferedReader;
@@ -135,6 +136,72 @@ public class HeaderExtractor {
           
         }
         
+        
+        
+        //Set<Sequence> setOfSequencesInJob=new HashSet<>();
+        //type2 extraction
+        if(job.getType().equals(JobType0Model.SEGD_LOAD)){
+           
+            
+          for(Volume0 vol:volumes){
+              System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get());
+              Volume dbvol=volumeService.getVolume(vol.getId());
+              //Job dbjob=dbvol.getJob();
+              List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
+              for(SubsurfaceHeaders sub:subsInVol){
+                  Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                  Sequence dbseq=dbsub.getSequence();
+                  setOfSubsurfacesInJob.add(dbsub);
+                  SubsurfaceJob dbSubjob;
+                  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
+                      dbSubjob=new SubsurfaceJob();
+                      dbSubjob.setJob(dbjob);
+                      dbSubjob.setSubsurface(dbsub);
+                      subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+                  }
+                  dbjob.getSubsurfaceJobs().add(dbSubjob);
+                  //jobService.updateJob(dbjob.getId(), dbjob);
+                  //setOfSequencesInJob.add(dbseq);
+                          
+                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
+                
+                  
+                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
+                  String latestTimestamp=sub.getTimeStamp();
+                  if(headerService.getHeadersFor(dbvol,dbsub,latestTimestamp)==null){
+                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
+                      Header header=new Header();
+                      header.setJob(dbvol.getJob());
+                      header.setSubsurfaceJob(dbSubjob);
+                      header.setVolume(dbvol);
+                      header.setSubsurface(dbsub);
+                      header.setTimeStamp(latestTimestamp);
+                      //header.setSequence(dbsub.getSequence());
+                    populate(header);
+                    setOfHeadersInJob.add(header);
+                     
+                    //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+                    //dbjob.getSubsurfaceJobs().add(dbSubjob);
+                   // dbjob.setSequences(setOfSequencesInJob);
+                    dbjob.setHeaders(setOfHeadersInJob);
+                    jobService.updateJob(dbjob.getId(), dbjob);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                        headerService.getMultipleInstances(dbjob, dbsub);
+                  }else{
+                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
+                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                        headerService.getMultipleInstances(dbjob, dbsub);
+                  }
+                  
+              }
+          }
+         
+          
+          // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                
+                   ((JobType2Model)job).setHeadersCommited(true);
+          
+        }
         
         
         //if Acquisition
