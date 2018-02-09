@@ -56,5 +56,10 @@ public class SummaryServiceImpl implements SummaryService{
     public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W) {
         return summaryDao.getSummariesForJobSeq(job, seq, W);
     }
+
+    @Override
+    public List<Summary> getSummariesForJobSeq(Job job, Sequence seq) {
+        return summaryDao.getSummariesForJobSeq(job, seq);
+    }
     
 }

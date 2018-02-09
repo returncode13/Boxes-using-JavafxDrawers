@@ -24,4 +24,5 @@ public interface SummaryDAO {
  public Summary getSummaryFor(Sequence sequence,Job job);
  public List<Long> getDepthsInSummary(Workspace W);
  public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W);
+ public List<Summary> getSummariesForJobSeq(Job job,Sequence seq);
 }

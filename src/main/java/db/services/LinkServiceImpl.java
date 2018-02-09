@@ -14,6 +14,7 @@ import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.Workspace;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -74,6 +75,11 @@ public class LinkServiceImpl implements LinkService {
         
         return links;
         
+    }
+
+    @Override
+    public List<Link> getLinkBetweenParentAndChild(Job parent, Job Child, Dot dot) {
+        return linkDAO.getLinkBetweenParentAndChild(parent, Child, dot);
     }
     
 

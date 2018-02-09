@@ -361,6 +361,7 @@ fend/job/job1/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel$1.class
 fend/workspace/saveworkspace/SaveWorkspaceModel.class
 fend/job/job2/JobType2View.class
 fend/job/job0/definitions/volume/VolumeListModel$1.class
+fend/summary/SummaryController$2.class
 db/dao/DoubtStatusDAO.class
 fend/job/job2/JobType2Model$2.class
 db/model/DoubtType.class

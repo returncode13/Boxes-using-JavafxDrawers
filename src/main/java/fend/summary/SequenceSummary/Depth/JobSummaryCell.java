@@ -10,6 +10,7 @@ import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryView;
 import fend.summary.SequenceSummary.SequenceSummary;
 import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TreeTableCell;
 
 /**
@@ -20,14 +21,25 @@ public class JobSummaryCell extends TableCell<SequenceSummary, JobSummaryModel>{
     JobSummaryView view;
     JobSummaryModel model;
 
-    public JobSummaryCell(JobSummaryModel model) {
-        this.model = model;
-        view=new JobSummaryView(model);
+    public JobSummaryCell() {
+        
     }
+
+    public JobSummaryCell(TableColumn<SequenceSummary, JobSummaryModel> param) {
+        //param.get
+                
+    }
+
     
+                                            
     protected void updateItem(JobSummaryModel t,boolean empty){
         super.updateItem(t, true);
         if(!empty){
+            SequenceSummary item=(SequenceSummary) this.getTableRow().getItem();
+            this.model = model;
+            model.setSequence(item.getSequence());
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.<init>() job "+model.isActive());
+            view=new JobSummaryView(model);
             setGraphic(view);
         }
     }

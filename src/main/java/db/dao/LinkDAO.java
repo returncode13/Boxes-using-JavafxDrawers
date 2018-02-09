@@ -23,5 +23,5 @@ public interface LinkDAO {
     public void deleteLink(Long id);
     public void updateLink(Long id,Link newLink);
     public void clearLinksforJob(Job job,Dot dot);      //clear links where either child=job or parent=job
-    
+    public List<Link> getLinkBetweenParentAndChild(Job parent,Job Child,Dot dot);
 }

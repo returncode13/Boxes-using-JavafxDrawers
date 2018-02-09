@@ -9,6 +9,7 @@ import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.QcTable_;
 import db.model.Subsurface;
 import db.model.Workspace;
 import db.services.WorkspaceService;
@@ -131,6 +132,28 @@ public class LinkDAOImpl implements LinkDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<Link> getLinkBetweenParentAndChild(Job parent, Job child, Dot dot) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction= null;
+         List result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria = session.createCriteria(Link.class);
+            criteria.add(Restrictions.eq("parent", parent));
+            criteria.add(Restrictions.eq("child", child));
+            criteria.add(Restrictions.eq("dot", dot));
+           result=criteria.list();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
    

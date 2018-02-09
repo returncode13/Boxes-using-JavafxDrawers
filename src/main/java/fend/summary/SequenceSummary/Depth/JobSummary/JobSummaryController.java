@@ -5,6 +5,10 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary;
 
+import db.model.Summary;
+import db.services.SummaryService;
+import db.services.SummaryServiceImpl;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -19,6 +23,8 @@ import javafx.scene.layout.AnchorPane;
 public class JobSummaryController {
     private JobSummaryModel model;
     private JobSummaryView view;
+    private SummaryService summaryService=new SummaryServiceImpl();
+            
     
     @FXML
     private Button timeBtn;
@@ -62,23 +68,36 @@ public class JobSummaryController {
     
     void setModel(JobSummaryModel item) {
         this.model=item;
-        if(!this.model.isActive()){
-            timeBtn.setDisable(true);
-            traceBtn.setDisable(true);
-            qcBtn.setDisable(true);
-            insightBtn.setDisable(true);
-            inhBtn.setDisable(true);
+        
+        List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(model.getJob(),model.getSequence());
+        if(summariesForJobsAtDepth.isEmpty()) model.setActive(false);
+        else{
+            model.setActive(true);
         }
+        /*if(!this.model.isActive()){
+        timeBtn.setDisable(true);
+        traceBtn.setDisable(true);
+        qcBtn.setDisable(true);
+        insightBtn.setDisable(true);
+        inhBtn.setDisable(true);
+        }*/
         
         model.activeProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                System.out.println(".changed() from "+oldValue+" to "+newValue);
                 if(newValue){
                     timeBtn.setDisable(false);
-            traceBtn.setDisable(false);
-            qcBtn.setDisable(false);
-            insightBtn.setDisable(false);
-            inhBtn.setDisable(false);
+                    traceBtn.setDisable(false);
+                    qcBtn.setDisable(false);
+                    insightBtn.setDisable(false);
+                    inhBtn.setDisable(false);
+                }else{
+                    timeBtn.setDisable(true);
+                    traceBtn.setDisable(true);
+                    qcBtn.setDisable(true);
+                    insightBtn.setDisable(true);
+                    inhBtn.setDisable(true);
                 }
             }
         });

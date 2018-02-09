@@ -34,6 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -276,19 +277,29 @@ public class DotController extends Stage{
           Set<LinkModel> linksSharingThisDot=model.getLinks();
           Set<Link> dbLinks=new HashSet<>();
           for(LinkModel lm:linksSharingThisDot){
-                     Link dbLink=new Link();
+             
+                    
                      Job child=jobService.getJob(lm.getChild().getId());
                      Job parent=jobService.getJob(lm.getParent().getId());
+                     List<Link> linksContainingParentChildThroughDot=linkService.getLinkBetweenParentAndChild(parent, child, dbDot);
                       //linkService.clearLinksforJob(child,dbDot);                 //rebuild each save
                       //linkService.clearLinksforJob(parent,dbDot);                //rebuild each save     
-                     dbLink.setParent(parent);
-                     dbLink.setChild(child);
-                     dbLink.setDot(dbDot);
-                     dbLinks.add(dbLink);
+                     
+                      if(linksContainingParentChildThroughDot.isEmpty()){
+                            Link dbLink=new Link();
+                            dbLink.setParent(parent);
+                            dbLink.setChild(child);
+                            dbLink.setDot(dbDot);
+                            dbLinks.add(dbLink);
+                      }
+                      
+                      
+                      
           }
           dbDot.setLinks(dbLinks);
           
           for(Link l:dbLinks){
+              
               linkService.createLink(l);
           }
           dotService.updateDot(dbDot.getId(), dbDot);

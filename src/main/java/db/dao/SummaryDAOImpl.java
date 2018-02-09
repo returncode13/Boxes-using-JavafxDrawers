@@ -172,5 +172,27 @@ public class SummaryDAOImpl implements  SummaryDAO{
          }
          return result;
     }
+
+    @Override
+    public List<Summary> getSummariesForJobSeq(Job job, Sequence seq) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         List<Summary> result=null;
+         
+         try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Summary.class);
+            
+            criteria.add(Restrictions.eq("sequence", seq));
+            criteria.add(Restrictions.eq("job", job));
+            result=criteria.list();
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         return result;
+    }
     
 }
