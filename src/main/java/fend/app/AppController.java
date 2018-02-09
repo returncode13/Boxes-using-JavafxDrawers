@@ -471,7 +471,7 @@ public class AppController extends Stage{
                             Set<User> us=dbWorkspace.getUsers();
                             us.add(u);
                             dbWorkspace.setUsers(us);
-                            u.addToWorkspaces(dbWorkspace);
+                           // u.addToWorkspaces(dbWorkspace);
                             workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
                     
                      }

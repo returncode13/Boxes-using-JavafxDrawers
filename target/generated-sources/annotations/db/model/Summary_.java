@@ -10,6 +10,7 @@ public abstract class Summary_ {
 
 	public static volatile SingularAttribute<Summary, Boolean> timeSummary;
 	public static volatile SingularAttribute<Summary, Sequence> sequence;
+	public static volatile SingularAttribute<Summary, Workspace> workspace;
 	public static volatile SingularAttribute<Summary, Long> depth;
 	public static volatile SingularAttribute<Summary, Boolean> inheritanceSummary;
 	public static volatile SingularAttribute<Summary, Boolean> traceSummary;

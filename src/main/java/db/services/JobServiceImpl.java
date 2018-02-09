@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Job;
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -45,8 +46,8 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> listJobs() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Job> listJobs(Workspace W) {
+       return jobStepDAO.listJobs(W);
     }
 
     /*@Override
@@ -65,6 +66,11 @@ public class JobServiceImpl implements JobService {
     public void resetPending(Job js) {
     jobStepDAO.resetPending(js);
     }*/
+
+    @Override
+    public List<Long> getDepthOfGraph(Workspace W) {
+        return jobStepDAO.getDepthOfGraph(W);
+    }
 
     
     

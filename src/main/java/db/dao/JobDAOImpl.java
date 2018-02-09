@@ -13,8 +13,13 @@ import db.model.Job;
 /*import db.model.SessionDetails;
 import db.model.Sessions;*/
 import db.model.Volume;
+import db.model.Workspace;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -166,6 +171,50 @@ public class JobDAOImpl implements JobDAO{
     session.close();
     }
     }*/
+
+    @Override
+    public List<Long> getDepthOfGraph(Workspace W) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Long> depths=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Job.class);
+            criteria.add(Restrictions.eq("workspace", W));
+            ProjectionList pList=Projections.projectionList();
+            pList.add(Projections.property("depth"));
+            criteria.setProjection(Projections.distinct(pList));
+            depths=criteria.list();
+            transaction.commit();
+            
+            System.out.println("db.dao.JobDAOImpl.getDepthOfGraph(): returning "+depths.size()+" depths");
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return depths;
+    }
+
+    @Override
+    public List<Job> listJobs(Workspace W) {
+        Session session= HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Job> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Job.class);
+            criteria.add(Restrictions.eq("workspace", W));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
 
     
     

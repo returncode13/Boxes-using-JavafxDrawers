@@ -47,6 +47,7 @@ fend/job/job4/JobType4Model$6.class
 fend/edge/dotjobedge/DotJobEdgeController$1.class
 db/dao/NodePropertyDAO.class
 fend/job/job1/JobType1Model$6.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryModel.class
 fend/job/job2/JobType2Controller$1.class
 fend/job/job3/table/lineTable/LineTableController.class
 db/model/Log.class
@@ -79,8 +80,10 @@ fend/job/job4/definitions/volume/VolumeListModel.class
 fend/job/job4/JobType4Model$4.class
 fend/job/job4/JobType4Model$1.class
 fend/dot/anchor/AnchorView.class
+fend/summary/SummaryModel.class
 db/model/Doubt_.class
 fend/job/table/lineTable/LineTableController$1.class
+fend/summary/SummaryController$1.class
 fend/dot/DotController$6.class
 fend/job/job0/definitions/qcmatrix/QcMatrixModel.class
 fend/job/job3/definitions/JobDefinitionsController.class
@@ -93,6 +96,7 @@ fend/app/loading/LoadWorkspaceController.class
 db/services/UserService.class
 fend/job/table/qctable/QcTableController.class
 db/dao/UserWorkspaceDAOImpl.class
+fend/summary/SequenceSummary/Depth/Depth.class
 db/dao/LogDAO.class
 fend/job/job2/JobType2Controller.class
 fend/job/job0/definitions/volume/VolumeListView.class
@@ -201,6 +205,7 @@ db/services/QcTypeServiceImpl.class
 db/dao/PropertyTypeDAO.class
 fend/job/job3/table/lineTable/LineTableView.class
 fend/edge/dotjobedge/DotJobEdgeView.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$1.class
 db/model/Dot.class
 fend/job/job0/JobType0View.class
 fend/edge/parentchildedge/ParentChildEdgeController$Delta.class
@@ -302,6 +307,7 @@ db/model/QcMatrixRow_.class
 middleware/dugex/AcquisitionLoader.class
 fend/job/job1/definitions/qcmatrix/QcMatrixController.class
 db/services/SummaryServiceImpl.class
+fend/summary/SequenceSummary/Depth/JobSummaryCell.class
 middleware/dugex/DugLogManager$1.class
 fend/job/job2/definitions/insight/InsightListCell.class
 fend/dot/anchor/AnchorController$Delta.class
@@ -391,6 +397,7 @@ app/connections/hibernate/Connections.class
 fend/dot/formulaField/FormulaFieldModel.class
 fend/job/table/qctable/seq/QcTableSequence$1.class
 fend/job/job2/definitions/insight/InsightVersion.class
+fend/summary/SequenceSummary/SequenceSummary.class
 db/model/Summary_.class
 app/settings/database/DataBaseSettingsWrapper.class
 db/dao/QcTypeDAO.class
@@ -412,6 +419,7 @@ fend/job/job2/definitions/qcmatrix/QcMatrixModel.class
 middleware/dugex/WorkflowManager$1.class
 fend/dot/formulaField/FormulaFieldModel$1.class
 fend/job/table/lineTable/LineTableController.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController.class
 fend/job/job3/definitions/qcmatrix/QcMatrixModel.class
 fend/edge/dotjobedge/DotJobEdgeModel.class
 fend/edge/dotjobedge/DotJobEdgeController.class
@@ -440,6 +448,7 @@ fend/app/AppController$1.class
 fend/job/job3/table/lineTable/LineTableController$3.class
 db/services/AcquisitionServiceImpl.class
 fend/job/job4/definitions/JobDefinitionsController.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryView.class
 fend/job/job1/JobType1View.class
 fend/job/job4/JobType4Controller$5.class
 fend/job/job2/definitions/insight/InsightListModel.class
@@ -468,6 +477,7 @@ fend/job/job4/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel$1.class
 fend/job/job4/JobType4Controller$6.class
 db/model/Link_.class
 db/dao/SequenceDAO.class
+fend/summary/SummaryView.class
 fend/job/job4/JobType4Model.class
 fend/job/job0/definitions/volume/VolumeListController.class
 db/services/DotServiceImpl.class
@@ -491,6 +501,7 @@ db/services/NodeTypeServiceImpl.class
 db/dao/WorkspaceDAOImpl.class
 db/model/Header_.class
 fend/job/job3/JobType3Model$4.class
+fend/summary/SummaryController.class
 fend/job/job2/definitions/volume/VolumeListCell.class
 fend/edge/edge/arrow/Arrow.class
 db/model/SubsurfaceJobId.class

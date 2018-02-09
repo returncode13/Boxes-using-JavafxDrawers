@@ -51,6 +51,10 @@ public class Summary {
     @Column(name="inheritance_summary")
     private Boolean inheritanceSummary=false;
 
+    @ManyToOne
+    @JoinColumn(name="workspace",nullable=false)
+    private Workspace workspace;
+    
     public Summary() {
     }
 
@@ -62,6 +66,14 @@ public class Summary {
         return id;
     }
 
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
     
 
     public Job getJob() {
@@ -70,6 +82,7 @@ public class Summary {
 
     public void setJob(Job job) {
         this.job = job;
+        this.depth=job.getDepth();
     }
 
     public Sequence getSequence() {
@@ -81,7 +94,7 @@ public class Summary {
     }
 
     public Long getDepth() {
-        return job.getDepth();
+        return this.depth;
     }
 
   

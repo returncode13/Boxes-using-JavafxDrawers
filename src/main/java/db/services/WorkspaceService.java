@@ -19,4 +19,5 @@ public interface WorkspaceService {
     public void deleteWorkspace(Long sessionId);
     
     public List<Workspace> listWorkspaces();
+   
 }

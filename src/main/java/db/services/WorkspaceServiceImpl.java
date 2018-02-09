@@ -41,5 +41,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public List<Workspace> listWorkspaces() {
         return sessDAO.listWorkspaces();
     }
-    
+
+   
 }

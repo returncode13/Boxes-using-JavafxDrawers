@@ -52,6 +52,10 @@ public class Workspace implements Serializable{
      @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
     private Set<Dot> dots;
   
+      @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
+    private Set<Summary> summary;
+     
+     
     // @ManyToMany(mappedBy = "workspaces",fetch = FetchType.EAGER)
       @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(
@@ -181,6 +185,16 @@ public class Workspace implements Serializable{
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+    public Set<Summary> getSummary() {
+        return summary;
+    }
+
+    public void setSummary(Set<Summary> summary) {
+        this.summary = summary;
+    }
+    
+    
 
     /* public Set<UserWorkspace> getUserWorkspaces() {
     return userWorkspaces;
