@@ -12,6 +12,7 @@ import db.model.Job;
 import db.model.Link;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
+import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             //ll.setStatus(newds.getStatus());
             ll.setChildJob(newds.getChildJob());
             ll.setDot(newds.getDot());
+            ll.setLink(newds.getLink());
             ll.setSubsurface(newds.getSubsurface());
             ll.setUser(newds.getUser());
             ll.setDoubtStatuses(newds.getDoubtStatuses());
@@ -280,6 +282,35 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("subsurface", sub));
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("dot", dot));
+           
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>=1){
+            return result;
+        }else {
+            return null;
+        
+        }
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job job) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("sequence", seq));
+            criteria.add(Restrictions.eq("childJob", job));
+           // criteria.add(Restrictions.eq("dot", dot));
            
            
             result=criteria.list();

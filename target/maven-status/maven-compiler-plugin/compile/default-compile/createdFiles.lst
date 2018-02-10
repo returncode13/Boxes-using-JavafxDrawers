@@ -253,6 +253,7 @@ fend/job/job1/definitions/qcmatrix/QcMatrixView.class
 db/model/Sequence.class
 fend/volume/volume3/Volume3.class
 db/dao/VariableArgumentDAOImpl.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$2.class
 db/services/WorkspaceServiceImpl.class
 db/dao/SubsurfaceJobDAOImpl.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$2.class

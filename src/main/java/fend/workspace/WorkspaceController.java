@@ -1452,6 +1452,7 @@ public class WorkspaceController {
                             doubt.setSubsurface(subb);
                             doubt.setSequence(subb.getSequence());
                             doubt.setDot(dot);
+                            doubt.setLink(l);
                             doubt.setDoubtType(doubtTypeTraces);
                             //doubt.setUser(user);
                             doubtService.createDoubt(doubt);
@@ -1484,6 +1485,7 @@ public class WorkspaceController {
                                 doubt.setSubsurface(subb);
                                 doubt.setSequence(subb.getSequence());
                                 doubt.setDot(dot);
+                                doubt.setLink(l);
                                 doubt.setDoubtType(doubtTypeTraces);
                                 //doubt.setUser(user);
                                 doubtService.createDoubt(doubt);
@@ -1534,6 +1536,7 @@ public class WorkspaceController {
                         doubt = new Doubt();
                         doubt.setChildJob(jchild);
                         doubt.setDot(dot);
+                            doubt.setLink(l);
                         doubt.setSubsurface(subb);
                         doubt.setSequence(subb.getSequence());
                         doubt.setDoubtType(doubtTypeQc);
@@ -1575,6 +1578,7 @@ public class WorkspaceController {
                         doubt = new Doubt();
                         doubt.setChildJob(hchild);
                         doubt.setDot(dot);
+                        doubt.setLink(l);
                         doubt.setSubsurface(subb);
                         doubt.setSequence(subb.getSequence());
                         doubt.setDoubtType(doubtTypeTime);
@@ -1672,6 +1676,7 @@ public class WorkspaceController {
                             inhDoubt.setDoubtType(doubtTypeInherit);
                             inhDoubt.setChildJob(inhChild);
                             inhDoubt.setDot(dot);
+                            inhDoubt.setLink(l);
                             inhDoubt.setDoubtCause(cause);
                             inhDoubt.setSubsurface(subb);
                             inhDoubt.setSequence(subb.getSequence());

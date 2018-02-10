@@ -7,6 +7,7 @@ package db.model;
 
 import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +40,8 @@ public class Link {
     @JoinColumn(name="dot_fk")
     private Dot dot;
     
+    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    private Set<Doubt> doubts;
     
   
     
@@ -74,6 +77,14 @@ public class Link {
 
     public void setDot(Dot dot) {
         this.dot = dot;
+    }
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
     }
     
     

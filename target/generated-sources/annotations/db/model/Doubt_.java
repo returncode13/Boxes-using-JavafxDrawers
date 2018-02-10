@@ -13,6 +13,7 @@ public abstract class Doubt_ {
 	public static volatile SetAttribute<Doubt, DoubtStatus> doubtStatuses;
 	public static volatile SingularAttribute<Doubt, Doubt> doubtCause;
 	public static volatile SetAttribute<Doubt, Doubt> inheritedDoubts;
+	public static volatile SingularAttribute<Doubt, Link> link;
 	public static volatile SingularAttribute<Doubt, Dot> dot;
 	public static volatile SingularAttribute<Doubt, Job> childJob;
 	public static volatile SingularAttribute<Doubt, DoubtType> doubtType;

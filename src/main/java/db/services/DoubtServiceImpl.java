@@ -14,6 +14,7 @@ import db.model.DoubtType;
 import db.model.Job;
 
 import db.model.Link;
+import db.model.Sequence;
 import db.model.Subsurface;
 
 import java.util.List;
@@ -83,6 +84,11 @@ public class DoubtServiceImpl implements DoubtService{
     @Override
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
         return dsDAO.getDoubtFor(sub, job, dot);
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job job) {
+        return dsDAO.getDoubtFor(seq, job);
     }
     
 }

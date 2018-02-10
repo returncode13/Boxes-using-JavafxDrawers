@@ -5,10 +5,18 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary;
 
+import db.model.Dot;
+import db.model.Doubt;
+import db.model.DoubtStatus;
+import db.model.Link;
 import db.model.Summary;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import java.util.List;
+import java.util.Set;
+import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -26,7 +34,7 @@ public class JobSummaryController {
     private JobSummaryModel model;
     private JobSummaryView view;
     private SummaryService summaryService=new SummaryServiceImpl();
-            
+    private DoubtService doubtService=new DoubtServiceImpl();
     
     @FXML
     private Button timeBtn;
@@ -58,6 +66,7 @@ public class JobSummaryController {
 
     @FXML
     private Label inheritLabel;
+    
 
     /*
     @FXML
@@ -107,8 +116,19 @@ public class JobSummaryController {
 
     @FXML
     void timeClicked(MouseEvent event) {
-        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked()");
-
+        if(model.isTime()) {  //time doubt exists
+            List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob());
+            for(Doubt d:doubtsForTime){
+                Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                Dot dot=d.getDot();
+                Set<Link> links=dot.getLinks();
+                for(DoubtStatus ds:dsList){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): Doubt id: "+d.getId()+" "+ds.getComment());
+                }
+               
+            }
+        }
+            
     }
 
     @FXML
@@ -179,10 +199,25 @@ public class JobSummaryController {
         }
         });
         
+        
+        model.timeProperty().addListener(TIME_SUMMARY_CHANGE_LISTENER);
+        
     }
 
     void setView(JobSummaryView vw) {
         this.view=vw;
     }
     
+    /**
+     * Listeners
+     */
+    
+    private ChangeListener<Boolean> TIME_SUMMARY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                timeLabel.setStyle("-fx-background-color: #14C6EF");
+            }
+        }
+    };
 }

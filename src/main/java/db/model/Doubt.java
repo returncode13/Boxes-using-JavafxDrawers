@@ -52,10 +52,10 @@ public class Doubt {
     private User user;
     
         
-    /*  @ManyToOne
+     @ManyToOne
     @JoinColumn(name="link_fk")
     private Link link;                              //several doubts maybe associated to a single link.
-    */
+    
     
     @ManyToOne
     @JoinColumn(name="dot_fk")                      //several  with the same dot
@@ -64,6 +64,8 @@ public class Doubt {
     @ManyToOne
     @JoinColumn(name="child_job_fk")
     private Job childJob;
+    
+    
     
     @ManyToOne
     @JoinColumn(name="seq_fk")
@@ -187,6 +189,16 @@ public class Doubt {
     this.link = link;
     }*/
 
+    public Link getLink() {
+        return link;
+    }
+
+    public void setLink(Link link) {
+        this.link = link;
+    }
+
+    
+    
     public Dot getDot() {
         return dot;
     }

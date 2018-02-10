@@ -11,6 +11,7 @@ import db.model.DoubtType;
 import db.model.Header;
 import db.model.Job;
 import db.model.Link;
+import db.model.Sequence;
 import db.model.Subsurface;
 
 import java.util.List;
@@ -39,4 +40,5 @@ public interface DoubtDAO {
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) ;
 
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot);
+    public List<Doubt> getDoubtFor(Sequence seq, Job job);
 }
