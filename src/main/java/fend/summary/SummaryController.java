@@ -23,6 +23,7 @@ import fend.summary.SequenceSummary.Depth.JobSummaryCell;
 import fend.summary.SequenceSummary.SequenceSummary;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -96,7 +97,7 @@ public class SummaryController extends Stage{
             
         }
         System.out.println("fend.summary.SummaryController.setModel(): No of columns for the table: "+depthForColumns.size());
-        
+          
         List<Sequence> sequences=sequenceService.getSequenceList();
         for(Sequence seq:sequences){                                                            //for each seq
             SequenceSummary seqSummary=new SequenceSummary();
@@ -104,42 +105,64 @@ public class SummaryController extends Stage{
             seqSummary.setDepths(depthForColumns);
             List<Depth> depthFromSeq=seqSummary.getDepths();
             
+            List<Depth> depth2FromSeq=new ArrayList<>();
+            // Unable to understand why I need a second list. The iterator should be changing the list entries..
             for(Depth depth:depthFromSeq){                                                  //for each depth
             List<JobSummaryModel> jobSummaryModels=depth.getJobSummaries();             //job summary for a job that contains Seq seq and is at depth = depth
+               
+             List<JobSummaryModel> jobSummaries=new ArrayList<>();
+            for (Iterator<JobSummaryModel> it = jobSummaryModels.iterator(); it.hasNext();) {
+                    JobSummaryModel jsm = it.next();
+                    JobSummaryModel njsm=new JobSummaryModel();
+                    njsm.setJob(jsm.getJob());
+                    njsm.setSequence(seq);
+                    List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(jsm.getJob(), seq, dbWorkspace);
+                    System.out.println("fend.summary.SummaryController.setModel(): for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep()+" summary Size : "+summariesForJobsAtDepth.size());
+                    if(summariesForJobsAtDepth.size()>1) {
+                       // System.out.println("fend.summary.SummaryController.setModel(): MORE THAN ONE SUMMARY FOR A JOB/SEQ PAIR ENCOUNTERED!! ?: job: "+jsm.getJob().getId()+"  seq: "+seq.getSequenceno() );
+                    }       if(summariesForJobsAtDepth.isEmpty()) {
+                        //do nothing. jsm stays inactive
+                        //System.out.println("fend.summary.SummaryController.setModel(): setting jsm to FALSE for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep());
+                        njsm.setActive(false);
+                        njsm.setSequence(seq);
+                    }else{
+                        Summary sj=summariesForJobsAtDepth.get(0);
+                        //System.out.println("fend.summary.SummaryController.setModel(): setting jsm to TRUE for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep());
+                        njsm.setActive(true);
+                        njsm.setTime(sj.getTimeSummary());
+                        njsm.setTrace(sj.getTraceSummary());
+                        njsm.setQc(sj.getQcSummary());
+                        njsm.setInsight(sj.getInsightSummary());
+                        njsm.setInheritance(sj.getInheritanceSummary());
+                        njsm.setSequence(seq);
+                        
+                    } 
+                    
+                    
+                    jobSummaries.add(njsm);
+                
+                    
+                }
+            Depth depth2=new Depth();
+            depth2.setDepth(depth.getDepth());
+            depth2.setJobSummaries(jobSummaries);
             
             
-            
-            for(JobSummaryModel jsm:jobSummaryModels){
-            List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(jsm.getJob(), seq, dbWorkspace);
-            System.out.println("fend.summary.SummaryController.setModel(): for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep()+" summary Size : "+summariesForJobsAtDepth.size());
-            if(summariesForJobsAtDepth.size()>1) {
-            System.out.println("fend.summary.SummaryController.setModel(): MORE THAN ONE SUMMARY FOR A JOB/SEQ PAIR ENCOUNTERED!! ?: job: "+jsm.getJob().getId()+"  seq: "+seq.getSequenceno() );
+            //depth.setJobSummaries(jobSummaries);
+            depth2FromSeq.add(depth2);
             }
-            if(summariesForJobsAtDepth.isEmpty()) {
-            //do nothing. jsm stays inactive
-            System.out.println("fend.summary.SummaryController.setModel(): setting jsm to FALSE for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep());
-            jsm.setActive(false);
-            }else{
-            Summary sj=summariesForJobsAtDepth.get(0);
-            System.out.println("fend.summary.SummaryController.setModel(): setting jsm to TRUE for seq: "+seq.getSequenceno()+" job: "+jsm.getJob().getNameJobStep());
-            jsm.setActive(true);
-            jsm.setTime(sj.getTimeSummary());
-            jsm.setTrace(sj.getTraceSummary());
-            jsm.setQc(sj.getQcSummary());
-            jsm.setInsight(sj.getInsightSummary());
-            jsm.setInheritance(sj.getInheritanceSummary());
-            
-            }
-            }
-            
-            
-            
-            depth.setJobSummaries(jobSummaryModels);
-            
-            }
-            seqSummary.setDepths(depthFromSeq);
+            seqSummary.setDepths(depth2FromSeq);
             sequenceSummaries.add(seqSummary);
         }
+        
+        /* for(SequenceSummary ssum:sequenceSummaries){
+        for(Depth depth:ssum.getDepths()){
+        for(JobSummaryModel jssm:depth.getJobSummaries()){
+        System.err.println("seq: "+ssum.getSequence().getSequenceno()+" depth: "+depth.getDepth()+" job: "+jssm.getJob().getNameJobStep()+" active: "+jssm.isActive());
+        }
+        }
+        }
+        */
         
         
         List<TableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
@@ -151,24 +174,25 @@ public class SummaryController extends Stage{
             final int fjobId=jobId;
             final int depthId=Integer.valueOf(depth.getDepth()+"");
             
-                TableColumn<SequenceSummary,JobSummaryModel> jobcolumn=new TableColumn<>("Job: "+jobSummaryModel.getJob().getNameJobStep());
-                jobcolumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SequenceSummary, JobSummaryModel>, ObservableValue<JobSummaryModel>>() {
-                @Override
+                TableColumn<SequenceSummary,Boolean> jobcolumn=new TableColumn<>("Job: "+jobSummaryModel.getJob().getNameJobStep());
+                /*jobcolumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SequenceSummary, JobSummaryModel>, ObservableValue<JobSummaryModel>>() {
+                @Overridey
                 public ObservableValue<JobSummaryModel> call(TableColumn.CellDataFeatures<SequenceSummary, JobSummaryModel> param) {
-                    Job job=param.getValue().getDepths().get(Integer.valueOf(depthId)).getJobSummaries().get(fjobId).getJob();
-                    Boolean isActive=param.getValue().getDepths().get(Integer.valueOf(depthId)).getJobSummaries().get(fjobId).isActive();
-                    Sequence seq=param.getValue().getSequence();
-                    System.out.println(".call(): seq: "+seq.getSequenceno()+" job: "+job.getNameJobStep()+" isActive: "+isActive);
+                Job job=param.getValue().getDepths().get(Integer.valueOf(depthId)).getJobSummaries().get(fjobId).getJob();
+                Boolean isActive=param.getValue().getDepths().get(Integer.valueOf(depthId)).getJobSummaries().get(fjobId).isActive();
+                Sequence seq=param.getValue().getSequence();
+                System.out.println(".call(): seq: "+seq.getSequenceno()+" job: "+job.getNameJobStep()+" isActive: "+isActive);
                 return new SimpleObjectProperty<JobSummaryModel>(param.getValue().getDepths().get(Integer.valueOf(depthId)).getJobSummaries().get(fjobId));
                 }
-                });
-                /*jobcolumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
+                });*/
+                jobcolumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                 @Override
                 public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
+                   // System.out.println(".call(): returning : seq: "+param.getValue().getSequence().getSequenceno()+" active?: "+param.getValue().getDepths().get(depthId).getJobSummaries().get(fjobId).isActive());
                 return new SimpleBooleanProperty(param.getValue().getDepths().get(depthId).getJobSummaries().get(fjobId).isActive());
                 }
-                });*/
-                jobcolumn.setCellFactory(param->new JobSummaryCell());
+                });
+                jobcolumn.setCellFactory(param->new JobSummaryCell(depthId,fjobId));
                 depthColumn.getColumns().add(jobcolumn);
             }
             

@@ -205,7 +205,6 @@ db/services/QcTypeServiceImpl.class
 db/dao/PropertyTypeDAO.class
 fend/job/job3/table/lineTable/LineTableView.class
 fend/edge/dotjobedge/DotJobEdgeView.class
-fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$1.class
 db/model/Dot.class
 fend/job/job0/JobType0View.class
 fend/edge/parentchildedge/ParentChildEdgeController$Delta.class

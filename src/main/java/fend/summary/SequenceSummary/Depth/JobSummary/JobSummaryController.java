@@ -69,38 +69,44 @@ public class JobSummaryController {
     void setModel(JobSummaryModel item) {
         this.model=item;
         
-        List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(model.getJob(),model.getSequence());
+        /*List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(model.getJob(),model.getSequence());
         if(summariesForJobsAtDepth.isEmpty()) model.setActive(false);
         else{
-            model.setActive(true);
+        model.setActive(true);
+        }*/
+        if(!this.model.isActive()){
+                timeBtn.setDisable(true);
+                traceBtn.setDisable(true);
+                qcBtn.setDisable(true);
+                insightBtn.setDisable(true);
+                inhBtn.setDisable(true);
+        }else{
+                timeBtn.setDisable(false);
+                traceBtn.setDisable(false);
+                qcBtn.setDisable(false);
+                insightBtn.setDisable(false);
+                inhBtn.setDisable(false);
         }
-        /*if(!this.model.isActive()){
+        
+        /*model.activeProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        System.out.println(".changed() from "+oldValue+" to "+newValue);
+        if(newValue){
+        timeBtn.setDisable(false);
+        traceBtn.setDisable(false);
+        qcBtn.setDisable(false);
+        insightBtn.setDisable(false);
+        inhBtn.setDisable(false);
+        }else{
         timeBtn.setDisable(true);
         traceBtn.setDisable(true);
         qcBtn.setDisable(true);
         insightBtn.setDisable(true);
         inhBtn.setDisable(true);
-        }*/
-        
-        model.activeProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                System.out.println(".changed() from "+oldValue+" to "+newValue);
-                if(newValue){
-                    timeBtn.setDisable(false);
-                    traceBtn.setDisable(false);
-                    qcBtn.setDisable(false);
-                    insightBtn.setDisable(false);
-                    inhBtn.setDisable(false);
-                }else{
-                    timeBtn.setDisable(true);
-                    traceBtn.setDisable(true);
-                    qcBtn.setDisable(true);
-                    insightBtn.setDisable(true);
-                    inhBtn.setDisable(true);
-                }
-            }
-        });
+        }
+        }
+        });*/
         
     }
 
