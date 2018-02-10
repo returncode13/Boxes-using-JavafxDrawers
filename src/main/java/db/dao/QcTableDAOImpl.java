@@ -12,7 +12,10 @@ import db.model.QcType;
 import db.model.Subsurface;
 import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -226,13 +229,13 @@ public class QcTableDAOImpl implements QcTableDAO{
     public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface s) throws Exception {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        List<QcTable> result=null;
+        Set<QcTable> result=null;
         try{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcTable.class);
         criteria.add(Restrictions.eq("qcMatrixRow", qmx));
         criteria.add(Restrictions.eq("subsurface", s));
-        result=criteria.list();
+        result=new LinkedHashSet<>(criteria.list());
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();
@@ -242,9 +245,14 @@ public class QcTableDAOImpl implements QcTableDAO{
         if(result.isEmpty()){
             return null;
         }else if(result.size()>1){
+            System.out.println("db.dao.QcTableDAOImpl.getQcTableFor(): number of qctable entries encountered "+result.size());
+            for(QcTable qct:result){
+                System.err.println("id: "+qct.getId()+" sub: "+qct.getSubsurface().getId());
+            }
             throw new Exception("More than one qcTable entries encountered for qcmatrix :  id "+qmx.getId()+" and subsurface id: "+s.getId()+" name: "+s.getSubsurface());
         }else{
-            return result.get(0);
+            List<QcTable> resultSet=new ArrayList<>(result);
+            return resultSet.get(0);
         }
     }
 
