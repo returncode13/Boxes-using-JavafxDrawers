@@ -38,6 +38,9 @@ public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
         this.depthId=depthId;
         this.jobId=jobId;
         model=new JobSummaryModel();
+       
+        view=new JobSummaryView(model);
+        
          
     }
 
@@ -46,9 +49,16 @@ public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
     protected void updateItem(Boolean t,boolean empty){
         super.updateItem(t, empty);
         if(!empty){
-            int index=getIndex();
-           model=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
-            
+           
+              int index=getIndex();
+           JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
+            model.setSequence(jsm.getSequence());
+            model.setJob(jsm.getJob());
+            model.setInheritance(jsm.isInheritance());
+            model.setTime(jsm.isTime());
+            model.setTrace(jsm.isTrace());
+            model.setQc(jsm.isQc());
+            model.setInsight(jsm.isInsight());
             if(!t){
                 model.setActive(false);
                //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
@@ -66,7 +76,7 @@ public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
             model.setSequence(item.getSequence());*/
             
             //System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.<init>() seq "+model.getSequence().getSequenceno()+"  job "+model.getJob().getNameJobStep()+" is Active: "+model.isActive());
-            view=new JobSummaryView(model);
+            
             setGraphic(view);
         }
     }

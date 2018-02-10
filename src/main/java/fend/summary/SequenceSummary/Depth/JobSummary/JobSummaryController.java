@@ -14,6 +14,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
 /**
@@ -41,29 +43,77 @@ public class JobSummaryController {
     @FXML
     private Button inhBtn;
 
+    
+    @FXML
+    private Label timeLabel;
+
+    @FXML
+    private Label traceLabel;
+
+    @FXML
+    private Label qcLabel;
+
+    @FXML
+    private Label insightLabel;
+
+    @FXML
+    private Label inheritLabel;
+
+    /*
     @FXML
     void inheritClicked(ActionEvent event) {
-
+    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked()");
     }
-
+    
     @FXML
     void insightClicked(ActionEvent event) {
-
+    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.insightClicked()");
+    
     }
-
+    
     @FXML
     void qcClicked(ActionEvent event) {
-
+    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.qcClicked()");
+    
     }
-
+    
     @FXML
     void timeClicked(ActionEvent event) {
+    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked()");
+    
+    }
+    
+    @FXML
+    void traceClicked(ActionEvent event) {
+    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked()");
+    
+    }*/
+    
+    @FXML
+    void inheritClicked(MouseEvent event) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked()");
+    }
+
+    @FXML
+    void insightClicked(MouseEvent event) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.insightClicked()");
 
     }
 
     @FXML
-    void traceClicked(ActionEvent event) {
+    void qcClicked(MouseEvent event) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.qcClicked()");
+    }
 
+    @FXML
+    void timeClicked(MouseEvent event) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked()");
+
+    }
+
+    @FXML
+    void traceClicked(MouseEvent event) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked()");
     }
     
     void setModel(JobSummaryModel item) {
@@ -75,38 +125,59 @@ public class JobSummaryController {
         model.setActive(true);
         }*/
         if(!this.model.isActive()){
-                timeBtn.setDisable(true);
-                traceBtn.setDisable(true);
-                qcBtn.setDisable(true);
-                insightBtn.setDisable(true);
-                inhBtn.setDisable(true);
+            timeLabel.setDisable(true);
+            traceLabel.setDisable(true);
+            qcLabel.setDisable(true);
+            insightLabel.setDisable(true);
+            inheritLabel.setDisable(true);
+            /* timeBtn.setDisable(true);
+            traceBtn.setDisable(true);
+            qcBtn.setDisable(true);
+            insightBtn.setDisable(true);
+            inhBtn.setDisable(true);*/
         }else{
-                timeBtn.setDisable(false);
-                traceBtn.setDisable(false);
-                qcBtn.setDisable(false);
-                insightBtn.setDisable(false);
-                inhBtn.setDisable(false);
+            timeLabel.setDisable(false);
+            traceLabel.setDisable(false);
+            qcLabel.setDisable(false);
+            insightLabel.setDisable(false);
+            inheritLabel.setDisable(false);
+            /*timeBtn.setDisable(false);
+            traceBtn.setDisable(false);
+            qcBtn.setDisable(false);
+            insightBtn.setDisable(false);
+            inhBtn.setDisable(false);*/
         }
         
-        /*model.activeProperty().addListener(new ChangeListener<Boolean>() {
+        model.activeProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         System.out.println(".changed() from "+oldValue+" to "+newValue);
         if(newValue){
-        timeBtn.setDisable(false);
-        traceBtn.setDisable(false);
-        qcBtn.setDisable(false);
-        insightBtn.setDisable(false);
-        inhBtn.setDisable(false);
+            timeLabel.setDisable(false);
+            traceLabel.setDisable(false);
+            qcLabel.setDisable(false);
+            insightLabel.setDisable(false);
+            inheritLabel.setDisable(false);
+            /*timeBtn.setDisable(false);
+            traceBtn.setDisable(false);
+            qcBtn.setDisable(false);
+            insightBtn.setDisable(false);
+            inhBtn.setDisable(false);*/
         }else{
-        timeBtn.setDisable(true);
-        traceBtn.setDisable(true);
-        qcBtn.setDisable(true);
-        insightBtn.setDisable(true);
-        inhBtn.setDisable(true);
+            
+            timeLabel.setDisable(true);
+            traceLabel.setDisable(true);
+            qcLabel.setDisable(true);
+            insightLabel.setDisable(true);
+            inheritLabel.setDisable(true);
+            /*timeBtn.setDisable(true);
+            traceBtn.setDisable(true);
+            qcBtn.setDisable(true);
+            insightBtn.setDisable(true);
+            inhBtn.setDisable(true);*/
         }
         }
-        });*/
+        });
         
     }
 
