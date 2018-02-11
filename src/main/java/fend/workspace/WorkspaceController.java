@@ -1373,16 +1373,20 @@ public class WorkspaceController {
             Set<Link> linkNodesContainingSub = linkService.getLinksContainingSubsurface(subb, dbWorkspace);                  //all links where both the parent and the child contains sub subb
             for (Link l : linkNodesContainingSub) {
                 Summary summary;
-                if ((summary = summaryService.getSummaryFor(subb.getSequence(), l.getParent())) == null) {            //create an entry for parent summary
+                //if ((summary = summaryService.getSummaryFor(subb.getSequence(), l.getParent())) == null) {            //create an entry for parent summary
+                if ((summary = summaryService.getSummaryFor(subb, l.getParent())) == null) {            //create an entry for parent summary    
                     summary = new Summary();
                     summary.setSequence(subb.getSequence());
+                    summary.setSubsurface(subb);
                     summary.setJob(l.getParent());
                     summary.setWorkspace(dbWorkspace);
                     summaryService.createSummary(summary);
                 }
-                if ((summary = summaryService.getSummaryFor(subb.getSequence(), l.getChild())) == null) {             //create an entry for child summary 
+                //if ((summary = summaryService.getSummaryFor(subb.getSequence(), l.getChild())) == null) {             //create an entry for child summary 
+                if ((summary = summaryService.getSummaryFor(subb, l.getChild())) == null) {             //create an entry for child summary 
                     summary = new Summary();
                     summary.setSequence(subb.getSequence());
+                    summary.setSubsurface(subb);
                     summary.setJob(l.getChild());
                     summary.setWorkspace(dbWorkspace);
                     summaryService.createSummary(summary);

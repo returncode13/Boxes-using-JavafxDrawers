@@ -42,7 +42,8 @@ public class Subsurface implements Serializable {
     @OneToMany(mappedBy = "subsurfaceFK")
     private Set<Acquisition> acquisition;
     
-    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Summary> summaries;
 
     
     
@@ -135,6 +136,15 @@ public class Subsurface implements Serializable {
     public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
         this.subsurfaceJobs = subsurfaceJobs;
     }
+
+    public Set<Summary> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(Set<Summary> summaries) {
+        this.summaries = summaries;
+    }
+    
     
     
 

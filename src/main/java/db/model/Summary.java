@@ -33,6 +33,10 @@ public class Summary {
     @JoinColumn(name = "seq_fk",nullable=false)
     private Sequence sequence;
     
+    @ManyToOne
+    @JoinColumn(name = "subsurface_fk",nullable=false)
+    private Subsurface subsurface;
+    
     @Column(name="depth")
     private Long depth;
     
@@ -58,6 +62,7 @@ public class Summary {
     public Summary() {
     }
 
+    
     
     
     
@@ -137,6 +142,14 @@ public class Summary {
 
     public void setInheritanceSummary(Boolean inheritanceSummary) {
         this.inheritanceSummary = inheritanceSummary;
+    }
+
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
+
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
     }
     
     

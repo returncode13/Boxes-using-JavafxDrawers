@@ -16,6 +16,7 @@ public abstract class Summary_ {
 	public static volatile SingularAttribute<Summary, Boolean> traceSummary;
 	public static volatile SingularAttribute<Summary, Long> id;
 	public static volatile SingularAttribute<Summary, Job> job;
+	public static volatile SingularAttribute<Summary, Subsurface> subsurface;
 	public static volatile SingularAttribute<Summary, Boolean> qcSummary;
 	public static volatile SingularAttribute<Summary, Boolean> insightSummary;
 

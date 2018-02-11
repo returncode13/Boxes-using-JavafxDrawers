@@ -9,6 +9,7 @@ import db.dao.SummaryDAO;
 import db.dao.SummaryDAOImpl;
 import db.model.Job;
 import db.model.Sequence;
+import db.model.Subsurface;
 import db.model.Summary;
 import db.model.Workspace;
 import java.util.List;
@@ -60,6 +61,11 @@ public class SummaryServiceImpl implements SummaryService{
     @Override
     public List<Summary> getSummariesForJobSeq(Job job, Sequence seq) {
         return summaryDao.getSummariesForJobSeq(job, seq);
+    }
+
+    @Override
+    public Summary getSummaryFor(Subsurface subsurface, Job job) {
+        return summaryDao.getSummaryFor(subsurface, job);
     }
     
 }

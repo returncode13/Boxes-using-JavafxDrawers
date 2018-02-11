@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.Job;
 import db.model.Sequence;
+import db.model.Subsurface;
 import db.model.Summary;
 import db.model.Workspace;
 import java.util.List;
@@ -22,6 +23,7 @@ public interface SummaryDAO {
  public void updateSummary(Long id,Summary newSummary);
 
  public Summary getSummaryFor(Sequence sequence,Job job);
+ public Summary getSummaryFor(Subsurface subsurface,Job job);
  public List<Long> getDepthsInSummary(Workspace W);
  public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W);
  public List<Summary> getSummariesForJobSeq(Job job,Sequence seq);
