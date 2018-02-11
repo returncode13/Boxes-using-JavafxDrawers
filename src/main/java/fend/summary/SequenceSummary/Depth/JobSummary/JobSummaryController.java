@@ -8,10 +8,13 @@ package fend.summary.SequenceSummary.Depth.JobSummary;
 import db.model.Dot;
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.DoubtType;
 import db.model.Link;
 import db.model.Summary;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
+import db.services.DoubtTypeService;
+import db.services.DoubtTypeServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import java.util.List;
@@ -25,16 +28,34 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import middleware.doubt.DoubtTypeModel;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobSummaryController {
+    private final String TIME_IS_SET="#2B00FF";
+    private final String TIME_IS_UNSET="#14C6EF";
+    private final String TRACES_ARE_SET="#01594D";
+    private final String TRACES_ARE_UNSET="#14EFD1";
+    private final String QC_IS_SET="#00521F";
+    private final String QC_IS_UNSET="#14EF67";
+    private final String INSIGHT_IS_SET="#0B5500";
+    private final String INSIGHT_IS_UNSET="#2FEF14";
+    private final String INHERITANCE_IS_SET="#93B400";
+    private final String INHERITANCE_IS_UNSET="#C8EF14";
+    private DoubtType timeDoubtType;
+    private DoubtType traceDoubtType;
+    private DoubtType qcDoubtType;
+    private DoubtType insightDoubtType;
+    private DoubtType inheritanceDoubtType;
+    
     private JobSummaryModel model;
     private JobSummaryView view;
     private SummaryService summaryService=new SummaryServiceImpl();
     private DoubtService doubtService=new DoubtServiceImpl();
+    private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     
     @FXML
     private Button timeBtn;
@@ -117,13 +138,14 @@ public class JobSummaryController {
     @FXML
     void timeClicked(MouseEvent event) {
         if(model.isTime()) {  //time doubt exists
-            List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob());
+            List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob(),timeDoubtType);
             for(Doubt d:doubtsForTime){
                 Set<DoubtStatus> dsList=d.getDoubtStatuses();
                 Dot dot=d.getDot();
-                Set<Link> links=dot.getLinks();
+               
                 for(DoubtStatus ds:dsList){
-                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): Doubt id: "+d.getId()+" "+ds.getComment());
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
+                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
                 }
                
             }
@@ -138,6 +160,11 @@ public class JobSummaryController {
     
     void setModel(JobSummaryModel item) {
         this.model=item;
+        timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+        traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
+        qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
+        insightDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
+        inheritanceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
         
         /*List<Summary> summariesForJobsAtDepth=summaryService.getSummariesForJobSeq(model.getJob(),model.getSequence());
         if(summariesForJobsAtDepth.isEmpty()) model.setActive(false);
@@ -199,8 +226,12 @@ public class JobSummaryController {
         }
         });
         
-        
         model.timeProperty().addListener(TIME_SUMMARY_CHANGE_LISTENER);
+        if(model.isTime()){
+            timeLabel.setStyle("-fx-background-color: "+TIME_IS_SET);
+        }else{
+            timeLabel.setStyle("-fx-background-color: "+TIME_IS_UNSET);
+        }
         
     }
 
@@ -216,7 +247,9 @@ public class JobSummaryController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                timeLabel.setStyle("-fx-background-color: #14C6EF");
+                timeLabel.setStyle("-fx-background-color: "+TIME_IS_SET);
+            }else{
+                timeLabel.setStyle("-fx-background-color: "+TIME_IS_UNSET);
             }
         }
     };

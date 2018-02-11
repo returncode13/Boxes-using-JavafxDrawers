@@ -329,6 +329,35 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
     }
 
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job childJob, DoubtType doubtType) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("sequence", seq));
+            criteria.add(Restrictions.eq("childJob", childJob));
+            criteria.add(Restrictions.eq("doubtType", doubtType));
+           
+           
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>=1){
+            return result;
+        }else {
+            return null;
+        
+        }
+    }
+
    
     
 }

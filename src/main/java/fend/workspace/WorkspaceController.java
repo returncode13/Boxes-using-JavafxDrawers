@@ -1662,14 +1662,16 @@ public class WorkspaceController {
                 //inheritance   <--called at the very end. Put all doubts on top
                 Job inhParent = l.getParent();
                 Job inhChild = l.getChild();
+                System.out.println("fend.workspace.WorkspaceController.summarize(): Checking for inheritance. "+inhParent.getNameJobStep()+" <----> "+inhChild.getNameJobStep());
                 DoubtType doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
                 List<Doubt> doubtsInParent = doubtService.getDoubtFor(subb, inhParent, dot);
-
+                
                 if (doubtsInParent != null) {
                     for (Doubt cause : doubtsInParent) {
                         Set<Doubt> inherited = cause.getInheritedDoubts();
-
+                        System.err.println(" inherited DoubtSet . size: "+inherited.size());
                         if (inherited != null && inherited.size() > 0) {
+                            
                             continue;                   //do nothing
                         } else {
                             Doubt inhDoubt = new Doubt();
@@ -1699,6 +1701,9 @@ public class WorkspaceController {
                         }
 
                     }
+                }
+                else{
+                    System.out.println("fend.workspace.WorkspaceController.summarize(): doubtListFromParent job "+inhParent.getNameJobStep()+" is null.. implies no doubts to be inherited");
                 }
                 //inheritance-end <--put inside a function
 

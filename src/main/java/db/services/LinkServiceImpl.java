@@ -68,7 +68,7 @@ public class LinkServiceImpl implements LinkService {
                     if(l.getChild().getSubsurfaces().contains(s)){
                         links.add(l);
                     }
-                    System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
+                   // System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
                 }
             }
         }

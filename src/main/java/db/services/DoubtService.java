@@ -39,4 +39,5 @@ public interface DoubtService {
 
     public List<Doubt> getDoubtFor(Subsurface s, Job jchild, Dot dot);
     public List<Doubt> getDoubtFor(Sequence seq, Job job);
+    public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
 }

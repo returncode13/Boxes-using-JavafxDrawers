@@ -216,6 +216,7 @@ public class SummaryController extends Stage{
         table.getColumns().add(seqTableColumn);
         table.getColumns().addAll(depthColumns);
         table.setItems(tableList);
+        table.getSelectionModel().setCellSelectionEnabled(true);
         
     }
 

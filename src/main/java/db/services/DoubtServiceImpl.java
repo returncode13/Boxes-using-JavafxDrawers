@@ -90,5 +90,10 @@ public class DoubtServiceImpl implements DoubtService{
     public List<Doubt> getDoubtFor(Sequence seq, Job job) {
         return dsDAO.getDoubtFor(seq, job);
     }
+
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job job, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(seq, job,doubtType);
+    }
     
 }

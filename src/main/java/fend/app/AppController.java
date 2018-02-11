@@ -67,6 +67,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -468,7 +469,8 @@ public class AppController extends Stage{
                     
                      if(!AppProperties.INSTALL){
                             dbWorkspace.setOwner(u);
-                            Set<User> us=dbWorkspace.getUsers();
+                            //Set<User> us=dbWorkspace.getUsers();
+                            Set<User> us=new HashSet<>();
                             us.add(u);
                             dbWorkspace.setUsers(us);
                            // u.addToWorkspaces(dbWorkspace);

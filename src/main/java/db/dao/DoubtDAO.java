@@ -41,4 +41,5 @@ public interface DoubtDAO {
 
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot);
     public List<Doubt> getDoubtFor(Sequence seq, Job job);
+    public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
 }

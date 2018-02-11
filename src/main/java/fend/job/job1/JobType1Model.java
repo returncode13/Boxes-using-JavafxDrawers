@@ -244,13 +244,14 @@ public class JobType1Model implements JobType0Model {
     
 
     public ObservableSet<JobType0Model> getAncestors() {
-       
+        System.out.println("fend.job.job1.JobType1Model.getAncestors(): Inside "+this.getNameproperty().get());
        observableAncestors.clear();
             for(JobType0Model parent:observableParents){
+                System.err.println("Adding parent: "+parent.getNameproperty().get());
                 observableAncestors.add(parent);
                 observableAncestors.addAll(parent.getAncestors());
             }
-        
+        System.out.println("fend.job.job1.JobType1Model.getAncestors(): returning from : "+this.getNameproperty().get()); 
         return observableAncestors;
     }
 
