@@ -342,8 +342,8 @@ public class SummaryController extends Stage{
                                     newValue.setQc(value.isQc());
                                     newValue.setInsight(value.isInsight());
                                     newValue.setInheritance(value.isInheritance());
-                                    newValue.setSequence(value.getSequence());
-                                    newValue.setSubsurface(value.getSubsurface());
+                                    newValue.setSequence(sub.getSequence());
+                                    newValue.setSubsurface(sub);
                                     
                                     d1.addToJobSummaryMap(newValue);
                                     
@@ -398,6 +398,7 @@ public class SummaryController extends Stage{
                                         getChildren().size());
                         JobSummaryModel seqJsm=seqSummaryMap.get(seq).getDepth(depth).getJobSummaryModel(job);
                         seqJsm.setActive(true);
+                        seqJsm.setSubsurface(null);
                         seqJsm.setTime(seqJsm.isTime()||x.getTimeSummary());
                         seqJsm.setTrace(seqJsm.isTrace()||x.getTraceSummary());
                         seqJsm.setQc(seqJsm.isQc()||x.getQcSummary());

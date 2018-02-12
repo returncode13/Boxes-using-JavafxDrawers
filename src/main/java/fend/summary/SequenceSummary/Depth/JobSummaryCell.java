@@ -51,7 +51,7 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
        // this.jobId=jobId;
        this.job=job;
         model=new JobSummaryModel();
-       
+        
         view=new JobSummaryView(model);
         
          
@@ -64,9 +64,14 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
         if(!empty){
            
               int index=getIndex();
-              JobSummaryModel jsm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job);
+            JobSummaryModel jsm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job);
              //JobSummaryModel jsm= getTreeTableView().getTreeItem(index).getValue().getDepths().get(depthId).getJobSummaries().get(jobId);
            //JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSequence().getSequenceno());
+          //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSubsurface().getSubsurface());
+            /*if(jsm.getSubsurface()==null){
+            jsm=getTreeTableView().getTreeItem(index).getValue().get
+            }*/
             model.setSequence(jsm.getSequence());
             model.setJob(jsm.getJob());
             model.setInheritance(jsm.isInheritance());

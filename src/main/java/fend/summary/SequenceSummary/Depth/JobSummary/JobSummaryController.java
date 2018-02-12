@@ -138,6 +138,8 @@ public class JobSummaryController {
     @FXML
     void timeClicked(MouseEvent event) {
         if(model.isTime()) {  //time doubt exists
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
+                    + "job: "+model.getJob().getNameJobStep());
             List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob(),timeDoubtType);
             for(Doubt d:doubtsForTime){
                 Set<DoubtStatus> dsList=d.getDoubtStatuses();
