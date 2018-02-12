@@ -27,4 +27,6 @@ public interface SummaryService {
   public List<Long> getDepthsInSummary(Workspace W);
   public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W);
   public List<Summary> getSummariesForJobSeq(Job job,Sequence seq);
+  public List<Summary> getSummariesForJobSub(Job job,Subsurface sub,Workspace W);
+  public List<Summary> getSummariesFor(Workspace W);
 }

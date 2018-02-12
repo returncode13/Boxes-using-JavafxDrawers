@@ -25,7 +25,7 @@ public class SummaryView extends AnchorPane{
     
     public SummaryView(SummaryModel item){
         this.model=item;
-        this.location=getClass().getClassLoader().getResource("fxml/summary/summaryTable.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/summaryTable_subsurface.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

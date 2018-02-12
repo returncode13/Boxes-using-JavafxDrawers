@@ -7,7 +7,10 @@ package fend.summary.SequenceSummary.Depth.JobSummary;
 
 import db.model.Job;
 import db.model.Sequence;
+import db.model.Subsurface;
 import db.model.Summary;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -18,6 +21,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 public class JobSummaryModel {
    // private Summary summary;           
     private Sequence sequence;                                              //the sequence whos status this cell represents
+    private Subsurface subsurface;
     private Job job;                                                        //the job that this cell will represent
     private final BooleanProperty qc = new SimpleBooleanProperty();         //qc is true implies no doubt.
     private final BooleanProperty time = new SimpleBooleanProperty();       //time is true implies no doubt.
@@ -26,6 +30,8 @@ public class JobSummaryModel {
     private final BooleanProperty inheritance = new SimpleBooleanProperty();//inheritance is true implies no doubt.
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
 
+    
+    
     
     
     
@@ -140,6 +146,14 @@ public class JobSummaryModel {
 
     public void setSequence(Sequence sequence) {
         this.sequence = sequence;
+    }
+
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
+
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
     }
 
     

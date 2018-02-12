@@ -6,9 +6,12 @@
 package fend.summary.SequenceSummary;
 
 import db.model.Sequence;
+import db.model.Subsurface;
 import fend.summary.SequenceSummary.Depth.Depth;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -16,8 +19,12 @@ import java.util.List;
  */
 public class SequenceSummary {
     Sequence sequence;        //sequence that this summary row will represent
-    private List<Depth> depths=new ArrayList<>();         //the table column is ordered by depths.
-
+    Subsurface subsurface;
+    //private List<Depth> depths=new ArrayList<>();         //the table column is ordered by depths.
+    ///private List<SequenceSummary> children=new ArrayList<>();
+    private Map<Long,Depth> depthMap=new HashMap<>();
+    private Map<Subsurface,SequenceSummary> children=new HashMap<>();
+    
     public Sequence getSequence() {
         return sequence;
     }
@@ -26,14 +33,62 @@ public class SequenceSummary {
         this.sequence = sequence;
     }
 
-    public List<Depth> getDepths() {
-        return depths;
+    public Map<Long, Depth> getDepthMap() {
+        return depthMap;
     }
 
-    public void setDepths(List<Depth> depths) {
-        this.depths = depths;
+    public void setDepthMap(Map<Long, Depth> depthMap) {
+        this.depthMap = depthMap;
+    }
+
+    public Map<Subsurface, SequenceSummary> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Map<Subsurface, SequenceSummary> children) {
+        this.children = children;
+    }
+
+    public Depth getDepth(Long depth){
+        return depthMap.get(depth);
     }
     
+    public void addToDepth(Depth depth){
+        
+        this.depthMap.put(depth.getDepth(), depth);
+    }
+    
+    public SequenceSummary getChild(Subsurface sub){
+        return children.get(sub);
+    }
+    
+    public void addToChildren(SequenceSummary sequenceSummary){
+        this.children.put(sequenceSummary.getSubsurface(), sequenceSummary);
+    }
+    
+    /* public List<Depth> getDepths() {
+    return depths;
+    }
+    
+    public void setDepths(List<Depth> depths) {
+    this.depths = depths;
+    }*/
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
+
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
+    }
+
+    /* public List<SequenceSummary> getChildren() {
+    return children;
+    }
+    
+    public void setChildren(List<SequenceSummary> children) {
+    this.children = children;
+    }
+    */
     
     
     

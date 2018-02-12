@@ -5,11 +5,14 @@
  */
 package fend.summary;
 
+import db.model.Sequence;
 import fend.summary.SequenceSummary.SequenceSummary;
 import fend.workspace.WorkspaceController;
 import fend.workspace.WorkspaceModel;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -17,23 +20,39 @@ import java.util.List;
  */
 public class SummaryModel {
     private WorkspaceController workspaceController;
-    private List<SequenceSummary> sequenceSummaries=new ArrayList<>();
+  // private List<SequenceSummary> sequenceSummaries=new ArrayList<>();
+    private Map<Sequence,SequenceSummary> sequenceSummaryMap=new HashMap<>();
 
     public SummaryModel(WorkspaceController workspaceController) {
         this.workspaceController = workspaceController;
     }
 
+
     
     
-    
-    public List<SequenceSummary> getSequenceSummaries() {
-        return sequenceSummaries;
+    public Map<Sequence, SequenceSummary> getSequenceSummaryMap() {    
+        return sequenceSummaryMap;
     }
 
+    /*  public List<SequenceSummary> getSequenceSummaries() {
+    return sequenceSummaries;
+    }
     public void setSequenceSummaries(List<SequenceSummary> sequenceSummaries) {
-        this.sequenceSummaries = sequenceSummaries;
+    this.sequenceSummaries = sequenceSummaries;
+    }*/
+    public void setSequenceSummaryMap(Map<Sequence, SequenceSummary> sequenceSummaryMap) {
+        this.sequenceSummaryMap = sequenceSummaryMap;
+    }
+    
+    
+    public SequenceSummary getSequenceSummary(Sequence seq){
+        return sequenceSummaryMap.get(seq);
     }
 
+    public void addToSequenceSummaryMap(SequenceSummary sequenceSummary){
+        this.sequenceSummaryMap.put(sequenceSummary.getSequence(), sequenceSummary);
+    }
+    
     public WorkspaceController getWorkspaceController() {
         return workspaceController;
     }

@@ -67,5 +67,15 @@ public class SummaryServiceImpl implements SummaryService{
     public Summary getSummaryFor(Subsurface subsurface, Job job) {
         return summaryDao.getSummaryFor(subsurface, job);
     }
+
+    @Override
+    public List<Summary> getSummariesForJobSub(Job job, Subsurface sub, Workspace W) {
+        return summaryDao.getSummariesForJobSub(job, sub, W);
+    }
+
+    @Override
+    public List<Summary> getSummariesFor(Workspace W) {
+        return summaryDao.getSummariesFor(W);
+    }
     
 }

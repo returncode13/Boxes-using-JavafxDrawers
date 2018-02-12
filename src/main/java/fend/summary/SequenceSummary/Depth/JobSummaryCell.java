@@ -18,11 +18,12 @@ import javafx.scene.control.TreeTableCell;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
+public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     JobSummaryView view;
     JobSummaryModel model;
     int depthId;
-    int jobId;
+    //int jobId;
+    Job job;
     
     public JobSummaryCell() {
         
@@ -34,9 +35,21 @@ public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
                 
     }
 
-    public JobSummaryCell(int depthId, int jobId) {
+    /*   public JobSummaryCell(int depthId, int jobId) {
+    this.depthId=depthId;
+    this.jobId=jobId;
+    model=new JobSummaryModel();
+    
+    view=new JobSummaryView(model);
+    
+    
+    }*/
+    
+    
+    public JobSummaryCell(int depthId, Job job) {
         this.depthId=depthId;
-        this.jobId=jobId;
+       // this.jobId=jobId;
+       this.job=job;
         model=new JobSummaryModel();
        
         view=new JobSummaryView(model);
@@ -51,7 +64,9 @@ public class JobSummaryCell extends TableCell<SequenceSummary, Boolean>{
         if(!empty){
            
               int index=getIndex();
-           JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
+              JobSummaryModel jsm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job);
+             //JobSummaryModel jsm= getTreeTableView().getTreeItem(index).getValue().getDepths().get(depthId).getJobSummaries().get(jobId);
+           //JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
             model.setSequence(jsm.getSequence());
             model.setJob(jsm.getJob());
             model.setInheritance(jsm.isInheritance());

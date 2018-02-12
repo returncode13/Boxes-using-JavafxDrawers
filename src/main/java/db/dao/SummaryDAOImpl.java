@@ -223,5 +223,48 @@ public class SummaryDAOImpl implements  SummaryDAO{
          }
          
     }
+
+    @Override
+    public List<Summary> getSummariesForJobSub(Job job, Subsurface sub, Workspace W) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         List<Summary> result=null;
+         
+         try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Summary.class);
+            criteria.add(Restrictions.eq("workspace", W));
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("job", job));
+            result=criteria.list();
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         return result;
+    }
+
+    @Override
+    public List<Summary> getSummariesFor(Workspace W) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         List<Summary> result=null;
+         
+         try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Summary.class);
+            criteria.add(Restrictions.eq("workspace", W));
+            
+            result=criteria.list();
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         return result;
+    }
     
 }
