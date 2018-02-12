@@ -396,6 +396,15 @@ public class SummaryController extends Stage{
                         System.out.println("fend.summary.SummaryController.setModel(): size  of SeqsummaryMap.get("+seq.getSequenceno()+"): "+
                                 seqSummaryMap.get(seq).
                                         getChildren().size());
+                        JobSummaryModel seqJsm=seqSummaryMap.get(seq).getDepth(depth).getJobSummaryModel(job);
+                        seqJsm.setActive(true);
+                        seqJsm.setTime(seqJsm.isTime()||x.getTimeSummary());
+                        seqJsm.setTrace(seqJsm.isTrace()||x.getTraceSummary());
+                        seqJsm.setQc(seqJsm.isQc()||x.getQcSummary());
+                        seqJsm.setInsight(seqJsm.isInsight()||x.getInsightSummary());
+                        seqJsm.setInheritance(seqJsm.isInheritance()||x.getInheritanceSummary());
+                        
+                        
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
                                 getChild(sub).
