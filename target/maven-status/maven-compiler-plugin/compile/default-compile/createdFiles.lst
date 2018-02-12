@@ -140,6 +140,7 @@ db/model/Dot_.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$1.class
 fend/dot/LinkModel.class
 db/services/PropertyTypeService.class
+fend/summary/SummaryController$3.class
 fend/job/job2/definitions/qcmatrix/QcMatrixView.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class

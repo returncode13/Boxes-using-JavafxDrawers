@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -326,10 +327,15 @@ public class SummaryController extends Stage{
                     for(Subsurface sub:subsurfacesInSurvey){
                         SequenceSummary subSeqSummary=new SequenceSummary();
                         subSeqSummary.setSequence(sub.getSequence());
+                       
+                        Map<Long,Depth> depthMapForSequenceRoot=new HashMap<>();
                         
                             for(Depth depth:depthForColumns){
                                 Depth d1=new Depth();
+                                Depth d2ForSeq=new Depth();
                                 d1.setDepth(depth.getDepth());
+                                d2ForSeq.setDepth(depth.getDepth());
+                                
                                 Map<Job,JobSummaryModel> newJobJobSummaryModel=depth.getJobSummaryMap();
                                     for (Map.Entry<Job, JobSummaryModel> entry : newJobJobSummaryModel.entrySet()) {
                                     Job key = entry.getKey();
@@ -345,11 +351,25 @@ public class SummaryController extends Stage{
                                     newValue.setSequence(sub.getSequence());
                                     newValue.setSubsurface(sub);
                                     
-                                    d1.addToJobSummaryMap(newValue);
                                     
+                                    JobSummaryModel newSeqValue=new JobSummaryModel();
+                                    newSeqValue.setActive(value.isActive());
+                                    newSeqValue.setJob(value.getJob());
+                                    newSeqValue.setTime(value.isTime());
+                                    newSeqValue.setTrace(value.isTrace());
+                                    newSeqValue.setQc(value.isQc());
+                                    newSeqValue.setInsight(value.isInsight());
+                                    newSeqValue.setInheritance(value.isInheritance());
+                                    newSeqValue.setSequence(sub.getSequence());
+                                    //newSeqValue.setSubsurface(sub);
+                                    
+                                    
+                                    d1.addToJobSummaryMap(newValue);
+                                    d2ForSeq.addToJobSummaryMap(newSeqValue);
                                     
                                 }
                                 subSeqSummary.addToDepth(d1);
+                                depthMapForSequenceRoot.put(d2ForSeq.getDepth(), d2ForSeq);
                             }
                             
                             if(seqSummaryMap.containsKey(sub.getSequence())){
@@ -358,7 +378,11 @@ public class SummaryController extends Stage{
                                 System.out.println("fend.summary.SummaryController.setModel(): added child subsurface: "+sub.getSubsurface());
                             }else{
                                 System.out.println("fend.summary.SummaryController.setModel(): added root sequence:    "+sub.getSequence().getSequenceno());
-                            seqSummaryMap.put(sub.getSequence(), subSeqSummary);
+                                SequenceSummary seqRootSummary=new SequenceSummary();
+                                seqRootSummary.setSequence(sub.getSequence());
+                                seqRootSummary.setDepthMap(depthMapForSequenceRoot);
+                                        
+                            seqSummaryMap.put(sub.getSequence(), seqRootSummary);
                             subSeqSummary.setSubsurface(sub);
                             seqSummaryMap.get(sub.getSequence()).addToChildren(subSeqSummary);
                                 System.out.println("fend.summary.SummaryController.setModel(): added child subsurface: "+sub.getSubsurface());
@@ -412,6 +436,7 @@ public class SummaryController extends Stage{
                                 getDepth(depth).
                                 getJobSummaryModel(job);
                         jsm.setActive(true);
+                        jsm.setSubsurface(sub);
                         jsm.setTime(x.getTimeSummary());
                         jsm.setTrace(x.getTraceSummary());
                         jsm.setQc(x.getQcSummary());
@@ -493,6 +518,17 @@ public class SummaryController extends Stage{
             }
         });
         
+        TreeTableColumn<SequenceSummary,String> subsurfaceTableColumn=new TreeTableColumn<>("subsurface");
+        subsurfaceTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceSummary, String> param) {
+                if(param.getValue().getValue().getSubsurface()==null){
+                   return new SimpleStringProperty(param.getValue().getValue().getSequence().getRealLineName());
+                }
+                return new SimpleStringProperty(param.getValue().getValue().getSubsurface().getSubsurface());
+            }
+        });
+        
         
         List<TreeItem<SequenceSummary>> treeSeq=new ArrayList<>();
         
@@ -527,6 +563,7 @@ public class SummaryController extends Stage{
        // ObservableList<SequenceSummary> tableList=FXCollections.observableArrayList(sequenceSummaries);
         
         treetable.getColumns().add(seqTableColumn);
+        treetable.getColumns().add(subsurfaceTableColumn);
         treetable.getColumns().addAll(depthColumns);
         TreeItem<SequenceSummary> root=new TreeItem<>();
         root.getChildren().addAll(treeSeq);

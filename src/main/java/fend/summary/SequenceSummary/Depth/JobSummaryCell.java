@@ -69,9 +69,13 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
            //JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSequence().getSequenceno());
           //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSubsurface().getSubsurface());
-            /*if(jsm.getSubsurface()==null){
-            jsm=getTreeTableView().getTreeItem(index).getValue().get
-            }*/
+            if(jsm.getSubsurface()==null){//this means the selected item is the parent sequence.
+            //jsm=getTreeTableView().getTreeItem(index).getValue().get
+         //   getTreeTableView().getTreeItem(index).getValue().get;
+                System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Sequence "+jsm.getSequence().getSequenceno()+" clicked. No subsurface info");
+            }else{
+                System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
+            }
             model.setSequence(jsm.getSequence());
             model.setJob(jsm.getJob());
             model.setInheritance(jsm.isInheritance());
