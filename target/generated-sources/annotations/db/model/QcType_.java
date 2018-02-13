@@ -1,6 +1,7 @@
 package db.model;
 
 import javax.annotation.Generated;
+import javax.persistence.metamodel.SetAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
@@ -9,6 +10,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class QcType_ {
 
 	public static volatile SingularAttribute<QcType, String> name;
+	public static volatile SetAttribute<QcType, QcMatrixRow> qcmatrix;
 	public static volatile SingularAttribute<QcType, Long> id;
 
 }

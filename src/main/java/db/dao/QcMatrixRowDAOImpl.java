@@ -169,7 +169,9 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         Criteria criteria=session.createCriteria(QcMatrixRow.class);
         criteria.add(Restrictions.eq("job", sessDetails));
         criteria.add(Restrictions.eq("present",b));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         result=criteria.list();
+            System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixForJob(): for job "+sessDetails.getNameJobStep()+" size of qcMatrix : "+result.size());
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();

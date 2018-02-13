@@ -9,6 +9,7 @@ import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import db.model.Workspace;
 import java.util.ArrayList;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -103,8 +104,8 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
       
       try{
           transaction=hibsession.beginTransaction();
-          sessList=hibsession.createCriteria(Workspace.class).list();
-          
+          sessList=hibsession.createCriteria(Workspace.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+          System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces(): no of workspaces returned : "+sessList.size());
           transaction.commit();
           
       }catch(Exception e){

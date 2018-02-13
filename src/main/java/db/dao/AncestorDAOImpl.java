@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
+import java.util.LinkedHashSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -116,19 +117,21 @@ public class AncestorDAOImpl implements AncestorDAO{
             
         Criteria criteria=session.createCriteria(Ancestor.class);
         criteria.add(Restrictions.eq("job", dbjob));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         List results=criteria.list();
-     
+        Set<Ancestor> set=new LinkedHashSet<>(results);
         
-            if(results.size()>0){
+            if(set.size()>0){
              
          Transaction transaction=session.beginTransaction();
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = set.iterator(); iterator.hasNext();) {
                     Ancestor next = (Ancestor) iterator.next();
+                    System.out.println("db.dao.AncestorDAOImpl.clearTableForJob(): deleting ancestor table entry: "+next.getId()+ " for "+dbjob.getNameJobStep());
                     session.delete(next);
                     
                 }
         transaction.commit();
-        
+                System.out.println("db.dao.AncestorDAOImpl.clearTableForJob(): transaction completed. deleted all ancestors");
         
         }
         }catch(Exception e){

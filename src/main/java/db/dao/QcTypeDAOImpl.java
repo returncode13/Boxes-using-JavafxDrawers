@@ -44,6 +44,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
             transaction=session.beginTransaction();
             QcType ll=(QcType) session.get(QcType.class,qid);
             ll.setName(newQcType.getName());
+            ll.setQcmatrix(newQcType.getQcmatrix());
           //  ll.setSessions(newQcType.getSessions());
             session.update(ll);
             

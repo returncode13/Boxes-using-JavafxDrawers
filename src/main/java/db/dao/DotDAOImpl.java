@@ -64,6 +64,7 @@ public class DotDAOImpl implements DotDAO{
              l.setTolerance(newDot.getTolerance());
              l.setError(newDot.getError());
              l.setDoubts(newDot.getDoubts());
+             l.setWorkspace(newDot.getWorkspace());
              
             session.update(l);
             
@@ -100,6 +101,7 @@ public class DotDAOImpl implements DotDAO{
             
         Criteria criteria=session.createCriteria(Dot.class);
         criteria.add(Restrictions.eq("workspace",ws));
+        
         List results=criteria.list();
      
         

@@ -207,7 +207,10 @@ public class SummaryDAOImpl implements  SummaryDAO{
             Criteria criteria=session.createCriteria(Summary.class);
             criteria.add(Restrictions.eq("subsurface", subsurface));
             criteria.add(Restrictions.eq("job", job));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             result=criteria.list();
+            
+             System.out.println("db.dao.SummaryDAOImpl.getSummaryFor(): For job: "+job.getNameJobStep()+ " and subsurface: "+subsurface.getSubsurface()+" No of existing Summaries found : "+result.size());
             transaction.commit();
          }catch(Exception e){
              e.printStackTrace();

@@ -266,6 +266,7 @@ public class QcTableDAOImpl implements QcTableDAO{
         Criteria criteria=session.createCriteria(QcTable.class);
         criteria.add(Restrictions.eq("qcMatrixRow.id", qcmatrixRowId));
         criteria.add(Restrictions.eq("subsurface", s));
+         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         result=criteria.list();
         transaction.commit();
         }catch(Exception e){

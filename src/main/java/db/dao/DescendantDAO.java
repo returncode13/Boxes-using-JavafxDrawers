@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.Descendant;
 import db.model.Job;
+import java.util.List;
 
 /**
  *
@@ -19,6 +20,7 @@ public interface DescendantDAO  {
     public void deleteDescendant(Long did);
 
     public Descendant getDescendantFor(Job fkid, Long descendant);
+    public List<Descendant> getDescendantsFor(Job job);
     public void clearTableForJob(Job dbjob);
     
 }

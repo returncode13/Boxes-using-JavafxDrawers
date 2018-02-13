@@ -121,7 +121,21 @@ public class JobSummaryController {
     
     @FXML
     void inheritClicked(MouseEvent event) {
-        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked()");
+        if(model.isInheritance()) {  //inheritance doubt exists
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
+                    + "job: "+model.getJob().getNameJobStep());
+            List<Doubt> doubtsForInheritance=doubtService.getDoubtFor(model.getSequence(), model.getJob(),inheritanceDoubtType);
+            for(Doubt d:doubtsForInheritance){
+                Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                Dot dot=d.getDot();
+               
+                for(DoubtStatus ds:dsList){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked(): Doubt id: "+d.getId()+"  INHERITED FROM "+d.getDoubtCause().getLink().getParent().getNameJobStep()
+                             +" <--Failed Link--> "+d.getDoubtCause().getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                }
+               
+            }
+        }
     }
 
     @FXML
@@ -133,6 +147,21 @@ public class JobSummaryController {
     @FXML
     void qcClicked(MouseEvent event) {
         System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.qcClicked()");
+        if(model.isQc()){
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.qcClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
+                    + "job: "+model.getJob().getNameJobStep());
+            List<Doubt> doubtsForQC=doubtService.getDoubtFor(model.getSequence(), model.getJob(),qcDoubtType);
+            for(Doubt d:doubtsForQC){
+                Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                Dot dot=d.getDot();
+               
+                for(DoubtStatus ds:dsList){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.QcClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
+                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                }
+               
+            }
+        }
     }
 
     @FXML
@@ -158,6 +187,21 @@ public class JobSummaryController {
     @FXML
     void traceClicked(MouseEvent event) {
         System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked()");
+        if(model.isTrace()){
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
+                    + "job: "+model.getJob().getNameJobStep());
+            List<Doubt> doubtsForTrace=doubtService.getDoubtFor(model.getSequence(), model.getJob(),traceDoubtType);
+            for(Doubt d:doubtsForTrace){
+                Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                Dot dot=d.getDot();
+               
+                for(DoubtStatus ds:dsList){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
+                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                }
+               
+            }
+        }
     }
     
     void setModel(JobSummaryModel item) {
@@ -235,6 +279,26 @@ public class JobSummaryController {
             timeLabel.setStyle("-fx-background-color: "+TIME_IS_UNSET);
         }
         
+        model.traceProperty().addListener(TRACE_SUMMARY_CHANGE_LISTENER);
+        if(model.isTrace()){
+            traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_SET);
+        }else{
+            traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_UNSET);
+        }
+        
+        model.qcProperty().addListener(QC_SUMMARY_CHANGE_LISTENER);
+        if(model.isQc()){
+            qcLabel.setStyle("-fx-background-color: "+QC_IS_SET );
+        }else{
+            qcLabel.setStyle("-fx-background-color: "+QC_IS_UNSET );
+        }
+        
+        model.inheritanceProperty().addListener(INHERITANCE_SUMMARY_CHANGE_LISTENER);
+        if(model.isInheritance()){
+            inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_SET );
+        }else{
+            inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_UNSET );
+        }
     }
 
     void setView(JobSummaryView vw) {
@@ -252,6 +316,41 @@ public class JobSummaryController {
                 timeLabel.setStyle("-fx-background-color: "+TIME_IS_SET);
             }else{
                 timeLabel.setStyle("-fx-background-color: "+TIME_IS_UNSET);
+            }
+        }
+    };
+    
+    
+    private ChangeListener<Boolean> TRACE_SUMMARY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_SET);
+            }else{
+                traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_UNSET);
+            }
+        }
+    };
+    
+    
+    private ChangeListener<Boolean> QC_SUMMARY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                qcLabel.setStyle("-fx-background-color: "+QC_IS_SET);
+            }else{
+                qcLabel.setStyle("-fx-background-color: "+QC_IS_UNSET);
+            }
+        }
+    };
+    
+    private ChangeListener<Boolean> INHERITANCE_SUMMARY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_SET);
+            }else{
+                inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_UNSET);
             }
         }
     };

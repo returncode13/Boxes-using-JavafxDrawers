@@ -23,6 +23,7 @@ import javax.persistence.Table;
 public class QcMatrixRow {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @Column(name="qcmatrixrow_id")        
  Long id;
  
  /*@ManyToOne

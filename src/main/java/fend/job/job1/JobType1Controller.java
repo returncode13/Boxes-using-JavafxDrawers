@@ -340,6 +340,9 @@ parent.addChild(model);*/
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println("workspace.WorkspaceController.NameChangeListener.changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
+             dbjob=jobService.getJob(model.getId());
+             dbjob.setNameJobStep(model.getNameproperty().get());
+             jobService.updateJob(dbjob.getId(), dbjob);
            
         }
     };
@@ -360,6 +363,7 @@ parent.addChild(model);*/
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
+             dbjob=jobService.getJob(model.getId());
            dbjob.setDepth((Long) newValue);
            jobService.updateJob(dbjob.getId(), dbjob);
            /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved

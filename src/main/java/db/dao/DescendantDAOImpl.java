@@ -122,6 +122,7 @@ public class DescendantDAOImpl implements DescendantDAO {
             
         Criteria criteria=session.createCriteria(Descendant.class);
         criteria.add(Restrictions.eq("job", dbjob));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         List results=criteria.list();
      
         
@@ -130,11 +131,12 @@ public class DescendantDAOImpl implements DescendantDAO {
          Transaction transaction=session.beginTransaction();
             for (Iterator iterator = results.iterator(); iterator.hasNext();) {
                     Descendant next = (Descendant) iterator.next();
+                    System.out.println("db.dao.DescendantDAOImpl.clearTableForJob():  deleting  id: "+next.getId()+" for job: "+next.getJob().getNameJobStep());
                     session.delete(next);
                     
                 }
         transaction.commit();
-        
+                System.out.println("db.dao.DescendantDAOImpl.clearTableForJob(): finished transaction..deleted all entries for descendants");
         
         }
         }catch(Exception e){
@@ -143,6 +145,29 @@ public class DescendantDAOImpl implements DescendantDAO {
             session.close();
         }
     
+    }
+
+    @Override
+    public List<Descendant> getDescendantsFor(Job job) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List results=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Descendant.class);
+            criteria.add(Restrictions.eq("job", job));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            results=criteria.list();
+            transaction.commit();
+            System.out.println("db.dao.DescendantDAOImpl.getDescendantsFor(): for job: "+job.getNameJobStep()+" size of descendants returned: "+results.size());
+        
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
     }
     
 }

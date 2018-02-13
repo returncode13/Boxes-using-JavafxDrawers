@@ -124,8 +124,8 @@ public class QcTableController extends Stage{
                          name=qseq.getSequence().getRealLineName();
                      }
                      
-                    // System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
-                    // System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
+                     System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
+                     System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
                      checkUncheck.bindBidirectional(qseq.getQcmatrix().get(index).getCheckUncheckProperty());
                      indeterminate.bindBidirectional(qseq.getQcmatrix().get(index).getIndeterminateProperty());
                      

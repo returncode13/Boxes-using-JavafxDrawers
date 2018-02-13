@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -407,6 +408,8 @@ public class SummaryController extends Stage{
                     
                     
                     List<Summary> summariesInWorkspace=summaryService.getSummariesFor(dbWorkspace);
+                   //  Set<Summary> summariesInWorkspace=new LinkedHashSet<>(summaryService.getSummariesFor(dbWorkspace));
+                    System.out.println("fend.summary.SummaryController.setModel(): size of SummariesFromWorkspace: "+summariesInWorkspace.size());
                     for(Summary x:summariesInWorkspace){
                         Long depth=x.getDepth();
                         Sequence seq=x.getSequence();

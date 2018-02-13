@@ -118,7 +118,7 @@ public class DotController extends Stage{
             
             
             
-            workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
+            workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.
             
             
        
@@ -240,7 +240,7 @@ public class DotController extends Stage{
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                System.out.println("dot.DotController.addListener.modelstatus: Link was created in the model.. changed from "+oldValue+" to "+newValue);
                updateColor();
-               updateDatabaseAndFormulaFieldinModel();
+               updateDatabaseAndFormulaFieldinModel(); //Commented for troubleshooting. Positively to be uncommented.
             }
 
            
@@ -318,7 +318,7 @@ public class DotController extends Stage{
           /**
            * ready the models formula field
            */
-          updateVariableArgumentsInDB();
+          updateVariableArgumentsInDB();   
           
           
     }
