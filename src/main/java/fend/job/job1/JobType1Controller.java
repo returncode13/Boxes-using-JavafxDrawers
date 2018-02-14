@@ -209,164 +209,8 @@ parent.addChild(model);*/
                     dotmodel.addToChildren(model);*/
                     DotView dotnode=new DotView(dotmodel, JobType1Controller.this.interactivePane);
                     dotmodel.createLink(parent, model); // create a link between parent and child .add child to parent's list of children and parent to child's list of parents
-                    dbjob=jobService.getJob(dbjob.getId());
-                    Job dbParent=jobService.getJob(parent.getId());
-                    
-                    /*Set<Ancestor>   Ap=dbParent.getAncestors();
-                    Set<Ancestor>   Ac=dbjob.getAncestors();
-                    Set<Descendant> Dp=dbParent.getDescendants();
-                    Set<Descendant> Dc=dbjob.getDescendants();*/
-                    
-                    Set<Ancestor> Ap=new LinkedHashSet<>(ancestorService.getAncestorFor(dbParent));
-                    Set<Ancestor> Ac=new LinkedHashSet<>(ancestorService.getAncestorFor(dbjob));
-                    Set<Descendant> Dp=new LinkedHashSet<>(descendantService.getDescendantsFor(dbParent));
-                    Set<Descendant> Dc=new LinkedHashSet<>(descendantService.getDescendantsFor(dbjob));
-                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The parent job "+ dbParent.getId()+" "+dbParent.getNameJobStep() + "  Ancestors: "+Ap.size());
-                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The child job "+ dbjob.getId()+" "+dbjob.getNameJobStep() + "  Ancestors: "+Ac.size());
-                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The parent job "+ dbParent.getId()+" "+dbParent.getNameJobStep() + "  Descendants: "+Dp.size());
-                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The childs job "+ dbjob.getId()+" "+dbjob.getNameJobStep() + "  Descendants: "+Dc.size());
-                    
-                    
-                    Ancestor parentIsAnAncestor;
-                    if((parentIsAnAncestor=ancestorService.getAncestorFor(dbjob, dbParent))==null){
-                        parentIsAnAncestor=new Ancestor();
-                        parentIsAnAncestor.setJob(dbjob);
-                        parentIsAnAncestor.setAncestor(dbParent);
-
-                        ancestorService.addAncestor(parentIsAnAncestor);
-                        System.out.println("fend.job.job1.JobType1Controller.setView() Created an new Ancestor for job "+dbjob.getNameJobStep()+" and ancestor  "+dbParent.getNameJobStep());
-                        Ac.add(parentIsAnAncestor);
-                        System.out.println("fend.job.job1.JobType1Controller.setView(): Added ");
-                    }else{
-                         System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+dbjob.getNameJobStep()+" and ancestor  "+dbParent.getNameJobStep());
-                            
-                    }
-                     dbjob.setAncestors(Ac);
-                      for(Ancestor cc:Ac){
-                     ancestorService.updateAncestor(cc.getId(), cc);
-                     }
-                     jobService.updateJob(dbParent.getId(), dbParent);
-                    jobService.updateJob(dbjob.getId(), dbjob);
-                    
-                    
-                    
-                    for(Ancestor ap:Ap){                        //add all the ancestors of parents to the jobs list of ancestors
-                        Ancestor jobAncestor;
-                        Job ancestorToBeAdded=ap.getAncestor();
-                        if((jobAncestor=ancestorService.getAncestorFor(dbjob, ancestorToBeAdded))==null){
-                            
-                            jobAncestor=new Ancestor();
-                            jobAncestor.setJob(dbjob);
-                            jobAncestor.setAncestor(ancestorToBeAdded);
-                            ancestorService.addAncestor(jobAncestor);
-                            System.out.println("fend.job.job1.JobType1Controller.setView() creating new Ancestor for job "+dbjob.getNameJobStep()+" new Ancestor added: "+ancestorToBeAdded.getNameJobStep());
-                            Ac.add(jobAncestor);
-                        }else{
-                            System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+dbjob.getNameJobStep()+" and ancestor "+ancestorToBeAdded.getNameJobStep());
-                            
-                        }
-                        jobService.updateJob(ancestorToBeAdded.getId(), ancestorToBeAdded);
-                    }
-                    
-                    dbjob.setAncestors(Ac);
-                    /* for(Ancestor cc:Ac){
-                    ancestorService.updateAncestor(cc.getId(), cc);
-                    }*/
-                    
-                    jobService.updateJob(dbjob.getId(), dbjob);
-                    
-                    
-                    Descendant currentJobIsADescendant;
-                    if((currentJobIsADescendant=descendantService.getDescendantFor(dbParent, dbjob))==null){
-                        currentJobIsADescendant=new Descendant();
-                        currentJobIsADescendant.setJob(dbParent);
-                        currentJobIsADescendant.setDescendant(dbjob);
-                        descendantService.addDescendant(currentJobIsADescendant);
-                         System.out.println("fend.job.job1.JobType1Controller.setView() creating new Descendant for job "+dbParent.getNameJobStep()+" new Descendant added: "+dbjob.getNameJobStep());
-                         Dp.add(currentJobIsADescendant);
-                                
-                    }
-                    dbParent.setDescendants(Dp);
-                    jobService.updateJob(dbParent.getId(), dbParent);
-                    jobService.updateJob(dbjob.getId(), dbjob);
-                    
-                    
-                    for(Descendant dj:Dc){          //add all of the jobs descendants to the parents list of Descendants
-                        Descendant currentJobsDescendant;   
-                        Job descendantToBeAdded=dj.getDescendant();
-                        if((currentJobsDescendant=descendantService.getDescendantFor(dbParent, descendantToBeAdded))==null){
-                            currentJobsDescendant=new Descendant();
-                            currentJobsDescendant.setJob(dbParent);
-                            currentJobsDescendant.setDescendant(descendantToBeAdded);
-                            descendantService.addDescendant(currentJobsDescendant);
-                            System.out.println("fend.job.job1.JobType1Controller.setView(): creating new Descendant for job "+dbParent.getNameJobStep()+" new Descendant added: "+dbjob.getNameJobStep());
-                            Dp.add(currentJobsDescendant);              //add current jobs descendant to the list of parents descendants
-                        }
-                        jobService.updateJob(descendantToBeAdded.getId(), descendantToBeAdded);
-                    }
-                    dbParent.setDescendants(Dp);
-                    jobService.updateJob(dbParent.getId(), dbParent);
-                    
-                    
-                    
-                    
-                    //update the ancestor list for the jobs descendants
-                    for(Descendant jobsDescendantEntry:Dc){
-                        Job jobsDescendant=jobsDescendantEntry.getDescendant();              //jobs descendant
-                        Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
-                        
-                            for(Ancestor anc:Ac){
-                                Job ancestorJobToBeAdded=anc.getAncestor();        //this ancestor is the current jobs ancestor which is now been added to its descendant
-                                Ancestor jobAncestor;
-                                if((jobAncestor=ancestorService.getAncestorFor(jobsDescendant, ancestorJobToBeAdded))==null){
-                                    
-                                    jobAncestor=new Ancestor();
-                                    jobAncestor.setJob(jobsDescendant);
-                                    jobAncestor.setAncestor(ancestorJobToBeAdded);
-                                    ancestorService.addAncestor(jobAncestor);
-                                    System.out.println("fend.job.job1.JobType1Controller.setView() creating new Ancestor for job "+jobsDescendant.getNameJobStep()+" new Ancestor added: "+ancestorJobToBeAdded.getNameJobStep());
-                                    ancestorsInJobsDescendant.add(jobAncestor);
-                                }else{
-                                     System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+jobsDescendant.getNameJobStep()+" and ancestor "+ancestorJobToBeAdded.getNameJobStep());
-                                }
-                            }
-                            
-                            jobsDescendant.setAncestors(ancestorsInJobsDescendant);
-                            /*for(Ancestor aijd:ancestorsInJobsDescendant){
-                            ancestorService.updateAncestor(aijd.getId(), aijd);
-                            }*/
-                            jobService.updateJob(jobsDescendant.getId(), jobsDescendant);
-                    }
-                            
-                    
-                    
-                    //update the descendant list for the parents ancestors
-                    for(Ancestor parentAncestorEntry:Ap){
-                        Job parentsAncestor=parentAncestorEntry.getAncestor();  //parents Ancestor
-                        Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
-                        
-                        for(Descendant desc:Dp){                    //add all of the parents descendants to the parents ancestors
-                            Job descendantToBeAdded=desc.getDescendant();       //descendant to be added to the parents ancestor's list of descendants
-                            Descendant parentDescendant;
-                            
-                            if((parentDescendant=descendantService.getDescendantFor(parentsAncestor,descendantToBeAdded))==null){
-                                parentDescendant=new Descendant();
-                                parentDescendant.setJob(parentsAncestor);
-                                parentDescendant.setDescendant(descendantToBeAdded);
-                                descendantService.addDescendant(parentDescendant);
-                                System.out.println("fend.job.job1.JobType1Controller.setView(): creating new Descendant for job "+parentsAncestor.getNameJobStep()+" new Descendant added: "+descendantToBeAdded.getNameJobStep());
-                                descendantsInParentsAncestor.add(parentDescendant);
-                            }else{
-                                System.out.println("fend.job.job1.JobType1Controller.setView(): found a Descendant Entry existing for job "+parentsAncestor.getNameJobStep()+" and descendant "+descendantToBeAdded.getNameJobStep());
-                                
-                            }
-                        }
-                        
-                        parentsAncestor.setDescendants(descendantsInParentsAncestor);
-                        jobService.updateJob(parentsAncestor.getId(), parentsAncestor);
-                    }
-                    
-                    
+                   
+                    setupAncestorsAndDescendants(parent);
                             
                             
                     Long parentDepth=parent.getDepth().get();
@@ -419,7 +263,12 @@ parent.addChild(model);*/
                             return;
                         }
                         
+                         setupAncestorsAndDescendants(parent);
+                         
+                         
                          Long parentDepth=parent.getDepth().get();
+                         
+                         
                     if(model.getDepth().get()<(parentDepth+1)){
                         model.setDepth(parentDepth+1);
                     } 
@@ -603,6 +452,189 @@ parent.addChild(model);*/
         });
         
         menu.getItems().addAll(addAChildJob,deleteThisJob);
+    }
+
+    
+    /**
+     * Function called for split and njs operation.
+     * Sets up the ancestors descendants table.
+     * 
+     * Ap=parent.getAncestors;          Dp=parent.getDescendants()
+     * Ac=job.getAncestors;             Dc=job.getDescendants()
+     * 
+     * Ac=Ac+{parent,Ap}               Dp=Dp+{job,Dc}
+     * Ap=Ap;                          Dc=Dc
+     * 
+     * 
+     * for(each of jobs Descendants d : Dc)
+     * {
+     *  Ancestor_d=Ancestor_d+Ac;
+     * }
+     * 
+     * for(each of parents Ancestors a : Ap)
+     * {
+     *  Descendant_a=Descendant_a+Dp;
+     * }
+     **/
+    
+    
+    
+    private void setupAncestorsAndDescendants(JobType0Model parent) {
+         dbjob=jobService.getJob(dbjob.getId());
+                    Job dbParent=jobService.getJob(parent.getId());
+                    
+                    /*Set<Ancestor>   Ap=dbParent.getAncestors();
+                    Set<Ancestor>   Ac=dbjob.getAncestors();
+                    Set<Descendant> Dp=dbParent.getDescendants();
+                    Set<Descendant> Dc=dbjob.getDescendants();*/
+                    
+                    Set<Ancestor> Ap=new LinkedHashSet<>(ancestorService.getAncestorFor(dbParent));
+                    Set<Ancestor> Ac=new LinkedHashSet<>(ancestorService.getAncestorFor(dbjob));
+                    Set<Descendant> Dp=new LinkedHashSet<>(descendantService.getDescendantsFor(dbParent));
+                    Set<Descendant> Dc=new LinkedHashSet<>(descendantService.getDescendantsFor(dbjob));
+                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The parent job "+ dbParent.getId()+" "+dbParent.getNameJobStep() + "  Ancestors: "+Ap.size());
+                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The child job "+ dbjob.getId()+" "+dbjob.getNameJobStep() + "  Ancestors: "+Ac.size());
+                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The parent job "+ dbParent.getId()+" "+dbParent.getNameJobStep() + "  Descendants: "+Dp.size());
+                    System.out.println("fend.job.job1.JobType1Controller.setView(): Size of The childs job "+ dbjob.getId()+" "+dbjob.getNameJobStep() + "  Descendants: "+Dc.size());
+                    
+                    
+                    Ancestor parentIsAnAncestor;
+                    if((parentIsAnAncestor=ancestorService.getAncestorFor(dbjob, dbParent))==null){
+                        parentIsAnAncestor=new Ancestor();
+                        parentIsAnAncestor.setJob(dbjob);
+                        parentIsAnAncestor.setAncestor(dbParent);
+
+                        ancestorService.addAncestor(parentIsAnAncestor);
+                        System.out.println("fend.job.job1.JobType1Controller.setView() Created an new Ancestor for job "+dbjob.getNameJobStep()+" and ancestor  "+dbParent.getNameJobStep());
+                        Ac.add(parentIsAnAncestor);
+                        System.out.println("fend.job.job1.JobType1Controller.setView(): Added ");
+                    }else{
+                         System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+dbjob.getNameJobStep()+" and ancestor  "+dbParent.getNameJobStep());
+                            
+                    }
+                    /*dbjob.setAncestors(Ac);
+                    for(Ancestor cc:Ac){
+                    ancestorService.updateAncestor(cc.getId(), cc);
+                    }
+                    jobService.updateJob(dbParent.getId(), dbParent);
+                    jobService.updateJob(dbjob.getId(), dbjob);
+                    */
+                    
+                    
+                    for(Ancestor ap:Ap){                        //add all the ancestors of parents to the jobs list of ancestors
+                        Ancestor jobAncestor;
+                        Job ancestorToBeAdded=ap.getAncestor();
+                        if((jobAncestor=ancestorService.getAncestorFor(dbjob, ancestorToBeAdded))==null){
+                            
+                            jobAncestor=new Ancestor();
+                            jobAncestor.setJob(dbjob);
+                            jobAncestor.setAncestor(ancestorToBeAdded);
+                            ancestorService.addAncestor(jobAncestor);
+                            System.out.println("fend.job.job1.JobType1Controller.setView() creating new Ancestor for job "+dbjob.getNameJobStep()+" new Ancestor added: "+ancestorToBeAdded.getNameJobStep());
+                            Ac.add(jobAncestor);
+                        }else{
+                            System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+dbjob.getNameJobStep()+" and ancestor "+ancestorToBeAdded.getNameJobStep());
+                            
+                        }
+                        //jobService.updateJob(ancestorToBeAdded.getId(), ancestorToBeAdded);
+                    }
+                    
+                    //dbjob.setAncestors(Ac);
+                    /* for(Ancestor cc:Ac){
+                    ancestorService.updateAncestor(cc.getId(), cc);
+                    }*/
+                    
+                    //jobService.updateJob(dbjob.getId(), dbjob);
+                    
+                    
+                    Descendant currentJobIsADescendant;
+                    if((currentJobIsADescendant=descendantService.getDescendantFor(dbParent, dbjob))==null){
+                        currentJobIsADescendant=new Descendant();
+                        currentJobIsADescendant.setJob(dbParent);
+                        currentJobIsADescendant.setDescendant(dbjob);
+                        descendantService.addDescendant(currentJobIsADescendant);
+                         System.out.println("fend.job.job1.JobType1Controller.setView() creating new Descendant for job "+dbParent.getNameJobStep()+" new Descendant added: "+dbjob.getNameJobStep());
+                         Dp.add(currentJobIsADescendant);
+                                
+                    }
+                    /*dbParent.setDescendants(Dp);
+                    jobService.updateJob(dbParent.getId(), dbParent);
+                    jobService.updateJob(dbjob.getId(), dbjob);*/
+                    
+                    
+                    for(Descendant dj:Dc){          //add all of the jobs descendants to the parents list of Descendants
+                        Descendant currentJobsDescendant;   
+                        Job descendantToBeAdded=dj.getDescendant();
+                        if((currentJobsDescendant=descendantService.getDescendantFor(dbParent, descendantToBeAdded))==null){
+                            currentJobsDescendant=new Descendant();
+                            currentJobsDescendant.setJob(dbParent);
+                            currentJobsDescendant.setDescendant(descendantToBeAdded);
+                            descendantService.addDescendant(currentJobsDescendant);
+                            System.out.println("fend.job.job1.JobType1Controller.setView(): creating new Descendant for job "+dbParent.getNameJobStep()+" new Descendant added: "+dbjob.getNameJobStep());
+                            Dp.add(currentJobsDescendant);              //add current jobs descendant to the list of parents descendants
+                        }
+                    //   jobService.updateJob(descendantToBeAdded.getId(), descendantToBeAdded);
+                    }
+                    /* dbParent.setDescendants(Dp);
+                    jobService.updateJob(dbParent.getId(), dbParent);*/
+                    
+                    
+                    
+                    
+                    //update the ancestor list for the jobs descendants
+                    for(Descendant jobsDescendantEntry:Dc){
+                        Job jobsDescendant=jobsDescendantEntry.getDescendant();              //jobs descendant
+                        Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
+                        
+                            for(Ancestor anc:Ac){
+                                Job ancestorJobToBeAdded=anc.getAncestor();        //this ancestor is the current jobs ancestor which is now been added to its descendant
+                                Ancestor jobAncestor;
+                                if((jobAncestor=ancestorService.getAncestorFor(jobsDescendant, ancestorJobToBeAdded))==null){
+                                    
+                                    jobAncestor=new Ancestor();
+                                    jobAncestor.setJob(jobsDescendant);
+                                    jobAncestor.setAncestor(ancestorJobToBeAdded);
+                                    ancestorService.addAncestor(jobAncestor);
+                                    System.out.println("fend.job.job1.JobType1Controller.setView() creating new Ancestor for job "+jobsDescendant.getNameJobStep()+" new Ancestor added: "+ancestorJobToBeAdded.getNameJobStep());
+                                    ancestorsInJobsDescendant.add(jobAncestor);
+                                }else{
+                                     System.out.println("fend.job.job1.JobType1Controller.setView() Found an  Ancestor Entry existing for job "+jobsDescendant.getNameJobStep()+" and ancestor "+ancestorJobToBeAdded.getNameJobStep());
+                                }
+                            }
+                            
+                            /* jobsDescendant.setAncestors(ancestorsInJobsDescendant);
+                            
+                            jobService.updateJob(jobsDescendant.getId(), jobsDescendant);*/
+                    }
+                            
+                    
+                    
+                    //update the descendant list for the parents ancestors
+                    for(Ancestor parentAncestorEntry:Ap){
+                        Job parentsAncestor=parentAncestorEntry.getAncestor();  //parents Ancestor
+                        Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
+                        
+                        for(Descendant desc:Dp){                    //add all of the parents descendants to the parents ancestors
+                            Job descendantToBeAdded=desc.getDescendant();       //descendant to be added to the parents ancestor's list of descendants
+                            Descendant parentDescendant;
+                            
+                            if((parentDescendant=descendantService.getDescendantFor(parentsAncestor,descendantToBeAdded))==null){
+                                parentDescendant=new Descendant();
+                                parentDescendant.setJob(parentsAncestor);
+                                parentDescendant.setDescendant(descendantToBeAdded);
+                                descendantService.addDescendant(parentDescendant);
+                                System.out.println("fend.job.job1.JobType1Controller.setView(): creating new Descendant for job "+parentsAncestor.getNameJobStep()+" new Descendant added: "+descendantToBeAdded.getNameJobStep());
+                                descendantsInParentsAncestor.add(parentDescendant);
+                            }else{
+                                System.out.println("fend.job.job1.JobType1Controller.setView(): found a Descendant Entry existing for job "+parentsAncestor.getNameJobStep()+" and descendant "+descendantToBeAdded.getNameJobStep());
+                                
+                            }
+                        }
+                        
+                        /*parentsAncestor.setDescendants(descendantsInParentsAncestor);
+                        jobService.updateJob(parentsAncestor.getId(), parentsAncestor);*/
+                    }
+                    
     }
     
     
