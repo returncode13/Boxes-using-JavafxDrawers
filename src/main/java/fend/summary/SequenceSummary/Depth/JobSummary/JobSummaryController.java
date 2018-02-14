@@ -126,12 +126,15 @@ public class JobSummaryController {
                     + "job: "+model.getJob().getNameJobStep());
             List<Doubt> doubtsForInheritance=doubtService.getDoubtFor(model.getSequence(), model.getJob(),inheritanceDoubtType);
             for(Doubt d:doubtsForInheritance){
-                Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                
+                Doubt cause=d.getDoubtCause();
+                
+                Set<DoubtStatus> dsList=cause.getDoubtStatuses();
                 Dot dot=d.getDot();
-               
+                
                 for(DoubtStatus ds:dsList){
-                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked(): Doubt id: "+d.getId()+"  INHERITED FROM "+d.getDoubtCause().getLink().getParent().getNameJobStep()
-                             +" <--Failed Link--> "+d.getDoubtCause().getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked(): Doubt id: "+d.getId()+"  INHERITED FROM "+cause.getLink().getParent().getNameJobStep()
+                +" <--Failed Link--> "+cause.getLink().getChild().getNameJobStep()+" type: "+cause.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
                 }
                
             }

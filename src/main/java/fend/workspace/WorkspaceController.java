@@ -1980,6 +1980,44 @@ public class WorkspaceController {
                             System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getComment() + " time: " + d.getTimeStamp());
                         }
                     }
+                }else{
+                    System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): "+lparent.getNameJobStep()+ " has passed all QC. Checking for any existing doubt entries..so as to clear them");
+                    Doubt existingDoubt;
+                    if((existingDoubt=doubtService.getDoubtFor(subb, jchild, dot, doubtTypeQc))==null){
+                        //do nothing ..as no doubt exists
+                        System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): No doubts exist for job: "+jchild.getNameJobStep()+" sub: "+subb.getSubsurface()+" for type: "+doubtTypeQc.getName());
+                    }else{
+                        //get all doubtStatus for the existing doubt
+                        System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): found an existing doubt to a previous failed condition: id. "+existingDoubt.getId());
+                        Set<DoubtStatus> doubtStatus=existingDoubt.getDoubtStatuses();
+                        for(DoubtStatus doubtStat:doubtStatus){
+                            System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): deleting doubtstatus: "+doubtStat.getId() );
+                            doubtStatusService.deleteDoubtStatus(doubtStat.getId());
+                        }
+                        System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all doubtstatus messages related to "+existingDoubt.getId()+" have now been deleted.");
+                        System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+existingDoubt.getId());
+                        
+                        Set<Doubt> inheritedDoubts=existingDoubt.getInheritedDoubts();
+                        for(Doubt inheritedDoubt:inheritedDoubts){
+                            System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+existingDoubt.getId());
+                            
+                            Set<DoubtStatus> inheritedDoubtStatus=inheritedDoubt.getDoubtStatuses();
+                                for(DoubtStatus inhdbt:inheritedDoubtStatus){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
+                                            + "\nDeleting doubtstatus: "+inhdbt.getId());
+                                    doubtStatusService.deleteDoubtStatus(inhdbt.getId());
+                                }
+                                System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
+                                System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
+                            doubtService.deleteDoubt(inheritedDoubt.getId());
+                            
+                        }
+                        System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all inherited doubts cleared for id: "+existingDoubt.getId()+"\nDeleting id: "+existingDoubt.getId());
+                        doubtService.deleteDoubt(existingDoubt.getId());
+                    }
+                    System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Setting summary to false for job: "+jchild.getNameJobStep()+" sub: "+subb.getSubsurface());
+                    summary.setQcSummary(false);
+                
                 }
 
     }
