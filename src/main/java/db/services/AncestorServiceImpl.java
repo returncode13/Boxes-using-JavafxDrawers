@@ -58,6 +58,11 @@ public class AncestorServiceImpl implements AncestorService{
         ancDao.clearTableForJob(dbjob);
     }
     
+    @Override
+    public Ancestor getAncestorFor(Job job, Job ancestor) {
+        return ancDao.getAncestorFor(job, ancestor);
+                
+    }
     
     /*@Override
     public void getInitialAncestorListFor(SessionDetails s,Set<Long> listOfAncestor){
@@ -237,6 +242,13 @@ public class AncestorServiceImpl implements AncestorService{
       public Ancestor getAncestorFor(SessionDetails fkid, Long ancestor) {
       return ancDao.getAncestorFor(fkid, ancestor);
       }*/
+
+    @Override
+    public List<Ancestor> getAncestorFor(Job job) {
+        return ancDao.getAncestorFor(job);
+    }
+
+    
 
     
    

@@ -41,8 +41,7 @@ public class Ancestor implements Serializable{
     public int hashCode() {
         int hash = 7;
         hash = 71 * hash + Objects.hashCode(this.id);
-        hash = 71 * hash + Objects.hashCode(this.job);
-        hash = 71 * hash + Objects.hashCode(this.ancestor);
+        
         return hash;
     }
 
@@ -62,12 +61,7 @@ public class Ancestor implements Serializable{
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
-        if (!Objects.equals(this.job, other.job)) {
-            return false;
-        }
-        if (!Objects.equals(this.ancestor, other.ancestor)) {
-            return false;
-        }
+        
         return true;
     }
 

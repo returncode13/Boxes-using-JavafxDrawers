@@ -11,6 +11,8 @@ import db.model.Job;
 import java.util.Iterator;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -168,6 +170,36 @@ public class DescendantDAOImpl implements DescendantDAO {
             session.close();
         }
         return results;
+    }
+
+    @Override
+    public Descendant getDescendantFor(Job job, Job descendant) {
+        Session sess = HibernateUtil.getSessionFactory().openSession();
+        List<Descendant> result=null;
+        Transaction transaction=null;
+        try{
+            transaction=sess.beginTransaction();
+            Criteria criteria= sess.createCriteria(Descendant.class);
+            criteria.add(Restrictions.eq("job", job));
+            criteria.add(Restrictions.eq("descendant",descendant));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(result.size()>1){
+           try {
+               throw new Exception("More than one ancestor entry for job: "+job.getNameJobStep()+"("+job.getId()+")"+" ancestor "+descendant.getNameJobStep()+" ("+descendant.getId()+")");
+           } catch (Exception ex) {
+               Logger.getLogger(AncestorDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }if(result.size()==1){
+            return result.get(0);
+        }
+        System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): No ancestors found for "+job.getNameJobStep()+"("+job.getId()+")"+" ancestor "+descendant.getNameJobStep()+" ("+descendant.getId()+")");
+        return null;
     }
     
 }

@@ -23,5 +23,6 @@ public interface DescendantService {
     public void clearTableForJob(Job dbjob);
     public List<Descendant> getDescendantsFor(Job job);
     public List<Descendant> getDescendantsForJobContainingSub(Job job,Subsurface sub);
+    public Descendant getDescendantFor(Job job, Job descendant);
    
 }

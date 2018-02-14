@@ -81,13 +81,13 @@ public class Job implements Serializable{
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
     
     @OneToMany(mappedBy = "ancestor",fetch=FetchType.EAGER)
-    private Set<Ancestor> ancestors;                    
+    private Set<Ancestor> ancestors=new HashSet<>();                    
     
     @OneToMany(mappedBy ="job",fetch=FetchType.EAGER)
     private Set<Descendant> currentJobInDescendant;
     
     @OneToMany(mappedBy ="descendant",fetch=FetchType.EAGER)
-    private Set<Descendant> descendants;
+    private Set<Descendant> descendants=new HashSet<>();
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<QcMatrixRow> qcmatrix;

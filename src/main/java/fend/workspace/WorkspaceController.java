@@ -961,6 +961,8 @@ public class WorkspaceController {
             /**
              * Setting up ancestors and descendants
              */
+            
+            /*
             for (JobType0Model job : jobsInWorkSpace) {
 //              System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): List of ancestors for g1Child: "+g1Child.getId()%1000);
                 Job dbjob = jobService.getJob(job.getId());    //the g1Child for which the ancestors are to be determined.
@@ -1007,6 +1009,8 @@ public class WorkspaceController {
                 }
 
             }
+            
+            */
 
             for (Job dbjob : dbjobs) {
                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating job " + dbjob.getId());

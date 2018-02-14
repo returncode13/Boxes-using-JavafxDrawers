@@ -19,10 +19,10 @@ public interface AncestorDAO {
     public void updateAncestor(Long aid,Ancestor newAncestor);
     public void deleteAncestor(Long aid);
     
-    public Ancestor getAncestorFor(Job fkid,Long ancestor);     //get the entry where sessionsDetails=fkid and where the column ancestor = ancestor
+   public List<Ancestor> getAncestorFor(Job fkid);
 
     public void clearTableForJob(Job dbjob);
-   
+    public Ancestor getAncestorFor(Job job,Job ancestor); 
    
     
     

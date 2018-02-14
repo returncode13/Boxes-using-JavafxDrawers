@@ -80,6 +80,11 @@ public class DescendantServiceImpl implements DescendantService{
         }
         return  result;
     }
+
+    @Override
+    public Descendant getDescendantFor(Job job, Job descendant) {
+        return descDao.getDescendantFor(job, descendant);
+    }
     
 
    

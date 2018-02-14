@@ -28,4 +28,6 @@ public interface AncestorService {
     public Ancestor getAncestorFor(Job fkid,Long ancestor);     //get the entry where sessionsDetails=fkid and where the column ancestor = ancestor*/
 
     public void clearTableForJob(Job dbjob);
+    public Ancestor getAncestorFor(Job job,Job ancestor); 
+    public List<Ancestor> getAncestorFor(Job job);
 }

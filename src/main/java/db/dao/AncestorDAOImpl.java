@@ -12,6 +12,8 @@ import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
 import java.util.LinkedHashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -89,7 +91,7 @@ public class AncestorDAOImpl implements AncestorDAO{
     }
 
     @Override
-    public Ancestor getAncestorFor(Job fkid, Long ancestor) {
+    public List<Ancestor> getAncestorFor(Job fkid) {
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
@@ -97,16 +99,17 @@ public class AncestorDAOImpl implements AncestorDAO{
             transaction=sess.beginTransaction();
             Criteria criteria= sess.createCriteria(Ancestor.class);
             criteria.add(Restrictions.eq("job", fkid));
-            criteria.add(Restrictions.eq("ancestor",ancestor));
+            
             result=criteria.list();
             transaction.commit();
-            if(result.size()==1) return result.get(0);
+            System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): returning ancestor list of size "+result.size()+" for job: "+fkid.getNameJobStep());
+           
         }catch(Exception e){
             e.printStackTrace();
         }
         
         
-        return null;
+        return result;
     }
 
     @Override
@@ -140,6 +143,37 @@ public class AncestorDAOImpl implements AncestorDAO{
             session.close();
         }
     
+    }
+
+    @Override
+    public Ancestor getAncestorFor(Job job, Job ancestor) {
+       Session sess = HibernateUtil.getSessionFactory().openSession();
+        List<Ancestor> result=null;
+        Transaction transaction=null;
+        try{
+            transaction=sess.beginTransaction();
+            Criteria criteria= sess.createCriteria(Ancestor.class);
+            criteria.add(Restrictions.eq("job", job));
+            criteria.add(Restrictions.eq("ancestor",ancestor));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            result=criteria.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(result.size()>1){
+           try {
+               throw new Exception("More than one ancestor entry for job: "+job.getNameJobStep()+"("+job.getId()+")"+" ancestor "+ancestor.getNameJobStep()+" ("+ancestor.getId()+")");
+           } catch (Exception ex) {
+               Logger.getLogger(AncestorDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+           }
+        }if(result.size()==1){
+            return result.get(0);
+        }
+        System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): No ancestors found for "+job.getNameJobStep()+"("+job.getId()+")"+" ancestor "+ancestor.getNameJobStep()+" ("+ancestor.getId()+")");
+        return null;
+      
     }
          
 

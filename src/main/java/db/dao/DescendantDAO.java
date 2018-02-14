@@ -22,5 +22,6 @@ public interface DescendantDAO  {
     public Descendant getDescendantFor(Job fkid, Long descendant);
     public List<Descendant> getDescendantsFor(Job job);
     public void clearTableForJob(Job dbjob);
+    public Descendant getDescendantFor(Job job, Job descendant);
     
 }
