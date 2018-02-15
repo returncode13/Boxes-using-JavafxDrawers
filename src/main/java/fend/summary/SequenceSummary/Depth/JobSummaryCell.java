@@ -10,6 +10,11 @@ import fend.summary.SequenceSummary.Depth.Depth;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryView;
 import fend.summary.SequenceSummary.SequenceSummary;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TreeTableCell;
@@ -24,6 +29,7 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     int depthId;
     //int jobId;
     Job job;
+    
     
     public JobSummaryCell() {
         
@@ -50,6 +56,8 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
         this.depthId=depthId;
        // this.jobId=jobId;
        this.job=job;
+       this.itemProperty().addListener(ITEM_PROPERTY_CHANGE_LISTENER);
+       
         model=new JobSummaryModel();
         
         view=new JobSummaryView(model);
@@ -104,6 +112,28 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
             setGraphic(view);
         }
     }
+    
+    
+    
+    
+    private ChangeListener<Boolean> ITEM_PROPERTY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue!=null)
+            if(newValue){
+                final ContextMenu contextMenu=new ContextMenu();
+                if(model.isInDoubt()){
+                    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt"); 
+                    overrideMenuItem.setOnAction(e->{
+                        System.out.println("Fetching doubt information for Subsurface: "+getTreeTableRow().getItem().getSubsurface().getSubsurface()+" job: "
+                                + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep());
+                    });
+                    contextMenu.getItems().add(overrideMenuItem);
+                }
+                setContextMenu(contextMenu);
+            }
+        }
+    };
     
     
 }

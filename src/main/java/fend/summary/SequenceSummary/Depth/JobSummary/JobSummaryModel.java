@@ -156,6 +156,10 @@ public class JobSummaryModel {
         this.subsurface = subsurface;
     }
 
+    public Boolean isInDoubt(){
+        
+        return this.isTime()||this.isTrace()||this.isQc()||this.isInsight()||this.isInheritance();
+    }
     
     
     

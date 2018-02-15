@@ -1772,7 +1772,7 @@ public class WorkspaceController {
                         doubtService.createDoubt(doubt);
                         summary.setTimeSummary(true);
                         DoubtStatus doubtStatus = new DoubtStatus();
-                        doubtStatus.setComment(DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName()));
+                        doubtStatus.setReason(DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName()));
                         doubtStatus.setDoubt(doubt);
                         doubtStatus.setStatus(DoubtStatusModel.YES);
                         doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -1785,7 +1785,7 @@ public class WorkspaceController {
                         Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                         summary.setTimeSummary(true);
                         for (DoubtStatus d : doubtStatuses) {
-                            System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getComment() + " time: " + d.getTimeStamp());
+                            System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getReason() + " time: " + d.getTimeStamp());
                         }
                     }
 
@@ -1959,7 +1959,7 @@ public class WorkspaceController {
                             doubtService.createDoubt(doubt);
 
                             DoubtStatus doubtStatus = new DoubtStatus();
-                            doubtStatus.setComment(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                            doubtStatus.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                             doubtStatus.setDoubt(doubt);
                             doubtStatus.setStatus(DoubtStatusModel.YES);
                             doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -1975,7 +1975,7 @@ public class WorkspaceController {
                             summary.setTraceSummary(true);
                             Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                             for (DoubtStatus ds : doubtStatuses) {
-                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getComment() + " time: " + ds.getTimeStamp());
+                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                             }
                         }
                     } else {
@@ -1994,7 +1994,7 @@ public class WorkspaceController {
                                 summary.setTraceSummary(true);
 
                                 DoubtStatus doubtStatus = new DoubtStatus();
-                                doubtStatus.setComment(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                                doubtStatus.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                 doubtStatus.setDoubt(doubt);
                                 doubtStatus.setStatus(DoubtStatusModel.YES);
                                 doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -2010,7 +2010,7 @@ public class WorkspaceController {
                                 Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                                 summary.setTraceSummary(true);
                                 for (DoubtStatus ds : doubtStatuses) {
-                                    System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getComment() + " time: " + ds.getTimeStamp());
+                                    System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                                 }
 
                             }
@@ -2052,7 +2052,7 @@ public class WorkspaceController {
 
                         summary.setQcSummary(true);
                         DoubtStatus doubtStatus = new DoubtStatus();
-                        doubtStatus.setComment(DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(), subb.getSubsurface(), doubtTypeQc.getName()));
+                        doubtStatus.setReason(DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(), subb.getSubsurface(), doubtTypeQc.getName()));
                         doubtStatus.setDoubt(doubt);
                         doubtStatus.setStatus(DoubtStatusModel.YES);
                         doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -2066,7 +2066,7 @@ public class WorkspaceController {
                         Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                         summary.setQcSummary(true);
                         for (DoubtStatus d : doubtStatuses) {
-                            System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getComment() + " time: " + d.getTimeStamp());
+                            System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getReason() + " time: " + d.getTimeStamp());
                         }
                     }
                 }else{
@@ -2159,7 +2159,7 @@ public class WorkspaceController {
                                 System.out.println("fend.workspace.WorkspaceController.inherit(): Setting the inheritance flag in summaryEntry# "+summary.getId());
                                 summary.setInheritanceSummary(true);
                                 DoubtStatus doubtStatus=new DoubtStatus();
-                                doubtStatus.setComment(DoubtStatusModel.getNewDoubtInheritanceMessage(inhChild.getNameJobStep(),subb.getSubsurface(), job.getNameJobStep(), doubtTypeInherit.getName()));
+                                doubtStatus.setReason(DoubtStatusModel.getNewDoubtInheritanceMessage(inhChild.getNameJobStep(),subb.getSubsurface(), job.getNameJobStep(), doubtTypeInherit.getName()));
                                 doubtStatus.setDoubt(d);
                                 doubtStatus.setStatus(DoubtStatusModel.YES);
                                 doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
@@ -2179,7 +2179,7 @@ public class WorkspaceController {
                                 summaryService.updateSummary(summary.getId(), summary);
                       
                             for(DoubtStatus dsmess:d.getDoubtStatuses()){
-                                System.out.println("STATUS "+dsmess.getStatus()+" MSG: "+dsmess.getComment());
+                                System.out.println("STATUS "+dsmess.getStatus()+" MSG: "+dsmess.getReason());
                             }
                         }
                 }

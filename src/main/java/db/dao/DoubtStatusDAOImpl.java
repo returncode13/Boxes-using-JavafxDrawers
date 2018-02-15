@@ -70,7 +70,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
         try{
             transaction=session.beginTransaction();
              DoubtStatus l= (DoubtStatus) session.get(DoubtStatus.class, id);
-             l.setComment(newds.getComment());
+             l.setReason(newds.getReason());
              l.setDoubt(newds.getDoubt());
              l.setStatus(newds.getStatus());
              l.setTimeStamp(newds.getTimeStamp());

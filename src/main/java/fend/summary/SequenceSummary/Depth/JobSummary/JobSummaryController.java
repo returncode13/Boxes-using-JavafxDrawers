@@ -26,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import middleware.doubt.DoubtTypeModel;
@@ -134,7 +135,7 @@ public class JobSummaryController {
                 
                 for(DoubtStatus ds:dsList){
                 System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.inheritClicked(): Doubt id: "+d.getId()+"  INHERITED FROM "+cause.getLink().getParent().getNameJobStep()
-                +" <--Failed Link--> "+cause.getLink().getChild().getNameJobStep()+" type: "+cause.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                +" <--Failed Link--> "+cause.getLink().getChild().getNameJobStep()+" type: "+cause.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getReason());
                 }
                
             }
@@ -160,7 +161,7 @@ public class JobSummaryController {
                
                 for(DoubtStatus ds:dsList){
                      System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.QcClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
-                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getReason());
                 }
                
             }
@@ -169,21 +170,31 @@ public class JobSummaryController {
 
     @FXML
     void timeClicked(MouseEvent event) {
-        if(model.isTime()) {  //time doubt exists
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
-                    + "job: "+model.getJob().getNameJobStep());
-            List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob(),timeDoubtType);
-            for(Doubt d:doubtsForTime){
-                Set<DoubtStatus> dsList=d.getDoubtStatuses();
-                Dot dot=d.getDot();
-               
-                for(DoubtStatus ds:dsList){
-                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
-                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
-                }
+        
+        if(event.getButton().equals(MouseButton.SECONDARY)){
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): context menu displayed");
+        }
+        
+        if(event.getButton().equals(MouseButton.PRIMARY)){
+            if(event.getClickCount()==2){
+                if(model.isTime()) {  //time doubt exists
+                    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
+                            + "job: "+model.getJob().getNameJobStep());
+                    List<Doubt> doubtsForTime=doubtService.getDoubtFor(model.getSequence(), model.getJob(),timeDoubtType);
+                    for(Doubt d:doubtsForTime){
+                        Set<DoubtStatus> dsList=d.getDoubtStatuses();
+                        Dot dot=d.getDot();
+
+                        for(DoubtStatus ds:dsList){
+                             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
+                                     +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getReason());
+                        }
                
             }
         }
+            }
+        }
+        
             
     }
 
@@ -200,7 +211,7 @@ public class JobSummaryController {
                
                 for(DoubtStatus ds:dsList){
                      System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked(): Doubt id: "+d.getId()+"  "+d.getLink().getParent().getNameJobStep()
-                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getComment());
+                             +" <--Failed Link--> "+d.getLink().getChild().getNameJobStep()+" type: "+d.getDoubtType().getName()+" status: "+ds.getStatus()+" message: "+ds.getReason());
                 }
                
             }

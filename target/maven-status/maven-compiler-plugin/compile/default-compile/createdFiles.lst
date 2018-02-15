@@ -46,6 +46,7 @@ fend/job/job2/JobType2Model$5.class
 fend/job/job4/JobType4Model$6.class
 fend/edge/dotjobedge/DotJobEdgeController$1.class
 db/dao/NodePropertyDAO.class
+fend/summary/override/confirmation/OverrideConfirmationModel.class
 fend/job/job1/JobType1Model$6.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryModel.class
 fend/job/job2/JobType2Controller$1.class
@@ -69,6 +70,7 @@ db/model/User.class
 fend/job/job3/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.class
 middleware/dugex/LogStatusManager$1.class
 fend/job/table/lineTable/LineTableView.class
+fend/summary/SequenceSummary/Depth/JobSummaryCell$1.class
 db/services/DoubtService.class
 db/dao/LogDAOImpl.class
 fend/job/job1/definitions/JobDefinitionsController.class
@@ -155,6 +157,7 @@ db/dao/WorkspaceDAO.class
 middleware/doubt/DoubtStatusModel.class
 app/settings/database/DbListNode.class
 fend/job/table/lineTable/LineTableModel.class
+fend/summary/override/OverrideController$1.class
 fend/job/job1/JobType1Model$4.class
 fend/job/job4/JobType4Model$2.class
 db/services/UserWorkspaceService.class
@@ -195,12 +198,14 @@ fend/volume/volume1/Volume1.class
 fend/job/job2/JobType2Model$6.class
 fend/job/job4/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.class
 fend/user/newUser/NewUserView.class
+fend/summary/override/OverrideController.class
 db/services/DescendantServiceImpl.class
 db/dao/VariableArgumentDAO.class
 fend/job/table/qctable/QcTableController$3.class
 db/services/PropertyTypeServiceImpl.class
 fend/job/job1/JobType1Model$5.class
 fend/job/job3/definitions/JobDefinitionsModel.class
+fend/summary/override/confirmation/OverrideConfirmationController.class
 db/dao/AncestorDAOImpl.class
 fend/job/job0/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$4.class
@@ -255,10 +260,12 @@ fend/job/job4/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class
 db/dao/AcquisitionDAO.class
 db/model/DoubtStatus_.class
 fend/job/job1/definitions/qcmatrix/QcMatrixView.class
+fend/summary/override/OverrideModel.class
 db/model/Sequence.class
 fend/volume/volume3/Volume3.class
 db/dao/VariableArgumentDAOImpl.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$2.class
+fend/summary/override/OverrideController$2.class
 db/services/WorkspaceServiceImpl.class
 db/dao/SubsurfaceJobDAOImpl.class
 fend/job/table/qctable/seq/sub/QcTableSubsurface$2.class
@@ -266,6 +273,7 @@ fend/job/job1/JobType1Model$2.class
 fend/job/job1/definitions/qcmatrix/QcMatrixListCell.class
 app/settings/database/DbListController.class
 fend/job/job0/definitions/qcmatrix/QcMatrixModel$1.class
+fend/summary/override/OverrideView.class
 fend/job/job3/JobType3Controller$4.class
 fend/job/job2/definitions/insight/InsightListCell$1.class
 db/dao/SummaryDAO.class
@@ -500,6 +508,7 @@ fend/job/job4/definitions/qcmatrix/QcMatrixListCell$1.class
 fend/job/job3/definitions/JobDefinitionsView.class
 fend/job/job3/table/lineTable/LineTableController$2.class
 fend/job/job3/JobType3Model$1.class
+fend/summary/override/confirmation/OverrideConfirmationView.class
 db/dao/PropertyTypeDAOImpl.class
 db/model/NodePropertyValue.class
 db/dao/NodePropertyDAOImpl.class
