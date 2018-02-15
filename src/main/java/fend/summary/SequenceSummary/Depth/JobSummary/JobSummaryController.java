@@ -173,6 +173,7 @@ public class JobSummaryController {
         
         if(event.getButton().equals(MouseButton.SECONDARY)){
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.timeClicked(): context menu displayed");
+            model.setContextAskedForDoubtType(DoubtTypeModel.TIME);
         }
         
         if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -200,6 +201,14 @@ public class JobSummaryController {
 
     @FXML
     void traceClicked(MouseEvent event) {
+         if(event.getButton().equals(MouseButton.SECONDARY)){
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked(): context menu displayed");
+            model.setContextAskedForDoubtType(DoubtTypeModel.TRACES);
+        }
+        
+        if(event.getButton().equals(MouseButton.PRIMARY)){
+        
+         if(event.getClickCount()==2){
         System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked()");
         if(model.isTrace()){
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.traceClicked(): model.sequence "+model.getSequence().getSequenceno()+" "
@@ -216,6 +225,9 @@ public class JobSummaryController {
                
             }
         }
+         }
+     }
+        
     }
     
     void setModel(JobSummaryModel item) {

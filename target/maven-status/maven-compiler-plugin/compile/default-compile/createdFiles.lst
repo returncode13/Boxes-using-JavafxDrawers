@@ -70,7 +70,6 @@ db/model/User.class
 fend/job/job3/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.class
 middleware/dugex/LogStatusManager$1.class
 fend/job/table/lineTable/LineTableView.class
-fend/summary/SequenceSummary/Depth/JobSummaryCell$1.class
 db/services/DoubtService.class
 db/dao/LogDAOImpl.class
 fend/job/job1/definitions/JobDefinitionsController.class

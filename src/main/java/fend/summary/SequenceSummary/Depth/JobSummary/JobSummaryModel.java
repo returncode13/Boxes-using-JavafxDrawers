@@ -30,7 +30,7 @@ public class JobSummaryModel {
     private final BooleanProperty inheritance = new SimpleBooleanProperty();//inheritance is true implies no doubt.
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
 
-    
+    private String contextAskedForDoubtType=null;
     
     
     
@@ -159,6 +159,14 @@ public class JobSummaryModel {
     public Boolean isInDoubt(){
         
         return this.isTime()||this.isTrace()||this.isQc()||this.isInsight()||this.isInheritance();
+    }
+
+    public String getContextAskedForDoubtType() {
+        return contextAskedForDoubtType;
+    }
+
+    public void setContextAskedForDoubtType(String contextAskedForDoubtType) {
+        this.contextAskedForDoubtType = contextAskedForDoubtType;
     }
     
     

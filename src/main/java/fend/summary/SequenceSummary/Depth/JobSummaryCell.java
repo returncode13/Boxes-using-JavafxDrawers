@@ -56,7 +56,7 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
         this.depthId=depthId;
        // this.jobId=jobId;
        this.job=job;
-       this.itemProperty().addListener(ITEM_PROPERTY_CHANGE_LISTENER);
+//       this.itemProperty().addListener(ITEM_PROPERTY_CHANGE_LISTENER);
        
         model=new JobSummaryModel();
         
@@ -91,6 +91,10 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
             model.setTrace(jsm.isTrace());
             model.setQc(jsm.isQc());
             model.setInsight(jsm.isInsight());
+            if(jsm.getSubsurface()!=null){
+                model.setSubsurface(jsm.getSubsurface());
+            }
+            
             if(!t){
                 model.setActive(false);
                //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
@@ -102,7 +106,16 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
             
             }
             //this.model=new JobSummaryModel();
-             
+             final ContextMenu contextMenu=new ContextMenu();
+                if(model.isInDoubt() && model.getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences. 
+                    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt"); 
+                    overrideMenuItem.setOnAction(e->{
+                        System.out.println("Fetching doubt information for Subsurface: "+model.getSubsurface().getSubsurface()+" job: "
+                                + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep()+" for doubtType: "+model.getContextAskedForDoubtType());
+                    });
+                    contextMenu.getItems().add(overrideMenuItem);
+                }
+                setContextMenu(contextMenu);
             /*SequenceSummary item=(SequenceSummary) this.getTableRow().getItem();
             model=item.getDepths().get(depthId).getJobSummaries().get(jobId);
             model.setSequence(item.getSequence());*/
@@ -116,24 +129,24 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     
     
     
-    private ChangeListener<Boolean> ITEM_PROPERTY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(newValue!=null)
-            if(newValue){
-                final ContextMenu contextMenu=new ContextMenu();
-                if(model.isInDoubt()){
-                    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt"); 
-                    overrideMenuItem.setOnAction(e->{
-                        System.out.println("Fetching doubt information for Subsurface: "+getTreeTableRow().getItem().getSubsurface().getSubsurface()+" job: "
-                                + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep());
-                    });
-                    contextMenu.getItems().add(overrideMenuItem);
-                }
-                setContextMenu(contextMenu);
-            }
-        }
-    };
+    /*  private ChangeListener<Boolean> ITEM_PROPERTY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    if(newValue!=null)
+    if(newValue){
+    final ContextMenu contextMenu=new ContextMenu();
+    if(model.isInDoubt()){
+    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+    overrideMenuItem.setOnAction(e->{
+    System.out.println("Fetching doubt information for Subsurface: "+getTreeTableRow().getItem().getSubsurface().getSubsurface()+" job: "
+    + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep());
+    });
+    contextMenu.getItems().add(overrideMenuItem);
+    }
+    setContextMenu(contextMenu);
+    }
+    }
+    };*/
     
     
 }
