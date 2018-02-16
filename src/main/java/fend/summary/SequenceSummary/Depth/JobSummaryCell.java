@@ -10,6 +10,8 @@ import fend.summary.SequenceSummary.Depth.Depth;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryView;
 import fend.summary.SequenceSummary.SequenceSummary;
+import fend.summary.override.OverrideModel;
+import fend.summary.override.OverrideView;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -112,6 +114,10 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
                     overrideMenuItem.setOnAction(e->{
                         System.out.println("Fetching doubt information for Subsurface: "+model.getSubsurface().getSubsurface()+" job: "
                                 + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep()+" for doubtType: "+model.getContextAskedForDoubtType());
+                    
+                    
+                        model.setShowOverride(true);
+                    
                     });
                     contextMenu.getItems().add(overrideMenuItem);
                 }

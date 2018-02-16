@@ -104,7 +104,7 @@
                <children>
                   <ButtonBar AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <buttons>
-                      <Button fx:id="proceedBtn" mnemonicParsing="false" onAction="#proceedClicked" text="OK" />
+                      <Button fx:id="proceedBtn" mnemonicParsing="false" onAction="#proceedClicked" text="Proceed To Commit" />
                         <Button fx:id="cancelBtn" layoutX="125.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCancel" text="Cancel" />
                     </buttons>
                   </ButtonBar>

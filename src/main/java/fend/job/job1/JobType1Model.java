@@ -131,7 +131,7 @@ public class JobType1Model implements JobType0Model {
                 
         
         nameproperty.addListener(nameChangeListener);
-        finishedCheckingLogs.addListener(checkLogsListener);
+        //finishedCheckingLogs.addListener(checkLogsListener);
         
         listenToDepthChange=new SimpleBooleanProperty(false);
         
@@ -517,27 +517,27 @@ public class JobType1Model implements JobType0Model {
         
     }
 
-    public void extractLogs() {
-        System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
-        new DugLogManager(this);
-       finishedCheckingLogs.set(!finishedCheckingLogs.get());
-    }
+    /*public void extractLogs() {
+    System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
+    new DugLogManager(this);
+    finishedCheckingLogs.set(!finishedCheckingLogs.get());
+    }*/
     
-     private void extractHeaders() {
-         System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
-         new HeaderExtractor(this);
-        
-     }
+    /*private void extractHeaders() {
+    System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
+    new HeaderExtractor(this);
+    
+    }*/
             
      
-     ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          //  if(newValue){
-                extractHeaders();
-           // }
-        }
-    };
+    /*ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    //  if(newValue){
+    extractHeaders();
+    // }
+    }
+    };*/
 
     void checkMultiples() {
        
@@ -614,6 +614,14 @@ public class JobType1Model implements JobType0Model {
     @Override
     public void setJobProperties(List<JobModelProperty> jobModelProperties) {
         this.jobProperties=jobModelProperties;
+    }
+
+    public BooleanProperty finishedCheckingLogs() {
+        return finishedCheckingLogs;
+    }
+
+    public void setFinishedCheckingLogs(Boolean finished) {
+        this.finishedCheckingLogs.set(finished);
     }
      
     

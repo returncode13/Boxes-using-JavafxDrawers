@@ -48,7 +48,7 @@
             </AnchorPane>
             <AnchorPane GridPane.columnIndex="5">
                <children>
-                  <Label fx:id="inheritLabel" alignment="CENTER" onMouseClicked="#inheritClicked" style="-fx-background-color: #C8EF14;" text="inherit" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Label fx:id="inheritLabel" alignment="CENTER" onMouseClicked="#inheritClicked" style="-fx-background-color: #A0522D;" text="inherit" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>

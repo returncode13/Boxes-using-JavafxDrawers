@@ -154,57 +154,61 @@ public class DugLogManager {
          if(volumeType.equals(JobType0Model.PROCESS_2D)){
             for(FileWrapper fw:filesToCommit){
                 try {
-                    ExecutorService executorService=Executors.newCachedThreadPool();
-                    executorService.submit(new Callable<Void>(){
-                        @Override
-                        public Void call() throws Exception {
-
-
-
-                            try {
-
-                                // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager <<TO DO
-
-
-                                            Process process=new ProcessBuilder(dugioScripts.getSubsurfaceInsightVersionForLog().getAbsolutePath(),fw.fwrap.getAbsolutePath()).start();
-                                            InputStream is = process.getInputStream();
-                                            InputStreamReader isr=new InputStreamReader(is);
-                                            BufferedReader br=new BufferedReader(isr);
-
-                                            String value;
-                                            while((value=br.readLine())!=null){
-                                                //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
-                                                String linename=value.substring(9,value.indexOf(" "));
-                                                String insight=value.substring(value.indexOf(" ")+9);
-                                                //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
-
-                                                LogInformation li=new LogInformation();
-                                                li.volume=dbVol;
-                                                li.log=fw.fwrap;
-                                                li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
-                                                li.insightVersion=insight;
-                                                li.timestamp=hackTimeStamp(fw.fwrap);
-                                                logInformation.add(li);
-                                            }
-                                        } catch (IOException ex) {
-                                            ex.printStackTrace();
-                                            //Exceptions.printStackTrace(ex);
-                                        }
-
-
-
-
-                                        return null;
-                                    }
-
-                                }).get();
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                        //Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
-                        ex.printStackTrace();
-                        //Exceptions.printStackTrace(ex);
+                    // try {
+                    // ExecutorService executorService=Executors.newCachedThreadPool();
+                    // executorService.submit(new Callable<Void>(){
+                    // @Override
+                    // public Void call() throws Exception {
+                    
+                    
+                    
+                    //  try {
+                    
+                    // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager <<TO DO
+                    
+                    
+                    Process process=new ProcessBuilder(dugioScripts.getSubsurfaceInsightVersionForLog().getAbsolutePath(),fw.fwrap.getAbsolutePath()).start();
+                    InputStream is = process.getInputStream();
+                    InputStreamReader isr=new InputStreamReader(is);
+                    BufferedReader br=new BufferedReader(isr);
+                    
+                    String value;
+                    while((value=br.readLine())!=null){
+                        //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                        String linename=value.substring(9,value.indexOf(" "));
+                        String insight=value.substring(value.indexOf(" ")+9);
+                        //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
+                        
+                        LogInformation li=new LogInformation();
+                        li.volume=dbVol;
+                        li.log=fw.fwrap;
+                        li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                        li.insightVersion=insight;
+                        li.timestamp=hackTimeStamp(fw.fwrap);
+                        logInformation.add(li);
                     }
+                    /* } catch (IOException ex) {
+                    ex.printStackTrace();
+                    //Exceptions.printStackTrace(ex);
+                    }*/
+                    
+                    
+                    
+                    
+                    //    return null;
+                    // }
+                    
+                    //   }).get();
+                    /*  } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                    //Exceptions.printStackTrace(ex);
+                    } catch (ExecutionException ex) {
+                    ex.printStackTrace();
+                    //Exceptions.printStackTrace(ex);
+                    }*/
+                } catch (IOException ex) {
+                    Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
             
             }
         }

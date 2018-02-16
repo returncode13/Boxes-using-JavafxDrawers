@@ -47,7 +47,6 @@ fend/job/job4/JobType4Model$6.class
 fend/edge/dotjobedge/DotJobEdgeController$1.class
 db/dao/NodePropertyDAO.class
 fend/summary/override/confirmation/OverrideConfirmationModel.class
-fend/job/job1/JobType1Model$6.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryModel.class
 fend/job/job2/JobType2Controller$1.class
 fend/job/job3/table/lineTable/LineTableController.class
@@ -120,6 +119,7 @@ db/model/PropertyType_.class
 db/dao/DoubtDAO.class
 db/dao/LinkDAO.class
 middleware/doubt/Doubt.class
+fend/job/job1/JobType1Controller$7.class
 db/services/QcTableService.class
 db/services/NodePropertyValueServiceImpl.class
 middleware/watcher/WorkflowWatcher$1.class
@@ -169,6 +169,7 @@ db/model/Subsurface_.class
 db/dao/SubsurfaceDAO.class
 db/model/NodePropertyValue_.class
 fend/volume/volume4/Volume4.class
+fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$6.class
 fend/job/job0/definitions/JobDefinitionsModel.class
 app/settings/ssh/SShSettingsWrapper.class
 fend/edge/dotjobedge/DotJobEdgeController$Delta.class
@@ -326,7 +327,6 @@ middleware/dugex/DugLogManager$1.class
 fend/job/job2/definitions/insight/InsightListCell.class
 fend/dot/anchor/AnchorController$Delta.class
 db/model/Header.class
-middleware/dugex/HeaderExtractor$1.class
 db/services/QcMatrixRowServiceImpl.class
 middleware/dugex/DugLogManager$LogInformation.class
 fend/workspace/WorkspaceController$3.class
@@ -379,6 +379,7 @@ fend/summary/SummaryController$2.class
 db/dao/DoubtStatusDAO.class
 fend/job/job2/JobType2Model$2.class
 db/model/DoubtType.class
+fend/job/job1/JobType1Controller$8.class
 db/model/Acquisition_.class
 fend/job/job0/definitions/insight/InsightListCell$1.class
 fend/job/job4/JobType4Controller$3.class
@@ -477,6 +478,7 @@ middleware/dugex/DugLogManager$FileWrapper.class
 fend/job/job3/JobType3Model$6.class
 fend/dot/DotController$3.class
 db/services/LogService.class
+fend/job/job1/JobType1Controller$8$1.class
 fend/job/job1/definitions/insight/InsightListModel.class
 fend/job/table/qctable/CheckBoxCell$2.class
 fend/job/job2/definitions/volume/VolumeListView.class

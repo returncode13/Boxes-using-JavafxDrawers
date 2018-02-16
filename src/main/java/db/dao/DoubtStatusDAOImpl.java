@@ -75,6 +75,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
              l.setStatus(newds.getStatus());
              l.setTimeStamp(newds.getTimeStamp());
              l.setUser(newds.getUser());
+             l.setComments(newds.getComments());
              
              
             session.update(l);

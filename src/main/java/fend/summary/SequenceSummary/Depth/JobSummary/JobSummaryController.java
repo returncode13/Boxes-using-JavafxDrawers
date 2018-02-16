@@ -17,6 +17,9 @@ import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
+import fend.summary.override.OverrideModel;
+import fend.summary.override.OverrideView;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javafx.beans.InvalidationListener;
@@ -88,6 +91,7 @@ public class JobSummaryController {
 
     @FXML
     private Label inheritLabel;
+    
     
 
     /*
@@ -325,6 +329,10 @@ public class JobSummaryController {
         }else{
             inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_UNSET );
         }
+        
+        
+        model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
+        
     }
 
     void setView(JobSummaryView vw) {
@@ -377,6 +385,45 @@ public class JobSummaryController {
                 inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_SET);
             }else{
                 inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_UNSET);
+            }
+        }
+    };
+    
+    
+    
+    private ChangeListener<Boolean> SHOW_OVERRIDE_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                System.out.println(".changed(): show overrride dialog");
+                DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
+                Doubt doubt=doubtService.getDoubtFor(model.getSubsurface(), model.getJob(),modelDoubtType);
+                DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                OverrideModel ovrModel=new OverrideModel();
+                
+                Link l=doubt.getLink();
+                String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();
+                String parentJobName=l.getParent().getNameJobStep();
+                String doubtStatusReason=ds.getReason();
+                String stat=ds.getStatus();
+                String userComment=ds.getComments();
+                String earlierStat=ds.getStatus();
+                
+                    
+                    ovrModel.setDoubt(doubt);
+                    ovrModel.setDoubtStatus(ds);
+                    
+                    ovrModel.setTypeText(model.getContextAskedForDoubtType());
+                    ovrModel.setSubsurfaceName(model.getSubsurface().getSubsurface());
+                    ovrModel.setLinkDescription(linkDesc);
+                    ovrModel.setParentJobName(parentJobName);                   
+                    ovrModel.setDoubtStatusComment(ds.getReason());
+                    ovrModel.setStatus(stat);
+                    ovrModel.setUserCommentStack(userComment);
+                    ovrModel.setEarlierStatus(earlierStat);
+                    
+                OverrideView ovrView=new OverrideView(ovrModel);
+                model.setShowOverride(false);
             }
         }
     };

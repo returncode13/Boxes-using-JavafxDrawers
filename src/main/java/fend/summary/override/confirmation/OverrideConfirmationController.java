@@ -10,8 +10,10 @@ import db.model.DoubtStatus;
 import db.model.DoubtType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
@@ -54,7 +56,9 @@ public class OverrideConfirmationController extends Stage{
         model.getOverrideModel().addToUserCommentStack(userComment);
         
         model.getOverrideModel().setConfirmation(true);
+       
         close();
+        
     }
     
     void setModel(OverrideConfirmationModel item) {
@@ -80,6 +84,10 @@ public class OverrideConfirmationController extends Stage{
 
     void setView(OverrideConfirmationView vw) {
         this.view=vw;
+        this.setTitle("Commit");
+        this.setScene(new Scene(this.view));
+        this.initModality(Modality.APPLICATION_MODAL);
+        this.showAndWait();
     }
     
 }

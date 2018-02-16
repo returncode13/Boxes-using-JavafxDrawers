@@ -31,9 +31,26 @@ public class JobSummaryModel {
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
 
     private String contextAskedForDoubtType=null;
+    private final BooleanProperty showOverride = new SimpleBooleanProperty();
+
+  
     
     
     
+    
+    
+    //Used to show override menu in the JobSummaryController
+    public boolean isShowOverride() {
+        return showOverride.get();
+    }
+
+    public void setShowOverride(boolean value) {
+        showOverride.set(value);
+    }
+
+    public BooleanProperty showOverrideProperty() {
+        return showOverride;
+    }
     
     
     

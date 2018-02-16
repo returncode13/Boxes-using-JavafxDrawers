@@ -39,6 +39,7 @@ public interface DoubtDAO {
     
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) ;
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,Doubt cause,DoubtType doubtType) ;
+    public Doubt getDoubtFor(Subsurface sub,Job job,DoubtType doubtType) ;
 
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot);
     public List<Doubt> getDoubtFor(Sequence seq, Job job);

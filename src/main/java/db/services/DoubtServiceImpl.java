@@ -100,5 +100,10 @@ public class DoubtServiceImpl implements DoubtService{
     public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, Doubt cause, DoubtType doubtType) {
         return dsDAO.getDoubtFor(sub, job, dot, cause, doubtType);
     }
+
+    @Override
+    public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(sub, job, doubtType);
+    }
     
 }

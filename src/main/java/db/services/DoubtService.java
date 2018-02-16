@@ -37,7 +37,7 @@ public interface DoubtService {
     // public List<Doubt> getDoubtsForLink(Link  link);    
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,DoubtType doubtType) ;
     public Doubt getDoubtFor(Subsurface sub,Job job,Dot dot,Doubt cause,DoubtType doubtType) ;
-
+    public Doubt getDoubtFor(Subsurface sub,Job job,DoubtType doubtType) ;
     public List<Doubt> getDoubtFor(Subsurface s, Job jchild, Dot dot);
     public List<Doubt> getDoubtFor(Sequence seq, Job job);
     public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);

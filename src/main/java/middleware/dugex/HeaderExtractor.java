@@ -227,11 +227,11 @@ public class HeaderExtractor {
 
     private void populate(Header hdr) {
         
-        try {
-            ExecutorService executorService = Executors.newCachedThreadPool();
-            executorService.submit(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
+        /*try {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {*/
                     
                     
                     System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getHeaderId());
@@ -356,17 +356,17 @@ public class HeaderExtractor {
 //                headerService.getMultipleInstances(dbjob, hdr.getSubsurface());
 
 
-return null;
-                }
-            }).get();
-        } catch (InterruptedException ex) {
-            //Exceptions.printStackTrace(ex);
-            ex.printStackTrace();
-        } catch (ExecutionException ex) {
-            //Exceptions.printStackTrace(ex);
-            ex.printStackTrace();
-        }
-                         
+/*return null;
+}
+}).get();*/
+/*} catch (InterruptedException ex) {
+//Exceptions.printStackTrace(ex);
+ex.printStackTrace();
+} catch (ExecutionException ex) {
+//Exceptions.printStackTrace(ex);
+ex.printStackTrace();
+}
+*/          
          
                          
     }

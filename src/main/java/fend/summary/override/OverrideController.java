@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import middleware.doubt.DoubtStatusModel;
 
@@ -97,6 +98,7 @@ public class OverrideController extends Stage{
         this.view=vw;
         this.setTitle("managing doubt for sub: "+model.getSubsurfaceName()+" in  job: "+model.getDoubt().getLink().getChild().getNameJobStep());
         this.setScene(new Scene(this.view));
+        this.initModality(Modality.APPLICATION_MODAL);
         this.showAndWait();
         
     }
