@@ -387,8 +387,29 @@ parent.addChild(model);*/
     
      @FXML
     void showQctable(ActionEvent event) {
-            QcTableModel qcTableModel=new QcTableModel(model);
-            QcTableView qcTableView=new QcTableView(qcTableModel);
+            Task<Void> qctableTask=new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    qctable.setDisable(true);
+                    QcTableModel qcTableModel=new QcTableModel(model);
+                    QcTableView qcTableView=new QcTableView(qcTableModel);
+                return null;
+                }
+            };
+            
+            qctableTask.setOnFailed(e->{
+                qctableTask.getException().printStackTrace();
+                qctable.setDisable(false);
+            });
+            qctableTask.setOnSucceeded(e->{
+                qctable.setDisable(false);
+            });
+            qctableTask.setOnRunning(e->{
+                System.out.println("fend.job.job1.JobType1Controller.showQctable()...loading the qctable");
+            });
+        
+        exec.execute(qctableTask);
+            
     }
     
     
@@ -467,6 +488,51 @@ parent.addChild(model);*/
                     
         }
     };
+    
+    
+        
+ /**
+  * Used to extract headers after the logs are extracted.
+  **/
+    
+    private  ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          //  if(newValue){
+          //      new HeaderExtractor(model);
+          if(newValue){
+              if(headerExtractor==null){
+                  Task<Void> headerExtractionTask=new Task<Void>() {
+                      @Override
+                      protected Void call() throws Exception {
+                          headerExtractor=new HeaderExtractor(model);
+                          return null;
+                      }
+                  };
+                  
+                  headerExtractionTask.setOnFailed(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                       showTable.setDisable(false);
+                       qctable.setDisable(false);
+                       model.setFinishedCheckingLogs(false);
+                  });
+                  
+                  headerExtractionTask.setOnSucceeded(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                      qctable.setDisable(false);
+                      showTable.setDisable(false);
+                      model.setFinishedCheckingLogs(false);
+                  });
+                  
+                  exec.execute(headerExtractionTask);
+              }
+          }
+           // }
+        }
+    };
+    
     
     /***
      * private Implementation
@@ -685,47 +751,6 @@ parent.addChild(model);*/
                     }
                     
     }
-    
-  /***
-   * Listeners
-   **/
-    
-    private  ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          //  if(newValue){
-          //      new HeaderExtractor(model);
-          if(newValue){
-              if(headerExtractor==null){
-                  Task<Void> headerExtractionTask=new Task<Void>() {
-                      @Override
-                      protected Void call() throws Exception {
-                          headerExtractor=new HeaderExtractor(model);
-                          return null;
-                      }
-                  };
-                  
-                  headerExtractionTask.setOnFailed(e->{
-                      headerExtractor=null;
-                      headerButton.setDisable(false);
-                       showTable.setDisable(false);
-                       qctable.setDisable(false);
-                       model.setFinishedCheckingLogs(false);
-                  });
-                  
-                  headerExtractionTask.setOnSucceeded(e->{
-                      headerExtractor=null;
-                      headerButton.setDisable(false);
-                      qctable.setDisable(false);
-                      showTable.setDisable(false);
-                      model.setFinishedCheckingLogs(false);
-                  });
-                  
-                  exec.execute(headerExtractionTask);
-              }
-          }
-           // }
-        }
-    };
+
     
 }

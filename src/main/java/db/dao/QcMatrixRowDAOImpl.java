@@ -123,6 +123,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         Criteria criteria=session.createCriteria(QcMatrixRow.class);
         criteria.add(Restrictions.eq("job", sd));
         //criteria.add(Restrictions.eq("present", true));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         result=criteria.list();
         transaction.commit();
         }catch(Exception e){

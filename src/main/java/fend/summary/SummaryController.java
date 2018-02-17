@@ -5,11 +5,18 @@
  */
 package fend.summary;
 
+import db.model.Doubt;
+import db.model.DoubtStatus;
+import db.model.DoubtType;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.Summary;
 import db.model.Workspace;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
+import db.services.DoubtTypeService;
+import db.services.DoubtTypeServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SequenceService;
@@ -50,6 +57,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import middleware.doubt.DoubtTypeModel;
 
 /**
  *
@@ -63,6 +71,14 @@ public class SummaryController extends Stage{
     private WorkspaceService workspaceService=new WorkspaceServiceImpl();
     private JobService jobService=new JobServiceImpl();
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    private DoubtService doubtService =new DoubtServiceImpl();
+    private DoubtType timeDoubtType;
+    private DoubtType traceDoubtType;
+    private DoubtType qcDoubtType;
+    private DoubtType insightDoubtType;
+    private DoubtType inheritanceDoubtType;
+    private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
+    
     // @FXML
    // private TableView<SequenceSummary> table;
     
@@ -275,6 +291,12 @@ public class SummaryController extends Stage{
      
      void setModel(SummaryModel model){
          this.model=model;
+         timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+         traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
+         qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
+         insightDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
+         inheritanceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+         
          Map<Sequence,SequenceSummary> seqSummaryMap=new HashMap<>();
          //first get a list of all the subsurfaces.
          
@@ -441,9 +463,41 @@ public class SummaryController extends Stage{
                         jsm.setActive(true);
                         jsm.setSubsurface(sub);
                         jsm.setTime(x.getTimeSummary());
+                            if(x.getTimeSummary()){
+                                Doubt dxt=doubtService.getDoubtFor(sub, job, timeDoubtType);
+                                DoubtStatus dxts=new ArrayList<>(dxt.getDoubtStatuses()).get(0);
+                                String timeStatus=dxts.getStatus();
+                                String timeState=dxts.getState();
+                                jsm.setTimeStatus(timeStatus);
+                                jsm.setTimeState(timeState);
+                            }
                         jsm.setTrace(x.getTraceSummary());
+                            if(x.getTraceSummary()){
+                                    Doubt dxt=doubtService.getDoubtFor(sub, job, traceDoubtType);
+                                    DoubtStatus dxts=new ArrayList<>(dxt.getDoubtStatuses()).get(0);
+                                    String traceStatus=dxts.getStatus();
+                                    String traceState=dxts.getState();
+                                    jsm.setTracesStatus(traceStatus);
+                                    jsm.setTracesState(traceState);
+                                }
                         jsm.setQc(x.getQcSummary());
+                            if(x.getQcSummary()){
+                                        Doubt dxt=doubtService.getDoubtFor(sub, job, qcDoubtType);
+                                        DoubtStatus dxts=new ArrayList<>(dxt.getDoubtStatuses()).get(0);
+                                        String qcstatus=dxts.getStatus();
+                                        String qcstate=dxts.getState();
+                                        jsm.setQcStatus(qcstatus);
+                                        jsm.setQcState(qcstate);
+                                    }
                         jsm.setInsight(x.getInsightSummary());
+                        if(x.getInsightSummary()){
+                                        Doubt dxt=doubtService.getDoubtFor(sub, job, insightDoubtType);
+                                        DoubtStatus dxts=new ArrayList<>(dxt.getDoubtStatuses()).get(0);
+                                        String insightStatus=dxts.getStatus();
+                                        String insightState=dxts.getState();
+                                        jsm.setQcStatus(insightStatus);
+                                        jsm.setQcState(insightState);
+                                    }
                         jsm.setInheritance(x.getInheritanceSummary());
                         
                         System.out.println("fend.summary.SummaryController.setModel(): Changed flags on the jobsummary model for depth: "+depth+" job: "+job.getNameJobStep()+" seq: "+seq.getSequenceno()+" sub: "+sub.getSubsurface());

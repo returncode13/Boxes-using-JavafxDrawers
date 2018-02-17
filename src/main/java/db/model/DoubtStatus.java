@@ -41,6 +41,9 @@ public class DoubtStatus {
     @Column(name="comments")
     private String comments;
     
+    @Column(name="state")
+    private String state;
+    
     @ManyToOne
     @JoinColumn(name="user_fk")
     private User user;
@@ -99,6 +102,14 @@ public class DoubtStatus {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
     
     

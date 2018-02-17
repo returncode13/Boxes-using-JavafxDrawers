@@ -32,6 +32,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
 
 /**
@@ -39,6 +40,7 @@ import middleware.doubt.DoubtTypeModel;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobSummaryController {
+    
     private final String TIME_IS_SET="#2B00FF";
     private final String TIME_IS_UNSET="#14C6EF";
     private final String TRACES_ARE_SET="#01594D";
@@ -311,6 +313,17 @@ public class JobSummaryController {
         
         model.traceProperty().addListener(TRACE_SUMMARY_CHANGE_LISTENER);
         if(model.isTrace()){
+            
+            if(model.getTimeStatus().equals(DoubtStatusModel.OVERRIDE)){
+                traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_OVERRRIDE);
+            }else{
+                if(model.getTimeState().equals(DoubtStatusModel.WARNING)){
+                    traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_WARNING);
+                }else{
+                    traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_DOUBT);
+                }
+            }
+            
             traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_SET);
         }else{
             traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_UNSET);

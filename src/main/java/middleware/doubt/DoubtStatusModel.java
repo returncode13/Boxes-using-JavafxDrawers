@@ -12,6 +12,11 @@ package middleware.doubt;
 public class DoubtStatusModel {
     public static final String YES="Y";
     public static final String OVERRIDE="O";
+    
+    public static final String GOOD="GOOD";
+    public static final String ERROR="ERROR";
+    public static final String WARNING="WARNING";
+    
     public static String getNewDoubtTraceMessage(String function,Double tolerance,Double error,Double evaluated,Double lhs,String doubttype){
         String message=new String();
         if(doubttype.equals(DoubtTypeModel.TRACES)){

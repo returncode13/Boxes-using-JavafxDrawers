@@ -150,13 +150,15 @@ public class QcTableSubsurface extends QcTableSequence{
     }
 
     public String getUpdateTime() {
+        
         return updateTime;
     }
      
     private ChangeListener<String> qcTableSelectionChangedListener=new ChangeListener<String>() {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-            System.out.println(".changed(): from "+oldValue+" to "+newValue);
+            
+            System.out.println("fend.job.table.qctable.seq.sub.QcTableSubsurface.changed(): from "+oldValue+" to "+newValue);
         }
     };
     

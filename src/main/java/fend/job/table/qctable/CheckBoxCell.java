@@ -17,6 +17,8 @@ import db.services.QcTableServiceImpl;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.List;
+import java.util.concurrent.Executor;
+import javafx.concurrent.Task;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
@@ -100,29 +102,44 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
        checkBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
            @Override
            public void handle(MouseEvent event) {
-            //   System.out.println(".handle(): MouseClicked");
-             
-               String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
-               
-               int sel=getTreeTableRow().getIndex();
-               selectedItem=CheckBoxCell.this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
-                
-                if(selectedItem.isParent()){
-                     selectedItem.updateChildren=true;
-                    for(QcTableSequence child: selectedItem.getChildren()){
-               //         System.out.println(".handle(): updating children");
-                        child.updateParent=false;
-                    }
-                    updateDownwards(updateTime);
-                }
-               else{
-                    selectedItem.getParent().updateChildren=false;
-                    selectedItem.updateParent=true;
-                    updateUpwards(updateTime);
-                }
-                
-                
+               /*    //   System.out.println(".handle(): MouseClicked");
+               Task<Void> clickTask=new Task<Void>() {
+               @Override
+               protected Void call() throws Exception {*/
+            
+            
+                                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+
+                                int sel=getTreeTableRow().getIndex();
+                                selectedItem=CheckBoxCell.this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
+
+                                 if(selectedItem.isParent()){
+                                      selectedItem.updateChildren=true;
+                                     for(QcTableSequence child: selectedItem.getChildren()){
+                                //         System.out.println(".handle(): updating children");
+                                         child.updateParent=false;
+                                     }
+                                     updateDownwards(updateTime);
+                                 }
+                                else{
+                                     selectedItem.getParent().updateChildren=false;
+                                     selectedItem.updateParent=true;
+                                     updateUpwards(updateTime);
+                                 }
+
+                                 /*   return null;
+                                 
+                                 }
+                                 };*/
+            
+                                 /*clickTask.setOnFailed(e->{});
+                                 clickTask.setOnSucceeded(e->{});
+                                 
+                                 exec.execute(clickTask);*/
            }
+           
+           
+           
            
        });
        
@@ -142,6 +159,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
        });
     }
 
+   
     
     
     

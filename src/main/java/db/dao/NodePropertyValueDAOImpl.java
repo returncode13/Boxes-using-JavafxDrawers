@@ -103,6 +103,8 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
             transaction=session.beginTransaction();
             Criteria criteria = session.createCriteria(NodePropertyValue.class);
             criteria.add(Restrictions.eq("job", job));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        //result=criteria.list();
             
             result=criteria.list();
             transaction.commit();
@@ -129,6 +131,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
             Criteria criteria = session.createCriteria(NodePropertyValue.class);
             criteria.add(Restrictions.eq("job", jobStep));
             criteria.add(Restrictions.eq("nodeProperty", nodeProperty));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             result=criteria.list();
             transaction.commit();
             if(result.size()==1){

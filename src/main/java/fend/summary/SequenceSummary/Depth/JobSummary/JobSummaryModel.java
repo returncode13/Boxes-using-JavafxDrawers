@@ -33,12 +33,114 @@ public class JobSummaryModel {
     private String contextAskedForDoubtType=null;
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
 
-  
+    
+    /**
+     * Status variables. set only when there's a doubt. 
+     * Two status states: DoubtStatusModel.OVERRIDE and DoubtStatusModel.YES
+     */
+    private String timeStatus;
+    private String tracesStatus;
+    private String qcStatus;
+    private String insightStatus;
+    //private String inheritanceStatus;                       //hopefully never have to use this!
     
     
     
+    /***
+     * State variables: 
+     * 3 states to a each type.
+     * GOOD.     (when no doubt exists. isT()==false  for type T)
+     * WARNING.  (when doubt exists isT()==true for type T)
+     * ERROR.    (when doubt exists isT()==true for type T)
+     **/
+    
+    private String timeState;
+    private String tracesState;
+    private String qcState;
+    private String insightState;
     
     
+    
+    /**
+     * Status getters/setters
+     **/
+    
+
+    public String getTimeStatus() {
+        return timeStatus;
+    }
+
+    public void setTimeStatus(String timeStatus) {
+        this.timeStatus = timeStatus;
+    }
+
+    public String getTracesStatus() {
+        return tracesStatus;
+    }
+
+    public void setTracesStatus(String tracesStatus) {
+        this.tracesStatus = tracesStatus;
+    }
+
+    public String getQcStatus() {
+        return qcStatus;
+    }
+
+    public void setQcStatus(String qcStatus) {
+        this.qcStatus = qcStatus;
+    }
+
+    public String getInsightStatus() {
+        return insightStatus;
+    }
+
+    public void setInsightStatus(String insightStatus) {
+        this.insightStatus = insightStatus;
+    }
+
+    /* public String getInheritanceStatus() {
+    return inheritanceStatus;
+    }
+    
+    public void setInheritanceStatus(String inheritanceStatus) {
+    this.inheritanceStatus = inheritanceStatus;
+    }
+    */
+    public String getTimeState() {
+        return timeState;
+    }
+
+    public void setTimeState(String timeState) {
+        this.timeState = timeState;
+    }
+
+    public String getTracesState() {
+        return tracesState;
+    }
+
+    public void setTracesState(String tracesState) {
+        this.tracesState = tracesState;
+    }
+
+    public String getQcState() {
+        return qcState;
+    }
+
+    public void setQcState(String qcState) {
+        this.qcState = qcState;
+    }
+
+    public String getInsightState() {
+        return insightState;
+    }
+
+    /***
+     * State getters/setters
+     **/
+    public void setInsightState(String insightState) {
+        this.insightState = insightState;
+    }
+
     //Used to show override menu in the JobSummaryController
     public boolean isShowOverride() {
         return showOverride.get();

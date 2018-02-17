@@ -5,23 +5,19 @@
  */
 package fend.job.table.qctable;
 
-import com.jfoenix.controls.JFXTreeTableColumn;
 import fend.job.table.qctable.seq.QcTableSequence;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import db.model.QcMatrixRow;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBoxTreeItem;
@@ -39,6 +35,8 @@ public class QcTableController extends Stage{
     QcTableModel model;
     QcTableView view;
     
+    Executor exec;
+    
     /*@FXML
     private JFXTreeTableView<QcTableSequence> treeTableView;*/
     
@@ -48,9 +46,21 @@ public class QcTableController extends Stage{
     
     public void setModel(QcTableModel item){
         model=item;
-    }
-    
-    public void setView(QcTableView vw){
+        exec=Executors.newCachedThreadPool(runnable->{
+                Thread t=new Thread(runnable);
+                t.setDaemon(true);
+                return t;
+        });
+        
+        
+                //List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
+        Task<Void> qctableLoadTask=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                
+       
+        
+        
         
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
         
@@ -124,8 +134,8 @@ public class QcTableController extends Stage{
                          name=qseq.getSequence().getRealLineName();
                      }
                      
-                     System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
-                     System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
+                   //  System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
+                   //  System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
                      checkUncheck.bindBidirectional(qseq.getQcmatrix().get(index).getCheckUncheckProperty());
                      indeterminate.bindBidirectional(qseq.getQcmatrix().get(index).getIndeterminateProperty());
                      
@@ -178,12 +188,38 @@ public class QcTableController extends Stage{
         treetableView.setRoot(root);
         treetableView.setShowRoot(false);
         
+        return null;
         
-        this.view=vw;
+             }
+        };
+        
+        
+        
+            qctableLoadTask.setOnFailed(e->{
+                qctableLoadTask.getException().printStackTrace(); 
+            });
+
+            qctableLoadTask.setOnSucceeded(e->{
+
+              
+            });
+        
+            exec.execute(qctableLoadTask);
+        
+        
+    }
+    
+    public void setView(QcTableView vw){
+         this.view=vw;
         
         this.setTitle("qcTable");
         this.setScene(new Scene(this.view));
         this.showAndWait();
+        
+
+        
+            
+       
         
     }
 }
