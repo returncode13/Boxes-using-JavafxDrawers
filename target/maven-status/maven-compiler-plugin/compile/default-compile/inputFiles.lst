@@ -9,6 +9,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/edge/dotjobedge/DotJobEdgeController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/QcTableService.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/edge/dotjobedge/DotJobEdgeView.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary_new/JobSummaryView.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/dot/anchor/AnchorController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/HeaderService.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/override/OverrideView.java
@@ -77,6 +78,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryColors.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/QcTypeDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/Subsurface.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCellController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/DescendantDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/middleware/sequences/SequenceHeaders.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/SubsurfaceJobService.java
@@ -85,6 +87,8 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/UserDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/SequenceDAO.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/AncestorDAOImpl.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCellView.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary_new/JobSummaryModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/DoubtTypeDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/dot/anchor/AnchorModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job2/JobType2Model.java
@@ -102,6 +106,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job2/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/SummaryDAO.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job2/definitions/JobDefinitionsController.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/listener/integrator/EventListenerIntegrator.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/AcquisitionDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job4/JobType4Controller.java
@@ -195,6 +200,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/JobVolumeMapServiceImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job2/definitions/qcmatrix/QcMatrixView.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/AcquisitionDAO.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/listener/DoubtUpdateListener.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job0/definitions/insight/InsightListModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/SubsurfaceJobId.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/middleware/dugex/DugLogManager.java
@@ -216,6 +222,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/QcMatrixRow.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/table/qctable/QcTableController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/middleware/dugex/AcquisitionLoader.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary_new/JobSummaryController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/table/qctable/seq/sub/QcTableSubsurface.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job2/definitions/qcmatrix/QcMatrixListCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/DoubtStatusDAO.java
@@ -237,6 +244,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job1/definitions/qcmatrix/QcMatrixView.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job4/definitions/volume/VolumeListController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job3/definitions/qcmatrix/QcMatrixView.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCellModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/PropertyTypeDAOImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/DoubtServiceImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/Descendant.java
@@ -267,6 +275,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/dot/anchor/AnchorView.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job4/JobType4View.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/dot/formulaField/FormulaFieldModel.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/app/connections/hibernate/HibernateUtil_back.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job1/definitions/volume/VolumeListCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/dot/variableArgument/VariableArgumentModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/dao/LinkDAO.java
@@ -332,6 +341,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/JobVolumeMap.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job0/JobType0View.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SummaryModel.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/TimeCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/user/UserController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job4/definitions/qcmatrix/QcMatrixListCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/UserService.java

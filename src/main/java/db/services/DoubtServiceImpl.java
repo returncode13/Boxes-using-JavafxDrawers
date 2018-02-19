@@ -105,5 +105,19 @@ public class DoubtServiceImpl implements DoubtService{
     public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
         return dsDAO.getDoubtFor(sub, job, doubtType);
     }
+
+    @Override
+    public Doubt getCauseOfInheritedDoubtForType(Subsurface sub, Job job, DoubtType doubtType) {
+        List<Doubt> inheritedDoubtsInSubJob=dsDAO.getInheritedDoubtFor(sub, job);
+        for(Doubt inh:inheritedDoubtsInSubJob){
+            Doubt cause=inh.getDoubtCause();
+            if(cause.getDoubtType().equals(doubtType)){
+                return cause;
+            }
+        }
+        return null;
+    }
+
+    
     
 }

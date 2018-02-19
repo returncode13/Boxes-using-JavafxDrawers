@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -89,6 +90,31 @@ public class SequenceSummary {
     this.children = children;
     }
     */
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.subsurface);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SequenceSummary other = (SequenceSummary) obj;
+        if (!Objects.equals(this.subsurface, other.subsurface)) {
+            return false;
+        }
+        return true;
+    }
     
     
     

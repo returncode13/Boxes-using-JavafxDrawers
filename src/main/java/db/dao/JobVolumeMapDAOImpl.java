@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +25,7 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
 
     @Override
     public void createJobVolumeMap(JobVolumeMap jvd) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -56,7 +56,7 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
 
     @Override
     public List<JobVolumeMap> getJobVolumeMap(Job js) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         
@@ -81,7 +81,7 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
 
     @Override
     public List<Job> getJobsContaining(Volume v) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         List<Job> jobStepList=new ArrayList<>();
@@ -107,7 +107,7 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
 
     @Override
     public List<Volume> getVolumesFor(Job js) {
-       Session session = HibernateUtil.getSessionFactory().openSession();
+       Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         List<Volume> volumeList=new ArrayList<>();
@@ -135,7 +135,7 @@ public class JobVolumeMapDAOImpl implements JobVolumeMapDAO{
     public JobVolumeMap getJobVolumeMap(Job js, Volume v) {
         
         
-          Session session = HibernateUtil.getSessionFactory().openSession();
+          Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<JobVolumeMap> result=null;
         List<Volume> volumeList=new ArrayList<>();

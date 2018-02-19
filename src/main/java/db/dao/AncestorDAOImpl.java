@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public void addAncestor(Ancestor anc) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -44,7 +44,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public Ancestor getAncestor(Long aid) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             Ancestor anc= (Ancestor) session.get(Ancestor.class, aid);
             return anc;
@@ -58,7 +58,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public void updateAncestor(Long aid, Ancestor newAncestor) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -76,7 +76,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public void deleteAncestor(Long aid) {
-          Session session = HibernateUtil.getSessionFactory().openSession();
+          Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -92,7 +92,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public List<Ancestor> getAncestorFor(Job fkid) {
-        Session sess = HibernateUtil.getSessionFactory().openSession();
+        Session sess = HibernateUtil_back.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
         try{
@@ -114,7 +114,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public void clearTableForJob(Job dbjob) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         
         try{
             
@@ -147,7 +147,7 @@ public class AncestorDAOImpl implements AncestorDAO{
 
     @Override
     public Ancestor getAncestorFor(Job job, Job ancestor) {
-       Session sess = HibernateUtil.getSessionFactory().openSession();
+       Session sess = HibernateUtil_back.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
         try{

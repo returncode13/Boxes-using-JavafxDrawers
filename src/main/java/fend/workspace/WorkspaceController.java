@@ -6,8 +6,6 @@
 package fend.workspace;
 
 import app.properties.AppProperties;
-import com.jfoenix.controls.JFXButton;
-import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
 import db.model.Doubt;
@@ -82,12 +80,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import fend.job.job1.JobType1Model;
 import fend.job.job1.JobType1View;
-import fend.job.job0.definitions.JobDefinitionsModel;
-import fend.job.job0.definitions.JobDefinitionsView;
-import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
-import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
-import fend.job.job0.definitions.volume.VolumeListModel;
-import fend.job.job0.definitions.volume.VolumeListView;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.JobType0View;
 import fend.job.job0.property.JobModelProperty;
@@ -103,8 +95,6 @@ import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
 import fend.workspace.gLink.GLink;
-import fend.workspace.saveworkspace.SaveWorkSpaceView;
-import fend.workspace.saveworkspace.SaveWorkspaceModel;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -118,22 +108,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
-import javafx.application.Platform;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-import jdk.internal.dynalink.linker.LinkerServices;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
 import net.objecthunter.exp4j.Expression;
@@ -175,6 +157,10 @@ public class WorkspaceController {
     private SummaryService summaryService = new SummaryServiceImpl();
     private List<BooleanProperty> changePropertyList = new ArrayList<>();
 
+    
+    private SummaryModel summaryModel=null;
+    
+    
     @FXML
     private AnchorPane baseWindow;              //depth =0 
 
@@ -374,7 +360,7 @@ public class WorkspaceController {
     void getSummary(ActionEvent event) throws Exception {
             
         
-                SummaryModel summaryModel=new SummaryModel(this);
+                if(summaryModel==null) summaryModel=new SummaryModel(this);
                 SummaryView summaryView=new SummaryView(summaryModel);
         
                 //summarize();
@@ -750,6 +736,14 @@ public class WorkspaceController {
     public WorkspaceModel getModel() {
         return model;
     }
+
+    public SummaryModel getSummaryModel() {
+        return summaryModel;
+    }
+
+    public void setSummaryModel(SummaryModel summaryModel) {
+        this.summaryModel = summaryModel;
+    }
     
     
 
@@ -825,23 +819,23 @@ public class WorkspaceController {
                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Fetched job " + dbjob.getNameJobStep() + " id: " + dbjob.getId());
                     dbjob.setNameJobStep(fejob.getNameproperty().get());
                     
-                    List<NodePropertyValue> npValues=nodePropertyValueService.getNodePropertyValuesFor(dbjob);
-                   
+                    /*List<NodePropertyValue> npValues=nodePropertyValueService.getNodePropertyValuesFor(dbjob);
+                    
                     List<JobModelProperty> jobproperties=fejob.getJobProperties();
                     for (Iterator<JobModelProperty> iterator = jobproperties.iterator(); iterator.hasNext();) {
-                        JobModelProperty jobProperty = iterator.next();
-                         for (Iterator<NodePropertyValue> iterator1 = npValues.iterator(); iterator1.hasNext();) {
-                               NodePropertyValue npv = iterator1.next();
-                               if(npv.getNodeProperty().getPropertyType().getName().equals(jobProperty.getPropertyName())){
-                                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Before updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
-                                    npv.setValue(jobProperty.getPropertyValue());
-                                    nodePropertyValueService.updateNodePropertyValue(npv.getIdNodePropertyValue(), npv);
-                                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): After updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
-                                    
-                               }
-                         }
-                        
+                    JobModelProperty jobProperty = iterator.next();
+                    for (Iterator<NodePropertyValue> iterator1 = npValues.iterator(); iterator1.hasNext();) {
+                    NodePropertyValue npv = iterator1.next();
+                    if(npv.getNodeProperty().getPropertyType().getName().equals(jobProperty.getPropertyName())){
+                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Before updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+                    npv.setValue(jobProperty.getPropertyValue());
+                    nodePropertyValueService.updateNodePropertyValue(npv.getIdNodePropertyValue(), npv);
+                    System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): After updating found nodePropertyValues for type 4 with  "+npv.getIdNodePropertyValue()+" : job: "+npv.getJob().getNameJobStep()+" : nodeProperty-Node: "+npv.getNodeProperty().getNodeType().getActualnodeid()+" : nodeProperty-Property: "+npv.getNodeProperty().getPropertyType().getName()+" : value: "+npv.getValue());
+                    
                     }
+                    }
+                    
+                    }*/
 
                 }
 
@@ -1372,10 +1366,10 @@ public class WorkspaceController {
     public void summarize() throws Exception{
         
         
-         ExecutorService executorService= Executors.newFixedThreadPool(1);
-                executorService.submit(new Callable<Void>() {
-                     @Override
-                public Void call() throws Exception {
+        /*    ExecutorService executorService= Executors.newFixedThreadPool(1);
+        executorService.submit(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {*/
         
         
         
@@ -1746,8 +1740,8 @@ public class WorkspaceController {
         System.out.println("fend.workspace.WorkspaceController.getSummary(): Exception "+e.getLocalizedMessage());
         }*/
         
-        return null;
-                }}).get();
+        /*return null;
+        }}).get();*/
     }
 
     private void checkForTimeDoubts(Link l,Dot dot,Subsurface subb,Summary summary,List<Descendant> descendantsThatContainSub) throws Exception {
@@ -1775,6 +1769,7 @@ public class WorkspaceController {
                         doubtStatus.setReason(DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName()));
                         doubtStatus.setDoubt(doubt);
                         doubtStatus.setStatus(DoubtStatusModel.YES);
+                        doubtStatus.setState(DoubtStatusModel.ERROR);
                         doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                         //doubtStatus.setUser(user);
                         doubtStatusService.createDoubtStatus(doubtStatus);
@@ -1933,16 +1928,16 @@ public class WorkspaceController {
                 } else if ((evaluated <= error && evaluated > tolerance) || (evaluated > error)) {
                     System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt");
                     String dotState = dot.getStatus();
-                    /*
                     
-                    Use this redFlag to set summary to either null or true . Summary=null will show up red on the summary table. Summary=true will show up as a warning(milder) color
+                    
+                    //Use this redFlag to set summary to either null or true . Summary=null will show up red on the summary table. Summary=true will show up as a warning(milder) color
                     
                     Boolean redFlag;
                     if(evaluated > error){
                     redFlag=true;
                     }else{
                     redFlag=false;
-                    }*/
+                    }
                     Doubt doubt;
 
                     if (dotState.equals(DotModel.JOIN)) {
@@ -1962,6 +1957,11 @@ public class WorkspaceController {
                             doubtStatus.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                             doubtStatus.setDoubt(doubt);
                             doubtStatus.setStatus(DoubtStatusModel.YES);
+                            if(redFlag){
+                                doubtStatus.setState(DoubtStatusModel.ERROR);
+                            }else{
+                                doubtStatus.setState(DoubtStatusModel.WARNING);
+                            }
                             doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                             //doubtStatus.setUser(user);
                             doubtStatusService.createDoubtStatus(doubtStatus);
@@ -1969,7 +1969,9 @@ public class WorkspaceController {
                             doubtService.updateDoubt(doubt.getId(), doubt);
 
                             summary.setTraceSummary(true);
-                            inherit(l,dot,subb,doubt,descendantsThatContainSub);
+                            if(redFlag){                                                //inherit only for errors
+                                inherit(l,dot,subb,doubt,descendantsThatContainSub);
+                            }
                         } else {
                             doubt = doubtService.getDoubtFor(subb, l.getChild(), dot, doubtTypeTraces);
                             summary.setTraceSummary(true);
@@ -1997,6 +1999,11 @@ public class WorkspaceController {
                                 doubtStatus.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                 doubtStatus.setDoubt(doubt);
                                 doubtStatus.setStatus(DoubtStatusModel.YES);
+                                if(redFlag){
+                                    doubtStatus.setState(DoubtStatusModel.ERROR);
+                                }else{
+                                    doubtStatus.setState(DoubtStatusModel.WARNING);
+                                }
                                 doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                                 //doubtStatus.setUser(user);
                                 doubtStatusService.createDoubtStatus(doubtStatus);
@@ -2004,7 +2011,9 @@ public class WorkspaceController {
                                 doubtService.updateDoubt(doubt.getId(), doubt);
                                 summary.setTraceSummary(true);
                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Setting Trace doubt inheritance on the descendants");
-                                inherit(l,dot,subb,doubt,descendantsThatContainSub);
+                                if(redFlag){                                        //inherit only for errors
+                                    inherit(l,dot,subb,doubt,descendantsThatContainSub);
+                                }
                             } else {
                                 doubt = doubtService.getDoubtFor(subb, child, dot, doubtTypeTraces);
                                 Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
@@ -2055,6 +2064,7 @@ public class WorkspaceController {
                         doubtStatus.setReason(DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(), subb.getSubsurface(), doubtTypeQc.getName()));
                         doubtStatus.setDoubt(doubt);
                         doubtStatus.setStatus(DoubtStatusModel.YES);
+                        doubtStatus.setState(DoubtStatusModel.ERROR);
                         doubtStatus.setTimeStamp(DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT));
                         //doubtStatus.setUser(user);
                         doubtStatusService.createDoubtStatus(doubtStatus);

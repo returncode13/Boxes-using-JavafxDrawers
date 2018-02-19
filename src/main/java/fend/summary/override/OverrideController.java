@@ -8,11 +8,16 @@ package fend.summary.override;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
+import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.services.DoubtService;
 import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
 import fend.summary.override.confirmation.OverrideConfirmationModel;
 import fend.summary.override.confirmation.OverrideConfirmationView;
+import java.util.Iterator;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -114,13 +119,50 @@ public class OverrideController extends Stage{
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
+                Boolean statusChanged=false;
                 System.out.println("fend.summary.override.OverrideController.setModel(): Override Confirmed...updating database for doubtstatus id: "+model.getDoubtStatus().getId());
                 DoubtStatus ds=model.getDoubtStatus();
                 String status=model.getStatus();
                 String userComment=model.getUserCommentStack();
+                if(!ds.getStatus().equals(status)){
+                    statusChanged=true;
+                }
                 ds.setStatus(status);
                 ds.setComments(userComment);
                 doubtStatusService.updateDoubtStatus(ds.getId(), ds);
+                
+                Doubt doubt=ds.getDoubt();
+                Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
+                for (Iterator<Doubt> iterator = inheritedDoubts.iterator(); iterator.hasNext();) {
+                    Doubt inhDoubt = iterator.next();
+                    
+                    if(statusChanged){
+                            Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
+                                for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
+                                        System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
+                                        inhDoubtStat.setStatus(status);
+                                        doubtStatusService.updateDoubtStatus(inhDoubt.getId(), inhDoubtStat);
+                                }
+                    }
+                            
+                    
+                    
+                    
+                    
+                    System.out.println(".changed(): inherited doubt: "+inhDoubt.getChildJob().getNameJobStep()+" will be requeried. for subsurface "+inhDoubt.getSubsurface().getSubsurface());
+                    
+                    JobSummaryModel inhjsm=model.getCellModel().getJobSummaryModel()
+                            .getSummaryModel()
+                            .getSequenceSummaryMap()
+                            .get(inhDoubt.getSubsurface().getSequence())
+                            .getChild(inhDoubt.getSubsurface())
+                            .getDepth(inhDoubt.getChildJob().getDepth())
+                            .getJobSummaryModel(inhDoubt.getChildJob());
+                    System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
+                    inhjsm.setQuery(!inhjsm.isQuery());
+                }
+                
+                
                 System.out.println(".changed(): closing the override box..");
                 close();
                 

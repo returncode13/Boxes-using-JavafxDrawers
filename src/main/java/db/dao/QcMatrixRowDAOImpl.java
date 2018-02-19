@@ -9,7 +9,7 @@ import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.model.Job;
 import db.model.Volume;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -24,7 +24,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void createQcMatrixRow(QcMatrixRow qcmatrix) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -39,7 +39,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void updateQcMatrixRow(Long qid, QcMatrixRow newq) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -62,7 +62,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public QcMatrixRow getQcMatrixRow(Long qid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             QcMatrixRow h= (QcMatrixRow) session.get(QcMatrixRow.class, qid);
             return h;
@@ -76,7 +76,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void deleteQcMatrixRow(Long qid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -115,7 +115,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public List<QcMatrixRow> getQcMatrixForJob(Job sd) {    //return sd.getQcMatrices() ???
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
         try{
@@ -136,7 +136,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public QcMatrixRow getQcMatrixRowFor(Job sd, QcType qctype) throws Exception{
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
         try{
@@ -162,7 +162,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public List<QcMatrixRow> getQcMatrixForJob(Job sessDetails, boolean b) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
         try{

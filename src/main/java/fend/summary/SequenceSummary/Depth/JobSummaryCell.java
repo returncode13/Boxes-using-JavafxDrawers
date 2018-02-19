@@ -6,18 +6,14 @@
 package fend.summary.SequenceSummary.Depth;
 
 import db.model.Job;
-import fend.summary.SequenceSummary.Depth.Depth;
-import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
-import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryView;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellView;
+import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryView;
 import fend.summary.SequenceSummary.SequenceSummary;
-import fend.summary.override.OverrideModel;
-import fend.summary.override.OverrideView;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import fend.summary.SummaryModel;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TreeTableCell;
 
@@ -26,7 +22,9 @@ import javafx.scene.control.TreeTableCell;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
+    SummaryModel summaryModel;
     JobSummaryView view;
+    //AnchorPane view=new AnchorPane();
     JobSummaryModel model;
     int depthId;
     //int jobId;
@@ -54,15 +52,20 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     }*/
     
     
-    public JobSummaryCell(int depthId, Job job) {
+    public JobSummaryCell(int depthId, Job job,SummaryModel summodel) {
+        this.summaryModel=summodel;
         this.depthId=depthId;
        // this.jobId=jobId;
        this.job=job;
 //       this.itemProperty().addListener(ITEM_PROPERTY_CHANGE_LISTENER);
        
-        model=new JobSummaryModel();
-        
+        model=new JobSummaryModel(summaryModel);
+        /*TimeCellModel tcm=model.getTimeCellModel();
+        TimeCellView tcview=new TimeCellView(tcm);
+        */
         view=new JobSummaryView(model);
+        //view.getChildren().add(tcview);
+        
         
          
     }
@@ -75,24 +78,19 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
            
               int index=getIndex();
             JobSummaryModel jsm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job);
-             //JobSummaryModel jsm= getTreeTableView().getTreeItem(index).getValue().getDepths().get(depthId).getJobSummaries().get(jobId);
-           //JobSummaryModel jsm=getTableView().getItems().get(index).getDepths().get(depthId).getJobSummaries().get(jobId);
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSequence().getSequenceno());
-          //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting sequence to "+jsm.getSubsurface().getSubsurface());
+           
             if(jsm.getSubsurface()==null){//this means the selected item is the parent sequence.
-            //jsm=getTreeTableView().getTreeItem(index).getValue().get
-         //   getTreeTableView().getTreeItem(index).getValue().get;
-                System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Sequence "+jsm.getSequence().getSequenceno()+" clicked. No subsurface info");
-            }else{
+          }else{
                 System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
             }
-            model.setSequence(jsm.getSequence());
+            /*model.setSequence(jsm.getSequence());
             model.setJob(jsm.getJob());
             model.setInheritance(jsm.isInheritance());
             model.setTime(jsm.isTime());
             model.setTrace(jsm.isTrace());
             model.setQc(jsm.isQc());
-            model.setInsight(jsm.isInsight());
+            model.setInsight(jsm.isInsight());*/
+            //model.getTimeCellModel().setTimeProperty(jsm.getTimeCellModel().isTimeProperty());
             if(jsm.getSubsurface()!=null){
                 model.setSubsurface(jsm.getSubsurface());
             }
@@ -107,21 +105,26 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
                //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
             }
-            //this.model=new JobSummaryModel();
-             final ContextMenu contextMenu=new ContextMenu();
-                if(model.isInDoubt() && model.getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences. 
-                    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt"); 
-                    overrideMenuItem.setOnAction(e->{
-                        System.out.println("Fetching doubt information for Subsurface: "+model.getSubsurface().getSubsurface()+" job: "
-                                + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep()+" for doubtType: "+model.getContextAskedForDoubtType());
-                    
-                    
-                        model.setShowOverride(true);
-                    
-                    });
-                    contextMenu.getItems().add(overrideMenuItem);
-                }
-                setContextMenu(contextMenu);
+            /* final ContextMenu contextMenu=new ContextMenu();
+            if(model.isInDoubt() && model.getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+            final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+            overrideMenuItem.setOnAction(e->{
+            System.out.println("Fetching doubt information for Subsurface: "+model.getSubsurface().getSubsurface()+" job: "
+            + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep()+" for doubtType: "+model.getContextAskedForDoubtType());
+            
+            
+            model.setShowOverride(true);
+            
+            });
+            contextMenu.getItems().add(overrideMenuItem);
+            }
+            setContextMenu(contextMenu);
+            */
+            
+            
+            
+            
+            
             /*SequenceSummary item=(SequenceSummary) this.getTableRow().getItem();
             model=item.getDepths().get(depthId).getJobSummaries().get(jobId);
             model.setSequence(item.getSequence());*/
@@ -133,26 +136,6 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     }
     
     
-    
-    
-    /*  private ChangeListener<Boolean> ITEM_PROPERTY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
-    @Override
-    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-    if(newValue!=null)
-    if(newValue){
-    final ContextMenu contextMenu=new ContextMenu();
-    if(model.isInDoubt()){
-    final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
-    overrideMenuItem.setOnAction(e->{
-    System.out.println("Fetching doubt information for Subsurface: "+getTreeTableRow().getItem().getSubsurface().getSubsurface()+" job: "
-    + ""+getTreeTableRow().getItem().getDepth(Long.valueOf(depthId)).getJobSummaryModel(job).getJob().getNameJobStep());
-    });
-    contextMenu.getItems().add(overrideMenuItem);
-    }
-    setContextMenu(contextMenu);
-    }
-    }
-    };*/
-    
+
     
 }

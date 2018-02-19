@@ -7,7 +7,7 @@ package db.dao;
 
 import db.model.Doubt;
 import db.model.DoubtType;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -22,7 +22,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public void createDoubtType(DoubtType dt) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         try{
             transaction=session.beginTransaction();
@@ -37,7 +37,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public void updateDoubtType(Long dtid, DoubtType newdt) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -56,7 +56,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public DoubtType getDoubtType(Long dtid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             DoubtType ll=(DoubtType) session.get(DoubtType.class,dtid);
             return ll;
@@ -70,7 +70,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public void deleteDoubtType(Long dtid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -86,7 +86,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public DoubtType getDoubtTypeByName(String doubtName) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<DoubtType> result=null;
         try{

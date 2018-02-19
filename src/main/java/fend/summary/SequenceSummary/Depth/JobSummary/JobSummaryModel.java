@@ -9,10 +9,14 @@ import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.Summary;
+import fend.summary.SummaryModel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import middleware.doubt.DoubtStatusModel;
 
 /**
  *
@@ -29,19 +33,34 @@ public class JobSummaryModel {
     private final BooleanProperty insight = new SimpleBooleanProperty();    //insight is true implies no doubt.
     private final BooleanProperty inheritance = new SimpleBooleanProperty();//inheritance is true implies no doubt.
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
+    private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
+    
+    final private SummaryModel summaryModel;
 
+    public JobSummaryModel(SummaryModel summaryModel) {
+        this.summaryModel = summaryModel;
+    }
+
+    public SummaryModel getSummaryModel() {
+        return summaryModel;
+    }
+    
+    
+    
+    
+    
     private String contextAskedForDoubtType=null;
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
 
     
     /**
      * Status variables. set only when there's a doubt. 
-     * Two status states: DoubtStatusModel.OVERRIDE and DoubtStatusModel.YES
+     * Three status states: DoubtStatusModel.GOOD DoubtStatusModel.OVERRIDE and DoubtStatusModel.YES
      */
-    private String timeStatus;
-    private String tracesStatus;
-    private String qcStatus;
-    private String insightStatus;
+    private StringProperty timeStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
+    private StringProperty tracesStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
+    private StringProperty qcStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
+    private StringProperty insightStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
     //private String inheritanceStatus;                       //hopefully never have to use this!
     
     
@@ -67,37 +86,53 @@ public class JobSummaryModel {
     
 
     public String getTimeStatus() {
-        return timeStatus;
+        return timeStatus.get();
     }
 
     public void setTimeStatus(String timeStatus) {
-        this.timeStatus = timeStatus;
+        this.timeStatus.set(timeStatus);
     }
 
     public String getTracesStatus() {
-        return tracesStatus;
+        return tracesStatus.get();
     }
 
     public void setTracesStatus(String tracesStatus) {
-        this.tracesStatus = tracesStatus;
+        this.tracesStatus.set(tracesStatus);
     }
 
     public String getQcStatus() {
-        return qcStatus;
+        return qcStatus.get();
     }
 
     public void setQcStatus(String qcStatus) {
-        this.qcStatus = qcStatus;
+        this.qcStatus.set(qcStatus);
     }
 
     public String getInsightStatus() {
-        return insightStatus;
+        return insightStatus.get();
     }
 
     public void setInsightStatus(String insightStatus) {
-        this.insightStatus = insightStatus;
+        this.insightStatus.set(insightStatus);
+    }
+    
+    
+    public StringProperty timeStatusProperty(){
+        return timeStatus;
     }
 
+    public StringProperty tracesStatusProperty(){
+        return tracesStatus;
+    }
+    
+    public StringProperty qcStatusProperty(){
+        return qcStatus;
+    }
+    
+    public StringProperty insightStatusProperty(){
+        return insightStatus;
+    }
     /* public String getInheritanceStatus() {
     return inheritanceStatus;
     }
@@ -259,6 +294,26 @@ public class JobSummaryModel {
         return inheritance;
     }
 
+    /**
+     * Flag used to query db
+     **/
+    
+    public boolean isQuery() {
+        return query.get();
+    }
+
+    public void setQuery(boolean value) {
+        query.set(value);
+    }
+
+    public BooleanProperty queryProperty() {
+        return query;
+    }
+    
+    
+    //Sequence getter/setter
+    
+    
     public Sequence getSequence() {
         return sequence;
     }

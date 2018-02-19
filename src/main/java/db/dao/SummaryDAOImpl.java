@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -27,7 +27,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public void createSummary(Summary summary) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
         try{
             transaction=session.beginTransaction();
@@ -43,7 +43,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public Summary getSummary(Long id) {
-       Session session=HibernateUtil.getSessionFactory().openSession();
+       Session session=HibernateUtil_back.getSessionFactory().openSession();
        try{
            Summary summary=(Summary) session.get(Summary.class,id);
            return summary;
@@ -57,7 +57,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public void deleteSummary(Long id) {
-       Session session=HibernateUtil.getSessionFactory().openSession();
+       Session session=HibernateUtil_back.getSessionFactory().openSession();
        Transaction transaction=null;
        
        try{
@@ -75,7 +75,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public void updateSummary(Long id, Summary newSummary) {
-         Session session=HibernateUtil.getSessionFactory().openSession();
+         Session session=HibernateUtil_back.getSessionFactory().openSession();
        Transaction transaction=null;
        
        try{
@@ -100,7 +100,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public Summary getSummaryFor(Sequence sequence,Job job ) {
-         Session session=HibernateUtil.getSessionFactory().openSession();
+         Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -130,7 +130,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public List<Long> getDepthsInSummary(Workspace W) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Long> depths=null;
         try{
@@ -154,7 +154,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -176,7 +176,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public List<Summary> getSummariesForJobSeq(Job job, Sequence seq) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -198,7 +198,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public Summary getSummaryFor(Subsurface subsurface, Job job) {
-         Session session=HibernateUtil.getSessionFactory().openSession();
+         Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -229,7 +229,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public List<Summary> getSummariesForJobSub(Job job, Subsurface sub, Workspace W) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -251,7 +251,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
 
     @Override
     public List<Summary> getSummariesFor(Workspace W) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
          
@@ -259,7 +259,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Summary.class);
             criteria.add(Restrictions.eq("workspace", W));
-            
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             result=criteria.list();
             transaction.commit();
          }catch(Exception e){

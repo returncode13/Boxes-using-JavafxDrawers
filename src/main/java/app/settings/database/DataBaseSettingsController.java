@@ -7,7 +7,7 @@ package app.settings.database;
 
 
 import app.connections.hibernate.Connections;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -124,7 +124,7 @@ public class DataBaseSettingsController extends Stage{
              password=sett.getSshPassword();
          }
         }catch (JAXBException ex) {
-            Logger.getLogger(HibernateUtil.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HibernateUtil_back.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         

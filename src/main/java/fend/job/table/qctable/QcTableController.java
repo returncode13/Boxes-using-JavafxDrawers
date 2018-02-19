@@ -53,10 +53,10 @@ public class QcTableController extends Stage{
         });
         
         
-                //List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
+        /*        //List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
         Task<Void> qctableLoadTask=new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
+        @Override
+        protected Void call() throws Exception {*/
                 
        
         
@@ -188,23 +188,23 @@ public class QcTableController extends Stage{
         treetableView.setRoot(root);
         treetableView.setShowRoot(false);
         
-        return null;
+        /*   return null;
         
-             }
+        }
         };
         
         
         
-            qctableLoadTask.setOnFailed(e->{
-                qctableLoadTask.getException().printStackTrace(); 
-            });
-
-            qctableLoadTask.setOnSucceeded(e->{
-
-              
-            });
+        qctableLoadTask.setOnFailed(e->{
+        qctableLoadTask.getException().printStackTrace();
+        });
         
-            exec.execute(qctableLoadTask);
+        qctableLoadTask.setOnSucceeded(e->{
+        
+        
+        });
+        
+        exec.execute(qctableLoadTask);*/
         
         
     }

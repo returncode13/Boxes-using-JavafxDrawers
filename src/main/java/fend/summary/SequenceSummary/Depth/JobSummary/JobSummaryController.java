@@ -303,48 +303,17 @@ public class JobSummaryController {
         }
         }
         });
-        
+        model.queryProperty().addListener(QUERY_CHANGE_LISTENER);
         model.timeProperty().addListener(TIME_SUMMARY_CHANGE_LISTENER);
-        if(model.isTime()){
-            timeLabel.setStyle("-fx-background-color: "+TIME_IS_SET);
-        }else{
-            timeLabel.setStyle("-fx-background-color: "+TIME_IS_UNSET);
-        }
-        
         model.traceProperty().addListener(TRACE_SUMMARY_CHANGE_LISTENER);
-        if(model.isTrace()){
-            
-            if(model.getTimeStatus().equals(DoubtStatusModel.OVERRIDE)){
-                traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_OVERRRIDE);
-            }else{
-                if(model.getTimeState().equals(DoubtStatusModel.WARNING)){
-                    traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_WARNING);
-                }else{
-                    traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_DOUBT);
-                }
-            }
-            
-            traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_SET);
-        }else{
-            traceLabel.setStyle("-fx-background-color: "+TRACES_ARE_UNSET);
-        }
-        
         model.qcProperty().addListener(QC_SUMMARY_CHANGE_LISTENER);
-        if(model.isQc()){
-            qcLabel.setStyle("-fx-background-color: "+QC_IS_SET );
-        }else{
-            qcLabel.setStyle("-fx-background-color: "+QC_IS_UNSET );
-        }
-        
         model.inheritanceProperty().addListener(INHERITANCE_SUMMARY_CHANGE_LISTENER);
-        if(model.isInheritance()){
-            inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_SET );
-        }else{
-            inheritLabel.setStyle("-fx-background-color: "+INHERITANCE_IS_UNSET );
-        }
-        
-        
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
+        
+        
+        
+      //  model.timeStatusProperty().addListener();
+        
         
     }
 
@@ -366,6 +335,22 @@ public class JobSummaryController {
             }
         }
     };
+    
+     private ChangeListener<String> TIME_STATUS_CHANGE_LISTENER=new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(newValue.equals(DoubtStatusModel.OVERRIDE)){
+                    
+                    timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_OVERRRIDE);
+                }
+                if(newValue.equals(DoubtStatusModel.YES)){
+                    timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_DOUBT);
+                }
+        }
+      
+    };
+    
+    
     
     
     private ChangeListener<Boolean> TRACE_SUMMARY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
@@ -403,6 +388,49 @@ public class JobSummaryController {
     };
     
     
+      private ChangeListener<Boolean> QUERY_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            
+            
+             String typeToBeQueried=model.getContextAskedForDoubtType();
+             DoubtType type=doubtTypeService.getDoubtTypeByName(typeToBeQueried);
+             Doubt indDoubt=doubtService.getDoubtFor(model.getSubsurface(), model.getJob(), type);
+             Doubt cause=indDoubt.getDoubtCause();
+             DoubtStatus causeDoubtStatus=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+             
+             
+             if(causeDoubtStatus.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                 if(type.getName().equals(DoubtTypeModel.TIME)){
+                     model.setTimeStatus(DoubtStatusModel.OVERRIDE);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.TRACES)){
+                     model.setTracesStatus(DoubtStatusModel.OVERRIDE);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.QC)){
+                     model.setQcStatus(DoubtStatusModel.OVERRIDE);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.INSIGHT)){
+                     model.setInsightStatus(DoubtStatusModel.OVERRIDE);                 
+                 }
+             }else{
+                 if(type.getName().equals(DoubtTypeModel.TIME)){
+                     model.setTimeStatus(DoubtStatusModel.YES);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.TRACES)){
+                     model.setTracesStatus(DoubtStatusModel.YES);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.QC)){
+                     model.setQcStatus(DoubtStatusModel.YES);                 
+                 }
+                 if(type.getName().equals(DoubtTypeModel.INSIGHT)){
+                     model.setInsightStatus(DoubtStatusModel.YES);                 
+                 }
+             }
+        }
+    };
+    
+    
     
     private ChangeListener<Boolean> SHOW_OVERRIDE_CHANGE_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -412,7 +440,7 @@ public class JobSummaryController {
                 DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
                 Doubt doubt=doubtService.getDoubtFor(model.getSubsurface(), model.getJob(),modelDoubtType);
                 DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                OverrideModel ovrModel=new OverrideModel();
+                OverrideModel ovrModel=new OverrideModel(model);
                 
                 Link l=doubt.getLink();
                 String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();

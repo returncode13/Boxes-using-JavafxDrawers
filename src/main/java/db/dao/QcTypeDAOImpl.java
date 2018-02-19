@@ -8,7 +8,7 @@ package db.dao;
 
 import db.model.QcType;
 import db.model.Job;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,7 +23,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
 
     @Override
     public void createQcType(QcType qctype) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,7 +38,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
 
     @Override
     public void updateQcType(Long qid, QcType newQcType) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -59,7 +59,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
 
     @Override
     public QcType getQcType(Long qid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             QcType l= (QcType) session.get(QcType.class, qid);
             return l;
@@ -73,7 +73,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
 
     @Override
     public void deleteQcType(Long qid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -108,7 +108,7 @@ public class QcTypeDAOImpl implements QcTypeDAO{
 
     @Override
     public List<QcType> getAllQcTypes() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
     Transaction transaction = null;
     List<QcType> result=null;
     try{

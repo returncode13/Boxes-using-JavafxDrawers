@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import db.model.Dot;
 import db.model.Workspace;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public void createDot(Dot dot) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,7 +38,7 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public Dot getDot(Long id) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
+    Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             Dot l= (Dot) session.get(Dot.class, id);
             return l;
@@ -52,7 +52,7 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public void updateDot(Long id, Dot newDot) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -79,7 +79,7 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public void deleteDot(Long id) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -95,7 +95,7 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public void clearUnattachedDots(Workspace ws) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         
         try{
             

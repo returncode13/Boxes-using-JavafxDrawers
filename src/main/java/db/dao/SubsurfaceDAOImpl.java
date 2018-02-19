@@ -7,7 +7,7 @@ package db.dao;
 
 import db.model.Sequence;
 import db.model.Subsurface;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -24,7 +24,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
     @Override
     public void createSubsurface(Subsurface sub) {
         
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -40,7 +40,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
 
     @Override
     public Subsurface getSubsurface(Long sid) {
-          Session session = HibernateUtil.getSessionFactory().openSession();
+          Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             Subsurface l= (Subsurface) session.get(Subsurface.class, sid);
             return l;
@@ -56,7 +56,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
     @Override
     public void deleteSubsurface(Long sid) {
        
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -72,7 +72,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
 
     @Override
     public void updateSubsurface(Long sid, Subsurface newsub) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -94,7 +94,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
 
     @Override
     public List<Subsurface> getSubsurfaceForSequence(Sequence seq) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Subsurface> result=null;
         try{
@@ -115,7 +115,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
 
     @Override
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Subsurface> result=null;
         try{
@@ -142,7 +142,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
 
     @Override
     public List<Subsurface> getSubsurfaceList() {
-          Session session = HibernateUtil.getSessionFactory().openSession();
+          Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Subsurface> result=null;
         try{

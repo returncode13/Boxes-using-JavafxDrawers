@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import db.model.DoubtStatus;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,7 +18,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void createDoubtStatus(DoubtStatus ds) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -33,7 +33,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public DoubtStatus getDoubtStatus(Long id) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             DoubtStatus l= (DoubtStatus) session.get(DoubtStatus.class, id);
             return l;
@@ -47,7 +47,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void deleteDoubtStatus(Long id) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -65,7 +65,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void updateDoubtStatus(Long id, DoubtStatus newds) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();

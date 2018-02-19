@@ -7,7 +7,7 @@ package db.dao;
 
 import db.model.Volume;
 import db.model.Workflow;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,7 +23,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public void createWorkFlow(Workflow W) {
-       Session session = HibernateUtil.getSessionFactory().openSession();
+       Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,7 +38,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public Workflow getWorkflow(Long wid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             Workflow l= (Workflow) session.get(Workflow.class, wid);
             return l;
@@ -62,7 +62,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public List<Workflow> getWorkFlowsFor(Volume v) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Workflow> result=null;
         try{
@@ -83,7 +83,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public List<Workflow> getWorkFlowWith(String md5,Volume vol) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Workflow> result=null;
         try{
@@ -105,7 +105,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public Workflow getWorkFlowVersionFor(Volume v) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Workflow> result=null;
         try{
@@ -127,7 +127,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
 
     @Override
     public Workflow getWorkflowRunBeforeTime(String time, Volume vol) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Workflow> result=null;
         try{

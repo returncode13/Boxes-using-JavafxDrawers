@@ -41,4 +41,5 @@ public interface DoubtService {
     public List<Doubt> getDoubtFor(Subsurface s, Job jchild, Dot dot);
     public List<Doubt> getDoubtFor(Sequence seq, Job job);
     public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
+    public Doubt getCauseOfInheritedDoubtForType(Subsurface sub, Job job,DoubtType doubtType);             //return the doubt of type doubttype which resulted in an inherited doubt in job
 }

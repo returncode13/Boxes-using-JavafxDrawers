@@ -13,6 +13,7 @@ public abstract class DoubtStatus_ {
 	public static volatile SingularAttribute<DoubtStatus, String> comments;
 	public static volatile SingularAttribute<DoubtStatus, Doubt> doubt;
 	public static volatile SingularAttribute<DoubtStatus, Long> id;
+	public static volatile SingularAttribute<DoubtStatus, String> state;
 	public static volatile SingularAttribute<DoubtStatus, User> user;
 	public static volatile SingularAttribute<DoubtStatus, String> status;
 

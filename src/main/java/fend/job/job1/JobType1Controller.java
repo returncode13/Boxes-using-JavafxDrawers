@@ -387,28 +387,28 @@ parent.addChild(model);*/
     
      @FXML
     void showQctable(ActionEvent event) {
-            Task<Void> qctableTask=new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    qctable.setDisable(true);
+        /*Task<Void> qctableTask=new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {*/
+                  //  qctable.setDisable(true);
                     QcTableModel qcTableModel=new QcTableModel(model);
                     QcTableView qcTableView=new QcTableView(qcTableModel);
-                return null;
-                }
-            };
+                    /* return null;
+                    }
+                    };*/
             
-            qctableTask.setOnFailed(e->{
-                qctableTask.getException().printStackTrace();
-                qctable.setDisable(false);
+            /*  qctableTask.setOnFailed(e->{
+            qctableTask.getException().printStackTrace();
+            qctable.setDisable(false);
             });
             qctableTask.setOnSucceeded(e->{
-                qctable.setDisable(false);
+            qctable.setDisable(false);
             });
             qctableTask.setOnRunning(e->{
-                System.out.println("fend.job.job1.JobType1Controller.showQctable()...loading the qctable");
+            System.out.println("fend.job.job1.JobType1Controller.showQctable()...loading the qctable");
             });
-        
-        exec.execute(qctableTask);
+            
+            exec.execute(qctableTask);*/
             
     }
     

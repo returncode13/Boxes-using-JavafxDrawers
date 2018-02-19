@@ -7,7 +7,7 @@ package db.dao;
 
 
 import db.model.NodeType;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -22,7 +22,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void createNodeType(NodeType n) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -37,7 +37,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public NodeType getNodeType(Long nid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             NodeType ll=(NodeType) session.get(NodeType.class,nid);
             return ll;
@@ -51,7 +51,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void updateNodeType(Long nid, NodeType newNodeType) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -73,7 +73,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void deleteNodeType(Long nid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -89,7 +89,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public NodeType getNodeTypeObjForType(Long type) {
-        Session sess = HibernateUtil.getSessionFactory().openSession();
+        Session sess = HibernateUtil_back.getSessionFactory().openSession();
         List<NodeType> result=null;
         Transaction transaction=null;
         try{

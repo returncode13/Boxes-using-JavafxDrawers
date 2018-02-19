@@ -7,6 +7,8 @@ package fend.summary.override;
 
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
@@ -16,6 +18,8 @@ import javafx.beans.property.SimpleBooleanProperty;
  */
 public class OverrideModel {
    
+    //private JobSummaryModel jobSummaryModel;
+    private TimeCellModel cellModel;
     private Doubt doubt;
     private DoubtStatus doubtStatus;
     
@@ -29,11 +33,28 @@ public class OverrideModel {
     private String earlierStatus;
     private BooleanProperty confirmation;
 
-    public OverrideModel() {
+    public OverrideModel(JobSummaryModel jbsm) {
+     //   jobSummaryModel=jbsm;
+        confirmation=new SimpleBooleanProperty(false);
+        
+    }
+     public OverrideModel(TimeCellModel cellm) {
+     //   jobSummaryModel=jbsm;
+     cellModel=cellm;
         confirmation=new SimpleBooleanProperty(false);
         
     }
 
+    /*public JobSummaryModel getJobSummaryModel() {
+    return jobSummaryModel;
+    }
+    
+    public void setJobSummaryModel(JobSummaryModel jobSummaryModel) {
+    this.jobSummaryModel = jobSummaryModel;
+    }*/
+    
+    
+    
     public Boolean getConfirmation() {
         return confirmation.get();
     }
@@ -134,6 +155,15 @@ public class OverrideModel {
     public void setEarlierStatus(String earlierStatus) {
         this.earlierStatus = earlierStatus;
     }
+
+    public TimeCellModel getCellModel() {
+        return cellModel;
+    }
+
+    public void setCellModel(TimeCellModel cellModel) {
+        this.cellModel = cellModel;
+    }
+    
     
     
            

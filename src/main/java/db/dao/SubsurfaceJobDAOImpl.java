@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -24,7 +24,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
     @Override
     public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -39,7 +39,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
     @Override
     public SubsurfaceJob getSubsurfaceJob(Long id) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         
         try{
             
@@ -65,7 +65,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
     @Override
     public SubsurfaceJob getSubsurfaceJobFor(Job job, Subsurface subsurface) {
-        Session session =HibernateUtil.getSessionFactory().openSession();
+        Session session =HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<SubsurfaceJob> result=null;
         try{

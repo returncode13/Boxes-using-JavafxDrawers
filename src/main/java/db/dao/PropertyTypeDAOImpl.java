@@ -7,7 +7,7 @@ package db.dao;
 
 
 import db.model.PropertyType;
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -22,7 +22,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void createPropertyType(PropertyType p) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -37,7 +37,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public PropertyType getPropertyType(Long pid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             PropertyType ll=(PropertyType) session.get(PropertyType.class,pid);
             return ll;
@@ -51,7 +51,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void updatePropertyType(Long pid, PropertyType np) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -73,7 +73,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void deletePropertyType(Long pid) {
-       Session session = HibernateUtil.getSessionFactory().openSession();
+       Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -89,7 +89,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public PropertyType getPropertyTypeObjForName(String propname) {
-        Session sess = HibernateUtil.getSessionFactory().openSession();
+        Session sess = HibernateUtil_back.getSessionFactory().openSession();
         List<PropertyType> result=null;
         Transaction transaction=null;
         try{

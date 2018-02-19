@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +36,7 @@ public class JobDAOImpl implements JobDAO{
     public void createJob(Job js) {
         
              
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         
         try{
@@ -53,7 +53,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public Job getJob(Long jobId) {
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
         
         
         try{
@@ -70,7 +70,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void updateJob(Long jobId,Job newJs) {
-      Session session = HibernateUtil.getSessionFactory().openSession();
+      Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         
         try{
@@ -112,7 +112,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void deleteJob(Long jobId) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction =  null;
         
         try{
@@ -174,7 +174,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public List<Long> getDepthOfGraph(Workspace W) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Long> depths=null;
         try{
@@ -199,7 +199,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public List<Job> listJobs(Workspace W) {
-        Session session= HibernateUtil.getSessionFactory().openSession();
+        Session session= HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Job> result=null;
         try{

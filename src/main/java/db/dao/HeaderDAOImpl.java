@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil_back;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +33,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     @Override
     public void createHeader(Header h) {
                
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -49,7 +49,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Header getHeader(Long hid) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         try{
             Header h= (Header) session.get(Header.class, hid);
             return h;
@@ -63,7 +63,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public void updateHeader(Long hid, Header newH) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -122,7 +122,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public void deleteHeader(Long hid) {
-       Session session = HibernateUtil.getSessionFactory().openSession();
+       Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -139,7 +139,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public List<Header> getHeadersFor(Volume v) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
         try{
@@ -158,7 +158,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public List<Header> getHeadersFor(Job job) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
         try{
@@ -187,7 +187,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
      @Override
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume v) {
-        Session session=HibernateUtil.getSessionFactory().openSession();
+        Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Header> result=null;
         List<Subsurface> subsurfacesThatNeedToBeSummarized=null;
@@ -457,7 +457,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
-            Session session = HibernateUtil.getSessionFactory().openSession();
+            Session session = HibernateUtil_back.getSessionFactory().openSession();
             Transaction transaction = null;
             List<Header> result=null;
             try{
@@ -485,7 +485,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Set<Header> getMultipleInstances(Job job, Subsurface sub) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = HibernateUtil_back.getSessionFactory().openSession();
             Transaction transaction = null;
             Set<Header> result=null;
             try{
@@ -541,7 +541,7 @@ query.setParameter("subid", sub);
 
     @Override
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
-         Session session = HibernateUtil.getSessionFactory().openSession();
+         Session session = HibernateUtil_back.getSessionFactory().openSession();
             Transaction transaction = null;
             Set<Header> result=null;
             try{
