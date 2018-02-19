@@ -2126,7 +2126,7 @@ public class WorkspaceController {
         
                 Job inhParent = l.getParent();
                 Job inhChild = l.getChild();
-                System.out.println("fend.workspace.WorkspaceController.summarize(): Checking for inheritance. "+inhParent.getNameJobStep()+" <----> "+inhChild.getNameJobStep());
+                System.out.println("fend.workspace.WorkspaceController.summarize(): Checking for inheritance. "+inhParent.getNameJobStep()+" <----> "+inhChild.getNameJobStep()+" TYPE: "+cause.getDoubtType().getName()+" size of Descendants: "+descendantsThatContainSub.size());
                 DoubtType doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
                 Set<Job> inhJob=new HashSet<>();
                 for(Descendant desc:descendantsThatContainSub){

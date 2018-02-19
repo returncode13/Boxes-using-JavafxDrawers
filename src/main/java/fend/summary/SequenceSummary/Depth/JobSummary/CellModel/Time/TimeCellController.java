@@ -70,6 +70,23 @@ public class TimeCellController {
     
     void setModel(TimeCellModel item) {
         model=item;
+        /* System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.setModel(): During load");
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
+        if(model.getJobSummaryModel().getSubsurface()!=null){
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getSubsurface().getSubsurface());
+        }
+        System.out.println("active  : "+model.isActive());
+        System.out.println("doubt   : "+model.isTimeProperty());
+        System.out.println("state   : "+model.getState());
+        System.out.println("inherit : "+model.isInheritance());
+        System.out.println("override: "+model.isOverride());
+        System.out.println("query   : "+model.isQuery());
+        System.out.println("showOver: "+model.isShowOverride());
+        
+        
+        
+        System.out.println("\n");  */  
+        
         if(model.isActive()){
             timeLabel.setDisable(false);
         }else{
@@ -139,27 +156,28 @@ public class TimeCellController {
     private ChangeListener<Boolean> TIME_DOUBT_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(model.isActive()){
+            /* if(model.isActive()){
             
-                if(newValue){   //is in doubt
-                    timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_DOUBT);
-                }
-                if(!newValue){  //is not in doubt
-                    //not in doubt. so decide between the two states. GOOD/WARNING
-                    if(model.getJobSummaryModel().getSubsurface()!=null){
-                        
-                    
-                        if(model.getState().equals(DoubtStatusModel.GOOD)){
-                            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_GOOD);
-                        }
-                         if(model.getState().equals(DoubtStatusModel.WARNING)){
-                            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_WARNING);
-                        }
-                     }
-
-                }
+            if(newValue){   //is in doubt
+            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_DOUBT);
+            }
+            if(!newValue){  //is not in doubt
+            //not in doubt. so decide between the two states. GOOD/WARNING
+            if(model.getJobSummaryModel().getSubsurface()!=null){
             
-        }
+            
+            if(model.getState().equals(DoubtStatusModel.GOOD)){
+            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_GOOD);
+            }
+            if(model.getState().equals(DoubtStatusModel.WARNING)){
+            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_WARNING);
+            }
+            }
+            
+            }
+            
+            }*/
+            applyColor();
         }
     };
     
@@ -172,18 +190,19 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-            if(model.isActive()){
+            /*if(model.isActive()){
             
             if(!model.isTimeProperty()){        //if the cell has no doubt of its own. proceed to deal with the inheritance
-                if(newValue){                   // inheritance=true implies the inheritance is NOT OVERRIDEN. 
-                    timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_DOUBT);
-                }
-                if(!newValue){                           // inheritance=false implies the inheritance is OVERRIDEN. 
-                    timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_OVERRRIDE);
-                    
-                }
+            if(newValue){                   // inheritance=true implies the inheritance is NOT OVERRIDEN.
+            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_DOUBT);
             }
-        }
+            if(!newValue){                           // inheritance=false implies the inheritance is OVERRIDEN.
+            timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_OVERRRIDE);
+            
+            }
+            }
+            }*/
+            applyColor();
         }
         
     };
@@ -314,12 +333,15 @@ public class TimeCellController {
              
              if(model.isTimeProperty()){
                  if(model.isOverride()){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting OVERRIDE");
                      timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_OVERRRIDE);
                  }else{
                      if(model.getState().equals(DoubtStatusModel.ERROR)){
+                         System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting ERROR");
                          timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_DOUBT);
                      }
                      if(model.getState().equals(DoubtStatusModel.WARNING)){
+                         System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting WARNING");
                          timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_WARNING);
                      }
                      
@@ -339,13 +361,16 @@ public class TimeCellController {
                      
                    DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
                    if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                       System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting INHERITED_OVERRIDE");
                        timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_OVERRRIDE);
                    }else{
+                       System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting INHERITED_DOUBT");
                        timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_DOUBT);
                    }
                      
                      
                  }else{
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting GOOD");
                      timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_GOOD);
                              
                  }
@@ -353,6 +378,7 @@ public class TimeCellController {
              
              
          }else{
+             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting NO_SEQ_PRESENT");
              timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
          }
      }

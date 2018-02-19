@@ -30,7 +30,7 @@ import db.services.WorkspaceServiceImpl;
 import fend.summary.SequenceSummary.Depth.Depth;
 import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummaryCell;
-import fend.summary.SequenceSummary.Depth.TimeCell;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell.TimeCell;
 import fend.summary.SequenceSummary.SequenceSummary;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -100,6 +100,7 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job1/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job1/definitions/qcmatrix/QcMatrixListCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/middleware/doubt/DoubtTypeModel.java
+/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCell/TimeCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/app/settings/database/DbListNode.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/QcMatrixRowServiceImpl.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job1/definitions/qcmatrix/qctype/addQcType/AddQcTypeNode.java
@@ -341,7 +342,6 @@
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/model/JobVolumeMap.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job0/JobType0View.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SummaryModel.java
-/d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/summary/SequenceSummary/Depth/TimeCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/user/UserController.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/fend/job/job4/definitions/qcmatrix/QcMatrixListCell.java
 /d/home/asima0152/programming/Boxes-using-JavafxDrawers/src/main/java/db/services/UserService.java

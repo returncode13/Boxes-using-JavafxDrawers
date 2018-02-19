@@ -29,6 +29,7 @@ fend/job/table/qctable/CheckBoxCell$3.class
 app/connections/hibernate/HibernateUtil_back.class
 db/services/WorkflowServiceImpl.class
 db/model/NodeType.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCell/TimeCell.class
 db/services/JobVolumeMapService.class
 fend/job/job1/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel.class
 middleware/core/Sub.class
@@ -152,7 +153,6 @@ fend/dot/LinkModel.class
 db/services/PropertyTypeService.class
 fend/summary/SummaryController$3.class
 fend/job/job2/definitions/qcmatrix/QcMatrixView.class
-fend/summary/SequenceSummary/Depth/TimeCell.class
 db/dao/QcMatrixRowDAO.class
 db/model/Volume_.class
 fend/job/table/lineTable/LineTableController$2.class
