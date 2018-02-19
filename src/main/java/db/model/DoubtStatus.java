@@ -38,7 +38,7 @@ public class DoubtStatus {
     @Column(name="timestamp")
     private String timeStamp;
     
-    @Column(name="comments")
+    @Column(name="comments",columnDefinition = "text" )
     private String comments;
     
     @Column(name="state")

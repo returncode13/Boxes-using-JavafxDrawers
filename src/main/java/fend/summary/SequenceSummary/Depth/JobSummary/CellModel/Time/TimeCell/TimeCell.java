@@ -72,7 +72,7 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
                //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
             }
-            
+           jsm.setFeModeltimeCellModel(model);
             
             final ContextMenu contextMenu=new ContextMenu();
             if(model.isTimeProperty()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.

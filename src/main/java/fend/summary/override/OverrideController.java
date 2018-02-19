@@ -128,6 +128,7 @@ public class OverrideController extends Stage{
                     statusChanged=true;
                 }
                 ds.setStatus(status);
+                
                 ds.setComments(userComment);
                 doubtStatusService.updateDoubtStatus(ds.getId(), ds);
                 
@@ -137,6 +138,13 @@ public class OverrideController extends Stage{
                     Doubt inhDoubt = iterator.next();
                     
                     if(statusChanged){
+                        
+                        if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                                model.getCellModel().setOverride(true);
+                        }else{
+                            model.getCellModel().setOverride(false);
+                        }
+                        
                             Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
                                 for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
                                         System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
@@ -159,7 +167,10 @@ public class OverrideController extends Stage{
                             .getDepth(inhDoubt.getChildJob().getDepth())
                             .getJobSummaryModel(inhDoubt.getChildJob());
                     System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
-                    inhjsm.setQuery(!inhjsm.isQuery());
+                    System.out.println(".changed() : current Query flag: "+inhjsm.getTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getTimeCellModel().isQuery());
+                    System.out.println(".changed() : current Query flag: "+inhjsm.getFeModeltimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModeltimeCellModel().isQuery());
+                  //  inhjsm.setQuery(!inhjsm.isQuery());
+                    inhjsm.getFeModeltimeCellModel().setQuery(!inhjsm.getFeModeltimeCellModel().isQuery());
                 }
                 
                 
@@ -176,6 +187,7 @@ public class OverrideController extends Stage{
         public void changed(ObservableValue<? extends String> observable, String oldStatus, String newStatus) {
             System.out.println(".changed(): changing status in model from "+model.getStatus()+" to "+newStatus);
             model.setStatus(newStatus);
+            
         }
         
     };

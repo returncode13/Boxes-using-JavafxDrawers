@@ -22,8 +22,18 @@ public class JobSummaryModel {
     private Job job;
     private TimeCellModel timeCellModel;
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
-    private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
+    private final BooleanProperty query = new SimpleBooleanProperty(false);      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
+    
+    private TimeCellModel feModeltimeCellModel;
+
+    public TimeCellModel getFeModeltimeCellModel() {
+        return feModeltimeCellModel;
+    }
+
+    public void setFeModeltimeCellModel(TimeCellModel feModeltimeCellModel) {
+        this.feModeltimeCellModel = feModeltimeCellModel;
+    }
     
     
     final private SummaryModel summaryModel;
