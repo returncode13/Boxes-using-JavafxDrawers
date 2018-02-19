@@ -168,9 +168,9 @@ public class OverrideController extends Stage{
                             .getJobSummaryModel(inhDoubt.getChildJob());
                     System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
                     System.out.println(".changed() : current Query flag: "+inhjsm.getTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getTimeCellModel().isQuery());
-                    System.out.println(".changed() : current Query flag: "+inhjsm.getFeModeltimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModeltimeCellModel().isQuery());
+                    System.out.println(".changed() : current Query flag: "+inhjsm.getFeModelTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModelTimeCellModel().isQuery());
                   //  inhjsm.setQuery(!inhjsm.isQuery());
-                    inhjsm.getFeModeltimeCellModel().setQuery(!inhjsm.getFeModeltimeCellModel().isQuery());
+                    inhjsm.getFeModelTimeCellModel().setQuery(!inhjsm.getFeModelTimeCellModel().isQuery());
                 }
                 
                 

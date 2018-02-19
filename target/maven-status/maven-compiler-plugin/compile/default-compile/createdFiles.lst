@@ -46,6 +46,7 @@ db/services/AncestorService.class
 fend/job/table/qctable/QcTableController$3$1.class
 db/dao/DescendantDAO.class
 fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCellController.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$3.class
 fend/job/job2/properties/JobType2Properties.class
 fend/job/job2/JobType2Model$5.class
 fend/job/job4/JobType4Model$6.class
@@ -172,6 +173,7 @@ fend/job/job4/JobType4Model$2.class
 db/services/UserWorkspaceService.class
 db/services/DotService.class
 middleware/dugex/DugioScripts.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCell/TraceCell.class
 app/settings/database/DataBaseSettingsController.class
 fend/volume/volume3/Volume3$1.class
 db/dao/DescendantDAOImpl.class
@@ -218,6 +220,7 @@ fend/job/job1/JobType1Model$5.class
 fend/job/job3/definitions/JobDefinitionsModel.class
 fend/summary/override/confirmation/OverrideConfirmationController.class
 db/dao/AncestorDAOImpl.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/CellModel.class
 fend/job/job0/definitions/qcmatrix/qctype/addQcType/AddQcTypeModel.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$4.class
 fend/job/table/qctable/QcTableController$1.class
@@ -228,6 +231,7 @@ fend/edge/dotjobedge/DotJobEdgeView.class
 fend/summary/SequenceSummary/Depth/JobSummary/JobSummaryController$1.class
 db/model/Dot.class
 fend/job/job0/JobType0View.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellView.class
 fend/edge/parentchildedge/ParentChildEdgeController$Delta.class
 fend/workspace/WorkspaceModel.class
 fend/job/job2/definitions/qcmatrix/QcMatrixController.class
@@ -331,6 +335,7 @@ db/model/VariableArgument_.class
 db/model/UserWorkspace.class
 app/connections/hibernate/HibernateUtil.class
 db/model/SubsurfaceJob_.class
+fend/summary/SummaryController$5.class
 fend/user/UserView.class
 fend/user/UserController.class
 db/model/QcMatrixRow_.class
@@ -340,6 +345,7 @@ db/services/SummaryServiceImpl.class
 fend/summary/SequenceSummary/Depth/JobSummaryCell.class
 middleware/dugex/DugLogManager$1.class
 fend/job/job2/definitions/insight/InsightListCell.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$4.class
 fend/dot/anchor/AnchorController$Delta.class
 db/model/Header.class
 db/services/QcMatrixRowServiceImpl.class
@@ -373,6 +379,7 @@ fend/job/job2/definitions/qcmatrix/qcmatrixrow/QcMatrixRowModel$1.class
 fend/job/job3/JobType3View.class
 db/services/NodePropertyValueService.class
 fend/job/job1/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$2.class
 fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCellController$6.class
 db/services/VolumeServiceImpl.class
 db/services/SubsurfaceJobService.class
@@ -429,6 +436,7 @@ db/services/DoubtStatusServiceImpl.class
 fend/job/job0/definitions/volume/VolumeListCell.class
 fend/dot/DotController$7.class
 fend/job/job2/JobType2Controller$3.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$1.class
 app/connections/hibernate/Connections.class
 fend/dot/formulaField/FormulaFieldModel.class
 fend/job/table/qctable/seq/QcTableSequence$1.class
@@ -451,6 +459,8 @@ fend/job/job2/JobType2Model$1.class
 db/model/Workspace.class
 fend/job/job1/definitions/volume/VolumeListView.class
 fend/user/newUser/NewUserModel.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellModel.class
 fend/job/job2/definitions/qcmatrix/QcMatrixModel.class
 middleware/dugex/WorkflowManager$1.class
 fend/dot/formulaField/FormulaFieldModel$1.class
@@ -531,6 +541,7 @@ fend/job/job3/JobType3Model$1.class
 fend/summary/override/confirmation/OverrideConfirmationView.class
 db/dao/PropertyTypeDAOImpl.class
 db/model/NodePropertyValue.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$5.class
 db/dao/NodePropertyDAOImpl.class
 fend/app/AppModel.class
 db/services/DoubtServiceImpl.class
@@ -553,6 +564,7 @@ fend/job/job0/property/JobModelProperty.class
 db/services/UserWorkspaceServiceImpl.class
 db/dao/NodePropertyValueDAOImpl.class
 db/services/JobServiceImpl.class
+fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Trace/TraceCellController$6.class
 db/model/DoubtType_.class
 fend/job/job2/JobType2Controller$4.class
 app/settings/ssh/SShSettings.class

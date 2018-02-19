@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time;
+package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace;
 
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
@@ -17,13 +17,13 @@ import middleware.doubt.DoubtStatusModel;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class TimeCellModel implements CellModel{
+public class TraceCellModel implements CellModel {
     
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
     private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     
     
-    private final BooleanProperty timeProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
+    private final BooleanProperty traceProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
     private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt). 
                                                                                                                     //status = WARNING (no doubt).
                                                                                                                     //status = DOUBT (doubt)  
@@ -101,15 +101,15 @@ public class TimeCellModel implements CellModel{
     
 
     public boolean cellHasDoubt() {
-        return timeProperty.get();
+        return traceProperty.get();
     }
 
     public void setCellProperty(boolean value) {
-        timeProperty.set(value);
+        traceProperty.set(value);
     }
 
     public BooleanProperty cellProperty() {
-        return timeProperty;
+        return traceProperty;
     }
    
     
