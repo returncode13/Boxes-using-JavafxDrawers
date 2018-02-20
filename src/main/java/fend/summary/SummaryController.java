@@ -258,6 +258,7 @@ public class SummaryController extends Stage{
                         seqJsm.setInsight(seqJsm.isInsight()||x.getInsightSummary());
                         seqJsm.setInheritance(seqJsm.isInheritance()||x.getInheritanceSummary());*/
                         seqJsm.getTimeCellModel().setCellProperty(seqJsm.getTimeCellModel().cellHasDoubt()||x.getTimeSummary());
+                        seqJsm.getTraceCellModel().setActive(true);
                         seqJsm.getTraceCellModel().setCellProperty(seqJsm.getTraceCellModel().cellHasDoubt()||x.getTraceSummary());
                         
                         
@@ -281,6 +282,7 @@ public class SummaryController extends Stage{
                             */
                             jsm.getTimeCellModel().setState(state);
                         }
+                        jsm.getTraceCellModel().setActive(true);
                         jsm.getTraceCellModel().setCellProperty(x.getTraceSummary());
                         if(x.getTraceSummary()){
                             Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
@@ -292,6 +294,8 @@ public class SummaryController extends Stage{
                             }
                             */
                             jsm.getTraceCellModel().setState(state);
+                        }else{                  //is there is  no doubt (summary is false) then check for inherited
+                           // Doubt cause=doubtService.getCauseOfInheritedDoubtForType(sub, job, traceDoubtType);
                         }
                         
                         
@@ -341,6 +345,8 @@ public class SummaryController extends Stage{
                 timeColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                     @Override
                     public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
+                        if(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getSubsurface()!=null)
+                        System.out.println(".call(): RETURNING:  "+param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getSubsurface().getSubsurface()+" JOB: "+param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getJob().getNameJobStep()+"  VALUE: "+param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getTimeCellModel().isActive());
                        return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getTimeCellModel().isActive());
                     }
                 });
@@ -355,7 +361,7 @@ public class SummaryController extends Stage{
                 traceColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                     @Override
                     public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
-                       return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getTimeCellModel().isActive());
+                       return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getTraceCellModel().isActive());
                     }
                 });
                 traceColumn.setCellFactory(param->new TraceCell(depthId,jobkey));

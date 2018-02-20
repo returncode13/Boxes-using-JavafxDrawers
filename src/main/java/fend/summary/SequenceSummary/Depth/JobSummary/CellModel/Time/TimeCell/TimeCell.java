@@ -42,16 +42,19 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             TimeCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTimeCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            model.setJobSummaryModel(jsm);
+            //model.setJobSummaryModel(jsm);
+            //model=new TimeCellModel();
+            model=tcm;
+            view.getController().setModel(model);
             if(jsm.getSubsurface()==null){
             
             }else{
                
-                System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
+                System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
             }
             
-            model.setCellProperty(jsm.getTimeCellModel().cellHasDoubt());
-           // model.setActive(true);
+            /* model.setCellProperty(jsm.getTimeCellModel().cellHasDoubt());
+            // model.setActive(true);
             model.setInheritance(jsm.getTimeCellModel().isInheritance());
             model.setOverride(jsm.getTimeCellModel().isOverride());
             model.setQuery(jsm.getTimeCellModel().isQuery());
@@ -59,20 +62,23 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             model.setState(jsm.getTimeCellModel().getState());
             
             if(jsm.getSubsurface()!=null){
-                model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
+            model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
             }
-            
+            */
             if(!t){
-                model.setActive(false);
-               //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
+               // model.setActive(true);
+            model.setActive(false);
+            //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
             }
             else{
-                model.setActive(true);
-               //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
+           // model.setActive(false);
+            model.setActive(true);
+            //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
             }
-           jsm.setFeModelTimeCellModel(model);
+            //jsm.setFeModelTimeCellModel(model);
+            
             
             final ContextMenu contextMenu=new ContextMenu();
             if(model.cellHasDoubt()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
