@@ -6,7 +6,7 @@
 package db.dao;
 
 import db.model.Sequence;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -21,7 +21,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public void createSequence(Sequence seq) {
-       Session session = HibernateUtil_back.getSessionFactory().openSession();
+       Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -36,7 +36,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public Sequence getSequence(Long sid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Sequence l= (Sequence) session.get(Sequence.class, sid);
             return l;
@@ -50,7 +50,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public void deleteSequence(Long sid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -66,7 +66,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public void updateSequence(Long sid, Sequence newseq) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -87,7 +87,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public Sequence getSequenceObjByseqno(Long seqno) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Sequence> result=null;
         try{
@@ -115,7 +115,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public List<Sequence> getSequenceList() {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Sequence> result=null;
         try{

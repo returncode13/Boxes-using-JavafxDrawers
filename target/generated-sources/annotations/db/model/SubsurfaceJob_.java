@@ -8,6 +8,8 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(SubsurfaceJob.class)
 public abstract class SubsurfaceJob_ {
 
+	public static volatile SingularAttribute<SubsurfaceJob, String> summaryTime;
+	public static volatile SingularAttribute<SubsurfaceJob, String> updateTime;
 	public static volatile SingularAttribute<SubsurfaceJob, SubsurfaceJobId> pk;
 
 }

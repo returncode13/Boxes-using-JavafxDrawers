@@ -43,6 +43,29 @@ public class SubsurfaceJob {
     public SubsurfaceJob() {
     }
 
+    @Column(name="update_time")
+    String updateTime;
+    
+    @Column(name="summary_time")
+    String summaryTime;
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
+    
+    
     
     
     

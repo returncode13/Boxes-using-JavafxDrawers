@@ -12,7 +12,7 @@ import db.model.PropertyType;
 import db.model.Volume;
 
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -28,7 +28,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void createNodeProperty(NodeProperty np) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -43,7 +43,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public NodeProperty getNodeProperty(Long npid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             NodeProperty ll=(NodeProperty) session.get(NodeProperty.class,npid);
             return ll;
@@ -57,7 +57,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void updateNodeProperty(Long npid, NodeProperty newNp) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -79,7 +79,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void deleteNodeProperty(Long npid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -95,7 +95,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public List<NodeProperty> getPropertyTypesFor(NodeType nodeType) {
-          Session session = HibernateUtil_back.getSessionFactory().openSession();
+          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodeProperty> result=null;
         List<Volume> volumeList=new ArrayList<>();
@@ -120,7 +120,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public NodeProperty getNodeProperty(NodeType ntype, PropertyType protype) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodeProperty> result=null;
         List<Volume> volumeList=new ArrayList<>();

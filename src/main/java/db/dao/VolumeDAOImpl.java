@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Volume;
 import java.util.List;
@@ -22,7 +22,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void createVolume(Volume v) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         
         try{
@@ -39,7 +39,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public Volume getVolume(Long volid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Volume v = (Volume) session.get(Volume.class, volid);
             return v;
@@ -56,7 +56,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void deleteVolume(Long volid) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -72,7 +72,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void startAlert(Volume nv) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -94,7 +94,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void stopAlert(Volume nv) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -116,7 +116,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void setHeaderExtractionFlag(Volume nv) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -138,7 +138,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void resetHeaderExtractionFlag(Volume nv) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -160,7 +160,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void updateVolume(Long volid, Volume newVol) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         
         try{
@@ -182,7 +182,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public List<Volume> getVolumesForJob(Job job) {
-        Session session=HibernateUtil_back.getSessionFactory().openSession();
+        Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Volume> results=null;
         try{

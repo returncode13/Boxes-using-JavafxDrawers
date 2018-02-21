@@ -8,7 +8,7 @@ package db.services;
 import db.dao.DescendantDAO;
 import db.dao.DescendantDAOImpl;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;

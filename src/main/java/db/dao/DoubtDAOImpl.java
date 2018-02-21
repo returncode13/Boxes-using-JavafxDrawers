@@ -10,7 +10,7 @@ import db.model.DoubtType;
 import db.model.Header;
 import db.model.Job;
 import db.model.Link;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -30,7 +30,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public void createDoubt(Doubt ds) {
-        Session session=HibernateUtil_back.getSessionFactory().openSession();
+        Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         try{
             transaction=session.beginTransaction();
@@ -45,7 +45,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public void updateDoubt(Long dsid, Doubt newds) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -80,7 +80,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public Doubt getDoubt(Long dsid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Doubt ll=(Doubt) session.get(Doubt.class,dsid);
             return ll;
@@ -94,7 +94,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public void deleteDoubt(Long dsid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -238,7 +238,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
-        Session session=HibernateUtil_back.getSessionFactory().openSession();
+        Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -274,7 +274,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
-         Session session=HibernateUtil_back.getSessionFactory().openSession();
+         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -303,7 +303,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getDoubtFor(Sequence seq, Job job) {
-         Session session=HibernateUtil_back.getSessionFactory().openSession();
+         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -332,7 +332,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getDoubtFor(Sequence seq, Job childJob, DoubtType doubtType) {
-         Session session=HibernateUtil_back.getSessionFactory().openSession();
+         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -364,7 +364,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job,  Doubt cause, DoubtType doubtType) {
         System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): Inside DAO for sub: "+sub.getId()+" job: "+job.getId()+"  cause: "+cause.getId()+" doubtType: "+doubtType.getIdDoubtType());
-         Session session=HibernateUtil_back.getSessionFactory().openSession();
+         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -400,7 +400,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
-          Session session=HibernateUtil_back.getSessionFactory().openSession();
+          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
         try{
@@ -436,7 +436,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getInheritedDoubtFor(Subsurface sub, Job job) {
-           Session session=HibernateUtil_back.getSessionFactory().openSession();
+           Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         DoubtTypeDAO dbtypeDao=new DoubtTypeDAOImpl();
         DoubtType inheritedDoubtType=dbtypeDao.getDoubtTypeByName(DoubtTypeModel.INHERIT);

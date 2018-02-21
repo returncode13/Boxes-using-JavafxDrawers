@@ -5,11 +5,13 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+//import app.connections.hibernate.HibernateUtil;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
+import db.model.SubsurfaceJobId;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -24,7 +26,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
     @Override
     public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,8 +40,8 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
     }
 
     @Override
-    public SubsurfaceJob getSubsurfaceJob(Long id) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+    public SubsurfaceJob getSubsurfaceJob(SubsurfaceJobId id) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
             
@@ -54,18 +56,48 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
     }
 
     @Override
-    public void updateSubsurfaceJob(Long id, SubsurfaceJob nsj) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void updateSubsurfaceJob(SubsurfaceJob nsj) {
+         Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<SubsurfaceJob> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(SubsurfaceJob.class);
+            criteria.add(Restrictions.eq("pk.job", nsj.getJob()));
+            criteria.add(Restrictions.eq("pk.subsurface",nsj.getSubsurface()));
+            
+            result=criteria.list();
+            transaction.commit();
+            
+             if(result!=null && result.size()==1){
+                    transaction=null;
+                    SubsurfaceJob sj=result.get(0);
+                    sj.setUpdateTime(nsj.getUpdateTime());
+                    sj.setSummaryTime(nsj.getSummaryTime());
+                    transaction=session.beginTransaction();
+                    session.update(sj);
+                    transaction.commit();
+            
+            }else{
+                 throw new Exception("db.dao.SubsurfaceJobDAOImpl.updateSubsurfaceJob(): result.size()>1 found for job "+nsj.getJob()+" sub: "+nsj.getSubsurface()+" size found: "+result.size());
+             }
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+            
+        }
+   }
 
     @Override
-    public void deleteSubsurfaceJob(Long id) {
+    public void deleteSubsurfaceJob(SubsurfaceJobId id) {
          throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public SubsurfaceJob getSubsurfaceJobFor(Job job, Subsurface subsurface) {
-        Session session =HibernateUtil_back.getSessionFactory().openSession();
+        Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<SubsurfaceJob> result=null;
         try{

@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.User;
 import db.model.UserWorkspace;
 import db.model.Workspace;
@@ -23,7 +23,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
 
     @Override
     public void createUserWorkspace(UserWorkspace userWorkspace) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,7 +38,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
 
     @Override
     public UserWorkspace getUserWorkspace(Long id) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
             
@@ -54,7 +54,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
 
     @Override
     public void deleteUserWorkspace(Long id) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -70,7 +70,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
 
     @Override
     public void updateUserWorkspace(Long id, UserWorkspace newUserWorkspace) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -91,7 +91,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
 
     @Override
     public UserWorkspace getUserWorkspaceFor(User user, Workspace workspace) {
-       Session session =HibernateUtil_back.getSessionFactory().openSession();
+       Session session =HibernateUtil.getSessionFactory().openSession();
        Transaction transaction=null;
        List<UserWorkspace> result=null;
        

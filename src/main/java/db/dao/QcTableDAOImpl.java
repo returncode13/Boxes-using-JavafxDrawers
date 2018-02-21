@@ -11,7 +11,7 @@ import db.model.QcTable;
 import db.model.QcType;
 import db.model.Subsurface;
 import db.model.Volume;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,7 +29,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public void createQcTable(QcTable qcm) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -45,7 +45,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public QcTable getQcTable(Long qid) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             QcTable h= (QcTable) session.get(QcTable.class, qid);
             return h;
@@ -59,7 +59,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public void updateQcTable(Long qid, QcTable newQ) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -90,7 +90,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public void deleteQcTable(Long qid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -145,7 +145,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public List<QcTable> getQcTableFor(QcMatrixRow qmx) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
         try{
@@ -208,7 +208,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     }*/
     @Override
     public List<QcTable> getQcTableFor(Subsurface s) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
         try{
@@ -227,7 +227,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface s) throws Exception {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         Set<QcTable> result=null;
         try{
@@ -258,7 +258,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s) throws Exception{
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcTable> result=null;
         try{

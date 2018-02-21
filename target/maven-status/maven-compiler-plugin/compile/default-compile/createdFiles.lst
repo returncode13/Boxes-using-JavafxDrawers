@@ -26,7 +26,6 @@ db/services/SubsurfaceServiceImpl.class
 app/properties/AppProperties.class
 db/model/NodeProperty.class
 fend/job/table/qctable/CheckBoxCell$3.class
-app/connections/hibernate/HibernateUtil_back.class
 db/services/WorkflowServiceImpl.class
 db/model/NodeType.class
 fend/summary/SequenceSummary/Depth/JobSummary/CellModel/Time/TimeCell/TimeCell.class

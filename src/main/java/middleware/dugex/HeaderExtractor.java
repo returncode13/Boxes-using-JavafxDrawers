@@ -5,6 +5,7 @@
  */
 package middleware.dugex;
 
+import app.properties.AppProperties;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
@@ -43,6 +44,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import middleware.sequences.SubsurfaceHeaders;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 //import org.openide.util.Exceptions;
 
 /**
@@ -82,6 +85,7 @@ public class HeaderExtractor {
               //Job dbjob=dbvol.getJob();
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
+                  String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                   Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
@@ -90,6 +94,7 @@ public class HeaderExtractor {
                       dbSubjob=new SubsurfaceJob();
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
+                      dbSubjob.setUpdateTime(updateTime);
                       subsurfaceJobService.createSubsurfaceJob(dbSubjob);
                   }
                   dbjob.getSubsurfaceJobs().add(dbSubjob);
@@ -150,6 +155,7 @@ public class HeaderExtractor {
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                  String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                   Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
                   SubsurfaceJob dbSubjob;
@@ -157,6 +163,7 @@ public class HeaderExtractor {
                       dbSubjob=new SubsurfaceJob();
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
+                      dbSubjob.setUpdateTime(updateTime);
                       subsurfaceJobService.createSubsurfaceJob(dbSubjob);
                   }
                   dbjob.getSubsurfaceJobs().add(dbSubjob);
@@ -213,6 +220,7 @@ public class HeaderExtractor {
                       dbSubjob=new SubsurfaceJob();
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
+                    //  dbSubjob.setUpdateTime(updateTime);                                 //replace by acquisition time from db
                       subsurfaceJobService.createSubsurfaceJob(dbSubjob);
                       dbjob.getSubsurfaceJobs().add(dbSubjob);
                       jobService.updateJob(dbjob.getId(), dbjob);

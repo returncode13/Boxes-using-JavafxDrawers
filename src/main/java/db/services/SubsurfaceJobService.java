@@ -8,6 +8,7 @@ package db.services;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
+import db.model.SubsurfaceJobId;
 import java.util.List;
 
 /**
@@ -16,8 +17,8 @@ import java.util.List;
  */
 public interface SubsurfaceJobService {
      public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob);
-    public SubsurfaceJob getSubsurface(Long id);
-    public void updateSubsurfaceJob(Long id,SubsurfaceJob nsj);
-    public void deleteSubsurfaceJob(Long id);
+    public SubsurfaceJob getSubsurface(SubsurfaceJobId id);
+    public void updateSubsurfaceJob(SubsurfaceJob nsj);
+    public void deleteSubsurfaceJob(SubsurfaceJobId id);
     public SubsurfaceJob getSubsurfaceJobFor(Job job,Subsurface subsurface);
 }

@@ -10,6 +10,7 @@ import db.model.QcTable;
 
 import java.util.List;
 import db.dao.QcTableDAO;
+import db.model.Job;
 import db.model.QcMatrixRow;
 import db.model.Subsurface;
 
@@ -20,6 +21,7 @@ import db.model.Subsurface;
 public class QcTableServiceImpl implements QcTableService{
     
     QcTableDAO qcmDAO=new QcTableDAOImpl();
+    
     
     @Override
     public void createQcTable(QcTable qcm) {
@@ -34,6 +36,7 @@ public class QcTableServiceImpl implements QcTableService{
     @Override
     public void updateQcTable(Long qid, QcTable newQ) {
         qcmDAO.updateQcTable(qid, newQ);
+        
     }
 
     @Override

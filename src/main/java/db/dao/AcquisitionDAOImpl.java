@@ -6,7 +6,7 @@
 package db.dao;
 
 import db.model.Acquisition;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +25,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public void createAcquisition(Acquisition acq) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -40,7 +40,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public Acquisition getAcquisition(Long aid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Acquisition l= (Acquisition) session.get(Acquisition.class, aid);
             return l;
@@ -54,7 +54,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public void deleteAcquisition(Long aid) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -70,7 +70,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public void updateAcquisition(Long aid, Acquisition newAcq) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -103,7 +103,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public List<Long> getCables() {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Acquisition> result=null;
         List<Long> cables=new ArrayList<>();
@@ -134,7 +134,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public List<Long> getGuns() {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Acquisition> result=null;
         List<Long> guns=new ArrayList<>();
@@ -168,7 +168,7 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
 
     @Override
     public List<Acquisition> getEntireAcquisition() {
-        Session session=HibernateUtil_back.getSessionFactory().openSession();
+        Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Acquisition> result=null;
         try{

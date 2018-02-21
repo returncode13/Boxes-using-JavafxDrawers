@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
@@ -25,7 +25,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public void createLink(Link l) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -40,7 +40,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public Link getLink(Long id) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Link l= (Link) session.get(Link.class, id);
             return l;
@@ -54,7 +54,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public void deleteLink(Long id) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -70,7 +70,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public void updateLink(Long id, Link newLink) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -93,7 +93,7 @@ public class LinkDAOImpl implements LinkDAO{
     
     @Override
     public void clearLinksforJob(Job job,Dot dot) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
             
@@ -128,7 +128,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public List<Link> getLinkBetweenParentAndChild(Job parent, Job child, Dot dot) {
-        Session session=HibernateUtil_back.getSessionFactory().openSession();
+        Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction= null;
          List result=null;
         try{

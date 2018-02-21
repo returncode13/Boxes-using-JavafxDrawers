@@ -170,7 +170,7 @@ public class QcTableController extends Stage{
                 }
             });
             
-          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index);});
+          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index,exec);});
           
             columns.add(qcCol);
         }

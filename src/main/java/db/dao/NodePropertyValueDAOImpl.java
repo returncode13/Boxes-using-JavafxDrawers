@@ -12,7 +12,7 @@ import db.model.NodeProperty;
 import db.model.NodePropertyValue;
 
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -28,7 +28,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void createNodePropertyValue(NodePropertyValue npv) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -43,7 +43,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public NodePropertyValue getNodePropertyValue(Long npvid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             NodePropertyValue ll=(NodePropertyValue) session.get(NodePropertyValue.class,npvid);
             return ll;
@@ -57,7 +57,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void updateNodePropertyValue(Long npvid, NodePropertyValue newNpv) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -79,7 +79,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void deleteNodePropertyValue(Long npvid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -95,7 +95,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodePropertyValue> result=null;
         
@@ -122,7 +122,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public NodePropertyValue getNodePropertyValuesFor(Job jobStep, NodeProperty nodeProperty) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodePropertyValue> result=null;
         

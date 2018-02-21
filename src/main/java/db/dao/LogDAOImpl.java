@@ -9,7 +9,7 @@ import db.model.Header;
 import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Subsurface;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public void createLogs(Log l) {
-       Session session = HibernateUtil_back.getSessionFactory().openSession();
+       Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -46,7 +46,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLogs(Long lid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Log l= (Log) session.get(Log.class, lid);
             return l;
@@ -60,7 +60,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public void updateLogs(Long lid, Log newL) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -94,7 +94,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public void deleteLogs(Long lid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -110,7 +110,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Header h) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -129,7 +129,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -148,7 +148,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Subsurface subline) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -168,7 +168,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLatestLogFor(Volume v, Subsurface subline) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -192,7 +192,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -216,7 +216,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Subsurface subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -241,7 +241,7 @@ public class LogDAOImpl implements LogDAO{
     
     @Override
     public List<Log> getLogsFor(Volume v, Workflow workflow) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         List<Workflow> reswf=null;
@@ -266,7 +266,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Long seq) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -286,7 +286,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getSequencesFor(Volume v) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -307,7 +307,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getSubsurfacesFor(Volume v, Long seq) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -329,7 +329,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLogsFor(Volume volume, Subsurface linename, String timestamp, String filename) throws Exception{
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -359,7 +359,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Job dbJob) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -378,7 +378,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsByTimeFor(Job dbJob) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
@@ -398,7 +398,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{

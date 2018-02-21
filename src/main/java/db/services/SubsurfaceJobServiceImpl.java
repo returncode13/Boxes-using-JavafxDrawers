@@ -11,6 +11,7 @@ import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
+import db.model.SubsurfaceJobId;
 import java.util.List;
 
 /**
@@ -27,17 +28,17 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     }
 
     @Override
-    public SubsurfaceJob getSubsurface(Long id) {
-        return subsurfaceJobDAO.getSubsurfaceJob(id);
-    }
-
-    @Override
-    public void updateSubsurfaceJob(Long id, SubsurfaceJob nsj) {
+    public SubsurfaceJob getSubsurface(SubsurfaceJobId id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void deleteSubsurfaceJob(Long id) {
+    public void updateSubsurfaceJob(SubsurfaceJob nsj) {
+        subsurfaceJobDAO.updateSubsurfaceJob(nsj);
+    }
+
+    @Override
+    public void deleteSubsurfaceJob(SubsurfaceJobId id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

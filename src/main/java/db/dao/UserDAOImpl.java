@@ -8,7 +8,7 @@ package db.dao;
 
 
 import db.model.User;
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -23,7 +23,7 @@ public class UserDAOImpl implements UserDAO{
 
     @Override
     public void createUser(User user) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -38,7 +38,7 @@ public class UserDAOImpl implements UserDAO{
 
     @Override
     public void updateUser(Long uid, User newUser) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -62,7 +62,7 @@ public class UserDAOImpl implements UserDAO{
 
     @Override
     public User getUser(Long uid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             User l= (User) session.get(User.class, uid);
             return l;
@@ -76,7 +76,7 @@ public class UserDAOImpl implements UserDAO{
 
     @Override
     public void deleteUser(Long uid) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -92,7 +92,7 @@ public class UserDAOImpl implements UserDAO{
 
     @Override
     public User getUserWithInitials(String ini) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<User> result=null;
         try{

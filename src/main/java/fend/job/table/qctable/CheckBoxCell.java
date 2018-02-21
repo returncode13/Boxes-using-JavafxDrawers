@@ -10,10 +10,13 @@ import app.properties.AppProperties;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.List;
@@ -41,12 +44,13 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
     TreeTableColumn<QcTableSequence, Boolean> param;
     private QcTableService qcTableService=new QcTableServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     QcTableSequence selectedItem;
     int index;
     final CheckBox checkBox;
     
 
-    CheckBoxCell(TreeTableColumn<QcTableSequence, Boolean> param, int ind) {
+    CheckBoxCell(TreeTableColumn<QcTableSequence, Boolean> param, int ind,Executor exec) {
         
        this.param=param;
        checkBox=new CheckBox();
@@ -210,6 +214,10 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qctable.setResult(resForDb);
                             qctable.setUpdateTime(updateTime);
                             qcTableService.updateQcTable(qctable.getId(), qctable);
+                            QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
+                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);
+                            dbSubjob.setUpdateTime(updateTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubjob);
                         }else{                                                      //create  a new qctable entry
                             qctable=new QcTable();
                             QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
@@ -218,6 +226,9 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qctable.setUpdateTime(updateTime);
                             qctable.setResult(resForDb);
                             qcTableService.createQcTable(qctable);
+                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);
+                            dbSubjob.setUpdateTime(updateTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubjob);
                         }
                     } catch (Exception ex) {
                         //Exceptions.printStackTrace(ex);
@@ -305,6 +316,10 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qctable.setResult(resForDb);
                             qctable.setUpdateTime(updateTime);
                             qcTableService.updateQcTable(qctable.getId(), qctable);
+                            QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);           
+                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);
+                            dbSubjob.setUpdateTime(updateTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubjob);
                         }else{                                                      //create  a new qctable entry
                             qctable=new QcTable();
                             QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
@@ -313,6 +328,9 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qctable.setUpdateTime(updateTime);
                             qctable.setResult(resForDb);
                             qcTableService.createQcTable(qctable);
+                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);
+                            dbSubjob.setUpdateTime(updateTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubjob);
                         }
                     } catch (Exception ex) {
                        // Exceptions.printStackTrace(ex);

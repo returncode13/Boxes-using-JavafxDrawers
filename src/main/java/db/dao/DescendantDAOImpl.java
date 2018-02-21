@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.Descendant;
 import db.model.Job;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public void addDescendant(Descendant d) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -41,7 +41,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public Descendant getDescendant(Long did) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         Descendant anc=null;
         try{
@@ -59,7 +59,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public void updateDescendant(Long did, Descendant newD) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -77,7 +77,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public void deleteDescendant(Long did) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -93,7 +93,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public Descendant getDescendantFor(Job fkid, Long descendant) {
-       Session session = HibernateUtil_back.getSessionFactory().openSession();
+       Session session = HibernateUtil.getSessionFactory().openSession();
         List<Descendant> results=null;
         try{
             Transaction transaction=session.beginTransaction();
@@ -118,7 +118,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
      @Override
     public void clearTableForJob(Job dbjob) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
             
@@ -151,7 +151,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public List<Descendant> getDescendantsFor(Job job) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List results=null;
         try{
@@ -174,7 +174,7 @@ public class DescendantDAOImpl implements DescendantDAO {
 
     @Override
     public Descendant getDescendantFor(Job job, Job descendant) {
-        Session sess = HibernateUtil_back.getSessionFactory().openSession();
+        Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Descendant> result=null;
         Transaction transaction=null;
         try{

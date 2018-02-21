@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import db.model.Workspace;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
 
     @Override
     public void createWorkspace(Workspace s) {
-      Session session = HibernateUtil_back.getSessionFactory().openSession();
+      Session session = HibernateUtil.getSessionFactory().openSession();
       Transaction transaction=null;
       
       try{
@@ -38,7 +38,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
 
     @Override
     public Workspace getWorkspace(Long sessionId) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
             
       try{
           
@@ -56,7 +56,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
 
     @Override
     public void updateWorkspace(Long sessionId, Workspace newSession) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
       Transaction transaction=null;
       
       try{
@@ -80,7 +80,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
 
     @Override
     public void deleteWorkspace(Long sessionId) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
       Transaction transaction=null;
       
       try{
@@ -98,7 +98,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
 
     @Override
     public List<Workspace> listWorkspaces() {
-        Session hibsession = HibernateUtil_back.getSessionFactory().openSession();
+        Session hibsession = HibernateUtil.getSessionFactory().openSession();
         List<Workspace> sessList=new ArrayList<>();
       Transaction transaction=null;
       

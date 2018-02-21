@@ -5,7 +5,7 @@
  */
 package db.dao;
 
-import app.connections.hibernate.HibernateUtil_back;
+import app.connections.hibernate.HibernateUtil;
 import db.model.VariableArgument;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,7 +18,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public void createVariableArgument(VariableArgument va) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -33,7 +33,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public VariableArgument getVariableArgument(Long vaid) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             VariableArgument l= (VariableArgument) session.get(VariableArgument.class, vaid);
             return l;
@@ -47,7 +47,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public void updateVariableArgument(Long vaid, VariableArgument newVa) {
-        Session session = HibernateUtil_back.getSessionFactory().openSession();
+        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -69,7 +69,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public void deleteVariableArgument(Long vaid) {
-         Session session = HibernateUtil_back.getSessionFactory().openSession();
+         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();

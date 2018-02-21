@@ -20,8 +20,6 @@ import app.settings.database.DataBaseSettings;
 import app.settings.ssh.SShSettings;
 import org.hibernate.SessionFactory;
 import app.connections.manager.ssh.SSHManager;
-import org.hibernate.boot.registry.BootstrapServiceRegistry;
-import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 
 /**
  *
@@ -180,12 +178,6 @@ public class HibernateUtil {
             
             //sessionFactory=emfactory.unwrap(Session.class).getSessionFactory();
             sessionFactory=emfactory.unwrap(SessionFactory.class);
-            
-            
-            
-            
-            
-          
             System.out.println(result);
            return sessionFactory;
            
