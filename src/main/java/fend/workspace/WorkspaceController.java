@@ -21,6 +21,7 @@ import db.model.PropertyType;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.model.Summary;
 import db.model.VariableArgument;
 import db.model.Volume;
@@ -57,6 +58,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.SummaryService;
@@ -155,6 +158,7 @@ public class WorkspaceController {
     private DoubtStatusService doubtStatusService = new DoubtStatusServiceImpl();
     private QcTableService qcTableService = new QcTableServiceImpl();
     private SummaryService summaryService = new SummaryServiceImpl();
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     private List<BooleanProperty> changePropertyList = new ArrayList<>();
 
     private DoubtType doubtTypeQc;
@@ -1511,6 +1515,17 @@ public class WorkspaceController {
                     
                     
                 }
+                
+                
+                 String summaryTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);    
+                SubsurfaceJob dbSubChildjob=subsurfaceJobService.getSubsurfaceJobFor(l.getChild(), subb);
+                            dbSubChildjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubChildjob);    
+                            
+                SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), subb);
+                            dbSubParentjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubParentjob);                
+                            
     }
 
     private void checkForDependencyDoubts(Link l, Dot dot, Map<String, Double> mapForVariableSetting, Set<String> variableSet, Set<Job> argumentSet, Subsurface subb, Summary summary,List<Descendant> descendantsThatContainSub) throws Exception {
@@ -1727,6 +1742,16 @@ public class WorkspaceController {
                     }
 
                 }
+                
+              
+            String summaryTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);    
+                SubsurfaceJob dbSubChildjob=subsurfaceJobService.getSubsurfaceJobFor(l.getChild(), subb);
+                            dbSubChildjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubChildjob);    
+                            
+                SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), subb);
+                            dbSubParentjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubParentjob);    
     }
 
     private void checkForQcDoubts(Link l, Dot dot, Subsurface subb, Summary summary,List<Descendant> descendantsThatContainSub) throws Exception {
@@ -1829,6 +1854,16 @@ public class WorkspaceController {
                     summary.setQcSummary(false);
                 
                 }
+                
+                
+                String summaryTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);    
+                SubsurfaceJob dbSubChildjob=subsurfaceJobService.getSubsurfaceJobFor(l.getChild(), subb);
+                            dbSubChildjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubChildjob);    
+                            
+                SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), subb);
+                            dbSubParentjob.setSummaryTime(summaryTime);
+                            subsurfaceJobService.updateSubsurfaceJob(dbSubParentjob);    
 
     }
 
