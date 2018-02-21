@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -22,7 +24,11 @@ public class SummaryModel {
     private WorkspaceController workspaceController;
   // private List<SequenceSummary> sequenceSummaries=new ArrayList<>();
     private Map<Sequence,SequenceSummary> sequenceSummaryMap=new HashMap<>();
-
+    private BooleanProperty refreshTable=new SimpleBooleanProperty(false);
+    
+    
+    
+    
     public SummaryModel(WorkspaceController workspaceController) {
         this.workspaceController = workspaceController;
     }
@@ -56,6 +62,16 @@ public class SummaryModel {
     public WorkspaceController getWorkspaceController() {
         return workspaceController;
     }
+
+    public BooleanProperty refreshTableProperty() {
+        return refreshTable;
+    }
+
+    public void setRefreshTable(Boolean refresh) {
+        this.refreshTable.set(refresh);
+    }
+    
+    
     
     
 }

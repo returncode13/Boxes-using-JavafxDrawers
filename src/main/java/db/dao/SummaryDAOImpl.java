@@ -81,7 +81,10 @@ public class SummaryDAOImpl implements  SummaryDAO{
        try{
             transaction=session.beginTransaction();
             Summary summary=(Summary) session.get(Summary.class, id);
-            summary.setInheritanceSummary(newSummary.getInheritanceSummary());
+            summary.setTimeInheritanceSummary(newSummary.getTimeInheritanceSummary());
+            summary.setTraceInheritanceSummary(newSummary.getTraceInheritanceSummary());
+            summary.setQcInheritanceSummary(newSummary.getQcInheritanceSummary());
+            summary.setInsightInheritanceSummary(newSummary.getInsightInheritanceSummary());
             summary.setInsightSummary(newSummary.getInsightSummary());
             summary.setQcSummary(newSummary.getQcSummary());
             summary.setTimeSummary(newSummary.getTimeSummary());

@@ -65,6 +65,7 @@ fend/job/job3/definitions/qcmatrix/QcMatrixModel$2.class
 fend/job/job0/definitions/qcmatrix/QcMatrixModel$2.class
 db/dao/NodeTypeDAO.class
 db/model/QcType.class
+fend/summary/SummaryController$6.class
 db/model/UserWorkspaceId.class
 fend/job/job0/definitions/JobDefinitionsView.class
 fend/job/job2/definitions/qcmatrix/qctype/addQcType/AddQcTypeController.class

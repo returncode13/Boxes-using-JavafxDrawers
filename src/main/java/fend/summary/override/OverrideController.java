@@ -129,8 +129,18 @@ public class OverrideController extends Stage{
                 }
                 ds.setStatus(status);
                 
+                
+                
+                
                 ds.setComments(userComment);
                 doubtStatusService.updateDoubtStatus(ds.getId(), ds);
+                
+                if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                                model.getCellModel().setOverride(true);
+                        }else{
+                            model.getCellModel().setOverride(false);
+                        }
+                
                 
                 Doubt doubt=ds.getDoubt();
                 Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
@@ -139,11 +149,11 @@ public class OverrideController extends Stage{
                     
                     if(statusChanged){
                         
-                        if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                                model.getCellModel().setOverride(true);
+                        /*if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                        model.getCellModel().setOverride(true);
                         }else{
-                            model.getCellModel().setOverride(false);
-                        }
+                        model.getCellModel().setOverride(false);
+                        }*/
                         
                             Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
                                 for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
@@ -168,9 +178,12 @@ public class OverrideController extends Stage{
                             .getJobSummaryModel(inhDoubt.getChildJob());
                     System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
                     System.out.println(".changed() : current Query flag: "+inhjsm.getTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getTimeCellModel().isQuery());
-                    System.out.println(".changed() : current Query flag: "+inhjsm.getFeModelTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModelTimeCellModel().isQuery());
+                    System.out.println(".changed(): refreshing table");
+                    Boolean ref=model.getCellModel().getJobSummaryModel().getSummaryModel().refreshTableProperty().get();
+                    model.getCellModel().getJobSummaryModel().getSummaryModel().setRefreshTable(!ref);
+                    //System.out.println(".changed() : current Query flag: "+inhjsm.getFeModelTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModelTimeCellModel().isQuery());
                   //  inhjsm.setQuery(!inhjsm.isQuery());
-                    inhjsm.getFeModelTimeCellModel().setQuery(!inhjsm.getFeModelTimeCellModel().isQuery());
+                   // inhjsm.getFeModelTimeCellModel().setQuery(!inhjsm.getFeModelTimeCellModel().isQuery());
                 }
                 
                 

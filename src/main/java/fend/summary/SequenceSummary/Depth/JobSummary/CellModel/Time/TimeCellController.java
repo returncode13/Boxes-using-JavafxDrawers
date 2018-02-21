@@ -69,7 +69,9 @@ public class TimeCellController {
 
     
     public void setModel(TimeCellModel item) {
+        timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
         model=item;
+       
        
          if(model.isActive()){
         timeLabel.setDisable(false);
@@ -80,9 +82,9 @@ public class TimeCellController {
         
             applyColor();
        
-       
+        
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+        
         
         model.cellProperty().addListener(TIME_DOUBT_LISTENER);
         
@@ -94,6 +96,7 @@ public class TimeCellController {
         
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
+       
     }
 
     void setView(TimeCellView vw) {
@@ -170,23 +173,23 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                if(model.getJobSummaryModel().getSubsurface()!=null){
-                    System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel()
-                        .getJob()
-                        .getNameJobStep()+" for "+
-                        model.getJobSummaryModel()
-                                .getSubsurface()
-                                .getSubsurface()+
-                        " active: "+newValue);
+                /*if(model.getJobSummaryModel().getSubsurface()!=null){
+                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel()
+                .getJob()
+                .getNameJobStep()+" for "+
+                model.getJobSummaryModel()
+                .getSubsurface()
+                .getSubsurface()+
+                " active: "+newValue);
                 }
-                
+                */
                 timeLabel.setDisable(false);
                 applyColor();
                 
             }if(!newValue){
-                 if(model.getJobSummaryModel().getSubsurface()!=null){
-                     System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
-                 }
+                /* if(model.getJobSummaryModel().getSubsurface()!=null){
+                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
+                }*/
                 timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
                 timeLabel.setDisable(true);
             }
@@ -205,17 +208,17 @@ public class TimeCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
              //String typeToBeQueried=model.getContextAskedForDoubtType();
-             if(model.getJobSummaryModel().getSubsurface()!=null)
+             /* if(model.getJobSummaryModel().getSubsurface()!=null)
              System.out.println(".changed(): Query listener called on "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
-           
+             getJobSummaryModel().
+             getSubsurface().
+             getSubsurface()+" for "+
+             
+             model.
+             getJobSummaryModel().
+             getJob().
+             getNameJobStep());
+             */
              
              model.cellProperty().removeListener(TIME_DOUBT_LISTENER);
              model.inheritanceProperty().removeListener(TIME_INHERITANCE_LISTENER);
@@ -267,7 +270,17 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                System.out.println(".changed(): show overrride dialog");
+                  if(model.getJobSummaryModel().getSubsurface()!=null){
+                    System.out.println(".changed(): show overrride dialog for "+model.
+                        getJobSummaryModel().
+                        getSubsurface().
+                        getSubsurface()+
+                        " job: "+
+                        model.
+                                getJobSummaryModel().
+                                getJob().
+                                getNameJobStep());
+                }
               // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
                 Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),timeDoubtType);
                 DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
@@ -356,7 +369,7 @@ public class TimeCellController {
              
              
          }else{
-             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting NO_SEQ_PRESENT");
+         //    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting NO_SEQ_PRESENT");
              timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
          }
      }

@@ -53,8 +53,19 @@ public class Summary {
     @Column(name="insight_summary")
     private Boolean insightSummary=false;
     
-    @Column(name="inheritance_summary")
-    private Boolean inheritanceSummary=false;
+    @Column(name="time_inheritance_summary")
+    private Boolean timeInheritanceSummary=false;
+    
+    @Column(name="trace_inheritance_summary")
+    private Boolean traceInheritanceSummary=false;
+    
+    @Column(name="qc_inheritance_summary")
+    private Boolean qcInheritanceSummary=false;
+    
+    @Column(name="insight_inheritance_summary")
+    private Boolean insightInheritanceSummary=false;
+    
+    
 
     @ManyToOne
     @JoinColumn(name="workspace",nullable=false)
@@ -137,13 +148,39 @@ public class Summary {
         this.insightSummary = insightSummary;
     }
 
-    public Boolean getInheritanceSummary() {
-        return inheritanceSummary;
+    public Boolean getTimeInheritanceSummary() {
+        return timeInheritanceSummary;
     }
 
-    public void setInheritanceSummary(Boolean inheritanceSummary) {
-        this.inheritanceSummary = inheritanceSummary;
+    public void setTimeInheritanceSummary(Boolean timeInheritanceSummary) {
+        this.timeInheritanceSummary = timeInheritanceSummary;
     }
+
+    public Boolean getTraceInheritanceSummary() {
+        return traceInheritanceSummary;
+    }
+
+    public void setTraceInheritanceSummary(Boolean traceInheritanceSummary) {
+        this.traceInheritanceSummary = traceInheritanceSummary;
+    }
+
+    public Boolean getQcInheritanceSummary() {
+        return qcInheritanceSummary;
+    }
+
+    public void setQcInheritanceSummary(Boolean qcInheritanceSummary) {
+        this.qcInheritanceSummary = qcInheritanceSummary;
+    }
+
+    public Boolean getInsightInheritanceSummary() {
+        return insightInheritanceSummary;
+    }
+
+    public void setInsightInheritanceSummary(Boolean insightInheritanceSummary) {
+        this.insightInheritanceSummary = insightInheritanceSummary;
+    }
+    
+    
 
     public Subsurface getSubsurface() {
         return subsurface;

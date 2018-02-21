@@ -46,12 +46,12 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             //model=new TimeCellModel();
             model=tcm;
             view.getController().setModel(model);
-            if(jsm.getSubsurface()==null){
+            /*if(jsm.getSubsurface()==null){
             
             }else{
-               
-                System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
-            }
+            
+            System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
+            }*/
             
             /* model.setCellProperty(jsm.getTimeCellModel().cellHasDoubt());
             // model.setActive(true);

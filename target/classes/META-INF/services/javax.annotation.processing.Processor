@@ -1,1 +1,2 @@
-org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor
+org.netbeans.modules.openide.util.ServiceProviderProcessor
+org.netbeans.modules.openide.util.NamedServiceProcessor

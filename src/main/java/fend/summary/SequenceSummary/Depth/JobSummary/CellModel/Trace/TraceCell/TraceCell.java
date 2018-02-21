@@ -46,13 +46,13 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             //model.setJobSummaryModel(jsm);
             model=tcm;
              view.getController().setModel(model);
-            if(jsm.getSubsurface()==null){
-            
-            }else{
-               
-                System.out.println("fend.summary.SequenceSummary.Depth.TraceCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
-            }
-            
+             /*if(jsm.getSubsurface()==null){
+             
+             }else{
+             
+             System.out.println("fend.summary.SequenceSummary.Depth.TraceCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
+             }
+             */
             /* model.setCellProperty(jsm.getTraceCellModel().cellHasDoubt());
             // model.setActive(true);
             model.setInheritance(jsm.getTraceCellModel().isInheritance());
@@ -71,6 +71,7 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             
             }
             else{
+                // model.setActive(false);
             model.setActive(true);
             //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
@@ -81,7 +82,7 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             if(model.cellHasDoubt()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
             overrideMenuItem.setOnAction(e->{
-            System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");
+            System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
             
             
             

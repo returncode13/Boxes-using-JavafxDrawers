@@ -59,25 +59,24 @@ private String name;
         hash = 67 * hash + Objects.hashCode(this.idDoubtType);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-            return true;
+        return true;
         }
         if (obj == null) {
-            return false;
+        return false;
         }
         if (getClass() != obj.getClass()) {
-            return false;
+        return false;
         }
         final DoubtType other = (DoubtType) obj;
         if (!Objects.equals(this.idDoubtType, other.idDoubtType)) {
-            return false;
+        return false;
         }
         return true;
     }
-
     
     
 

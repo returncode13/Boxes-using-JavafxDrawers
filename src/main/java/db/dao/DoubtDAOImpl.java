@@ -248,7 +248,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("dot", dot));
             criteria.add(Restrictions.eq("doubtType",doubtType));
-           
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             result=criteria.list();
             transaction.commit();
             
@@ -283,7 +283,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("subsurface", sub));
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("dot", dot));
-           
+            
            
             result=criteria.list();
             transaction.commit();
@@ -341,9 +341,11 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("sequence", seq));
             criteria.add(Restrictions.eq("childJob", childJob));
             criteria.add(Restrictions.eq("doubtType", doubtType));
-           
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
             result=criteria.list();
+            
+            
             transaction.commit();
             
         }catch(Exception e){
@@ -372,7 +374,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("doubtType", doubtType));
             criteria.add(Restrictions.eq("dot", dot));
             criteria.add(Restrictions.eq("doubtCause", cause));
-           
+           criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
             result=criteria.list();
             transaction.commit();
@@ -401,10 +403,16 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("subsurface", sub));
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("doubtType", doubtType));
-           
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
            
             result=criteria.list();
+            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning a list of doubts of size: "+result.size()+" for "+sub.getSubsurface()+" job: "+job.getNameJobStep()+" doubttype: "+doubtType.getIdDoubtType()+" name: "+doubtType.getName());
+                for(Doubt d:result){
+                    System.out.println("id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" dbttype: "+d.getDoubtType().getIdDoubtType()+" -- "+d.getDoubtType().getName()+" dot: "+d.getDot().getId()+
+                            " link: "+d.getLink().getId());
+                }
+            
             transaction.commit();
             
         }catch(Exception e){
@@ -433,7 +441,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("subsurface", sub));
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("doubtType", inheritedDoubtType));
-           
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
            
             result=criteria.list();

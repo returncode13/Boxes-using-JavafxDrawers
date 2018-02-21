@@ -170,23 +170,23 @@ public class TraceCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                if(model.getJobSummaryModel().getSubsurface()!=null){
-                    System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel()
-                        .getJob()
-                        .getNameJobStep()+" for "+
-                        model.getJobSummaryModel()
-                                .getSubsurface()
-                                .getSubsurface()+
-                        " active: "+newValue);
+                /*if(model.getJobSummaryModel().getSubsurface()!=null){
+                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel()
+                .getJob()
+                .getNameJobStep()+" for "+
+                model.getJobSummaryModel()
+                .getSubsurface()
+                .getSubsurface()+
+                " active: "+newValue);
                 }
-                
+                */
                 traceLabel.setDisable(false);
                 applyColor();
                 
             }if(!newValue){
-                 if(model.getJobSummaryModel().getSubsurface()!=null){
-                     System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
-                 }
+                /* if(model.getJobSummaryModel().getSubsurface()!=null){
+                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
+                }*/
                 traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
                 traceLabel.setDisable(true);
             }
@@ -264,10 +264,23 @@ public class TraceCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                System.out.println(".changed(): show overrride dialog");
+                if(model.getJobSummaryModel().getSubsurface()!=null){
+                    System.out.println(".changed(): show overrride dialog for "+model.
+                        getJobSummaryModel().
+                        getSubsurface().
+                        getSubsurface()+
+                        " job: "+
+                        model.
+                                getJobSummaryModel().
+                                getJob().
+                                getNameJobStep());
+                }
+                
               // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
                 Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
-                DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                DoubtStatus ds=(new ArrayList<>(doubt.
+                        getDoubtStatuses()))
+                        .get(0);
                 OverrideModel ovrModel=new OverrideModel(model);
                 
                 Link l=doubt.getLink();
@@ -293,6 +306,7 @@ public class TraceCellController {
                     
                 OverrideView ovrView=new OverrideView(ovrModel);
                 model.setShowOverride(false);
+                
             }
         }
     };
@@ -324,32 +338,32 @@ public class TraceCellController {
              }else{
                  Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), traceDoubtType);
                  if(cause!=null){
-                      if(model.getJobSummaryModel().getSubsurface()!=null){
-                          System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): setting inheritance in "+model.
+                     /*if(model.getJobSummaryModel().getSubsurface()!=null){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): setting inheritance in "+model.
                      getJobSummaryModel().
                      getSubsurface().
                      getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
-                      
-                          //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor() cause found is "+cause.getId());
-                      }
+                     
+                     model.
+                     getJobSummaryModel().
+                     getJob().
+                     getNameJobStep());
+                     
+                     //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor() cause found is "+cause.getId());
+                     }*/
                      model.setInheritance(true);
                  }else{
-                     if(model.getJobSummaryModel().getSubsurface()!=null){
-                          System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): No cause for inherited doubt found in  "+model.
+                     /*if(model.getJobSummaryModel().getSubsurface()!=null){
+                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): No cause for inherited doubt found in  "+model.
                      getJobSummaryModel().
                      getSubsurface().
                      getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
-                      }
+                     
+                     model.
+                     getJobSummaryModel().
+                     getJob().
+                     getNameJobStep());
+                     }*/
                      model.setInheritance(false);
                  }
                          

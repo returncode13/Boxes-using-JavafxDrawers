@@ -72,7 +72,7 @@ public class Doubt {
     private Sequence sequence;
     
     @OneToMany(mappedBy = "doubt",fetch = FetchType.EAGER)
-    private Set<DoubtStatus> doubtStatuses;
+    private Set<DoubtStatus> doubtStatuses=new HashSet<>();
     
     @ManyToOne
     @JoinColumn(name = "doubt_cause_id")
