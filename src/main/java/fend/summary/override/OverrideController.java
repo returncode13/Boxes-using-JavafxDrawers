@@ -135,11 +135,13 @@ public class OverrideController extends Stage{
                 ds.setComments(userComment);
                 doubtStatusService.updateDoubtStatus(ds.getId(), ds);
                 
-                if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                                model.getCellModel().setOverride(true);
-                        }else{
-                            model.getCellModel().setOverride(false);
-                        }
+                if(statusChanged){
+                        if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                                        model.getCellModel().setOverride(true);
+                                }else{
+                                    model.getCellModel().setOverride(false);
+                                }
+                }
                 
                 
                 Doubt doubt=ds.getDoubt();

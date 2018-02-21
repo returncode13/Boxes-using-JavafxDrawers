@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,6 +66,31 @@ private Set<Job> jobsteps;
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + Objects.hashCode(this.idNodeType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NodeType other = (NodeType) obj;
+        if (!Objects.equals(this.idNodeType, other.idNodeType)) {
+            return false;
+        }
+        return true;
     }
     
     

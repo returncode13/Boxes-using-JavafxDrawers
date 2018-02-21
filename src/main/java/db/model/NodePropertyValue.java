@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -72,6 +73,31 @@ public class NodePropertyValue implements Serializable {
 
     public Long getIdNodePropertyValue() {
         return idNodePropertyValue;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.idNodePropertyValue);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final NodePropertyValue other = (NodePropertyValue) obj;
+        if (!Objects.equals(this.idNodePropertyValue, other.idNodePropertyValue)) {
+            return false;
+        }
+        return true;
     }
     
     

@@ -362,7 +362,8 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
 
     @Override
-    public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, Doubt cause, DoubtType doubtType) {
+    public Doubt getDoubtFor(Subsurface sub, Job job,  Doubt cause, DoubtType doubtType) {
+        System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): Inside DAO for sub: "+sub.getId()+" job: "+job.getId()+"  cause: "+cause.getId()+" doubtType: "+doubtType.getIdDoubtType());
          Session session=HibernateUtil_back.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -372,12 +373,17 @@ public class DoubtDAOImpl implements DoubtDAO{
             criteria.add(Restrictions.eq("subsurface", sub));
             criteria.add(Restrictions.eq("childJob", job));
             criteria.add(Restrictions.eq("doubtType", doubtType));
-            criteria.add(Restrictions.eq("dot", dot));
+          //  criteria.add(Restrictions.eq("dot", dot));
             criteria.add(Restrictions.eq("doubtCause", cause));
            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
             result=criteria.list();
             transaction.commit();
+            
+            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): RETURNING result of size : "+result.size());
+            for(Doubt d:result){
+                System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" cause: "+d.getDoubtCause().getId()+" "+" type: "+d.getDoubtType().getIdDoubtType());
+            }
             
         }catch(Exception e){
             e.printStackTrace();

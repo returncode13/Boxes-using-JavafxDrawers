@@ -278,35 +278,38 @@ public class TraceCellController {
                 
               // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
                 Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
-                DoubtStatus ds=(new ArrayList<>(doubt.
-                        getDoubtStatuses()))
-                        .get(0);
-                OverrideModel ovrModel=new OverrideModel(model);
-                
-                Link l=doubt.getLink();
-                String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();
-                String parentJobName=l.getParent().getNameJobStep();
-                String doubtStatusReason=ds.getReason();
-                String stat=ds.getStatus();
-                String userComment=ds.getComments();
-                String earlierStat=ds.getStatus();
-                
+                if(doubt!=null){
                     
-                    ovrModel.setDoubt(doubt);
-                    ovrModel.setDoubtStatus(ds);
-                    
-                    ovrModel.setTypeText(traceDoubtType.getName());
-                    ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
-                    ovrModel.setLinkDescription(linkDesc);
-                    ovrModel.setParentJobName(parentJobName);                   
-                    ovrModel.setDoubtStatusComment(ds.getReason());
-                    ovrModel.setStatus(stat);
-                    ovrModel.setUserCommentStack(userComment);
-                    ovrModel.setEarlierStatus(earlierStat);
-                    
-                OverrideView ovrView=new OverrideView(ovrModel);
-                model.setShowOverride(false);
-                
+               
+                        DoubtStatus ds=(new ArrayList<>(doubt.
+                                getDoubtStatuses()))
+                                .get(0);
+                        OverrideModel ovrModel=new OverrideModel(model);
+
+                        Link l=doubt.getLink();
+                        String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();
+                        String parentJobName=l.getParent().getNameJobStep();
+                        String doubtStatusReason=ds.getReason();
+                        String stat=ds.getStatus();
+                        String userComment=ds.getComments();
+                        String earlierStat=ds.getStatus();
+
+
+                            ovrModel.setDoubt(doubt);
+                            ovrModel.setDoubtStatus(ds);
+
+                            ovrModel.setTypeText(traceDoubtType.getName());
+                            ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
+                            ovrModel.setLinkDescription(linkDesc);
+                            ovrModel.setParentJobName(parentJobName);                   
+                            ovrModel.setDoubtStatusComment(ds.getReason());
+                            ovrModel.setStatus(stat);
+                            ovrModel.setUserCommentStack(userComment);
+                            ovrModel.setEarlierStatus(earlierStat);
+
+                        OverrideView ovrView=new OverrideView(ovrModel);
+                        model.setShowOverride(false);
+            } 
             }
         }
     };

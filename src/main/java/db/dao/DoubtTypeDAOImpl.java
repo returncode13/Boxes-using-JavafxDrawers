@@ -94,9 +94,13 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
             Criteria criteria=session.createCriteria(DoubtType.class);
             
             criteria.add(Restrictions.eq("name", doubtName));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            
+            
             
             result=criteria.list();
             transaction.commit();
+         //   System.out.println("db.dao.DoubtTypeDAOImpl.getDoubtTypeByName(): returning doubttype of size: "+result.size()+" for name "+doubtName);
         }catch(Exception e){
             e.printStackTrace();
         }finally{

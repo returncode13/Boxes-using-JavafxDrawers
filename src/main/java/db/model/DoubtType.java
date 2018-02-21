@@ -55,30 +55,33 @@ private String name;
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.idDoubtType);
+        int hash = 7;
+        hash = 43 * hash + Objects.hashCode(this.idDoubtType);
+        hash = 43 * hash + Objects.hashCode(this.name);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-        return true;
+            return true;
         }
         if (obj == null) {
-        return false;
+            return false;
         }
         if (getClass() != obj.getClass()) {
-        return false;
+            return false;
         }
         final DoubtType other = (DoubtType) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
         if (!Objects.equals(this.idDoubtType, other.idDoubtType)) {
-        return false;
+            return false;
         }
         return true;
     }
-    
-    
+
 
     
     

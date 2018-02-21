@@ -1862,7 +1862,7 @@ public class WorkspaceController {
                      
                     System.out.println("fend.workspace.WorkspaceController.inherit(): checking for Desc: "+job.getNameJobStep()+" <---- Descendant of ---"+l.getChild().getNameJobStep());
                     Doubt d;
-                   if((d=doubtService.getDoubtFor(subb, job, dot, cause, doubtTypeInherit))==null){
+                   if((d=doubtService.getDoubtFor(subb, job, cause, doubtTypeInherit))==null){
                                 System.out.println("fend.workspace.WorkspaceController.inherit(): Creating a new INHERITANCE DOUBT for "+job.getNameJobStep()+" sub: "+subb.getSubsurface()+" cause: "+cause.getChildJob().getNameJobStep());
                                 d=new Doubt();
                                 d.setDoubtType(doubtTypeInherit);
