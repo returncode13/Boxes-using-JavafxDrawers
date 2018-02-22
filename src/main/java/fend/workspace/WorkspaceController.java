@@ -1742,6 +1742,71 @@ public class WorkspaceController {
                         }
                     }
 
+                    
+                    //if (redFlag==false) i.e. there's a Warning then check for any inheritance and remove them.
+                    
+                    if(!redFlag){
+                        System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): redFlag is false..dependency is in the WARNING state. Removing any previous inheritance");
+                        
+                        
+                       
+                    //check for any existing doubt.
+                    //clear tracedependency flag.
+                    //update all doubtstatus messages related to doubt (state: ERROR --> WARNING)
+                    //remove all inherited doubts ( and associated doubt status messages) if present
+                    // the doubt is still present. just not inherited!. Therefore the existing doubt is not deleted. the doubtstatus.state is changed from ERROR --> WARNING
+                    //keep summary.trace= true
+                   
+                            Doubt previousErroneousDoubt;
+                            if((previousErroneousDoubt=doubtService.getDoubtFor(subb, l.getChild(), dot, doubtTypeTraces))==null){
+                                //do nothing ..as no doubt exists
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): No doubts exist for job: "+l.getChild().getNameJobStep()+" sub: "+subb.getSubsurface()+" for type: "+doubtTypeTraces.getName());
+                            }else{
+                                //get all doubtStatus for the existing doubt
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found an existing doubt to a previous failed condition: id. "+previousErroneousDoubt.getId());
+                                Set<DoubtStatus> doubtStatus=previousErroneousDoubt.getDoubtStatuses();
+                                for(DoubtStatus doubtStat:doubtStatus){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): updating doubtstatus: "+doubtStat.getId() );
+                                   // doubtStatusService.deleteDoubtStatus(doubtStat.getId());
+                                   doubtStat.setState(DoubtStatusModel.WARNING);
+                                   doubtStatusService.updateDoubtStatus(doubtStat.getId(), doubtStat);
+                                }
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtstatus messages related to "+previousErroneousDoubt.getId()+" have now been deleted.");
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+previousErroneousDoubt.getId());
+
+                                Set<Doubt> inheritedDoubts=previousErroneousDoubt.getInheritedDoubts();
+                                for(Doubt inheritedDoubt:inheritedDoubts){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+previousErroneousDoubt.getId());
+
+                                    Set<DoubtStatus> inheritedDoubtStatus=inheritedDoubt.getDoubtStatuses();
+                                        for(DoubtStatus inhdbt:inheritedDoubtStatus){
+                                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
+                                                    + "\nDeleting doubtstatus: "+inhdbt.getId());
+                                            doubtStatusService.deleteDoubtStatus(inhdbt.getId());
+                                        }
+                                        System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
+                                         Summary inhsummary;
+                                       if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){
+                                           System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Summary entry for inherited(Trace) summary id: "+inhsummary.getId()+" set to "+false);
+                                           inhsummary.setTraceInheritanceSummary(false);   //if yes then set the inheritance to false
+                                       }
+                                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
+
+
+                                    doubtService.deleteDoubt(inheritedDoubt.getId());
+
+
+
+                                }
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all inherited doubts cleared for id: "+previousErroneousDoubt.getId()+"\nDeleting id: "+previousErroneousDoubt.getId());
+                               
+                            }
+                           summary.setTraceSummary(true);
+
+
+
+                            }
+                    
                 }
                 
               

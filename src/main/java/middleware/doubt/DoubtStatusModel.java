@@ -30,6 +30,10 @@ public class DoubtStatusModel {
     } 
     
     
+    
+    
+    
+    
     public static String getNewDoubtTimeMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
         String message=new String();
         if(doubttype.equals(DoubtTypeModel.TIME)){

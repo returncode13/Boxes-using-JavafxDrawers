@@ -5,6 +5,7 @@
  */
 package fend.summary.override;
 
+import app.properties.AppProperties;
 import db.model.Doubt;
 import db.model.DoubtStatus;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
@@ -12,6 +13,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellMode
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -145,8 +148,10 @@ public class OverrideModel {
     }
     
     public void addToUserCommentStack(String userCommentStack) {
+         String currentUser=AppProperties.getCurrentUser().getInitials();
+         String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);    
          
-         this.userCommentStack += "@User: @Time @From "+earlierStatus+" --> "+this.status+" "+ userCommentStack+"\n";
+         this.userCommentStack += currentUser+" @ "+updateTime+" @From "+earlierStatus+" --> "+this.status+" "+ userCommentStack+"\n";
     }
 
     public String getEarlierStatus() {

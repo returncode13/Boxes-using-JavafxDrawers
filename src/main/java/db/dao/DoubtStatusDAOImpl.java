@@ -73,6 +73,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
              l.setReason(newds.getReason());
              l.setDoubt(newds.getDoubt());
              l.setStatus(newds.getStatus());
+             l.setState(newds.getState());
              l.setTimeStamp(newds.getTimeStamp());
              l.setUser(newds.getUser());
              l.setComments(newds.getComments());

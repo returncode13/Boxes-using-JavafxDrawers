@@ -187,7 +187,8 @@ public class Volume1 implements Volume0{
               .appendMinuteOfHour(2)
               .appendSecondOfMinute(2)
               .toFormatter();
-            //if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume4.setVolume(): found "+sub.getName()+" sn: "+name+" with time "+opformat.print(dt));
+            
+            System.out.println("fend.volume.volume1.Volume1.getSubsurfaces(): found "+sub.getName()+" sn: "+name+" with time "+opformat.print(dt));
             subsurface.setTimeStamp(opformat.print(dt));
             subsurfaces.add(subsurface);
          

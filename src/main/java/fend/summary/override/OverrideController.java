@@ -5,6 +5,7 @@
  */
 package fend.summary.override;
 
+import app.properties.AppProperties;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
@@ -131,7 +132,7 @@ public class OverrideController extends Stage{
                 
                 
                 
-                
+                ds.setUser(AppProperties.getCurrentUser());
                 ds.setComments(userComment);
                 doubtStatusService.updateDoubtStatus(ds.getId(), ds);
                 
@@ -161,6 +162,7 @@ public class OverrideController extends Stage{
                                 for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
                                         System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
                                         inhDoubtStat.setStatus(status);
+                                        inhDoubtStat.setUser(AppProperties.getCurrentUser());
                                         doubtStatusService.updateDoubtStatus(inhDoubt.getId(), inhDoubtStat);
                                 }
                     }
