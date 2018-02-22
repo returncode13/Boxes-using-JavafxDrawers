@@ -1688,8 +1688,22 @@ public class WorkspaceController {
                                     inherit(l, dot, subb,doubt, descendantsThatContainSub);
                                 }
                             summary.setTraceSummary(true);
+                            String updateT=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                             Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                             for (DoubtStatus ds : doubtStatuses) {
+                                 if(redFlag){
+                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        dsds.setState(DoubtStatusModel.ERROR);
+                                        dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                                        dsds.setTimeStamp(updateT);
+                                        doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
+                                    }else{
+                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        dsds.setState(DoubtStatusModel.WARNING);
+                                        dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                                        dsds.setTimeStamp(updateT);
+                                        doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
+                                    }
                                 System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                             }
                         }
@@ -1734,7 +1748,23 @@ public class WorkspaceController {
                                 }
                                 Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                                 summary.setTraceSummary(true);
+                                String updateT=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                                 for (DoubtStatus ds : doubtStatuses) {
+                                    if(redFlag){
+                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        dsds.setState(DoubtStatusModel.ERROR);
+                                        dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                                        dsds.setTimeStamp(updateT);
+                                        dsds.setStatus(DoubtStatusModel.YES);
+                                        doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
+                                    }else{
+                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        dsds.setState(DoubtStatusModel.WARNING);
+                                        dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
+                                        dsds.setTimeStamp(updateT);
+                                        dsds.setStatus(DoubtStatusModel.YES);
+                                        doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
+                                    }
                                     System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                                 }
 

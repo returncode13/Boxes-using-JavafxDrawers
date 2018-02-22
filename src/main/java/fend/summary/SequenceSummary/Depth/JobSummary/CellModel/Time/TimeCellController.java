@@ -80,7 +80,8 @@ public class TimeCellController {
         timeLabel.setDisable(true);
         }
         
-            applyColor();
+        //    applyColor();
+        labelColor();
        
         
         model.activeProperty().addListener(ACTIVE_LISTENER);
@@ -132,7 +133,8 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
-            applyColor();
+          //  applyColor();
+          labelColor();
         }
     };
     
@@ -145,7 +147,8 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
-            applyColor();
+         //   applyColor();
+         labelColor();
         }
         
     };
@@ -159,7 +162,8 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-            applyColor();
+         //   applyColor();
+         labelColor();
         }
         
     };
@@ -184,7 +188,8 @@ public class TimeCellController {
                 }
                 */
                 timeLabel.setDisable(false);
-                applyColor();
+              //  applyColor();
+              labelColor();
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -251,9 +256,10 @@ public class TimeCellController {
             //set model.inherited=true.
             //if cause.status=override. then use color TIME_INH_OVER
             //else use TIME_INH_DOUBT
-            //addressed in applyColor()
+            //addressed in applyColor() / labelColor()
             
-             applyColor();
+           //  applyColor();
+           labelColor();
             
              
              model.cellProperty().addListener(TIME_DOUBT_LISTENER);
@@ -373,5 +379,109 @@ public class TimeCellController {
              timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
          }
      }
+     
+     
+     private void labelColor(){
+         String color=new String();
+        
+         
+         
+            if(model.isActive()){
+                //red1
+                if(model.cellHasDoubt()){
+                    //red2
+                        if(model.isOverride()){
+                            //red3
+                            //calculate if the model has an inherited doubts.
+                                    
+                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
+                                if(model.isInheritance()){
+                                    //red4
+                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        String status=ds.getStatus();
+                                            if(status.equals(DoubtStatusModel.OVERRIDE)){
+                                                //red5
+                                                color=JobSummaryColors.TIME_OVERRRIDE;
+                                            }else{
+                                                //green5
+                                                color=JobSummaryColors.TIME_INHERITED_DOUBT;
+                                            }
+                                }else{
+                                    //green4
+                                    color=JobSummaryColors.TIME_OVERRRIDE;
+                                }
+                        }else{
+                            //green3
+                            //find the state (ERROR/WARNING) of the cells doubt
+                            String state=model.getState();
+                            if(state.equals(DoubtStatusModel.ERROR)){
+                                //red6
+                                color=JobSummaryColors.TIME_DOUBT;
+                            }else{
+                                //green6
+                                //state=WARNING
+                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
+                                if(model.isInheritance()){
+                                    //red7
+                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        String status=ds.getStatus();
+                                        if(status.equals(DoubtStatusModel.OVERRIDE)){
+                                            //red8
+                                            color=JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+                                        }else{
+                                            //green8
+                                            color=JobSummaryColors.TIME_INHERITED_DOUBT;
+                                        }
+                                }else{
+                                    //green7
+                                    color=JobSummaryColors.TIME_WARNING;
+                                }
+                            }
+                        }
+                }else{
+                    //green2
+                    Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
+                    if(model.isInheritance()){
+                        //red9
+                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                        String status=ds.getStatus();
+                        if(status.equals(DoubtStatusModel.OVERRIDE)){
+                            //red10
+                            color=JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+                        }else{
+                            //green10
+                            color=JobSummaryColors.TIME_INHERITED_DOUBT;
+                        }
+                    }else{
+                        //green9
+                        color=JobSummaryColors.TIME_GOOD;
+                    }
+                    
+                    
+                }
+            }else{
+                //green1
+                color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
+            }
+     
+     
+     timeLabel.setStyle("-fx-background-color: "+color);
+     
+     }
+
+    private Doubt calculateIfTheModelHasAnyInheritedDoubt() {
+         /**
+          * calculate if the model has any inherited doubts
+          */
+                                    Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), timeDoubtType);
+                                    if(cause!=null){
+                                        model.setInheritance(true);
+                                        
+                                    }else{
+                                        model.setInheritance(false);
+                                        
+                                    }
+            return cause;
+    }
     
 }
