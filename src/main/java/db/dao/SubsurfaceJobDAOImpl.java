@@ -14,6 +14,7 @@ import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -140,6 +141,30 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public void updateTimeWhereJobEquals(Job job, String updateTime) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update SubsurfaceJob set updateTime = :up where job_id =:j";
+        try{
+            transaction=session.beginTransaction();
+            /*Criteria criteria=session.createCriteria(SubsurfaceJob.class);
+            criteria.add(Restrictions.sqlRestriction(sql));*/
+            Query query= session.createQuery(sql);
+            query.setParameter("j", job);
+            query.setParameter("up", updateTime);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
     }
 
    

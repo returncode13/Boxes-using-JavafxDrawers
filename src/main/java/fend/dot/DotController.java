@@ -5,11 +5,13 @@
  */
 package fend.dot;
 
+import app.properties.AppProperties;
 import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.SubsurfaceJob;
 import db.model.VariableArgument;
 import db.model.Workspace;
 import db.services.AncestorService;
@@ -22,6 +24,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import db.services.WorkspaceService;
@@ -72,6 +76,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -96,7 +102,7 @@ public class DotController extends Stage{
     private Set<VariableArgument> dbVariableArguments;
     private AncestorService ancestorService=new AncestorServiceImpl();
     private DescendantService descendantService=new DescendantServiceImpl();
-    
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     
     
     
@@ -442,6 +448,17 @@ public class DotController extends Stage{
                 dbDot=dotService.getDot(model.getId());
                 dbDot.setFunction(newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
+                
+                
+  /*
+                Update the times for all the jobs connected by this dot
+*/                
+                Set<Link> dbLinks=dbDot.getLinks();
+                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                for(Link dbLink:dbLinks){
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getChild(), updateTime);
+                }
             }
         }
     };
@@ -454,6 +471,16 @@ public class DotController extends Stage{
                 dbDot=dotService.getDot(model.getId());
                 dbDot.setTolerance((Double) newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
+                
+                /*
+                Update the times for all the jobs connected by this dot
+*/                
+                Set<Link> dbLinks=dbDot.getLinks();
+                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                for(Link dbLink:dbLinks){
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getChild(), updateTime);
+                }
             }
         }
     };
@@ -465,6 +492,17 @@ public class DotController extends Stage{
                 dbDot=dotService.getDot(model.getId());
                 dbDot.setError((Double) newValue);
                 dotService.updateDot(dbDot.getId(), dbDot);
+                
+                 /*
+                Update the times for all the jobs connected by this dot
+*/                
+                Set<Link> dbLinks=dbDot.getLinks();
+                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                for(Link dbLink:dbLinks){
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getChild(), updateTime);
+                }
+                
             }
         }
     };

@@ -22,5 +22,7 @@ public interface SubsurfaceJobDAO {
     public void deleteSubsurfaceJob(SubsurfaceJobId id);
     public SubsurfaceJob getSubsurfaceJobFor(Job job,Subsurface subsurface);
     public List<SubsurfaceJob> getSubsurfaceJobsForSummary();           //get subsurface_job records where updateTime>summaryTime;
+
+    public void updateTimeWhereJobEquals(Job parent, String updateTime);
           
 }

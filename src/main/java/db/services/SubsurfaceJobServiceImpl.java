@@ -66,6 +66,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         return result;
       
     }
+
+    @Override
+    public void updateTimeWhereJobEquals(Job parent, String updateTime) {
+        subsurfaceJobDAO.updateTimeWhereJobEquals(parent,updateTime);
+    }
     
    
     

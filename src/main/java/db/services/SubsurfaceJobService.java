@@ -23,4 +23,6 @@ public interface SubsurfaceJobService {
     public void deleteSubsurfaceJob(SubsurfaceJobId id);
     public SubsurfaceJob getSubsurfaceJobFor(Job job,Subsurface subsurface);
     public Map<Job,List<Subsurface>> getSubsurfaceJobsForSummary();           //get subsurface_job records where updateTime>summaryTime;
+
+    public void updateTimeWhereJobEquals(Job parent, String updateTime);
 }
