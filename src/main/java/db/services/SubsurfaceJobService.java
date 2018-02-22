@@ -10,6 +10,7 @@ import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,4 +22,5 @@ public interface SubsurfaceJobService {
     public void updateSubsurfaceJob(SubsurfaceJob nsj);
     public void deleteSubsurfaceJob(SubsurfaceJobId id);
     public SubsurfaceJob getSubsurfaceJobFor(Job job,Subsurface subsurface);
+    public Map<Job,List<Subsurface>> getSubsurfaceJobsForSummary();           //get subsurface_job records where updateTime>summaryTime;
 }

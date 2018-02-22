@@ -1385,9 +1385,10 @@ public class WorkspaceController {
         Set<Job> argumentSet = new HashSet<>();
         List<Subsurface> subsurfaceList = subsurfaceService.getSubsurfaceList();
         dbWorkspace = workspaceService.getWorkspace(dbWorkspace.getId());
+         Map<Job,List<Subsurface>> mapForSummary=subsurfaceJobService.getSubsurfaceJobsForSummary();   //all entries where updateTime>summaryTime
         for (Subsurface subb : subsurfaceList) {
             System.out.println("fend.workspace.WorkspaceController.getSummary(): Loop for subsurface : " + subb.getSubsurface());
-            Set<Link> linkNodesContainingSub = linkService.getLinksContainingSubsurface(subb, dbWorkspace);                  //all links where both the parent and the child contains sub subb
+            Set<Link> linkNodesContainingSub = linkService.getLinksContainingSubsurface(subb, dbWorkspace,mapForSummary);                  //all links where both the parent and the child contains sub subb
             for (Link l : linkNodesContainingSub) {
                 Summary summary;
                 //if ((summary = summaryService.getSummaryFor(subb.getSequence(), l.getParent())) == null) {            //create an entry for parent summary
@@ -1971,9 +1972,10 @@ public class WorkspaceController {
         Set<Job> argumentSet = new HashSet<>();
         List<Subsurface> subsurfaceList = subsurfaceService.getSubsurfaceList();
         dbWorkspace = workspaceService.getWorkspace(dbWorkspace.getId());
+        Map<Job,List<Subsurface>> mapForSummary=subsurfaceJobService.getSubsurfaceJobsForSummary();   //all entries where updateTime>summaryTime
         for (Subsurface subb : subsurfaceList) {
             System.out.println("fend.workspace.WorkspaceController.getSummary(): Loop for subsurface : " + subb.getSubsurface());
-            Set<Link> linkNodesContainingSub = linkService.getLinksContainingSubsurface(subb, dbWorkspace);                  //all links where both the parent and the child contains sub subb
+            Set<Link> linkNodesContainingSub = linkService.getLinksContainingSubsurface(subb, dbWorkspace,mapForSummary);                  //all links where both the parent and the child contains sub subb
             
             GLink root=graphOfLinks(linkNodesContainingSub);
             

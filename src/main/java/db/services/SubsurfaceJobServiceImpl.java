@@ -12,7 +12,10 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -45,6 +48,23 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     @Override
     public SubsurfaceJob getSubsurfaceJobFor(Job job, Subsurface subsurface) {
         return subsurfaceJobDAO.getSubsurfaceJobFor(job, subsurface);
+    }
+
+    @Override
+    public Map<Job, List<Subsurface>> getSubsurfaceJobsForSummary() {
+        List<SubsurfaceJob> subsurfaceJobsForSummary=subsurfaceJobDAO.getSubsurfaceJobsForSummary();
+        Map<Job,List<Subsurface>> result=new HashMap<>();
+        
+        for(SubsurfaceJob subj:subsurfaceJobsForSummary){
+            if(!result.containsKey(subj.getJob())){
+                result.put(subj.getJob(), new ArrayList<>());
+                result.get(subj.getJob()).add(subj.getSubsurface());
+            }else{
+                result.get(subj.getJob()).add(subj.getSubsurface());
+            }
+        }
+        return result;
+      
     }
     
    

@@ -83,9 +83,11 @@ public class HeaderExtractor {
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get());
               Volume dbvol=volumeService.getVolume(vol.getId());
               //Job dbjob=dbvol.getJob();
+              String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
                   String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                  
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                   Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
@@ -95,6 +97,7 @@ public class HeaderExtractor {
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
                       dbSubjob.setUpdateTime(updateTime);
+                      dbSubjob.setSummaryTime(summaryTime);
                       subsurfaceJobService.createSubsurfaceJob(dbSubjob);
                   }
                   dbjob.getSubsurfaceJobs().add(dbSubjob);
@@ -152,10 +155,12 @@ public class HeaderExtractor {
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get());
               Volume dbvol=volumeService.getVolume(vol.getId());
               //Job dbjob=dbvol.getJob();
+              String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
               List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
               for(SubsurfaceHeaders sub:subsInVol){
                   Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                   String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                  
                   Sequence dbseq=dbsub.getSequence();
                   setOfSubsurfacesInJob.add(dbsub);
                   SubsurfaceJob dbSubjob;
@@ -164,6 +169,7 @@ public class HeaderExtractor {
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
                       dbSubjob.setUpdateTime(updateTime);
+                      dbSubjob.setSummaryTime(summaryTime);
                       subsurfaceJobService.createSubsurfaceJob(dbSubjob);
                   }
                   dbjob.getSubsurfaceJobs().add(dbSubjob);
@@ -214,8 +220,11 @@ public class HeaderExtractor {
         //if Acquisition
         if(job.getType().equals(JobType0Model.ACQUISITION)){
             List<Subsurface> totalSubsurfacesTillNow=subsurfaceService.getSubsurfaceList();
+            
+            String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
             for(Subsurface dbsub:totalSubsurfacesTillNow){
                 SubsurfaceJob dbSubjob;
+                
                   if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //if there is no entry then create
                       dbSubjob=new SubsurfaceJob();
                       dbSubjob.setJob(dbjob);

@@ -121,6 +121,27 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         return result.get(0);
     }
 
+    @Override
+    public List<SubsurfaceJob> getSubsurfaceJobsForSummary() {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<SubsurfaceJob> result=null;
+        String sql="update_time > summary_time";
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(SubsurfaceJob.class);
+            criteria.add(Restrictions.sqlRestriction(sql));
+            
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
    
 
    

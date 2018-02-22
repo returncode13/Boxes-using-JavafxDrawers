@@ -15,6 +15,7 @@ import db.model.SubsurfaceJob;
 import db.model.Workspace;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,9 +23,12 @@ import java.util.Set;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class LinkServiceImpl implements LinkService {
+    
 
     LinkDAO linkDAO=new LinkDAOImpl();
-           
+    SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
+    
+    
     @Override
     public void createLink(Link l) {
         linkDAO.createLink(l);
@@ -51,11 +55,14 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public Set<Link> getLinksContainingSubsurface(Subsurface s, Workspace w) {
+    public Set<Link> getLinksContainingSubsurface(Subsurface s, Workspace w,Map<Job,List<Subsurface>> mapForSummary) {
           //return links which whose parent and child contain Subsurface S
         Set<Dot> dotsInWorkspace=w.getDots();
         Set<Link> links=new HashSet<>();
-               
+       
+        
+        
+        
         for(Dot dot:dotsInWorkspace){
             Set<Link> linksinDot=dot.getLinks();
             for(Link l:linksinDot){
@@ -66,7 +73,11 @@ public class LinkServiceImpl implements LinkService {
                     continue;
                 }else{
                     if(l.getChild().getSubsurfaces().contains(s)){
-                        links.add(l);
+                        
+                        if((mapForSummary.containsKey(l.getChild()) && mapForSummary.get(l.getChild()).contains(s) )||( mapForSummary.containsKey(l.getParent()) && mapForSummary.get(l.getParent()).contains(s) )){
+                            System.out.println("db.services.LinkServiceImpl.getLinksContainingSubsurface(): Will summarize the link "+l.getParent().getNameJobStep()+" ----> "+l.getChild().getNameJobStep()+" for subsurface : "+s.getSubsurface());
+                            links.add(l);
+                        }
                     }
                    // System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
                 }
@@ -81,7 +92,10 @@ public class LinkServiceImpl implements LinkService {
     public List<Link> getLinkBetweenParentAndChild(Job parent, Job Child, Dot dot) {
         return linkDAO.getLinkBetweenParentAndChild(parent, Child, dot);
     }
-    
+
+   
+
+   
 
     
 }
