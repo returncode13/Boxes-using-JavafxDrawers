@@ -5,6 +5,8 @@
  */
 package app.properties;
 
+import db.model.User;
+
 /**
  *
  * @author sharath
@@ -24,7 +26,7 @@ public class AppProperties {
     private static String project=new String("no project selected");
     private String workspaceName=new String("unknown session");
     private String irdbHost=new String("no host assigned");
-    
+    private static User currentUser;
     
     public String getProject() {
         return project;
@@ -48,6 +50,14 @@ public class AppProperties {
 
     public void setIrdbHost(String irdbHost) {
         this.irdbHost = irdbHost;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(User currentUser) {
+        AppProperties.currentUser = currentUser;
     }
 
    

@@ -76,6 +76,7 @@ public class QcTableDAOImpl implements QcTableDAO{
             h.setComment(newQ.getComment());
             h.setUpdateTime(newQ.getUpdateTime());
             h.setSummaryTime(newQ.getSummaryTime());
+            h.setUser(newQ.getUser());
             session.update(h);
             
             

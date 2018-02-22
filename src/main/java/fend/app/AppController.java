@@ -679,6 +679,7 @@ public class AppController extends Stage{
         workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        AppProperties.setCurrentUser(u);
     }
 
     private void logout() {
