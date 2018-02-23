@@ -6,7 +6,7 @@
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time;
 
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;

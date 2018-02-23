@@ -5,7 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel;
 
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 

@@ -6,41 +6,51 @@
 package fend.summary.SequenceSummary.Depth.JobSummary;
 
 import db.model.Job;
-import db.model.Sequence;
 import db.model.Subsurface;
-import db.model.Summary;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel;
 import fend.summary.SummaryModel;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import middleware.doubt.DoubtStatusModel;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class JobSummaryModel {
-   // private Summary summary;           
-    private Sequence sequence;                                              //the sequence whos status this cell represents
+    
     private Subsurface subsurface;
-    private Job job;                                                        //the job that this cell will represent
-    private final BooleanProperty qc = new SimpleBooleanProperty();         //qc is true implies no doubt.
-    private final BooleanProperty time = new SimpleBooleanProperty();       //time is true implies no doubt.
-    private final BooleanProperty trace = new SimpleBooleanProperty();      //trace is true implies no doubt.
-    private final BooleanProperty insight = new SimpleBooleanProperty();    //insight is true implies no doubt.
-    private final BooleanProperty inheritance = new SimpleBooleanProperty();//inheritance is true implies no doubt.
+    private Job job;
+    private TimeCellModel timeCellModel;
+    private TraceCellModel traceCellModel;
+    private QcCellModel qcCellModel;
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
-    private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
+    private final BooleanProperty query = new SimpleBooleanProperty(false);      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
+    private final BooleanProperty showOverride = new SimpleBooleanProperty();
+    
+    /* private TimeCellModel feModelTimeCellModel;                             //these are front end models. these are the ones that are updated for the UI. (colors) etc whenever the db is updated. Find a way to get rid of these.
+    private TraceCellModel feModelTraceCellModel;
+    
+    */
+    
+    
+    
     
     final private SummaryModel summaryModel;
 
     public JobSummaryModel(SummaryModel summaryModel) {
         this.summaryModel = summaryModel;
+        timeCellModel=new TimeCellModel();
+        timeCellModel.setJobSummaryModel(this);
+        
+        traceCellModel=new TraceCellModel();
+        traceCellModel.setJobSummaryModel(this);
+        
+        qcCellModel=new QcCellModel();
+        qcCellModel.setJobSummaryModel(this);
     }
-
+    
     public SummaryModel getSummaryModel() {
         return summaryModel;
     }
@@ -49,149 +59,55 @@ public class JobSummaryModel {
     
     
     
-    private String contextAskedForDoubtType=null;
-    private final BooleanProperty showOverride = new SimpleBooleanProperty();
+    
+    public Subsurface getSubsurface() {
+        return subsurface;
+    }
 
-    
-    /**
-     * Status variables. set only when there's a doubt. 
-     * Three status states: DoubtStatusModel.GOOD DoubtStatusModel.OVERRIDE and DoubtStatusModel.YES
-     */
-    private StringProperty timeStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
-    private StringProperty tracesStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
-    private StringProperty qcStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
-    private StringProperty insightStatus=new SimpleStringProperty(DoubtStatusModel.GOOD);
-    //private String inheritanceStatus;                       //hopefully never have to use this!
-    
-    
-    
-    /***
-     * State variables: 
-     * 3 states to a each type.
-     * GOOD.     (when no doubt exists. isT()==false  for type T)
-     * WARNING.  (when doubt exists isT()==true for type T)
-     * ERROR.    (when doubt exists isT()==true for type T)
-     **/
-    
-    private String timeState;
-    private String tracesState;
-    private String qcState;
-    private String insightState;
+    public void setSubsurface(Subsurface subsurface) {
+        this.subsurface = subsurface;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
     
     
     
-    /**
-     * Status getters/setters
-     **/
-    
-
-    public String getTimeStatus() {
-        return timeStatus.get();
+    public TimeCellModel getTimeCellModel() {
+        return timeCellModel;
     }
 
-    public void setTimeStatus(String timeStatus) {
-        this.timeStatus.set(timeStatus);
+    public void setTimeCellModel(TimeCellModel timeCellModel) {
+        this.timeCellModel = timeCellModel;
     }
 
-    public String getTracesStatus() {
-        return tracesStatus.get();
+    public TraceCellModel getTraceCellModel() {
+        return traceCellModel;
     }
 
-    public void setTracesStatus(String tracesStatus) {
-        this.tracesStatus.set(tracesStatus);
+    public void setTraceCellModel(TraceCellModel traceCellModel) {
+        this.traceCellModel = traceCellModel;
     }
 
-    public String getQcStatus() {
-        return qcStatus.get();
+    public QcCellModel getQcCellModel() {
+        return qcCellModel;
     }
 
-    public void setQcStatus(String qcStatus) {
-        this.qcStatus.set(qcStatus);
+    public void setQcCellModel(QcCellModel qcCellModel) {
+        this.qcCellModel = qcCellModel;
     }
 
-    public String getInsightStatus() {
-        return insightStatus.get();
-    }
-
-    public void setInsightStatus(String insightStatus) {
-        this.insightStatus.set(insightStatus);
-    }
-    
-    
-    public StringProperty timeStatusProperty(){
-        return timeStatus;
-    }
-
-    public StringProperty tracesStatusProperty(){
-        return tracesStatus;
-    }
-    
-    public StringProperty qcStatusProperty(){
-        return qcStatus;
-    }
-    
-    public StringProperty insightStatusProperty(){
-        return insightStatus;
-    }
-    /* public String getInheritanceStatus() {
-    return inheritanceStatus;
-    }
-    
-    public void setInheritanceStatus(String inheritanceStatus) {
-    this.inheritanceStatus = inheritanceStatus;
-    }
-    */
-    public String getTimeState() {
-        return timeState;
-    }
-
-    public void setTimeState(String timeState) {
-        this.timeState = timeState;
-    }
-
-    public String getTracesState() {
-        return tracesState;
-    }
-
-    public void setTracesState(String tracesState) {
-        this.tracesState = tracesState;
-    }
-
-    public String getQcState() {
-        return qcState;
-    }
-
-    public void setQcState(String qcState) {
-        this.qcState = qcState;
-    }
-
-    public String getInsightState() {
-        return insightState;
-    }
-
-    /***
-     * State getters/setters
-     **/
-    public void setInsightState(String insightState) {
-        this.insightState = insightState;
-    }
-
-    //Used to show override menu in the JobSummaryController
-    public boolean isShowOverride() {
-        return showOverride.get();
-    }
-
-    public void setShowOverride(boolean value) {
-        showOverride.set(value);
-    }
-
-    public BooleanProperty showOverrideProperty() {
-        return showOverride;
-    }
     
     
     
-    public boolean isActive() {
+    
+     public boolean isActive() {
         return active.get();
     }
 
@@ -203,97 +119,6 @@ public class JobSummaryModel {
         return active;
     }
     
-    
-    
-    
-    public Job getJob() {
-        return job;
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    /*public Summary getSummary() {
-    return summary;
-    }
-    
-    public void setSummary(Summary summary) {
-    this.summary = summary;
-    }*/
-    
-    
-    
-    
-    //Qc getter and setter
-    public boolean isQc() {
-        return qc.get();
-    }
-
-    public void setQc(boolean value) {
-        qc.set(value);
-    }
-
-    public BooleanProperty qcProperty() {
-        return qc;
-    }
-    
-    
-    //Time getter and setter
-     public boolean isTime() {
-        return time.get();
-    }
-
-    public void setTime(boolean value) {
-        time.set(value);
-    }
-
-    public BooleanProperty timeProperty() {
-        return time;
-    }
-    
-    //Trace getter and setter
-    public boolean isTrace() {
-        return trace.get();
-    }
-
-    public void setTrace(boolean value) {
-        trace.set(value);
-    }
-
-    public BooleanProperty traceProperty() {
-        return trace;
-    }
-    
-    
-    //Insight getter and setter
-    public boolean isInsight() {
-        return insight.get();
-    }
-
-    public void setInsight(boolean value) {
-        insight.set(value);
-    }
-
-    public BooleanProperty insightProperty() {
-        return insight;
-    }
-    
-    
-    
-    //Inheritance getter and setter
-    public boolean isInheritance() {
-        return inheritance.get();
-    }
-
-    public void setInheritance(boolean value) {
-        inheritance.set(value);
-    }
-
-    public BooleanProperty inheritanceProperty() {
-        return inheritance;
-    }
-
     /**
      * Flag used to query db
      **/
@@ -311,38 +136,34 @@ public class JobSummaryModel {
     }
     
     
-    //Sequence getter/setter
-    
-    
-    public Sequence getSequence() {
-        return sequence;
+     //Used to show override menu in the JobSummaryController
+    public boolean isShowOverride() {
+        return showOverride.get();
     }
 
-    public void setSequence(Sequence sequence) {
-        this.sequence = sequence;
+    public void setShowOverride(boolean value) {
+        showOverride.set(value);
     }
 
-    public Subsurface getSubsurface() {
-        return subsurface;
-    }
-
-    public void setSubsurface(Subsurface subsurface) {
-        this.subsurface = subsurface;
-    }
-
-    public Boolean isInDoubt(){
-        
-        return this.isTime()||this.isTrace()||this.isQc()||this.isInsight()||this.isInheritance();
-    }
-
-    public String getContextAskedForDoubtType() {
-        return contextAskedForDoubtType;
-    }
-
-    public void setContextAskedForDoubtType(String contextAskedForDoubtType) {
-        this.contextAskedForDoubtType = contextAskedForDoubtType;
+    public BooleanProperty showOverrideProperty() {
+        return showOverride;
     }
     
     
+    /*public TimeCellModel getFeModelTimeCellModel() {
+    return feModelTimeCellModel;
+    }
     
+    public void setFeModelTimeCellModel(TimeCellModel feModelTimeCellModel) {
+    this.feModelTimeCellModel = feModelTimeCellModel;
+    }
+    
+    public TraceCellModel getFeModelTraceCellModel() {
+    return feModelTraceCellModel;
+    }
+    
+    public void setFeModelTraceCellModel(TraceCellModel feModelTraceCellModel) {
+    this.feModelTraceCellModel = feModelTraceCellModel;
+    }
+    */
 }

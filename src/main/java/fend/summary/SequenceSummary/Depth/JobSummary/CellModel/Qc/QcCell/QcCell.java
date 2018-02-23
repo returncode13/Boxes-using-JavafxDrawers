@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell;
+package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCell;
 
 import db.model.Job;
-import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
-import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellView;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellView;
+
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.SequenceSummary;
 import javafx.scene.control.ContextMenu;
@@ -19,19 +20,19 @@ import middleware.doubt.DoubtTypeModel;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
-    TimeCellView view;
-    TimeCellModel  model;
+public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
+    QcCellView view;
+    QcCellModel  model;
     int depthId;
     Job job;
-    String type=DoubtTypeModel.TIME;
+    String type=DoubtTypeModel.QC;
 
-    public TimeCell(int depthId, Job jobkey) {
+    public QcCell(int depthId, Job jobkey) {
         
        this.depthId=depthId;
        this.job=jobkey;
-       model=new TimeCellModel();
-       view=new TimeCellView(model);
+       model=new QcCellModel();
+       view=new QcCellView(model);
         
     }
     
@@ -40,10 +41,10 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
         if(!empty){
            
             int index=getIndex();
-            TimeCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTimeCellModel();
+            QcCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getQcCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
             //model.setJobSummaryModel(jsm);
-            //model=new TimeCellModel();
+            //model=new QcCellModel();
             model=tcm;
             view.getController().setModel(model);
             /*if(jsm.getSubsurface()==null){
@@ -53,13 +54,13 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
             }*/
             
-            /* model.setCellProperty(jsm.getTimeCellModel().cellHasDoubt());
+            /* model.setCellProperty(jsm.getQcCellModel().cellHasDoubt());
             // model.setActive(true);
-            model.setInheritance(jsm.getTimeCellModel().isInheritance());
-            model.setOverride(jsm.getTimeCellModel().isOverride());
-            model.setQuery(jsm.getTimeCellModel().isQuery());
-            model.setShowOverride(jsm.getTimeCellModel().isShowOverride());
-            model.setState(jsm.getTimeCellModel().getState());
+            model.setInheritance(jsm.getQcCellModel().isInheritance());
+            model.setOverride(jsm.getQcCellModel().isOverride());
+            model.setQuery(jsm.getQcCellModel().isQuery());
+            model.setShowOverride(jsm.getQcCellModel().isShowOverride());
+            model.setState(jsm.getQcCellModel().getState());
             
             if(jsm.getSubsurface()!=null){
             model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
@@ -77,7 +78,7 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
             
             }
-            //jsm.setFeModelTimeCellModel(model);
+            //jsm.setFeModelQcCellModel(model);
             
             
             final ContextMenu contextMenu=new ContextMenu();

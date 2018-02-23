@@ -6,7 +6,7 @@
 package fend.summary.SequenceSummary.Depth;
 
 import db.model.Job;
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

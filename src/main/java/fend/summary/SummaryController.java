@@ -28,7 +28,8 @@ import db.services.SummaryServiceImpl;
 import db.services.WorkspaceService;
 import db.services.WorkspaceServiceImpl;
 import fend.summary.SequenceSummary.Depth.Depth;
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCell.QcCell;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummaryCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell.TimeCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.TraceCell;
@@ -178,6 +179,7 @@ public class SummaryController extends Stage{
                                     newValue.setSubsurface(sub);
                                     newValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
                                     newValue.getTraceCellModel().setCellProperty(value.getTraceCellModel().cellHasDoubt());
+                                    newValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt());
                                     
                                     JobSummaryModel newSeqValue=new JobSummaryModel(model);
                                     newSeqValue.setActive(value.isActive());
@@ -191,6 +193,7 @@ public class SummaryController extends Stage{
                                     //newSeqValue.setSubsurface(sub);
                                     newSeqValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
                                     newSeqValue.getTraceCellModel().setCellProperty(value.getTraceCellModel().cellHasDoubt());
+                                    newSeqValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt());
                                     
                                     d1.addToJobSummaryMap(newValue);
                                     d2ForSeq.addToJobSummaryMap(newSeqValue);
@@ -301,6 +304,20 @@ public class SummaryController extends Stage{
                         }else{                  //is there is  no doubt (summary is false) then check for inherited
                            // Doubt cause=doubtService.getCauseOfInheritedDoubtForType(sub, job, traceDoubtType);
                         }
+                        jsm.getQcCellModel().setActive(true);
+                        jsm.getQcCellModel().setCellProperty(x.getQcSummary());
+                        if(x.getQcSummary()){
+                            Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
+                            DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                            String state=ds.getState();
+                            jsm.getTraceCellModel().setState(state);
+                            String status=ds.getStatus();
+                            if(status.equals(DoubtStatusModel.OVERRIDE)){
+                                jsm.getTraceCellModel().setOverride(true);
+                            }else{
+                                jsm.getTraceCellModel().setOverride(false);
+                            }
+                        }
                         
                         
                         /*jsm.setTime(x.getTimeSummary());
@@ -375,6 +392,22 @@ public class SummaryController extends Stage{
                  
                  
                  //<==End of Trace column
+                 
+                    //Beginning Qc Column ==>
+                 
+                 TreeTableColumn<SequenceSummary,Boolean> qcColumn=new TreeTableColumn<>("Qc"); 
+                qcColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
+                    @Override
+                    public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
+                       return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getQcCellModel().isActive());
+                    }
+                });
+                qcColumn.setCellFactory(param->new QcCell(depthId,jobkey));
+                 jobcolumn.getColumns().add(qcColumn);
+                 
+                 
+                 //<==End of Qc column
+                 
                 depthColumn.getColumns().add(jobcolumn);
                 
             }

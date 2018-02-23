@@ -14,7 +14,7 @@ import db.model.DoubtStatus;
 import db.services.DoubtService;
 import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.override.confirmation.OverrideConfirmationModel;
 import fend.summary.override.confirmation.OverrideConfirmationView;
 import java.util.Iterator;

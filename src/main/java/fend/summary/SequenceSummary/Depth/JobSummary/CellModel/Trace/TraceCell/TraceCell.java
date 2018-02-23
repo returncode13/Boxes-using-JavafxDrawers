@@ -9,7 +9,7 @@ import db.model.Job;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellView;
 
-import fend.summary.SequenceSummary.Depth.JobSummary_new.JobSummaryModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.SequenceSummary;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.summary.SequenceSummary.Depth.JobSummary_new;
+package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,17 +15,17 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobSummaryView extends AnchorPane {
-    private  JobSummaryModel model;
-    private JobSummaryController  controller;
+public class QcCellView extends AnchorPane{
+     private  QcCellModel model;
+    private QcCellController  controller;
     
      private FXMLLoader fXMLLoader;
     private final URL location;
     
     
-    public JobSummaryView(JobSummaryModel item){
+    public QcCellView(QcCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary_new/jobSummary.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/qc/qcCellView.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
@@ -38,7 +38,7 @@ public class JobSummaryView extends AnchorPane {
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(JobSummaryController)fXMLLoader.getController();
+                controller=(QcCellController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
@@ -51,10 +51,7 @@ public class JobSummaryView extends AnchorPane {
             }
     }
 
-    public JobSummaryController getController() {
+    public QcCellController getController() {
         return controller;
     }
-    
-    
-    
 }
