@@ -173,7 +173,8 @@ public class Volume2 implements Volume0{
             subsurface.setSubsurfaceName(name);
              BasicFileAttributes attr=null;
            try {
-              attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
+             // attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
+             attr=Files.readAttributes(Paths.get(sub.getAbsolutePath()),BasicFileAttributes.class);
            } catch (IOException ex) {
                Logger.getLogger(Volume2.class.getName()).log(Level.SEVERE, null, ex);
            }

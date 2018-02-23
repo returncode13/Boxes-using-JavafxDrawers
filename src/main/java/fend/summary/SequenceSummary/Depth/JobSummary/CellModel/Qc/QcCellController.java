@@ -69,7 +69,7 @@ public class QcCellController {
 
     
     public void setModel(QcCellModel item) {
-        qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
+        qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC );
         model=item;
        
        
@@ -416,6 +416,7 @@ public class QcCellController {
                             String state=model.getState();
                             if(state.equals(DoubtStatusModel.ERROR)){
                                 //red6
+                               // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellController.labelColor(): ERROR state");
                                 color=JobSummaryColors.QC_DOUBT;
                             }else{
                                 //green6

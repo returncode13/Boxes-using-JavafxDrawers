@@ -310,7 +310,7 @@ public class SummaryController extends Stage{
                             Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
                             DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
                             String state=ds.getState();
-                            jsm.getTraceCellModel().setState(state);
+                            jsm.getQcCellModel().setState(state);
                             String status=ds.getStatus();
                             if(status.equals(DoubtStatusModel.OVERRIDE)){
                                 jsm.getTraceCellModel().setOverride(true);
