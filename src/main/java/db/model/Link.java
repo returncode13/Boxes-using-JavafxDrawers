@@ -7,6 +7,7 @@ package db.model;
 
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -44,6 +45,8 @@ public class Link {
     @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
     private Set<Doubt> doubts;
     
+    @Column(name="creation_time")
+    private String creationTime;
   
     
     public Link() {
@@ -87,6 +90,16 @@ public class Link {
     public void setDoubts(Set<Doubt> doubts) {
         this.doubts = doubts;
     }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
+    
+    
 
     @Override
     public int hashCode() {

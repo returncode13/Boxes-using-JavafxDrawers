@@ -167,6 +167,28 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         
     }
 
+    @Override
+    public String getLatestSummaryTime() {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<String> result=null;
+        String sql="select MAX(summaryTime) from SubsurfaceJob";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(sql);
+            
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+              
+    }
+
    
 
    

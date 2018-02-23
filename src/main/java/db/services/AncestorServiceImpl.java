@@ -23,6 +23,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import db.dao.AncestorDAO;
+import db.model.Subsurface;
 
 /**
  *
@@ -249,7 +250,22 @@ public class AncestorServiceImpl implements AncestorService{
     }
 
     
-
+ @Override
+    public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub) {
+        List<Ancestor> ancestorsForJob=ancDao.getAncestorFor(job);
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of descendants for job "+job.getNameJobStep()+" size: "+ancestorsForJob.size());
+        List<Ancestor> result=new ArrayList<>();
+        for(Ancestor anc:ancestorsForJob){
+            Job ancJob=anc.getAncestor();
+            System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+ancJob.getNameJobStep()+" ==> "+ancJob.getSubsurfaces().size());
+            if(ancJob.getSubsurfaces().contains(sub)){
+                System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+ancJob.getNameJobStep());
+                result.add(anc);
+                        
+            }
+        }
+        return  result;
+    }
     
    
     

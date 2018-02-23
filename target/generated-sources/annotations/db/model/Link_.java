@@ -11,6 +11,7 @@ public abstract class Link_ {
 
 	public static volatile SetAttribute<Link, Doubt> doubts;
 	public static volatile SingularAttribute<Link, Job> parent;
+	public static volatile SingularAttribute<Link, String> creationTime;
 	public static volatile SingularAttribute<Link, Dot> dot;
 	public static volatile SingularAttribute<Link, Long> id;
 	public static volatile SingularAttribute<Link, Job> child;

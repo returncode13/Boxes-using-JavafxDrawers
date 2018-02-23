@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
+import db.model.Subsurface;
 
 /**
  *
@@ -30,4 +31,5 @@ public interface AncestorService {
     public void clearTableForJob(Job dbjob);
     public Ancestor getAncestorFor(Job job,Job ancestor); 
     public List<Ancestor> getAncestorFor(Job job);
+    public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub);
 }

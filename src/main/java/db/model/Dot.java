@@ -53,6 +53,10 @@ public class Dot {
     @Column(name="error")
     private Double error=0.0;
     
+    @Column(name="creation_time")
+    private String creationTime;
+    
+    
     public Dot() {
     }
 
@@ -155,6 +159,14 @@ public class Dot {
 
     public void setDoubts(Set<Doubt> doubts) {
         this.doubts = doubts;
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
     }
 
     

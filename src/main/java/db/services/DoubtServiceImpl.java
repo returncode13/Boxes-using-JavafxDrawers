@@ -118,6 +118,11 @@ public class DoubtServiceImpl implements DoubtService{
         return null;
     }
 
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job) {
+        return dsDAO.getDoubtFor(sub, job);
+    }
+
     
     
 }

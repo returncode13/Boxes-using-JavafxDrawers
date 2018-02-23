@@ -65,7 +65,7 @@ public class DotDAOImpl implements DotDAO{
              l.setError(newDot.getError());
              l.setDoubts(newDot.getDoubts());
              l.setWorkspace(newDot.getWorkspace());
-             
+             l.setCreationTime(newDot.getCreationTime());
             session.update(l);
             
             

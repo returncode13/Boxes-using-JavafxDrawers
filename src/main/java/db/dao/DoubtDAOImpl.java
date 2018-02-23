@@ -16,6 +16,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
 import java.util.Set;
+import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -361,6 +362,39 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
     }
 
+     @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Doubt> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Doubt.class);
+            criteria.add(Restrictions.eq("subsurface", sub));
+            criteria.add(Restrictions.eq("childJob", job));
+           // criteria.add(Restrictions.eq("dot", dot));
+           criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+           
+            result=criteria.list();
+            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning doubts of size: "+result.size()+" for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(result.size()>=1){
+            return result;
+        }else {
+            return null;
+        
+        }
+    }
+
+    
+    
+    
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job,  Doubt cause, DoubtType doubtType) {
         System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): Inside DAO for sub: "+sub.getId()+" job: "+job.getId()+"  cause: "+cause.getId()+" doubtType: "+doubtType.getIdDoubtType());
@@ -413,10 +447,13 @@ public class DoubtDAOImpl implements DoubtDAO{
            
            
             result=criteria.list();
-            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning a list of doubts of size: "+result.size()+" for "+sub.getSubsurface()+" job: "+job.getNameJobStep()+" doubttype: "+doubtType.getIdDoubtType()+" name: "+doubtType.getName());
+        if(sub!=null) System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning a list of doubts of size: "+result.size()+" for "+sub.getSubsurface()+" job: "+job.getNameJobStep()+" doubttype: "+doubtType.getIdDoubtType()+" name: "+doubtType.getName());
                 for(Doubt d:result){
-                    System.out.println("id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" dbttype: "+d.getDoubtType().getIdDoubtType()+" -- "+d.getDoubtType().getName()+" dot: "+d.getDot().getId()+
+                   if(!doubtType.getName().equals(DoubtTypeModel.INHERIT)) System.out.println("id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" dbttype: "+d.getDoubtType().getIdDoubtType()+" -- "+d.getDoubtType().getName()+" dot: "+d.getDot().getId()+
                             " link: "+d.getLink().getId());
+                   else{
+                       System.out.println("id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" dbttype: "+d.getDoubtType().getIdDoubtType()+" -- "+d.getDoubtType().getName());
+                   }
                 }
             
             transaction.commit();

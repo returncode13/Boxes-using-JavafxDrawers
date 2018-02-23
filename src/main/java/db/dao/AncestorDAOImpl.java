@@ -91,21 +91,23 @@ public class AncestorDAOImpl implements AncestorDAO{
     }
 
     @Override
-    public List<Ancestor> getAncestorFor(Job fkid) {
+    public List<Ancestor> getAncestorFor(Job job) {
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
         try{
             transaction=sess.beginTransaction();
             Criteria criteria= sess.createCriteria(Ancestor.class);
-            criteria.add(Restrictions.eq("job", fkid));
-            
+            criteria.add(Restrictions.eq("job", job));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             result=criteria.list();
             transaction.commit();
-            System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): returning ancestor list of size "+result.size()+" for job: "+fkid.getNameJobStep());
+            System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): returning ancestor list of size "+result.size()+" for job: "+job.getNameJobStep());
            
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            sess.close();
         }
         
         
@@ -161,6 +163,8 @@ public class AncestorDAOImpl implements AncestorDAO{
             
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            sess.close();
         }
         if(result.size()>1){
            try {

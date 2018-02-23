@@ -71,6 +71,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     public void updateTimeWhereJobEquals(Job parent, String updateTime) {
         subsurfaceJobDAO.updateTimeWhereJobEquals(parent,updateTime);
     }
+
+    @Override
+    public String getLatestSummaryTime() {
+        return subsurfaceJobDAO.getLatestSummaryTime();
+    }
     
    
     

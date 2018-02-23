@@ -115,11 +115,12 @@ public class DotController extends Stage{
         model=mod;
         WorkspaceModel workspaceModel=model.getWorkspaceModel();
         dbWorkspace=workspaceService.getWorkspace(workspaceModel.getId());
-            
+            String creationTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
             if(mod.getId()==null){                      //Commit the dot as soon as its created
             dbDot=new Dot();    
             dbDot.setWorkspace(dbWorkspace);
             dbDot.setStatus(model.getStatus().get());
+            dbDot.setCreationTime(creationTime);
             dotService.createDot(dbDot);
             model.setId(dbDot.getId());
             dbWorkspace.addToDots(dbDot);
@@ -311,9 +312,9 @@ public class DotController extends Stage{
                       
           }
           dbDot.setLinks(dbLinks);
-          
+          String creationTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           for(Link l:dbLinks){
-              
+              l.setCreationTime(creationTime);
               linkService.createLink(l);
           }
           dotService.updateDot(dbDot.getId(), dbDot);
