@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mycompany</groupId>
-    <artifactId>Box</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>PQman</artifactId>
+    <version>Internal-14.0.6</version>
     <packaging>jar</packaging>
 
     <name>Box</name>

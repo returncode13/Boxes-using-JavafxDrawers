@@ -26,10 +26,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -116,6 +118,7 @@ public class DugLogManager {
                 subsurfacesInCurrentFolder.add(li.linename);
                 log.setLogpath(li.log.getAbsolutePath());
                 log.setInsightVersion(li.insightVersion);
+                log.setVersion(li.version);
                 log.setTimestamp(li.timestamp);
                 logsService.createLogs(log);
             }
@@ -123,21 +126,21 @@ public class DugLogManager {
             System.out.println("middleware.dugex.DugLogManager.<init>(): updating versions");
             
             
-            for(Subsurface sub:subsurfacesInCurrentFolder){
-                
+            /*for(Subsurface sub:subsurfacesInCurrentFolder){
+            
             List<Log> listOfdbLogsForSubInJob=logsService.getLogsByTimeFor(dbJob,sub);                   //ascending order by time. element zero is version 0;
             for(int i=0;i<listOfdbLogsForSubInJob.size();i++){
-                System.out.println("middleware.dugex.DugLogManager.<init>(): version "+i+" time: "+listOfdbLogsForSubInJob.get(i).getTimestamp()+" file: "+listOfdbLogsForSubInJob.get(i).getLogpath());
-                Log ll=listOfdbLogsForSubInJob.get(i);
-                Long ver=Long.valueOf(i);
-                ll.setVersion(ver);
-                logsService.updateLogs(ll.getIdLogs(), ll);
+            System.out.println("middleware.dugex.DugLogManager.<init>(): version "+i+" time: "+listOfdbLogsForSubInJob.get(i).getTimestamp()+" file: "+listOfdbLogsForSubInJob.get(i).getLogpath());
+            Log ll=listOfdbLogsForSubInJob.get(i);
+            Long ver=Long.valueOf(i);
+            ll.setVersion(ver);
+            logsService.updateLogs(ll.getIdLogs(), ll);
             
             
             }
             
-                
-            }
+            
+            }*/
             
             System.out.println("middleware.dugex.DugLogManager.<init>(): updating workflows...");
             WorkflowManager workflowManager=new WorkflowManager(dbVol);
@@ -296,9 +299,14 @@ public class DugLogManager {
     
       /*
     check contents of file not present in db
+    Used for SEGD_LOAD logs
+    Type 2 Volumes
     */
     
     private List<LogInformation> getModifiedContents(Volume dbVol,File gcfile) {
+        
+        Map<String,List<LogInformation>> mapOfLogs=new HashMap<>();
+        
                             DugioScripts ds=new DugioScripts();
                             Process process=null;
                                 try {
@@ -337,23 +345,31 @@ public class DugLogManager {
                                         DateTimeFormatter formatter=DateTimeFormat.forPattern("dd-MMM-yyyy'T'HH:mm:ss");
                                         DateTime dt=formatter.parseDateTime(timeStamp);
       
+                                        /*   DateTimeFormatter opformat=new DateTimeFormatterBuilder()
+                                        .appendDayOfWeekShortText()
+                                        .appendLiteral(" ")
+                                        .appendMonthOfYearShortText()
+                                        .appendLiteral(" ")
+                                        .appendDayOfMonth(2)
+                                        .appendLiteral(" ")
+                                        .appendHourOfDay(2)
+                                        .appendLiteral(":")
+                                        .appendMinuteOfHour(2)
+                                        .appendLiteral(":")
+                                        .appendSecondOfMinute(2)
+                                        .appendLiteral(" ")
+                                        .appendTimeZoneShortName()
+                                        .appendLiteral(" ")
+                                        .appendYear(4, 4)
+                                        .toFormatter();*/
                                         DateTimeFormatter opformat=new DateTimeFormatterBuilder()
-                                                .appendDayOfWeekShortText()
-                                                .appendLiteral(" ")
-                                                .appendMonthOfYearShortText()
-                                                .appendLiteral(" ")
-                                                .appendDayOfMonth(2)
-                                                .appendLiteral(" ")
-                                                .appendHourOfDay(2)
-                                                .appendLiteral(":")
-                                                .appendMinuteOfHour(2)
-                                                .appendLiteral(":")
-                                                .appendSecondOfMinute(2)
-                                                .appendLiteral(" ")
-                                                .appendTimeZoneShortName()
-                                                .appendLiteral(" ")
-                                                .appendYear(4, 4)
-                                                .toFormatter();
+                                                            .appendYear(4, 4)
+                                                            .appendMonthOfYear(2)
+                                                            .appendDayOfMonth(2)
+                                                            .appendHourOfDay(2)
+                                                            .appendMinuteOfHour(2)
+                                                            .appendSecondOfMinute(2)
+                                                            .toFormatter();
                                         
                                         
                                         
@@ -366,8 +382,15 @@ public class DugLogManager {
                                         lw.log=gcfile;
                                         lw.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
                                         lw.volume=dbVol;
-                                        lw.timestamp=timeStamp;
+                                       // lw.timestamp=timeStamp;
+                                        lw.timestamp=dateTime;
                                         allResults.add(lw);
+                                        if(!mapOfLogs.containsKey(lw.linename.getSubsurface())){
+                                                mapOfLogs.put(lw.linename.getSubsurface(), new ArrayList<>());
+                                                mapOfLogs.get(lw.linename.getSubsurface()).add(lw);
+                                             }else{
+                                                mapOfLogs.get(lw.linename.getSubsurface()).add(lw);
+                                            }
                                     }   
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
@@ -377,14 +400,26 @@ public class DugLogManager {
                                 List<LogInformation> modifiedContents=new ArrayList<>();
                                 for(LogInformation l:allResults){
                                 try {
+                                    List<LogInformation> listOfLogsForSub=mapOfLogs.get(l.linename.getSubsurface());
+                                    Collections.sort(listOfLogsForSub);
+                                    
+                                        for(int ver=0;ver<listOfLogsForSub.size();ver++){
+                                            listOfLogsForSub.get(ver).version=Long.valueOf(ver);
+                                        }
+                                    
+                                    
                                     Log log=logsService.getLogsFor(l.volume, l.linename, l.timestamp, l.log.getAbsolutePath());
                                     if(log==null){              //if the database doesn't contain any log for the above params, then add to the list of modified.
                                         modifiedContents.add(l);
+                                        
+                                            
                                     }
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
                                 }
                                 }
+                                
+                                
                                 
                                return modifiedContents;
                             
@@ -465,12 +500,20 @@ public class DugLogManager {
         }
         
     }
-    private class LogInformation{
+    private class LogInformation implements Comparable<LogInformation>{
         File log;
         String insightVersion;
         Subsurface linename;
         String timestamp;
         Volume volume;
-              
+        Long version;      
+
+        @Override
+        public int compareTo(LogInformation log2) {
+            int later= this.timestamp.compareTo(log2.timestamp);            //later > 0 of this timestamp is greater (later) than log2.timestamp.  
+                                                                            //later < 0 if this timestamp is lesser (earlier) than log2.timestamp.
+                                                                            //later=0 if both are equal;
+            return later;
+        }
     }
 }

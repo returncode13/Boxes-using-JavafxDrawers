@@ -53,9 +53,14 @@ import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import middleware.dugex.DugLogManager;
+import middleware.dugex.HeaderExtractor;
 
 /**
  *
@@ -73,6 +78,12 @@ public class JobType2Controller implements JobType0Controller{
     private final ContextMenu menu=new ContextMenu();
     private AncestorService ancestorService=new AncestorServiceImpl();
     private DescendantService descendantService=new DescendantServiceImpl();
+    
+    
+    
+    private DugLogManager dugLogManager=null;
+    private HeaderExtractor headerExtractor=null;
+    private Executor exec;
     
     private BooleanProperty checkForHeaders;
     
@@ -106,7 +117,13 @@ public class JobType2Controller implements JobType0Controller{
         model.getHeadersCommited().addListener(headerExtractionListener);
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
-        
+         model.finishedCheckingLogs().addListener(checkLogsListener);
+      
+      exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
     }
 
     void setView(JobType2View vw,AnchorPane interactivePane) {
@@ -311,8 +328,37 @@ parent.addChild(model);*/
     
      @FXML
     void extractHeadersForJob(ActionEvent event) {
-            showTable.setDisable(true);
-            model.extractLogs();
+              if(dugLogManager==null){
+                headerButton.setDisable(true);
+                 showTable.setDisable(true);
+                 qctable.setDisable(true);
+                 
+                Task<Void> logExtraction=new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                       dugLogManager=new DugLogManager(model);
+                       return null;
+                    }
+                };
+                
+                logExtraction.setOnFailed(e->{
+                        logExtraction.getException().printStackTrace();
+                        headerButton.setDisable(false);
+                         showTable.setDisable(false);
+                        model.setFinishedCheckingLogs(false);
+                        dugLogManager=null;
+                });
+                
+                logExtraction.setOnSucceeded(e->{
+                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
+                    model.setFinishedCheckingLogs(true);
+                    dugLogManager=null;
+                });
+                
+                exec.execute(logExtraction);
+            }
+            
+           //model.extractLogs();
             
     }
     
@@ -351,7 +397,9 @@ parent.addChild(model);*/
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println("workspace.WorkspaceController.NameChangeListener.changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
-           
+            dbjob=jobService.getJob(model.getId());
+             dbjob.setNameJobStep(model.getNameproperty().get());
+             jobService.updateJob(dbjob.getId(), dbjob);
         }
     };
     
@@ -371,7 +419,8 @@ parent.addChild(model);*/
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
-           dbjob.setDepth((Long) newValue);
+           dbjob=jobService.getJob(model.getId());
+            dbjob.setDepth((Long) newValue);
            jobService.updateJob(dbjob.getId(), dbjob);
            /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved
            for(Descendant d:descendants){
@@ -406,6 +455,52 @@ parent.addChild(model);*/
                     
         }
     };
+    
+    
+    
+    
+    /**
+  * Used to extract headers after the logs are extracted.
+  **/
+    
+    private  ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          //  if(newValue){
+          //      new HeaderExtractor(model);
+          if(newValue){
+              if(headerExtractor==null){
+                  Task<Void> headerExtractionTask=new Task<Void>() {
+                      @Override
+                      protected Void call() throws Exception {
+                          headerExtractor=new HeaderExtractor(model);
+                          return null;
+                      }
+                  };
+                  
+                  headerExtractionTask.setOnFailed(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                       showTable.setDisable(false);
+                       qctable.setDisable(false);
+                       model.setFinishedCheckingLogs(false);
+                  });
+                  
+                  headerExtractionTask.setOnSucceeded(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                      qctable.setDisable(false);
+                      showTable.setDisable(false);
+                      model.setFinishedCheckingLogs(false);
+                  });
+                  
+                  exec.execute(headerExtractionTask);
+              }
+          }
+           // }
+        }
+    };
+    
     
     /***
      * private Implementation
