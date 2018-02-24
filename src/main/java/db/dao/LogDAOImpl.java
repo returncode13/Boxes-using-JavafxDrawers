@@ -15,6 +15,7 @@ import db.model.Subsurface;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -415,6 +416,30 @@ public class LogDAOImpl implements LogDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume v, Workflow w) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set workflow = :wk where volume =:v and workflow is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", v);
+            query.setParameter("wk", w);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+                
     }
 
     

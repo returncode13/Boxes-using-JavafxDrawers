@@ -41,4 +41,5 @@ public interface LogDAO {
     public List<Log> getLogsByTimeFor(Job dbJob);
 
     public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub);
+    public void bulkUpdateOnLogs(Volume v,Workflow w);    //usually a lot of logs have their wk=null and this is to do a bulk update on all of them
 }

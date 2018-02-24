@@ -112,6 +112,11 @@ public class LogServiceImpl implements LogService{
         return ldao.getLogsByTimeFor(dbJob,sub);
     }
 
+    @Override
+    public void bulkUpdateOnLogs(Volume v, Workflow w) {
+           ldao.bulkUpdateOnLogs(v, w);
+    }
+
    
     
 }

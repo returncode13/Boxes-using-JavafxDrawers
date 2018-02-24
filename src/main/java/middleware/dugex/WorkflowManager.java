@@ -69,6 +69,7 @@ public class WorkflowManager {
     }
     
     private void watchForWorkflows(){
+        
           Workflow wnull=null;
         loglist=lserv.getLogsFor(volume,wnull);
         try {
@@ -124,7 +125,7 @@ public class WorkflowManager {
                     newWorkflow.setMd5sum(workflowHolder.md5);
                     newWorkflow.setWfversion(++vers);       //increment the version
                     newWorkflow.setVolume(WorkflowManager.this.volume);
-                    System.out.println("watcher.WorkflowWatcher.init<>.call(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
+                    System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
                     wserv.createWorkFlow(newWorkflow);      //create the workflow in the db table
                     next.setWorkflow(newWorkflow);          //set the log in question to have this new workflow
                 }
@@ -135,7 +136,7 @@ public class WorkflowManager {
                 }
                 
              //   mlogwfholder.put(next, workflowHolder);
-                    System.out.println("watcher.WorkflowWatcher.init<>.call(): updating logs");
+                    System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): updating logs");
             lserv.updateLogs(next.getIdLogs(), next);       //update all these logs . all logs now have a workflow assigned
              }
                 return null;
@@ -145,7 +146,7 @@ public class WorkflowManager {
         }
         
         if(volume.getVolumeType().equals(2L)){
-            System.out.println("Started watcher.WorkflowWatcher.watchForWorkflows(): loglist Size: "+loglist.size());
+            System.out.println("Started middleware.dugex.WorkflowManager.watchForWorkflows(): loglist Size: "+loglist.size());
         
             executorService.submit(new Callable<Void>(){
              @Override
@@ -212,12 +213,15 @@ public class WorkflowManager {
                    
                    }
                    
-                   
-                   for(Log log:loglist){
-                      // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
-                       log.setWorkflow(wfForLog);
-                       lserv.updateLogs(log.getIdLogs(), log);
-                   }
+                   //one bulk update will speed this up.
+                   System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): updating "+loglist.size()+" logs with workflow entry "+wfForLog.getId());
+                   lserv.bulkUpdateOnLogs(volume, wfForLog);
+                   System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): finished updating "+loglist.size()+" logs with workflow entry "+wfForLog.getId());
+                   /* for(Log log:loglist){
+                   // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
+                   log.setWorkflow(wfForLog);
+                   lserv.updateLogs(log.getIdLogs(), log);
+                   }*/
                    
                    //   mlogwfholder.put(next, workflowHolder);
                    
