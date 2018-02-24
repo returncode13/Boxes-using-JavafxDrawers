@@ -29,5 +29,7 @@ public interface JobDAO {
     public void resetPending(Job js);*/
 
     public List<Job> listJobs(Workspace W);
+
+    public void updateName(Job dbjob, String name);
     
 }

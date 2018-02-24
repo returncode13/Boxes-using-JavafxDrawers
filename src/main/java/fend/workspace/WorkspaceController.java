@@ -774,46 +774,45 @@ public class WorkspaceController {
      * private Implementation
      */
     private void saveWorkspace() {
-        String name = model.getName().get();
-
+        /*    String name = model.getName().get();
+        
         final BooleanProperty readyToSave = new SimpleBooleanProperty(false);
         if (model.getName().get().isEmpty()) {
-
+        
         } else {
-            System.out.println("fend.workspace.WorkspaceController.saveWorkspace() continue to save session: " + model.getName().get());
-            readyToSave.set(true);
+        System.out.println("fend.workspace.WorkspaceController.saveWorkspace() continue to save session: " + model.getName().get());
+        readyToSave.set(true);
         }
-
+        
         if (readyToSave.get()) {
-            System.out.println("fend.workspace.WorkspaceController.saveWorkspace() Name: " + name);
-            Long currentWorkspaceId = model.getId();
-            Workspace dbWorkspace = null;
-
-            if (currentWorkspaceId == null) {           //if there is no such entry for session in the database
-                System.out.println("fend.workspace.WorkspaceController.saveWorkspace() creating a new workspace entry");
-                dbWorkspace = new Workspace();
-                // dbWorkspace.setId(currentWorkspaceId);
-                dbWorkspace.setName(model.getName().get());
-                workspaceService.createWorkspace(dbWorkspace);
-                model.setId(dbWorkspace.getId());
-            } else {
-                dbWorkspace = workspaceService.getWorkspace(currentWorkspaceId);       //refer to the existing workspace in the db
-            }
-
-            // dbWorkspace.setName(model.getName().get());
-            System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): saving the session.." + dbWorkspace.getName() + " id: " + dbWorkspace.getId());
-            // workspaceService.createWorkspace(dbWorkspace);
-
-            Set<JobType0Model> jobsInWorkSpace = model.getObservableJobs();
-            Set<Job> dbjobs = new HashSet<>();
-            Set<Volume> dbVolumes = new HashSet<>();
-            Set<Dot> dbDots = new HashSet<>();
-            Set<QcMatrixRow> dbQcMatrixRows = new HashSet<>();
-
-            workspaceService.createWorkspace(dbWorkspace);
-
-            for (JobType0Model fejob : jobsInWorkSpace) {
-                Job dbjob;
+        System.out.println("fend.workspace.WorkspaceController.saveWorkspace() Name: " + name);
+        Long currentWorkspaceId = model.getId();
+        Workspace dbWorkspace = null;
+        
+        if (currentWorkspaceId == null) {           //if there is no such entry for session in the database
+        System.out.println("fend.workspace.WorkspaceController.saveWorkspace() creating a new workspace entry");
+        dbWorkspace = new Workspace();
+        // dbWorkspace.setId(currentWorkspaceId);
+        dbWorkspace.setName(model.getName().get());
+        workspaceService.createWorkspace(dbWorkspace);
+        model.setId(dbWorkspace.getId());
+        } else {
+        dbWorkspace = workspaceService.getWorkspace(currentWorkspaceId);       //refer to the existing workspace in the db
+        }
+        
+        // dbWorkspace.setName(model.getName().get());
+        System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): saving the session.." + dbWorkspace.getName() + " id: " + dbWorkspace.getId());
+        // workspaceService.createWorkspace(dbWorkspace);
+        
+        Set<JobType0Model> jobsInWorkSpace = model.getObservableJobs();
+        Set<Job> dbjobs = new HashSet<>();
+        Set<Volume> dbVolumes = new HashSet<>();
+        Set<Dot> dbDots = new HashSet<>();
+        Set<QcMatrixRow> dbQcMatrixRows = new HashSet<>();
+        
+        workspaceService.createWorkspace(dbWorkspace);*/
+        //    for (JobType0Model fejob : jobsInWorkSpace) {
+                /*Job dbjob;
                 Set<Volume> dbVolumesForCurrentJob = new HashSet<>();
                 Long currentJobId = fejob.getId();
                 if (currentJobId == null) {                                                                   //if it'subb a new node. (not saved), then create a new Job in the database and set it up.
@@ -835,7 +834,7 @@ public class WorkspaceController {
                     dbjob = jobService.getJob(currentJobId);                                               // else get the instance of the previously saved g1Child
                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Fetched job " + dbjob.getNameJobStep() + " id: " + dbjob.getId());
                     dbjob.setNameJobStep(fejob.getNameproperty().get());
-                    
+                    */
                     /*List<NodePropertyValue> npValues=nodePropertyValueService.getNodePropertyValuesFor(dbjob);
                     
                     List<JobModelProperty> jobproperties=fejob.getJobProperties();
@@ -853,37 +852,37 @@ public class WorkspaceController {
                     }
                     
                     }*/
-
-                }
+//
+       //         }
 
                 /**
                  * *
                  * Volumes in the job
                  */
-                List<Volume0> fevolsinFejob = fejob.getVolumes();
+                /*List<Volume0> fevolsinFejob = fejob.getVolumes();
                 for (Volume0 vol : fevolsinFejob) {
-                    Volume dbVol;
-                    Long currentVolumeId = vol.getId();
-                    if (currentVolumeId == null) {
-                        dbVol = new Volume();
-                        dbVol.setVolumeType(vol.getType());
-                        dbVol.setNameVolume(vol.getName().get());
-                        dbVol.setPathOfVolume(vol.getVolume().getAbsolutePath());
-                        dbVol.setJob(dbjob);
-                        volumeService.createVolume(dbVol);
-                        System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): id is now " + dbVol.getId());
-                        vol.setId(dbVol.getId());
-                    } else {
-                        dbVol = volumeService.getVolume(vol.getId());
-                    }
-
-                    dbVolumesForCurrentJob.add(dbVol);
-
+                Volume dbVol;
+                Long currentVolumeId = vol.getId();
+                if (currentVolumeId == null) {
+                dbVol = new Volume();
+                dbVol.setVolumeType(vol.getType());
+                dbVol.setNameVolume(vol.getName().get());
+                dbVol.setPathOfVolume(vol.getVolume().getAbsolutePath());
+                dbVol.setJob(dbjob);
+                volumeService.createVolume(dbVol);
+                System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): id is now " + dbVol.getId());
+                vol.setId(dbVol.getId());
+                } else {
+                dbVol = volumeService.getVolume(vol.getId());
                 }
-
+                
+                dbVolumesForCurrentJob.add(dbVol);
+                
+                }
+                
                 dbVolumes.addAll(dbVolumesForCurrentJob);
-
-                dbjob.setVolumes(dbVolumesForCurrentJob);
+                
+                dbjob.setVolumes(dbVolumesForCurrentJob);*/
 
                 /**
                  * *
@@ -891,12 +890,12 @@ public class WorkspaceController {
                  * to the db based on UI
               *
                  */
-                List<QcMatrixRow> qcmatrixForJob = qcMatrixRowService.getQcMatrixForJob(dbjob);
+                /*  List<QcMatrixRow> qcmatrixForJob = qcMatrixRowService.getQcMatrixForJob(dbjob);
                 dbjob.setQcmatrix(new HashSet<>(qcmatrixForJob));
                 dbjobs.add(dbjob);
-            }
-
-            dbWorkspace.setJobs(dbjobs);
+                }
+                
+                dbWorkspace.setJobs(dbjobs);*/
 
             /**
              * Setting up Links
@@ -1023,19 +1022,20 @@ public class WorkspaceController {
             
             */
 
-            for (Job dbjob : dbjobs) {
-                System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating job " + dbjob.getId());
-
-                jobService.updateJob(dbjob.getId(), dbjob);
+            /* for (Job dbjob : dbjobs) {
+            System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): updating job " + dbjob.getId());
+            
+            jobService.updateJob(dbjob.getId(), dbjob);
             }
             for (Volume dbVol : dbVolumes) {
-                volumeService.updateVolume(dbVol.getId(), dbVol);
+            volumeService.updateVolume(dbVol.getId(), dbVol);
             }
-
+            
             workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
-        } else {
+            */
+            /*  }else {
             System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Workspace is missing a name. Unsaved!");
-        }
+            }*/
 
     }
 

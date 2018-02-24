@@ -429,9 +429,18 @@ parent.addChild(model);*/
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println("workspace.WorkspaceController.NameChangeListener.changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
-             dbjob=jobService.getJob(model.getId());
-             dbjob.setNameJobStep(model.getNameproperty().get());
-             jobService.updateJob(dbjob.getId(), dbjob);
+             Task<Void> task=new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    /*dbjob=jobService.getJob(model.getId());
+                    dbjob.setNameJobStep(model.getNameproperty().get());
+                    jobService.updateJob(dbjob.getId(), dbjob);*/
+                    jobService.updateName(dbjob,model.getNameproperty().get());
+                    return null;
+                }
+            };
+            
+            exec.execute(task);
            
         }
     };
@@ -516,6 +525,7 @@ parent.addChild(model);*/
                        showTable.setDisable(false);
                        qctable.setDisable(false);
                        model.setFinishedCheckingLogs(false);
+                       headerExtractionTask.getException().printStackTrace();
                   });
                   
                   headerExtractionTask.setOnSucceeded(e->{

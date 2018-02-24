@@ -442,6 +442,54 @@ public class LogDAOImpl implements LogDAO{
                 
     }
 
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set header = :hd where volume =:v and subsurface =:sub and header is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", volume);
+            query.setParameter("hd", hdr);
+            query.setParameter("sub", sub);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public String getLatestLogTimeFor(Volume dbVol) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<String> result=null;
+        String sql="select MAX(timestamp) from Log where volume = :v";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(sql);
+            query.setParameter("v", dbVol);
+            
+            result=query.list();
+            if(result.get(0)==null){
+                return new String("0");
+            }
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
+   
     
 
     

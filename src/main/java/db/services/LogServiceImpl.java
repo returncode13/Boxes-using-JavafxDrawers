@@ -117,6 +117,16 @@ public class LogServiceImpl implements LogService{
            ldao.bulkUpdateOnLogs(v, w);
     }
 
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub) {
+        ldao.bulkUpdateOnLogs(volume, hdr,sub);
+    }
+
+    @Override
+    public String getLatestLogTimeFor(Volume dbVol) {
+       return ldao.getLatestLogTimeFor(dbVol);
+    }
+
    
     
 }

@@ -581,6 +581,30 @@ query.setParameter("subid", sub);
             }
     }
 
+    @Override
+    public String getLatestTimeStampFor(Volume volume) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<String> result=null;
+        String sql="select MAX(timeStamp) from Header where volume =:v";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(sql);
+            query.setParameter("v", volume);
+            
+            result=query.list();
+            transaction.commit();
+            if(result.get(0)==null){
+                return new String("0");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
     
     
 }

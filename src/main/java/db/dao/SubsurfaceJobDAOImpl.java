@@ -180,6 +180,9 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
             
             result=query.list();
             transaction.commit();
+            if(result.get(0)==null){
+                return new String("0");
+            }
         }catch(Exception e){
             e.printStackTrace();
         }finally{

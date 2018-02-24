@@ -15,6 +15,7 @@ import db.model.Sessions;*/
 import db.model.Volume;
 import db.model.Workspace;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.ProjectionList;
@@ -214,6 +215,28 @@ public class JobDAOImpl implements JobDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public void updateName(Job dbjob, String name) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" update Job set name =:n where id = :id";
+              
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("n", name);
+            query.setParameter("id", dbjob.getId());
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     

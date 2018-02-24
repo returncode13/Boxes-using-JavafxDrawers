@@ -33,14 +33,19 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.concurrent.Task;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -61,24 +66,28 @@ public class DugLogManager {
     private DugioScripts dugioScripts=new DugioScripts();
     private JobService jobService=new JobServiceImpl();
     private List<FileWrapper> exclusionList=new ArrayList<>();
+    private ExecutorService exec;
     
     public DugLogManager(JobType0Model job) {
         this.job = job;
         this.dbJob=jobService.getJob(this.job.getId());
-        
+       // exec=Executors.newCachedThreadPool(threadFactory)
        
         
         List<Volume0> vols=job.getVolumes();
         for(Volume0 vol:vols){
             Volume dbVol=volumeService.getVolume(vol.getId());
-            List<Log> existingLogsInDb=logsService.getLogsFor(dbVol);
-            List<FileWrapper> filesExistingInDB=new ArrayList<>();
+           // List<Log> existingLogsInDb=logsService.getLogsFor(dbVol);
+            String latestTimeForVolumeInDatabase=logsService.getLatestLogTimeFor(dbVol);
+            BigInteger latestTimeForVolumeInt=new BigInteger(latestTimeForVolumeInDatabase);
+            System.out.println("middleware.dugex.DugLogManager.<init>(): latest Time for Volume: "+dbVol.getId()+" time: "+latestTimeForVolumeInt);
+            /*List<FileWrapper> filesExistingInDB=new ArrayList<>();
             for(Log log:existingLogsInDb){
-                File f=new File(log.getLogpath());
-                FileWrapper fw=new FileWrapper();
-                fw.fwrap=f;
-                filesExistingInDB.add(fw);
-            }
+            File f=new File(log.getLogpath());
+            FileWrapper fw=new FileWrapper();
+            fw.fwrap=f;
+            filesExistingInDB.add(fw);
+            }*/
             
             List<FileWrapper> filesToCommit=new ArrayList<>();
             File[] allFilesOnDisk=vol.getLogFolder().listFiles();
@@ -96,7 +105,12 @@ public class DugLogManager {
             for(File f:allFilesOnDisk){
                 FileWrapper fw=new FileWrapper();
                 fw.fwrap=f;
-                if(!filesExistingInDB.contains(fw) && !exclusionList.contains(fw)) filesToCommit.add(fw);       // files that aren't present in the database 
+                String time=hackTimeStamp(f);
+                BigInteger timeofFile=new BigInteger(time);
+                if(latestTimeForVolumeInt.compareTo(timeofFile)<0 && !exclusionList.contains(fw) ) {
+                    filesToCommit.add(fw);
+                }
+               // if(!filesExistingInDB.contains(fw) && !exclusionList.contains(fw)) filesToCommit.add(fw);       // files that aren't present in the database 
             }
             
             System.out.println("middleware.dugex.LogManager.<init>(): Listing the files that are to be considered for commit");
@@ -110,18 +124,47 @@ public class DugLogManager {
              */
             List<Subsurface> subsurfacesInCurrentFolder=new ArrayList<>();
             List<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType());
+            System.out.println("middleware.dugex.DugLogManager.<init>(): creating log entries");
+            List<Callable<String>> tasks=new ArrayList<>();
+            exec=Executors.newFixedThreadPool(5);
+            
+            
             for(LogInformation li:listWithLogInformation){
-                Log log=new Log();
-                log.setJob(dbJob);
-                log.setVolume(dbVol);
-                log.setSubsurface(li.linename);
-                subsurfacesInCurrentFolder.add(li.linename);
-                log.setLogpath(li.log.getAbsolutePath());
-                log.setInsightVersion(li.insightVersion);
-                log.setVersion(li.version);
-                log.setTimestamp(li.timestamp);
-                logsService.createLogs(log);
+                
+                 Callable<String> task= new Callable<String>(){
+                     @Override
+                     public String call() throws Exception {
+                         Log log=new Log();
+                        log.setJob(dbJob);
+                        log.setVolume(dbVol);
+                        log.setSubsurface(li.linename);
+                        subsurfacesInCurrentFolder.add(li.linename);
+                        log.setLogpath(li.log.getAbsolutePath());
+                        log.setInsightVersion(li.insightVersion);
+                        log.setVersion(li.version);
+                        log.setTimestamp(li.timestamp);
+                        logsService.createLogs(log);
+                        
+                        return "Created log entry for "+li.linename;
+                     }
+                 };
+                System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+li.linename);
+                tasks.add(task);
+                    
             }
+             try {
+                List<Future<String>> futures=exec.invokeAll(tasks);
+                for(Future<String> future:futures){
+                    System.out.println("future.get: "+future.get());
+                }
+                exec.shutdown();
+                
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             
             System.out.println("middleware.dugex.DugLogManager.<init>(): updating versions");
             
@@ -153,19 +196,24 @@ public class DugLogManager {
     private List<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType) {
         List<FileWrapper> listOfPendingFiles=new ArrayList<>();
         final List<LogInformation> logInformation=new ArrayList<>();
+        List<Callable<String>> tasks=new ArrayList<>();
+        exec=Executors.newFixedThreadPool(5);
+        
+        
         
          if(volumeType.equals(JobType0Model.PROCESS_2D)){
+             
+             Map<String,List<LogInformation>> mapOfLogs=new HashMap<>();     //map of subsurfaces and their logs
+             Set<String> allSubs=new HashSet<>();                //list of all logs 
+             
             for(FileWrapper fw:filesToCommit){
-                try {
-                    // try {
-                    // ExecutorService executorService=Executors.newCachedThreadPool();
-                    // executorService.submit(new Callable<Void>(){
-                    // @Override
-                    // public Void call() throws Exception {
-                    
-                    
-                    
-                    //  try {
+             
+            
+            
+                    Callable<String> task= new Callable<String>(){
+                        @Override
+                        public String call() throws Exception {
+                            
                     
                     // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager <<TO DO
                     
@@ -177,62 +225,113 @@ public class DugLogManager {
                     
                     String value;
                     while((value=br.readLine())!=null){
-                        //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
-                        String linename=value.substring(9,value.indexOf(" "));
-                        String insight=value.substring(value.indexOf(" ")+9);
-                        //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
-                        
-                        LogInformation li=new LogInformation();
-                        li.volume=dbVol;
-                        li.log=fw.fwrap;
-                        li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
-                        li.insightVersion=insight;
-                        li.timestamp=hackTimeStamp(fw.fwrap);
-                        logInformation.add(li);
-                    }
-                    /* } catch (IOException ex) {
-                    ex.printStackTrace();
-                    //Exceptions.printStackTrace(ex);
-                    }*/
-                    
-                    
-                    
-                    
-                    //    return null;
-                    // }
-                    
-                    //   }).get();
-                    /*  } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                    //Exceptions.printStackTrace(ex);
-                    } catch (ExecutionException ex) {
-                    ex.printStackTrace();
-                    //Exceptions.printStackTrace(ex);
-                    }*/
-                } catch (IOException ex) {
-                    Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            
+                            //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                            String linename=value.substring(9,value.indexOf(" "));
+                            String insight=value.substring(value.indexOf(" ")+9);
+                            //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
+
+                            LogInformation li=new LogInformation();
+                            li.volume=dbVol;
+                            li.log=fw.fwrap;
+                            li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                            li.insightVersion=insight;
+                            li.timestamp=hackTimeStamp(fw.fwrap);
+                           // logInformation.add(li);
+                            allSubs.add(li.linename.getSubsurface());
+                             if(!mapOfLogs.containsKey(li.linename.getSubsurface())){
+                                                mapOfLogs.put(li.linename.getSubsurface(), new ArrayList<>());
+                                                mapOfLogs.get(li.linename.getSubsurface()).add(li);
+                                             }else{
+                                                mapOfLogs.get(li.linename.getSubsurface()).add(li);
+                                            }
+                        }
+                        return "Finished for "+fw.fwrap.getName();
+                        }
+                    };
+                  
+               
+                     System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+fw.fwrap.getName());
+                    tasks.add(task);
             }
+            
+            
+            try {
+                List<Future<String>> futures=exec.invokeAll(tasks);
+                for(Future<String> future:futures){
+                    System.out.println("future.get: "+future.get());
+                }
+                exec.shutdown();
+                
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                
+                for(String subname:allSubs){
+                                    List<LogInformation> listOfLogsForSub=mapOfLogs.get(subname);
+                                    Collections.sort(listOfLogsForSub);
+                                    
+                                        for(int ver=0;ver<listOfLogsForSub.size();ver++){
+                                            listOfLogsForSub.get(ver).version=Long.valueOf(ver);
+                                        }
+                                        
+                                        logInformation.addAll(listOfLogsForSub);
+                }
+          
+            
         }
+         
+         
+         
+         
+         
+         
+         
+         
         
         if(volumeType.equals(JobType0Model.SEGD_LOAD)){
             
             for(FileWrapper fw:filesToCommit){
                 
-                    
-                    //Assume that all logs are completed. Need to code work for logs that are still building    ..Use the checkIfSegDLogIsDone(File f) function
+                Callable<String> task= new Callable<String>(){
+                    @Override
+                    public String call() throws Exception {
+                         //Assume that all logs are completed. Need to code work for logs that are still building    ..Use the checkIfSegDLogIsDone(File f) function
                                             List<LogInformation> modifiedList=getModifiedContents(dbVol,fw.fwrap); 
                                             getInsightVersionsFromLog(fw.fwrap,modifiedList);
                     
                                             for (LogInformation li : modifiedList) {
                                                 logInformation.add(li);
                                             }
+                                            return "Finished for "+fw.fwrap.getName();
+                    }
+                    
+                };
+                    
+                   System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+fw.fwrap.getName());
+                tasks.add(task);
+            }
+            try {
+                List<Future<String>> futures=exec.invokeAll(tasks);
+                for(Future<String> future:futures){
+                    System.out.println("future.get: "+future.get());
+                }
+                exec.shutdown();
                 
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
             }
             
                             
         }
+        
+        
+        
+        
+        
         return logInformation;
     }
 
@@ -325,43 +424,14 @@ public class DugLogManager {
                                         String timeStamp=line.substring(0,line.indexOf(" "));
                                         String linename=line.substring(line.indexOf(" ")+1,line.length());
                                         //String seq=line.substring(line.indexOf("_")-3,line.indexOf("_"));
-                                        System.out.println("middleware.dugex.DugLogManager.getModifiedContents(): timeStamp: "+timeStamp+" linename: "+linename);
+                                        //System.out.println("middleware.dugex.DugLogManager.getModifiedContents(): timeStamp: "+timeStamp+" linename: "+linename);
                                      //   /* String dateTime=timeStamp.substring(0,timeStamp.indexOf("T"));
                                     //    String timeOfDay=timeStamp.substring(timeStamp.indexOf("T")+1,timeStamp.length());*/
                                         
-                                        /*
-                                     DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    DateTime dt=formatter.parseDateTime(attr.creationTime().toString());
-                    DateTimeFormatter opformat=new DateTimeFormatterBuilder()
-                      .appendYear(4, 4)
-                      .appendMonthOfYear(2)
-                      .appendDayOfMonth(2)
-                      .appendHourOfDay(2)
-                      .appendMinuteOfHour(2)
-                      .appendSecondOfMinute(2)
-                      .toFormatter();
-                                    */
+                               
                                         
                                         DateTimeFormatter formatter=DateTimeFormat.forPattern("dd-MMM-yyyy'T'HH:mm:ss");
                                         DateTime dt=formatter.parseDateTime(timeStamp);
-      
-                                        /*   DateTimeFormatter opformat=new DateTimeFormatterBuilder()
-                                        .appendDayOfWeekShortText()
-                                        .appendLiteral(" ")
-                                        .appendMonthOfYearShortText()
-                                        .appendLiteral(" ")
-                                        .appendDayOfMonth(2)
-                                        .appendLiteral(" ")
-                                        .appendHourOfDay(2)
-                                        .appendLiteral(":")
-                                        .appendMinuteOfHour(2)
-                                        .appendLiteral(":")
-                                        .appendSecondOfMinute(2)
-                                        .appendLiteral(" ")
-                                        .appendTimeZoneShortName()
-                                        .appendLiteral(" ")
-                                        .appendYear(4, 4)
-                                        .toFormatter();*/
                                         DateTimeFormatter opformat=new DateTimeFormatterBuilder()
                                                             .appendYear(4, 4)
                                                             .appendMonthOfYear(2)
@@ -408,12 +478,14 @@ public class DugLogManager {
                                         }
                                     
                                     
-                                    Log log=logsService.getLogsFor(l.volume, l.linename, l.timestamp, l.log.getAbsolutePath());
-                                    if(log==null){              //if the database doesn't contain any log for the above params, then add to the list of modified.
+                                        /*Log log=logsService.getLogsFor(l.volume, l.linename, l.timestamp, l.log.getAbsolutePath());
+                                        if(log==null){              //if the database doesn't contain any log for the above params, then add to the list of modified.
                                         modifiedContents.add(l);
                                         
-                                            
-                                    }
+                                        
+                                        }*/             // no files are been considered which are created after the maxTimestamp in the database
+                                        
+                                        modifiedContents.add(l);
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
                                 }

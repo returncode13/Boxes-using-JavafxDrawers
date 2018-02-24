@@ -119,6 +119,11 @@ public class HeaderServiceImpl implements HeaderService{
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
         return hDao.getChosenHeaderFor(job,sub);
     }
+
+    @Override
+    public String getLatestTimeStampFor(Volume volume) {
+        return hDao.getLatestTimeStampFor(volume);
+    }
     
     
 }

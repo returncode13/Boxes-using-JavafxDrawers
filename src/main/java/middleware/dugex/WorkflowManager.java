@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import db.services.LogService;
+import fend.volume.volume0.Volume0;
 
 /*
  * @author sharath nair
@@ -75,7 +76,7 @@ public class WorkflowManager {
         try {
             
          ExecutorService executorService= Executors.newFixedThreadPool(1);
-        if(volume.getVolumeType().equals(1L)){
+        if(volume.getVolumeType().equals(Volume0.PROCESS_2D)){
             
         
             executorService.submit(new Callable<Void>(){

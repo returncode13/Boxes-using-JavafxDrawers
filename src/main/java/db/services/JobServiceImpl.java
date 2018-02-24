@@ -72,6 +72,11 @@ public class JobServiceImpl implements JobService {
         return jobStepDAO.getDepthOfGraph(W);
     }
 
+    @Override
+    public void updateName(Job dbjob, String name) {
+        jobStepDAO.updateName(dbjob,name);
+    }
+
     
     
 }

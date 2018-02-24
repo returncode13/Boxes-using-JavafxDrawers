@@ -38,6 +38,8 @@ public interface HeaderService {
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String latestTimestamp);
     public Set<Header> getMultipleInstances(Job job,Subsurface sub);
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
+
+    public String getLatestTimeStampFor(Volume dbvol);
     
     
 }

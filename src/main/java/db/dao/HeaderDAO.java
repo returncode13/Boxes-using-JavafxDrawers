@@ -42,6 +42,8 @@ public interface HeaderDAO {
     public Set<Header> getMultipleInstances(Job job,Subsurface sub);
 
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
+
+    public String getLatestTimeStampFor(Volume volume);
     
     
 }
