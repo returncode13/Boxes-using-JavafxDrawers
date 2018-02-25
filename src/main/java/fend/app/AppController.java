@@ -474,6 +474,7 @@ public class AppController extends Stage{
                             us.add(u);
                             dbWorkspace.setUsers(us);
                            // u.addToWorkspaces(dbWorkspace);
+                           System.out.println("fend.app.AppController.startNewWorkspace(): updating the workspace");
                             workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
                     
                      }

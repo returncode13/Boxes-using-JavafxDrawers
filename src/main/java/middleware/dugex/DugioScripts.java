@@ -123,8 +123,12 @@ public class DugioScripts implements Serializable{
      /*
        for extracting sailline-insight mapping from the gun_cable.logs under segdloadVolume/logs folder
        */
+       /* private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
+       "grep -B 1 Started  $1 | awk '{print $2 $13}' | sed 's/://' |grep [[:alnum:]]|sed '$!N;s/\\n/ /' ";*/
+       
+       
        private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
-"grep -B 1 Started  $1 | awk '{print $2 $13}' | sed 's/://' |grep [[:alnum:]]|sed '$!N;s/\\n/ /' ";
+       "grep -B 1 Started  $1 ";
        
      public DugioScripts()
     {

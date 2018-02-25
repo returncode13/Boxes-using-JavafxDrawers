@@ -504,10 +504,13 @@ public class DugLogManager {
     */
     
    private void getInsightVersionsFromLog(File gcfile,List<LogInformation> modifiedList) {
-                            DugioScripts ds=new DugioScripts();
+      
+                           // DugioScripts ds=new DugioScripts();
+                            System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): gcfile: "+gcfile.getAbsolutePath());
+                            System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): script  "+dugioScripts.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath() );
                             Process process=null;
                                 try {
-                                    process = new ProcessBuilder(ds.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath(),gcfile.getAbsolutePath()).start();
+                                    process = new ProcessBuilder(dugioScripts.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath(),gcfile.getAbsolutePath()).start();
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
                                 }
@@ -517,11 +520,44 @@ public class DugLogManager {
                             String line;
                             Map<String,String> sailInsMap=new HashMap<>();  //sailline insight Map
                                 try {
-                                    while((line=br.readLine())!=null){  //line now will read "5.0-707143-plcs  0327-1P1205B081"
-                                         String insVersion=line.substring(0,line.indexOf(" "));
-                                         String sailline=line.substring(line.indexOf(" ")+1,line.length());
-                                         System.out.println(".getInsightVersionsFromLog(): sailline: "+sailline+" insight: "+insVersion);
-                                         sailInsMap.put(sailline, insVersion);
+                                    
+                                    /***
+                                     * The script returns results of the format:
+                                     *  --
+                                        Insight 5.0 (703280)
+                                        Info    : [time = 16 Sep 2017 11:55:25] Started geom2d for line AMN-7715J13169
+                                        --
+                                        Insight 5.0 (703280)
+                                        Info    : [time = 17 Sep 2017 07:21:03] Started geom2d for line AMN-7679J13170
+                                        --
+
+                                     **/
+                                    
+                                    
+                                    while((line=br.readLine())!=null){  
+                                        /* String insVersion=line.substring(0,line.indexOf(" "));
+                                        String sailline=line.substring(line.indexOf(" ")+1,line.length());
+                                        System.out.println(".getInsightVersionsFromLog(): sailline: "+sailline+" insight: "+insVersion);
+                                        sailInsMap.put(sailline, insVersion);*/
+                                        
+                                         String line1=line;
+                                        String insightCheck=line1.substring(0,line1.indexOf(" "));
+                                        //System.out.println(".call() insightCheck: "+insightCheck);
+                                        if(insightCheck.equalsIgnoreCase("insight")){    //check for the line containing "insight"
+                                            String version = line1.substring(line1.indexOf(" ")+1,line.length());   //rest of the line is the version
+                                            String line3=br.readLine(); //next Line
+                                            if(line3.contains("Started geom2d for line")){    //this line will contain the linename
+                                                String sailine=line3.substring(line3.lastIndexOf(" "),line3.length());
+                                                System.out.println(sailine+" -- "+version);
+                                                br.readLine();                               // ignore "--"
+                                                
+                                                sailInsMap.put(sailine, version);
+                                            }
+                                        }
+                                        
+                                        
+                                        
+                                        
                                     }   
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
