@@ -70,6 +70,7 @@ public class DugLogManager {
     
     public DugLogManager(JobType0Model job) {
         this.job = job;
+        System.out.println("middleware.dugex.DugLogManager.<init>()..getting dbjob: "+job.getId());
         this.dbJob=jobService.getJob(this.job.getId());
        // exec=Executors.newCachedThreadPool(threadFactory)
        
@@ -123,7 +124,7 @@ public class DugLogManager {
              * For the files to commit, extract subsurface,insight and timestamp
              */
             List<Subsurface> subsurfacesInCurrentFolder=new ArrayList<>();
-            List<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType());
+            Set<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType());
             System.out.println("middleware.dugex.DugLogManager.<init>(): creating log entries");
             List<Callable<String>> tasks=new ArrayList<>();
             exec=Executors.newFixedThreadPool(5);
@@ -145,7 +146,7 @@ public class DugLogManager {
                         log.setTimestamp(li.timestamp);
                         logsService.createLogs(log);
                         
-                        return "Created log entry for "+li.linename;
+                        return "Created log entry for "+li.linename.getSubsurface();
                      }
                  };
                 System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+li.linename);
@@ -193,9 +194,9 @@ public class DugLogManager {
         }
     }
 
-    private List<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType) {
+    private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType) {
         List<FileWrapper> listOfPendingFiles=new ArrayList<>();
-        final List<LogInformation> logInformation=new ArrayList<>();
+        final Set<LogInformation> logInformation=new HashSet<>();
         List<Callable<String>> tasks=new ArrayList<>();
         exec=Executors.newFixedThreadPool(5);
         
@@ -299,7 +300,7 @@ public class DugLogManager {
                     public String call() throws Exception {
                          //Assume that all logs are completed. Need to code work for logs that are still building    ..Use the checkIfSegDLogIsDone(File f) function
                                             List<LogInformation> modifiedList=getModifiedContents(dbVol,fw.fwrap); 
-                                            getInsightVersionsFromLog(fw.fwrap,modifiedList);
+                                            //getInsightVersionsFromLog(fw.fwrap,modifiedList);
                     
                                             for (LogInformation li : modifiedList) {
                                                 logInformation.add(li);
@@ -325,7 +326,42 @@ public class DugLogManager {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-                            
+            System.out.println("middleware.dugex.DugLogManager.extractInformation(): Attaching Insight Versions to Saillines");
+            getInsightVersionsFromLog(filesToCommit.get(0).fwrap, logInformation);                          //all gcfiles have the same information about insight and sailline.
+            
+            
+            /* for(FileWrapper fw:filesToCommit){
+            
+            Callable<String> task= new Callable<String>(){
+            @Override
+            public String call() throws Exception {
+            //Assume that all logs are completed. Need to code work for logs that are still building    ..Use the checkIfSegDLogIsDone(File f) function
+            
+            getInsightVersionsFromLog(fw.fwrap,logInformation);
+            
+            
+            return "Finished assigning insight versions from  "+fw.fwrap.getName();
+            }
+            
+            };
+            
+            System.out.println("middleware.dugex.DugLogManager.extractInformation(): Attach Insight version Adding a task for "+fw.fwrap.getName());
+            tasks.add(task);
+            }
+            try {
+            List<Future<String>> futures=exec.invokeAll(tasks);
+            for(Future<String> future:futures){
+            System.out.println("future.get: "+future.get());
+            }
+            exec.shutdown();
+            
+            } catch (InterruptedException ex) {
+            Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+            Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            */      
         }
         
         
@@ -397,7 +433,7 @@ public class DugLogManager {
 
     
       /*
-    check contents of file not present in db
+    check contents of file . returns a list of logs not present in db
     Used for SEGD_LOAD logs
     Type 2 Volumes
     */
@@ -503,11 +539,12 @@ public class DugLogManager {
     get insight version and link it to the subline
     */
     
-   private void getInsightVersionsFromLog(File gcfile,List<LogInformation> modifiedList) {
+   private void getInsightVersionsFromLog(File gcfile,Set<LogInformation> listOfLogsToBeCommited) {
       
                            // DugioScripts ds=new DugioScripts();
-                            System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): gcfile: "+gcfile.getAbsolutePath());
-                            System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): script  "+dugioScripts.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath() );
+                           /*  System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): gcfile: "+gcfile.getAbsolutePath());
+                           System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): script  "+dugioScripts.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath() );
+                           System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): size of modifiedList: "+listOfLogsToBeCommited.size());*/
                             Process process=null;
                                 try {
                                     process = new ProcessBuilder(dugioScripts.getSegdLoadSaillineInsightFromGCLogs().getAbsolutePath(),gcfile.getAbsolutePath()).start();
@@ -547,7 +584,7 @@ public class DugLogManager {
                                             String version = line1.substring(line1.indexOf(" ")+1,line.length());   //rest of the line is the version
                                             String line3=br.readLine(); //next Line
                                             if(line3.contains("Started geom2d for line")){    //this line will contain the linename
-                                                String sailine=line3.substring(line3.lastIndexOf(" "),line3.length());
+                                                String sailine=line3.substring(line3.lastIndexOf(" ")+1,line3.length());
                                                 System.out.println(sailine+" -- "+version);
                                                 br.readLine();                               // ignore "--"
                                                 
@@ -562,14 +599,15 @@ public class DugLogManager {
                                 } catch (IOException ex) {
                                     ex.printStackTrace();
                                 }
-                                
+                                //System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): size of the sailline Insight Map: "+sailInsMap.size());
                             for (Map.Entry<String, String> entry : sailInsMap.entrySet()) {
                                 String saill = entry.getKey();
                                 String ins = entry.getValue();
-                                
-                                for(LogInformation l:modifiedList){
-                                    if(l.linename.getSubsurface().contains(saill)){
-                                        System.out.println(".getInsightVersionsFromLog(): adding insight version"+ins+" to "+l.linename+" which belongs to sailline: "+saill);
+                               // System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): "+saill+" <---> "+ins+"\n attaching subsurfacenames to sailline");
+                                for(LogInformation l:listOfLogsToBeCommited){
+                               //     System.out.println("middleware.dugex.DugLogManager.getInsightVersionsFromLog(): "+l.linename.getSubsurface()+" --- ? ---***SPACE***"+saill+" contains: ? "+l.linename.getSubsurface().contains(saill));
+                                    if(l.linename.getSubsurface().contains(saill.trim())){
+                                       // System.out.println(".getInsightVersionsFromLog(): adding insight version"+ins+" to "+l.linename.getSubsurface()+" which belongs to sailline: "+saill);
                                         l.insightVersion=ins;
                                     }
                                 }

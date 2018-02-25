@@ -111,6 +111,7 @@ public class JobType2Controller implements JobType0Controller{
 
     void setModel(JobType2Model item) {
         model=item;
+        
         dbjob=jobService.getJob(model.getId());
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);

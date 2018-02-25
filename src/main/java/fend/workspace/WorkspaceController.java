@@ -249,12 +249,15 @@ public class WorkspaceController {
     @FXML
     void addSEGD(ActionEvent event) {
         Job dbjob = new Job();
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        
         Long typeOfJob = JobType0Model.SEGD_LOAD;
         NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
         dbjob.setNodetype(nodetype);
         dbjob.setWorkspace(dbWorkspace);
 
         dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+        System.out.println("fend.workspace.WorkspaceController.addSEGD(): creating  a new job in the database");
         jobService.createJob(dbjob);
 
         JobType2Model job = new JobType2Model(this.model);
@@ -276,7 +279,7 @@ public class WorkspaceController {
         }
         
         
-        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+      //  BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
 

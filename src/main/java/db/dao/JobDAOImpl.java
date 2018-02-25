@@ -39,7 +39,7 @@ public class JobDAOImpl implements JobDAO{
              
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        
+        System.out.println("db.dao.JobDAOImpl.createJob()");
         try{
             transaction=session.beginTransaction();
             session.saveOrUpdate(js);
@@ -56,7 +56,7 @@ public class JobDAOImpl implements JobDAO{
     public Job getJob(Long jobId) {
          Session session = HibernateUtil.getSessionFactory().openSession();
         
-        
+        System.out.println("db.dao.JobDAOImpl.getJob()");
         try{
             Job js = (Job) session.get(Job.class, jobId);
            // System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJob()));
@@ -73,7 +73,7 @@ public class JobDAOImpl implements JobDAO{
     public void updateJob(Long jobId,Job newJs) {
       Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        
+        System.out.println("db.dao.JobDAOImpl.updateJob()");
         try{
             transaction=session.beginTransaction();
             
