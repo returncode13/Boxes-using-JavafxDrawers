@@ -111,8 +111,9 @@ public class JobType1Controller implements JobType0Controller{
 
     void setModel(JobType1Model item) {
         model=item;
-        System.out.println("fend.job.job1.JobType1Controller.setModel(): calling job from db "+model.getId());
-        dbjob=jobService.getJob(model.getId());
+        //System.out.println("fend.job.job1.JobType1Controller.setModel(): calling job from db "+model.getId());
+        //dbjob=jobService.getJob(model.getId());
+        dbjob=model.getDatabaseJob();
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
@@ -462,9 +463,10 @@ parent.addChild(model);*/
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
-             dbjob=jobService.getJob(model.getId());
-           dbjob.setDepth((Long) newValue);
-           jobService.updateJob(dbjob.getId(), dbjob);
+            /* dbjob=jobService.getJob(model.getId());
+            dbjob.setDepth((Long) newValue);
+            jobService.updateJob(dbjob.getId(), dbjob);*/
+            jobService.updateDepth(dbjob, newValue.longValue());
            /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved
            for(Descendant d:descendants){
            d.getDescendant().setDepth(d.getDescendant().getDepth()+1);
@@ -606,8 +608,10 @@ parent.addChild(model);*/
     
     
     private void setupAncestorsAndDescendants(JobType0Model parent) {
-         dbjob=jobService.getJob(dbjob.getId());
-                    Job dbParent=jobService.getJob(parent.getId());
+                    //dbjob=jobService.getJob(dbjob.getId());
+                    
+                  //  Job dbParent=jobService.getJob(parent.getId());
+                    Job dbParent=parent.getDatabaseJob();
                     
                     /*Set<Ancestor>   Ap=dbParent.getAncestors();
                     Set<Ancestor>   Ac=dbjob.getAncestors();

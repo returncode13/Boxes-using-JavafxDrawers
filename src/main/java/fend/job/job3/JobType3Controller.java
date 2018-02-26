@@ -100,7 +100,8 @@ public class JobType3Controller implements JobType0Controller{
 
     void setModel(JobType3Model item) {
         model=item;
-        dbjob=jobService.getJob(model.getId());
+        //dbjob=jobService.getJob(model.getId());
+         dbjob=model.getDatabaseJob();
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);

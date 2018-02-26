@@ -11,6 +11,7 @@ import db.model.User;
 import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -90,21 +91,50 @@ public class UserDAOImpl implements UserDAO{
         }
     }
 
+    /*@Override
+    public User getUserWithInitials(String ini) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Transaction transaction = null;
+    List<User> result=null;
+    try{
+    transaction=session.beginTransaction();
+    Criteria criteria=session.createCriteria(User.class);
+    criteria.add(Restrictions.eq("initials", ini));
+    criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    
+    result=criteria.list();
+    transaction.commit();
+    System.out.println("db.dao.UserDAOImpl.getUserWithInitials(): got "+result.size()+" users with initials "+ini);
+    if(result==null || result.size()==0)
+    return null;
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    session.close();
+    }
+    return result.get(0);
+    }*/
+
+    
+    
     @Override
     public User getUserWithInitials(String ini) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = null;
-        List<User> result=null;
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" from  User where initials = :ini";
+        List<User> result=null;      
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(User.class);
-            criteria.add(Restrictions.eq("initials", ini));
+            Query query=session.createQuery(sql);
+            query.setParameter("ini", ini);
             
             
-            result=criteria.list();
-            transaction.commit();
-            if(result==null || result.size()==0)
+          result=query.list();
+          transaction.commit();
+          System.out.println("db.dao.UserDAOImpl.getUserWithInitials(): got "+result.size()+" users with initials "+ini);
+            if(result.isEmpty()){
                 return null;
+            }
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -113,5 +143,7 @@ public class UserDAOImpl implements UserDAO{
         return result.get(0);
     }
 
+    
+    
  
 }

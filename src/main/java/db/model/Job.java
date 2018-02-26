@@ -74,7 +74,7 @@ public class Job implements Serializable{
     private Set<JobVolumeMap> jobVolumeMap;*/
     
      @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)                             //create a member named "job" in the JobVolumeMap class definition
-    private Set<Volume> volumes;
+    private Set<Volume> volumes=new HashSet<>();
     
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)

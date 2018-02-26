@@ -47,6 +47,7 @@ public class UserController extends Stage{
 
     @FXML
     void cancel(ActionEvent event) {
+        model.setLoginSucceeded(false);
         close();
     }
 
@@ -62,6 +63,7 @@ public class UserController extends Stage{
             System.out.println("fend.user.UserController.login(): Login successful: Logged in as "+user.getFullName()+" with initials: "+user.getInitials());
             model.setIntials(user.getInitials());
             model.setLoginSucceeded(true);
+            model.setUser(user);
         }
         close();
     }

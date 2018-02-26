@@ -34,7 +34,8 @@ public class InsightVersion {
                 System.out.println("InsightVersion.checkedByUser.changed(): "+insightVersion+" from "+oldValue+" to "+newValue);
                if(newValue){
                    
-                    Job job=jobService.getJob(parentJob.getId());
+                    //Job job=jobService.getJob(parentJob.getId());
+                    Job job=parentJob.getDatabaseJob();
                     
                     String insightVersionsPresent=job.getInsightVersions();
                     if(insightVersionsPresent==null){
@@ -48,9 +49,13 @@ public class InsightVersion {
                     
                     System.out.println("new Insight string: "+insightVersionsPresent);
                     job.setInsightVersions(insightVersionsPresent);
-                    jobService.updateJob(job.getId(), job);
+                    //jobService.updateJob(job.getId(), job);
+                    jobService.updateInsightVersionInJob(job);
+                    parentJob.setDatabaseJob(job);
                }else{
-                    Job job=jobService.getJob(parentJob.getId());
+                    //Job job=jobService.getJob(parentJob.getId());
+                    Job job=parentJob.getDatabaseJob();
+                    
                     String insightVersionsPresent=job.getInsightVersions();
                     String parts[]=insightVersionsPresent.split(";");
                     String remakeInsightVersions=new String();
@@ -63,7 +68,9 @@ public class InsightVersion {
                     }
                     System.out.println("new Insight string: "+remakeInsightVersions);
                     job.setInsightVersions(remakeInsightVersions);
-                    jobService.updateJob(job.getId(), job);
+                    //jobService.updateJob(job.getId(), job);
+                    jobService.updateInsightVersionInJob(job);
+                    parentJob.setDatabaseJob(job);
                }
                
                

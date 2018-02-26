@@ -216,7 +216,9 @@ public class WorkspaceController {
                     dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
                     jobService.createJob(dbjob);
                     job.setId(dbjob.getId());
-
+                    job.setDatabaseJob(dbjob);
+                    
+                    
                     List<JobModelProperty> jobProperties=job.getJobProperties();
                     for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
                         JobModelProperty jobProperty = iterator.next();
@@ -279,6 +281,7 @@ public class WorkspaceController {
 
                     System.out.println(".call(): setting the job id");
                     job.setId(dbjob.getId());
+                    job.setDatabaseJob(dbjob);
                     
                     System.out.println(".call(): getting jobProperties");
                      List<JobModelProperty> jobProperties=job.getJobProperties();
@@ -779,7 +782,8 @@ public class WorkspaceController {
         interactivePane.getChildren().addListener(jobLinkChangeListener);
         loadingProperty.addListener(loadingListener);
         model = item;
-        dbWorkspace = workspaceService.getWorkspace(model.getId());
+        //dbWorkspace = workspaceService.getWorkspace(model.getId());
+        dbWorkspace=model.getWorkspace();
         
         doubtTypeQc = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
         doubtTypeTraces = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
@@ -1109,6 +1113,7 @@ public class WorkspaceController {
             if (type.equals(JobType0Model.PROCESS_2D)) {
                 fejob = new JobType1Model(model);
                 fejob.setId(dbj.getId());
+                fejob.setDatabaseJob(dbj);
                 fejob.setNameproperty(dbj.getNameJobStep());
                 fejob.setDepth(dbj.getDepth());
 
@@ -1118,6 +1123,7 @@ public class WorkspaceController {
             if (type.equals(JobType0Model.SEGD_LOAD)) {
                 fejob = new JobType2Model(model);
                 fejob.setId(dbj.getId());
+                 fejob.setDatabaseJob(dbj);
                 fejob.setNameproperty(dbj.getNameJobStep());
                 fejob.setDepth(dbj.getDepth());
 
@@ -1127,6 +1133,7 @@ public class WorkspaceController {
             if (type.equals(JobType0Model.ACQUISITION)) {
                 fejob = new JobType3Model(model);
                 fejob.setId(dbj.getId());
+                 fejob.setDatabaseJob(dbj);
                 fejob.setNameproperty(dbj.getNameJobStep());
                 fejob.setDepth(dbj.getDepth());
 
@@ -1136,6 +1143,7 @@ public class WorkspaceController {
              if (type.equals(JobType0Model.TEXT)) {
                 fejob = new JobType4Model(model);
                 fejob.setId(dbj.getId());
+                 fejob.setDatabaseJob(dbj);
                 fejob.setNameproperty(dbj.getNameJobStep());
                 fejob.setDepth(dbj.getDepth());
 
@@ -1184,6 +1192,7 @@ public class WorkspaceController {
 
         for (Dot dot : dots) {
             DotModel fedot = new DotModel(model);
+            fedot.setDatabaseDot(dot);
             Set<Link> links = dot.getLinks();
             System.out.println("fend.workspace.WorkspaceController.loadSession(): number of links sharing  dot: " + dot.getId() + " in state " + dot.getStatus() + " links.size(): " + links.size());
             fedot.setStatus(dot.getStatus());
@@ -1308,6 +1317,7 @@ public class WorkspaceController {
 
         for (JobType0Model job : jobmodels) {
             if (job.getType().equals(JobType0Model.PROCESS_2D)) {
+               
                 JobType1View jv = new JobType1View((JobType1Model) job, interactivePane);
                    
                 /**

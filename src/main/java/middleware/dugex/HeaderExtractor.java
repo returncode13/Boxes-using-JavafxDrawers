@@ -73,7 +73,8 @@ public class HeaderExtractor {
     public HeaderExtractor(JobType0Model j){
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
-        dbjob=jobService.getJob(job.getId());
+       // dbjob=jobService.getJob(job.getId());
+        dbjob=job.getDatabaseJob();
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
@@ -291,6 +292,7 @@ public class HeaderExtractor {
             
                     
                     jobService.updateJob(dbjob.getId(), dbjob);
+                    job.setDatabaseJob(dbjob);
               
           }
          

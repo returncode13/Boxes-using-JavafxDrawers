@@ -34,12 +34,24 @@ public class WorkspaceModel {
     private ObservableSet<JobType0Model> observableJobs=FXCollections.observableSet(jobs);
     private ObservableSet<EdgeModel> observableEdges=FXCollections.observableSet(edges);
     private List<String> insightVersions=new ArrayList<>();
-   
+    private Workspace workspace;
+    
+    
+    
     public WorkspaceModel(){
   //      id=UUID.randomUUID().getMostSignificantBits();
           id=null;
     }
 
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    
     
     
     

@@ -342,6 +342,7 @@ public class AppController extends Stage{
         WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel();
         frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
         frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());
+        frontEndWorkspaceModel.setWorkspace(workspaceToBeLoaded);
         WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
         frontEndWorkspaceView.getController().setLoading(true);
        
@@ -484,6 +485,7 @@ public class AppController extends Stage{
                     WorkspaceModel model=new WorkspaceModel();
                     model.setId(dbWorkspace.getId());
                     model.setName(dbWorkspace.getName());
+                    model.setWorkspace(dbWorkspace);
                     WorkspaceView node=new WorkspaceView(model);
                     basePane.getChildren().add(node);
                     
@@ -617,9 +619,10 @@ public class AppController extends Stage{
         UserView userView=new UserView(userModel);
         if(userModel.getLoginSucceeded()){
             System.out.println("fend.app.AppController.logUser(): Getting user with Initials: "+userModel.getIntials());
-        currentUser=userService.getUserWithInitials(userModel.getIntials());
+      //  currentUser=userService.getUserWithInitials(userModel.getIntials());
+        currentUser=userModel.getUser();
         userBtn.setText(currentUser.getInitials());
-        
+            System.out.println("fend.app.AppController.logUser(): finished retrieving User ");
         
         }else{
         if(currentUser!=null)System.out.println("fend.app.AppController.logUser(): retaining the old user: "+currentUser.getInitials());
@@ -636,7 +639,8 @@ public class AppController extends Stage{
     private int elevation(){
         Workspace w=null;
         if(currentWorkspace!=null){
-            w=workspaceService.getWorkspace(currentWorkspace.getId());
+           // w=workspaceService.getWorkspace(currentWorkspace.getId());
+           w=currentWorkspace;
         }
         
         
@@ -658,10 +662,12 @@ public class AppController extends Stage{
 
     private void login() {
         
-        User u=userService.getUser(currentUser.getId());
+        //User u=userService.getUser(currentUser.getId());
+        User u=currentUser;
         Workspace w=null;
         if(currentWorkspace!=null){
-            w=workspaceService.getWorkspace(currentWorkspace.getId());
+          //  w=workspaceService.getWorkspace(currentWorkspace.getId());
+          w=currentWorkspace;
         }
         
         if(w!=null && w.getOwner()==null){
@@ -681,9 +687,9 @@ public class AppController extends Stage{
         System.out.println("fend.app.AppController.login(): after addition sizeofUserList: "+w.getUsers().size());
         System.out.println("fend.app.AppController.login(): adding workspace "+w.getName()+" to users list: "+u.getInitials()+""
                 + " sizeOfWorkspaceList: "+u.getWorkspaces().size());
-        u.addToWorkspaces(w);
+       // u.addToWorkspaces(w);
         System.out.println("fend.app.AppController.login(): after addition sizeOfWorkspaceList "+u.getWorkspaces().size());
-        workspaceService.updateWorkspace(w.getId(), w);
+     //   workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         AppProperties.setCurrentUser(u);
@@ -692,25 +698,27 @@ public class AppController extends Stage{
     private void logout() {
         if(previousUser==null) return;
         
-        User u=userService.getUser(previousUser.getId());
+        //User u=userService.getUser(previousUser.getId());
+        User u=previousUser;
         
         Workspace w=null;
         if(currentWorkspace!=null){
-            w=workspaceService.getWorkspace(currentWorkspace.getId());
+           // w=workspaceService.getWorkspace(currentWorkspace.getId());\
+           w=currentWorkspace;
         }
         if(w==null) return;
                
         System.out.println("fend.app.AppController.logout(): removing user: "+u.getInitials()+" from workspace: "+w.getName());
         w.removeUser(u);
-        u.removeFromWorkspaces(w);
+       // u.removeFromWorkspaces(w);
         workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
         if(u.equals(w.getOwner())){
             
             System.out.println("fend.app.AppController.logout(): elevating a guest to an owner");
-            workspaceService.updateWorkspace(w.getId(), w);
+          //  workspaceService.updateWorkspace(w.getId(), w);
             int i=elevation();
-            w=workspaceService.getWorkspace(w.getId());
+         //   w=workspaceService.getWorkspace(w.getId());
             if(i==0){
                 w.setOwner(null);
                 workspaceService.updateWorkspace(w.getId(), w);

@@ -6,6 +6,7 @@
 package fend.dot;
 
 
+import db.model.Dot;
 import db.model.Job;
 import fend.dot.formulaField.FormulaFieldModel;
 import fend.dot.variableArgument.VariableArgumentModel;
@@ -62,6 +63,8 @@ public class DotModel {
     private DoubleProperty error=new SimpleDoubleProperty(0.0);
     private DoubleProperty tolerance=new SimpleDoubleProperty(0.0);
     private VariableArgumentModel variableArgumentModel=new VariableArgumentModel();
+    private Dot databaseDot;
+    
     
     
     public DotModel(WorkspaceModel workspaceM){
@@ -79,6 +82,17 @@ public class DotModel {
        
         
     }   
+
+    public Dot getDatabaseDot() {
+        return databaseDot;
+    }
+
+    public void setDatabaseDot(Dot databaseDot) {
+        this.databaseDot = databaseDot;
+    }
+    
+    
+    
 
     public Long getId() {
         return id;
@@ -228,7 +242,7 @@ public class DotModel {
         return function;
     }
 
-    public void setFormula(String formula) {
+    public void setFunction(String formula) {
         this.function.set(formula);
     }
 

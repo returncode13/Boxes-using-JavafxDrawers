@@ -69,7 +69,7 @@ public class DugLogManager {
     private LogService logsService=new LogServiceImpl();
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     private DugioScripts dugioScripts=new DugioScripts();
-    private JobService jobService=new JobServiceImpl();
+    //private JobService jobService=new JobServiceImpl();
     private List<FileWrapper> exclusionList=new ArrayList<>();
     private ExecutorService exec;
     private final WorkflowService workflowService=new WorkflowServiceImpl();
@@ -78,7 +78,8 @@ public class DugLogManager {
     public DugLogManager(JobType0Model job) {
         this.job = job;
         System.out.println("middleware.dugex.DugLogManager.<init>()..getting dbjob: "+job.getId());
-        this.dbJob=jobService.getJob(this.job.getId());
+       // this.dbJob=jobService.getJob(this.job.getId());
+       this.dbJob=this.job.getDatabaseJob();
       
         System.out.println("middleware.dugex.DugLogManager.<init>(): got job .now querying for volumes");
         

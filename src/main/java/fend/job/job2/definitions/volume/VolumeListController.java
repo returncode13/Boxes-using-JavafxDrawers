@@ -116,8 +116,8 @@ public class VolumeListController {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
-        dbjob=jobService.getJob(parentjob.getId());
-        
+        //dbjob=jobService.getJob(parentjob.getId());
+        dbjob=parentjob.getDatabaseJob();
         
         Set<Volume> dbVolumesInJob=dbjob.getVolumes();
         for(Volume dbVol:dbVolumesInJob){

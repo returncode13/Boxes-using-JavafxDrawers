@@ -84,7 +84,15 @@ public class JobType2Model implements JobType0Model {
     private BooleanProperty headersCommited;
     private BooleanProperty listenToDepthChange;
     private List<JobModelProperty> jobProperties;
+    private Job databaseJob;
 
+    public Job getDatabaseJob() {
+        return databaseJob;
+    }
+
+    public void setDatabaseJob(Job databaseJob) {
+        this.databaseJob = databaseJob;
+    }
             
     public JobType2Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();

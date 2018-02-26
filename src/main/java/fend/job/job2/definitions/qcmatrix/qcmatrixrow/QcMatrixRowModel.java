@@ -42,9 +42,10 @@ public class QcMatrixRowModel extends QcMatrixRowModelParent{
         checkedByUser.addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                QcMatrixRow dbqcmatrixrow=qcMatrixRowService.getQcMatrixRow(id);
+                /*QcMatrixRow dbqcmatrixrow=qcMatrixRowService.getQcMatrixRow(id);
                 dbqcmatrixrow.setPresent(newValue);
-                qcMatrixRowService.updateQcMatrixRow(dbqcmatrixrow.getId(), dbqcmatrixrow);
+                qcMatrixRowService.updateQcMatrixRow(dbqcmatrixrow.getId(), dbqcmatrixrow);*/
+                qcMatrixRowService.updatePresent(id,newValue);
             }
             
         });

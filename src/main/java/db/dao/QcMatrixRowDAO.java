@@ -27,4 +27,6 @@ public interface QcMatrixRowDAO {
     public QcMatrixRow getQcMatrixRowFor(Job sd,QcType qctype) throws Exception;
 
     public List<QcMatrixRow> getQcMatrixForJob(Job sessDetails, boolean b);
+
+    public void updatePresent(Long id, Boolean val);
 }

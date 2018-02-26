@@ -112,7 +112,8 @@ public class JobType2Controller implements JobType0Controller{
     void setModel(JobType2Model item) {
         model=item;
         
-        dbjob=jobService.getJob(model.getId());
+        //dbjob=jobService.getJob(model.getId());
+         dbjob=model.getDatabaseJob();
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
@@ -572,9 +573,9 @@ parent.addChild(model);*/
      * }
      **/
     private void setupAncestorsAndDescendants(JobType0Model parent) {
-         dbjob=jobService.getJob(dbjob.getId());
-                    Job dbParent=jobService.getJob(parent.getId());
-                    
+        // dbjob=jobService.getJob(dbjob.getId());
+                    //Job dbParent=jobService.getJob(parent.getId());
+                    Job dbParent=parent.getDatabaseJob();
                     /*Set<Ancestor>   Ap=dbParent.getAncestors();
                     Set<Ancestor>   Ac=dbjob.getAncestors();
                     Set<Descendant> Dp=dbParent.getDescendants();

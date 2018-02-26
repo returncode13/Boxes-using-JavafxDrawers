@@ -32,6 +32,8 @@ public interface JobService {
     public void updateName(Job dbjob, String get);
 
     public void updateDepth(Job dbjob, Long newValue);
+
+    public void updateInsightVersionInJob(Job job);
     
    
 }

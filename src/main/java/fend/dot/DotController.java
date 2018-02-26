@@ -114,7 +114,9 @@ public class DotController extends Stage{
     void setModel(DotModel mod){
         model=mod;
         WorkspaceModel workspaceModel=model.getWorkspaceModel();
-        dbWorkspace=workspaceService.getWorkspace(workspaceModel.getId());
+        //dbWorkspace=workspaceService.getWorkspace(workspaceModel.getId());
+        dbWorkspace=workspaceModel.getWorkspace();
+        
             String creationTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
             if(mod.getId()==null){                      //Commit the dot as soon as its created
             dbDot=new Dot();    
@@ -123,19 +125,20 @@ public class DotController extends Stage{
             dbDot.setCreationTime(creationTime);
             dotService.createDot(dbDot);
             model.setId(dbDot.getId());
+            model.setDatabaseDot(dbDot);
             dbWorkspace.addToDots(dbDot);
             }
             else{
-                dbDot=dotService.getDot(mod.getId());       //else get a reference to the existing dot
+                /*dbDot=dotService.getDot(mod.getId());       //else get a reference to the existing dot
                 dbDot.setStatus(model.getStatus().get());
-                dotService.updateDot(dbDot.getId(), dbDot);    //update 
+                dotService.updateDot(dbDot.getId(), dbDot);    //update */
+                dbDot=model.getDatabaseDot();
             }
             
             
             
-            workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.
-            
-            
+         //   workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.            
+           
        
         
         model.getDelete().addListener(new ChangeListener<Boolean>(){
@@ -286,7 +289,7 @@ public class DotController extends Stage{
         
         System.out.println("fend.dot.DotController.updateDatabaseAndFormulaFieldinModel(): updating the dot.");
        
-              dbDot=dotService.getDot(model.getId());
+         //     dbDot=dotService.getDot(model.getId());
               dbDot.setStatus(model.getStatus().get());
          
           Set<LinkModel> linksSharingThisDot=model.getLinks();
@@ -294,8 +297,10 @@ public class DotController extends Stage{
           for(LinkModel lm:linksSharingThisDot){
              
                     
-                     Job child=jobService.getJob(lm.getChild().getId());
-                     Job parent=jobService.getJob(lm.getParent().getId());
+                     //Job child=jobService.getJob(lm.getChild().getId());
+                     Job child=lm.getChild().getDatabaseJob();
+                     //Job parent=jobService.getJob(lm.getParent().getId());
+                     Job parent=lm.getParent().getDatabaseJob();
                      List<Link> linksContainingParentChildThroughDot=linkService.getLinkBetweenParentAndChild(parent, child, dbDot);
                       //linkService.clearLinksforJob(child,dbDot);                 //rebuild each save
                       //linkService.clearLinksforJob(parent,dbDot);                //rebuild each save     
@@ -311,13 +316,15 @@ public class DotController extends Stage{
                       
                       
           }
-          dbDot.setLinks(dbLinks);
+         // dbDot.setLinks(dbLinks);
           String creationTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           for(Link l:dbLinks){
               l.setCreationTime(creationTime);
               linkService.createLink(l);
           }
-          dotService.updateDot(dbDot.getId(), dbDot);
+          //dotService.updateDot(dbDot.getId(), dbDot);
+          dotService.updateStatus(model.getId(),model.getStatus().get());
+          model.setDatabaseDot(dbDot);
           
           
           /**
@@ -352,8 +359,10 @@ public class DotController extends Stage{
             for(LinkModel felink:feLinks){
                 JobType0Model parentj=felink.getParent();
                 JobType0Model childj=felink.getChild();
-                Job dbChild=jobService.getJob(childj.getId());
-                Job dbParent=jobService.getJob(parentj.getId());
+                //Job dbChild=jobService.getJob(childj.getId());
+                Job dbChild=childj.getDatabaseJob();
+                //Job dbParent=jobService.getJob(parentj.getId());
+                Job dbParent=parentj.getDatabaseJob();
                 observableLhsArgs.add(dbParent);
                 observableRhsArgs.add(dbChild);
             }
@@ -365,8 +374,10 @@ public class DotController extends Stage{
             for(LinkModel felink:feLinks){
                 JobType0Model parentj=felink.getParent();
                 JobType0Model childj=felink.getChild();
-                Job dbChild=jobService.getJob(childj.getId());
-                Job dbParent=jobService.getJob(parentj.getId());
+                //Job dbChild=jobService.getJob(childj.getId());
+                Job dbChild=childj.getDatabaseJob();
+                //Job dbParent=jobService.getJob(parentj.getId());
+                Job dbParent=parentj.getDatabaseJob();
                 observableLhsArgs.add(dbChild);
                 observableRhsArgs.add(dbParent);
             }
@@ -378,8 +389,10 @@ public class DotController extends Stage{
             for(LinkModel felink:feLinks){
                 JobType0Model parentj=felink.getParent();
                 JobType0Model childj=felink.getChild();
-                Job dbChild=jobService.getJob(childj.getId());
-                Job dbParent=jobService.getJob(parentj.getId());
+                //Job dbChild=jobService.getJob(childj.getId());
+                Job dbChild=childj.getDatabaseJob();
+                //Job dbParent=jobService.getJob(parentj.getId());
+                Job dbParent=parentj.getDatabaseJob();
                 observableLhsArgs.add(dbParent);
                 observableRhsArgs.add(dbChild);
             }
@@ -430,6 +443,7 @@ public class DotController extends Stage{
           
           dbDot.setVariableArguments(dbVariableArguments);
           dotService.updateDot(dbDot.getId(), dbDot);
+          model.setDatabaseDot(dbDot);
           System.out.println("fend.dot.DotController.setupModelFormulaField(): setting a new formula field to the dot"); 
         
     }
@@ -446,11 +460,13 @@ public class DotController extends Stage{
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             if(model.getId()!=null){
-                dbDot=dotService.getDot(model.getId());
+                /* dbDot=dotService.getDot(model.getId());
+                
+                dotService.updateDot(dbDot.getId(), dbDot);*/
                 dbDot.setFunction(newValue);
+                //dotService.updateFunction(dbDot);
                 dotService.updateDot(dbDot.getId(), dbDot);
-                
-                
+                model.setDatabaseDot(dbDot);
   /*
                 Update the times for all the jobs connected by this dot
 */                
@@ -469,16 +485,20 @@ public class DotController extends Stage{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
              if(model.getId()!=null){
-                dbDot=dotService.getDot(model.getId());
+                 /*dbDot=dotService.getDot(model.getId());
+                 
+                 dotService.updateDot(dbDot.getId(), dbDot);*/
                 dbDot.setTolerance((Double) newValue);
+                //dotService.updateTolerance(dbDot);
                 dotService.updateDot(dbDot.getId(), dbDot);
-                
+                model.setDatabaseDot(dbDot);
                 /*
                 Update the times for all the jobs connected by this dot
 */                
                 Set<Link> dbLinks=dbDot.getLinks();
                 String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                 for(Link dbLink:dbLinks){
+                    System.out.println(".changed(): updating times on subsurface job entries: ");
                     subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);
                     subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getChild(), updateTime);
                 }
@@ -490,10 +510,13 @@ public class DotController extends Stage{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
              if(model.getId()!=null){
-                dbDot=dotService.getDot(model.getId());
+                 /*dbDot=dotService.getDot(model.getId());
+                 
+                 dotService.updateDot(dbDot.getId(), dbDot);*/
                 dbDot.setError((Double) newValue);
+                //dotService.updateError(dbDot);
                 dotService.updateDot(dbDot.getId(), dbDot);
-                
+                model.setDatabaseDot(dbDot);
                  /*
                 Update the times for all the jobs connected by this dot
 */                
@@ -536,8 +559,10 @@ public class DotController extends Stage{
      **/
    
     private void setupAncestorsAndDescendants(JobType0Model parent,JobType0Model child) {
-                    Job  dbjob=jobService.getJob(child.getId());
-                    Job dbParent=jobService.getJob(parent.getId());
+                    //Job  dbjob=jobService.getJob(child.getId());
+                     Job  dbjob=child.getDatabaseJob();
+                   // Job dbParent=jobService.getJob(parent.getId());
+                   Job dbParent=parent.getDatabaseJob();
                     
                     /*Set<Ancestor>   Ap=dbParent.getAncestors();
                     Set<Ancestor>   Ac=dbjob.getAncestors();

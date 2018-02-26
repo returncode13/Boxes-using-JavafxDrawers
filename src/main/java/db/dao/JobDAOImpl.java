@@ -261,6 +261,28 @@ public class JobDAOImpl implements JobDAO{
         }
     }
 
+    @Override
+    public void updateInsightVersionInJob(Job job) {
+     Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" update Job set insightVersions =:n where id = :id";
+              
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("n", job.getInsightVersions());
+            query.setParameter("id", job.getId());
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
     
     
     

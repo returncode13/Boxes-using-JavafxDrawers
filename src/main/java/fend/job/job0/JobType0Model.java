@@ -69,7 +69,8 @@ public interface JobType0Model {
     public List<JobModelProperty> getJobProperties();
     public void setJobProperties(List<JobModelProperty> jobProperties);
     
-    
+    public Job getDatabaseJob();
+    public void setDatabaseJob(Job job);
     
     @Override
     public boolean equals(Object obj);

@@ -12,6 +12,7 @@ import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -180,6 +181,28 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         session.close();
         }
         return result; 
+    }
+
+    @Override
+    public void updatePresent(Long id,Boolean val) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" update QcMatrixRow set present =:n where id = :id";
+              
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("n", val);
+            query.setParameter("id", id);
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
     
 }

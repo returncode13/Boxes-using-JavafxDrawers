@@ -69,7 +69,9 @@ public class FormulaFieldModel {
     
     public FormulaFieldModel(DotModel dot) {
         this.dot = dot;
-        dbDot=dotService.getDot(dot.getId());
+        //dbDot=dotService.getDot(dot.getId());
+        dbDot=this.dot.getDatabaseDot();
+               
         function.set(dbDot.getFunction());
         tolerance.set(dbDot.getTolerance()==null?0.0:dbDot.getTolerance());
         error.set(dbDot.getError()==null?0.0:dbDot.getError());
@@ -146,7 +148,7 @@ public class FormulaFieldModel {
     private final ChangeListener<String> formulaChangeListener=new ChangeListener<String>() {
        @Override
        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-           dot.setFormula(function.get());
+           dot.setFunction(function.get());
        }
    };
     

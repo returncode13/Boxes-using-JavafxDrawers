@@ -7,6 +7,7 @@ package db.services;
 
 import db.model.Dot;
 import db.model.Workspace;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -19,4 +20,12 @@ public interface DotService {
     public void deleteDot(Long id);
 
     public void clearUnattachedDots(Workspace ws);
+
+    public void updateStatus(Long id, String status);
+
+    public void updateFunction(Dot dbDot);
+
+    public void updateTolerance(Dot dbDot);
+
+    public void updateError(Dot dbDot);
 }

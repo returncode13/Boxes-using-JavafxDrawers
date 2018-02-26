@@ -47,13 +47,13 @@ public class Workspace implements Serializable{
     private String hashSessions;*/
     
     @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
-    private Set<Job> jobs;
+    private Set<Job> jobs=new HashSet<>();
     
      @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
-    private Set<Dot> dots;
+    private Set<Dot> dots=new HashSet<>();
   
       @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
-    private Set<Summary> summary;
+    private Set<Summary> summary=new HashSet<>();
      
      
     // @ManyToMany(mappedBy = "workspaces",fetch = FetchType.EAGER)

@@ -33,5 +33,7 @@ public interface JobDAO {
     public void updateName(Job dbjob, String name);
 
     public void updateDepth(Job dbjob, Long newValue);
+
+    public void updateInsightVersionInJob(Job job);
     
 }

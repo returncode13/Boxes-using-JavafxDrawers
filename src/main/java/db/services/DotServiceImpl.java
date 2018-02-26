@@ -9,6 +9,7 @@ import db.dao.DotDAO;
 import db.dao.DotDAOImpl;
 import db.model.Dot;
 import db.model.Workspace;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -41,6 +42,26 @@ public class DotServiceImpl implements DotService{
     @Override
     public void clearUnattachedDots(Workspace ws) {
         dotDao.clearUnattachedDots(ws);
+    }
+
+    @Override
+    public void updateStatus(Long id, String status) {
+        dotDao.updateStatus(id,status);
+    }
+
+    @Override
+    public void updateFunction(Dot dbDot) {
+        dotDao.updateFunction(dbDot);
+    }
+
+    @Override
+    public void updateTolerance(Dot dbDot) {
+        dotDao.updateTolerance(dbDot);
+    }
+
+    @Override
+    public void updateError(Dot dbDot) {
+        dotDao.updateError(dbDot);
     }
     
 }

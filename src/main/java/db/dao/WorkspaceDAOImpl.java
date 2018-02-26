@@ -63,8 +63,8 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
           transaction=session.beginTransaction();
           Workspace s=(Workspace) session.get(Workspace.class, sessionId);
           s.setName(newSession.getName());
-          s.setJobs(newSession.getJobs());
-          s.setDots(newSession.getDots());
+         // s.setJobs(newSession.getJobs());
+         // s.setDots(newSession.getDots());
          // System.out.println("db.dao.WorkspaceDAOImpl.updateWorkspace(): "+newSession.getName()+" has "+newSession.getUsers().size()+" users");
           s.setUsers(newSession.getUsers());
           s.setOwner(newSession.getOwner());

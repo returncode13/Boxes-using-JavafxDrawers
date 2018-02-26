@@ -21,7 +21,7 @@ import javafx.fxml.FXML;
 public class InsightListController {
     private InsightListModel model;
     private InsightListView view;
-    private JobService jobService=new JobServiceImpl();
+  //  private JobService jobService=new JobServiceImpl();
     
     @FXML
     private JFXListView<InsightVersion> insightList;
@@ -31,7 +31,9 @@ public class InsightListController {
     
     void setModel(InsightListModel item) {
        model=item;
-       Job job=jobService.getJob(model.getParentJob().getId());
+       //Job job=jobService.getJob(model.getParentJob().getId());
+       Job job=model.getParentJob().getDatabaseJob();
+       
        String insightsPresent=job.getInsightVersions();
        String[] parts;
        if(insightsPresent!=null){

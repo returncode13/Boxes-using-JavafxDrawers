@@ -40,10 +40,10 @@ public class QcMatrixController {
     private QcMatrixView qcMatrixView;
     private QcTypeService qcTypeService=new QcTypeServiceImpl();
     private QcMatrixRowService qcMatrixService=new QcMatrixRowServiceImpl();
-    private JobService jobService=new JobServiceImpl();
+   // private JobService jobService=new JobServiceImpl();
     
     private Job parentJob;
-     @FXML
+    @FXML
     private JFXButton addQcType;
 
     @FXML
@@ -85,7 +85,8 @@ public class QcMatrixController {
         
         
         if(qcMatrixModel.getParentjob().getId()!=null){
-            parentJob=jobService.getJob(qcMatrixModel.getParentjob().getId());
+            //parentJob=jobService.getJob(qcMatrixModel.getParentjob().getId());
+            parentJob=qcMatrixModel.getParentjob().getDatabaseJob();
             List<QcMatrixRow> qcMatrixForJob=qcMatrixService.getQcMatrixForJob(parentJob);
             for(QcMatrixRow qcmatrixRow:qcMatrixForJob){
                 QcMatrixRowModel qcrw=new QcMatrixRowModel();

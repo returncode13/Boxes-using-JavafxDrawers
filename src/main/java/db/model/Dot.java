@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
@@ -36,10 +37,10 @@ public class Dot {
     private Workspace workspace;
     
     @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
-    private Set<VariableArgument> variableArguments;
+    private Set<VariableArgument> variableArguments=new HashSet<>();
     
     @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
-    private Set<Doubt> doubts;
+    private Set<Doubt> doubts=new HashSet<>();
     
     @Column(name="status")
     private String status;
@@ -70,7 +71,7 @@ public class Dot {
     }
     
     @OneToMany(mappedBy = "dot",fetch=FetchType.EAGER)
-    private Set<Link> links;
+    private Set<Link> links=new HashSet<>();
 
     public Set<Link> getLinks() {
         return links;
