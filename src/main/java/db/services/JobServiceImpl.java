@@ -77,6 +77,11 @@ public class JobServiceImpl implements JobService {
         jobStepDAO.updateName(dbjob,name);
     }
 
+    @Override
+    public void updateDepth(Job dbjob, Long newValue) {
+        jobStepDAO.updateDepth(dbjob,newValue);
+    }
+
     
     
 }

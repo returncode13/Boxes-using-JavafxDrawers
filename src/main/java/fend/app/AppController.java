@@ -465,7 +465,7 @@ public class AppController extends Stage{
                        System.out.println("fend.app.AppController.startNewWorkspace(): creating a new Workspace for user "+u.getInitials());
                    }
                     
-                    workspaceService.createWorkspace(dbWorkspace);
+                   
                     
                      if(!AppProperties.INSTALL){
                             dbWorkspace.setOwner(u);
@@ -475,7 +475,9 @@ public class AppController extends Stage{
                             dbWorkspace.setUsers(us);
                            // u.addToWorkspaces(dbWorkspace);
                            System.out.println("fend.app.AppController.startNewWorkspace(): updating the workspace");
-                            workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
+                           
+                            workspaceService.createWorkspace(dbWorkspace);
+                            //workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
                     
                      }
                     
@@ -491,11 +493,14 @@ public class AppController extends Stage{
                     userService.updateUser(currentUser.getUser_id(), currentUser);*/
                     
                     if(!AppProperties.INSTALL){
-                        currentWorkspace=workspaceService.getWorkspace(dbWorkspace.getId());
+                       // currentWorkspace=workspaceService.getWorkspace(dbWorkspace.getId());
+                       currentWorkspace=dbWorkspace;
                    
                     System.out.println("fend.app.AppController.startNewWorkspace(): "+currentWorkspace.getName()+" has "+currentWorkspace.getUsers().size()+" users");
                     AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
                     }
+                    
+                    
                     
                     checkForJobPropertiesForJobType(JobType0Model.PROCESS_2D);
                     checkForJobPropertiesForJobType(JobType0Model.SEGD_LOAD);
@@ -611,6 +616,7 @@ public class AppController extends Stage{
         UserModel userModel=new UserModel();
         UserView userView=new UserView(userModel);
         if(userModel.getLoginSucceeded()){
+            System.out.println("fend.app.AppController.logUser(): Getting user with Initials: "+userModel.getIntials());
         currentUser=userService.getUserWithInitials(userModel.getIntials());
         userBtn.setText(currentUser.getInitials());
         

@@ -431,9 +431,10 @@ parent.addChild(model);*/
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
-           dbjob=jobService.getJob(model.getId());
+            /* dbjob=jobService.getJob(model.getId());
             dbjob.setDepth((Long) newValue);
-           jobService.updateJob(dbjob.getId(), dbjob);
+            jobService.updateJob(dbjob.getId(), dbjob);*/
+           jobService.updateDepth(dbjob,newValue.longValue());
            /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved
            for(Descendant d:descendants){
            d.getDescendant().setDepth(d.getDescendant().getDepth()+1);

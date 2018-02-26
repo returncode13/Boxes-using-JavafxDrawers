@@ -10,6 +10,7 @@ import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -82,7 +83,7 @@ public class WorkflowDAOImpl implements WorkflowDAO {
     }
 
     @Override
-    public List<Workflow> getWorkFlowWith(String md5,Volume vol) {
+    public Workflow getWorkFlowWith(String md5,Volume vol) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Workflow> result=null;
@@ -92,15 +93,17 @@ public class WorkflowDAOImpl implements WorkflowDAO {
             criteria.add(Restrictions.eq("volume", vol));
             criteria.add(Restrictions.eq("md5sum", md5));
             result=criteria.list();
-            if(result==null || result.size()==0)
-                return null;
+            System.out.println("db.dao.WorkflowDAOImpl.getWorkFlowWith(): returning "+result.size()+ " workflows for md5: "+md5+" in volume: "+vol.getId());
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
         }finally{
             session.close();
         }
-        return result;
+        if(result.isEmpty()){
+            return null;
+        }
+        return result.get(0);
     }
 
     @Override
@@ -141,6 +144,30 @@ public class WorkflowDAOImpl implements WorkflowDAO {
             if(result==null || result.size()==0)
                 return null;
         }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Volume v) {
+       Session session=HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String sql="select MAX(wfversion) from Workflow where volume = :v";
+       List<Long> result=null;
+       try{
+           transaction =session.beginTransaction();
+           Query query=session.createQuery(sql);
+           query.setParameter("v", v);
+           result=query.list();
+            
+            transaction.commit();
+            if(result.get(0)==null){
+                return 0L;
+            }
+       }catch(Exception e){
             e.printStackTrace();
         }finally{
             session.close();

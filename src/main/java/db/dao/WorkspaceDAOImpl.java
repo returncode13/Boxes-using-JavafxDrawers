@@ -23,7 +23,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
     public void createWorkspace(Workspace s) {
       Session session = HibernateUtil.getSessionFactory().openSession();
       Transaction transaction=null;
-      
+        System.out.println("db.dao.WorkspaceDAOImpl.createWorkspace()");
       try{
           transaction=session.beginTransaction();
           session.saveOrUpdate(s);
@@ -39,7 +39,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
     @Override
     public Workspace getWorkspace(Long sessionId) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-            
+            System.out.println("db.dao.WorkspaceDAOImpl.getWorkspace()");
       try{
           
           Workspace s=(Workspace) session.get(Workspace.class,sessionId);
@@ -58,7 +58,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
     public void updateWorkspace(Long sessionId, Workspace newSession) {
         Session session = HibernateUtil.getSessionFactory().openSession();
       Transaction transaction=null;
-      
+        System.out.println("db.dao.WorkspaceDAOImpl.updateWorkspace()");
       try{
           transaction=session.beginTransaction();
           Workspace s=(Workspace) session.get(Workspace.class, sessionId);
@@ -101,7 +101,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
         Session hibsession = HibernateUtil.getSessionFactory().openSession();
         List<Workspace> sessList=new ArrayList<>();
       Transaction transaction=null;
-      
+        System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces()");
       try{
           transaction=hibsession.beginTransaction();
           sessList=hibsession.createCriteria(Workspace.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();

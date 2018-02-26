@@ -110,10 +110,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import javafx.collections.ListChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -169,7 +171,7 @@ public class WorkspaceController {
     private DoubtType doubtTypeInherit;
     
     private SummaryModel summaryModel=null;
-    
+    private Executor exec;
     
     @FXML
     private AnchorPane baseWindow;              //depth =0 
@@ -200,47 +202,57 @@ public class WorkspaceController {
     @FXML
     void addBox(ActionEvent event) {
         Job dbjob = new Job();
-        Long typeOfJob = JobType0Model.PROCESS_2D;
-        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
-        dbjob.setNodetype(nodetype);
-        dbjob.setWorkspace(dbWorkspace);
-
-        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
-        jobService.createJob(dbjob);
-
-        
-        
-        
-        
-        JobType1Model job = new JobType1Model(this.model);
-        job.setId(dbjob.getId());
-        
-        List<JobModelProperty> jobProperties=job.getJobProperties();
-        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
-            JobModelProperty jobProperty = iterator.next();
-            NodePropertyValue npv=new NodePropertyValue();
-            npv.setJob(dbjob);
-            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
-            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
-            npv.setNodeProperty(nodeProperty);
-            npv.setValue(jobProperty.getPropertyValue());
-            nodePropertyValueService.createNodePropertyValue(npv);
-            
-            
-            
-        }
-        
-        
-        
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
-        changeProperty.bind(job.getChangeProperty());
-        changeProperty.addListener(workspaceChangedListener);
+         JobType1Model job = new JobType1Model(this.model);
+         
+           Task<String> task =new Task<String>(){
+            @Override
+            protected String call() throws Exception {
+                    Long typeOfJob = JobType0Model.PROCESS_2D;
+                    NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+                    dbjob.setNodetype(nodetype);
+                    dbjob.setWorkspace(dbWorkspace);
 
-        changePropertyList.add(changeProperty);
-        JobType1View jobview = new JobType1View(job, interactivePane);
-        interactivePane.getChildren().add(jobview);
-//        System.out.println("workspace.WorkspaceController.addBox(): "+g1Child.getId()%100);
+                    dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+                    jobService.createJob(dbjob);
+                    job.setId(dbjob.getId());
 
+                    List<JobModelProperty> jobProperties=job.getJobProperties();
+                    for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                        JobModelProperty jobProperty = iterator.next();
+                        NodePropertyValue npv=new NodePropertyValue();
+                        npv.setJob(dbjob);
+                        PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+                        NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+                        npv.setNodeProperty(nodeProperty);
+                        npv.setValue(jobProperty.getPropertyValue());
+                        nodePropertyValueService.createNodePropertyValue(npv);
+                    }
+                         
+                    return "finished building a 2dProcess entry: "+dbjob.getId();
+            }
+        };
+        
+        task.setOnFailed(e->{
+                    task.getException().printStackTrace();
+      });
+      
+        
+        task.setOnSucceeded(e->{
+                    changeProperty.bind(job.getChangeProperty());
+                    changeProperty.addListener(workspaceChangedListener);
+                    changePropertyList.add(changeProperty);
+                    JobType1View jobview = new JobType1View(job, interactivePane);
+                    interactivePane.getChildren().add(jobview);
+            //        System.out.println("workspace.WorkspaceController.addBox(): "+g1Child.getId()%100);
+
+         });
+      
+        task.setOnRunning(e->{
+            System.out.println("fend.workspace.WorkspaceController.add2D(): process is running");
+        });
+      
+      exec.execute(task);
             
             
 
@@ -250,42 +262,76 @@ public class WorkspaceController {
     void addSEGD(ActionEvent event) {
         Job dbjob = new Job();
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        JobType2Model job = new JobType2Model(WorkspaceController.this.model);
         
-        Long typeOfJob = JobType0Model.SEGD_LOAD;
-        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
-        dbjob.setNodetype(nodetype);
-        dbjob.setWorkspace(dbWorkspace);
-
-        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
-        System.out.println("fend.workspace.WorkspaceController.addSEGD(): creating  a new job in the database");
-        jobService.createJob(dbjob);
-
-        JobType2Model job = new JobType2Model(this.model);
-        job.setId(dbjob.getId());
         
-         List<JobModelProperty> jobProperties=job.getJobProperties();
-        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
-            JobModelProperty jobProperty = iterator.next();
-            NodePropertyValue npv=new NodePropertyValue();
-            npv.setJob(dbjob);
-            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
-            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
-            npv.setNodeProperty(nodeProperty);
-            npv.setValue(jobProperty.getPropertyValue());
-            nodePropertyValueService.createNodePropertyValue(npv);
-            
+        Task<String> task =new Task<String>(){
+            @Override
+            protected String call() throws Exception {
+                Long typeOfJob = JobType0Model.SEGD_LOAD;
+                    NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+                    dbjob.setNodetype(nodetype);
+                    dbjob.setWorkspace(dbWorkspace);
+
+                    dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+                    System.out.println("fend.workspace.WorkspaceController.addSEGD(): creating  a new job in the database");
+                    jobService.createJob(dbjob);
+
+                    System.out.println(".call(): setting the job id");
+                    job.setId(dbjob.getId());
+                    
+                    System.out.println(".call(): getting jobProperties");
+                     List<JobModelProperty> jobProperties=job.getJobProperties();
+                    for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                        JobModelProperty jobProperty = iterator.next();
+                        System.out.println(".call(): for jobProperty "+jobProperty.getPropertyName());
+                        System.out.println("");
+                        System.out.println(".call(): started a new  nodepropertyvalue object");
+                        NodePropertyValue npv=new NodePropertyValue();
+                        System.out.println(".call(): setting npvs job= dbjob");
+                        npv.setJob(dbjob);
+                        System.out.println(".call(): retrieving propertype: "+jobProperty.getPropertyName());
+                        PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+                        System.out.println(".call(): retrieving nodeProperty for nodetype: "+nodetype.getName()+" and propertytype: "+propertyType.getName());
+                        NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+                        System.out.println(".call(): setting npv.nodeproperty");
+                        npv.setNodeProperty(nodeProperty);
+                        System.out.println(".call(): setting npv.nodepropertyValue");
+                        npv.setValue(jobProperty.getPropertyValue());
+                        System.out.println(".call(): creating npv in the database");
+                        nodePropertyValueService.createNodePropertyValue(npv);
+                        System.out.println(".call(): done creating for this property");
             
             
         }
+                    return "finished building a SEGD entry: "+dbjob.getId();
+            }
+        };
         
         
       //  BooleanProperty changeProperty = new SimpleBooleanProperty(false);
-        changeProperty.bind(job.getChangeProperty());
-        changeProperty.addListener(workspaceChangedListener);
+      
+      
+      task.setOnFailed(e->{
+          task.getException().printStackTrace();
+      });
+      
+      task.setOnSucceeded(e->{
+          System.out.println("fend.workspace.WorkspaceController.addSEGD(): task succeeded. adding on the view.");
+            changeProperty.bind(job.getChangeProperty());
+            changeProperty.addListener(workspaceChangedListener);
 
-        changePropertyList.add(changeProperty);
-        JobType2View jobview = new JobType2View(job, interactivePane);
-        interactivePane.getChildren().add(jobview);
+            changePropertyList.add(changeProperty);
+            JobType2View jobview = new JobType2View(job, interactivePane);
+            interactivePane.getChildren().add(jobview);
+      });
+      
+      task.setOnRunning(e->{
+          System.out.println("fend.workspace.WorkspaceController.addSEGD(): process is running");
+      });
+      
+      exec.execute(task);
+        
     }
 
     @FXML
@@ -750,6 +796,12 @@ public class WorkspaceController {
             insightVersionStrings.add(insight.getName());
         }
         model.setInsightVersions(insightVersionStrings);
+        
+        exec=Executors.newCachedThreadPool((r)->{
+            Thread t=new Thread(r);
+            t.setDaemon(true);
+            return t;
+        });
 
     }
 

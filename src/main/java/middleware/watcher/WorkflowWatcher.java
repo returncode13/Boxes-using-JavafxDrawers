@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import db.services.LogService;
+import java.util.ArrayList;
 
 /*
  * @author sharath nair
@@ -118,7 +119,8 @@ public class WorkflowWatcher {
                 }
                 workflowHolder.md5=new String(sbuf.toString());
                    // System.out.println("watcher.WorkflowWatcher.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
-                List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
+             //   List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
+             List<Workflow> wlist=new ArrayList<>();
                 
                 if(wlist==null){                    // no workflow for vol with md5, so create a new entry for such a workflow
                     Workflow wver=wserv.getWorkFlowVersionFor(WorkflowWatcher.this.volume); //get the  workflow with the highest version for this volume
@@ -201,7 +203,8 @@ public class WorkflowWatcher {
                 workflowHolder.md5=new String(sbuf.toString());
                  //   System.out.println("watcher.WorkflowWatcher.watchForWorkflows().SGDLOAD Volume: call(): MD5: "+md);
                    // System.out.println("watcher.WorkflowWatcher.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
-                   List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
+                  // List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowWatcher.this.volume);
+                  List<Workflow> wlist=new ArrayList<>();
                    Workflow wfForLog=null;
                    if(wlist==null){                    // no workflow for vol with md5, so create a new entry for such a workflow
                    Workflow wver=wserv.getWorkFlowVersionFor(WorkflowWatcher.this.volume); //get the  workflow with the highest version for this volume

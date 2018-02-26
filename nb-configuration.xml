@@ -18,5 +18,9 @@ Any value defined here will override the pom.xml file value but is only applicab
     <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
         <word>doubtstatus</word>
         <word>geom</word>
+        <word>loginformation</word>
+        <word>workflow</word>
+        <word>workflowholder</word>
+        <word>workflows</word>
     </spellchecker-wordlist>
 </project-shared-configuration>

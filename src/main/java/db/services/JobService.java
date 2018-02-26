@@ -30,6 +30,8 @@ public interface JobService {
     public List<Job> listJobs(Workspace W);
 
     public void updateName(Job dbjob, String get);
+
+    public void updateDepth(Job dbjob, Long newValue);
     
    
 }

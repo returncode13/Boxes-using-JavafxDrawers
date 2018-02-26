@@ -6,6 +6,7 @@
 package fend.job.job0;
 
 
+import db.model.Job;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
@@ -67,6 +68,7 @@ public interface JobType0Model {
     public ObservableList<SequenceHeaders> getSequenceHeaders();  
     public List<JobModelProperty> getJobProperties();
     public void setJobProperties(List<JobModelProperty> jobProperties);
+    
     
     
     @Override

@@ -477,10 +477,11 @@ public class LogDAOImpl implements LogDAO{
             query.setParameter("v", dbVol);
             
             result=query.list();
+            
+            transaction.commit();
             if(result.get(0)==null){
                 return new String("0");
             }
-            transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
         }finally{

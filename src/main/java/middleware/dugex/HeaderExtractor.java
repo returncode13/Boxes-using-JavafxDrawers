@@ -90,102 +90,102 @@ public class HeaderExtractor {
         exec=Executors.newFixedThreadPool(processors);
         //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type1 extraction
-        if(job.getType().equals(JobType0Model.PROCESS_2D)){
-           
-            
-          for(Volume0 vol:volumes){
-              System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get());
-              Volume dbvol=volumeService.getVolume(vol.getId());
-              //Job dbjob=dbvol.getJob();
-              String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
-              List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
-              for(SubsurfaceHeaders sub:subsInVol){
-                  
-                  Callable<String> callableTask = ()->{
-                  
-                  
-                  
-                                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
-
-                                Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
-                                Sequence dbseq=dbsub.getSequence();
-                                setOfSubsurfacesInJob.add(dbsub);
-                                SubsurfaceJob dbSubjob;
-                                if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
-                                    dbSubjob=new SubsurfaceJob();
-                                    dbSubjob.setJob(dbjob);
-                                    dbSubjob.setSubsurface(dbsub);
-                                    dbSubjob.setUpdateTime(updateTime);
-                                    dbSubjob.setSummaryTime(summaryTime);
-                                    subsurfaceJobService.createSubsurfaceJob(dbSubjob);
-                                }
-                                dbjob.getSubsurfaceJobs().add(dbSubjob);
-                                //jobService.updateJob(dbjob.getId(), dbjob);
-                                //setOfSequencesInJob.add(dbseq);
-
-                                System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
-
-
-                                System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
-                                String latestTimestamp=sub.getTimeStamp();
-                                if(headerService.getHeadersFor(dbvol,dbsub,latestTimestamp)==null){
-                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
-                                    Header header=new Header();
-                                    header.setJob(dbvol.getJob());
-                                    header.setSubsurfaceJob(dbSubjob);
-                                    header.setVolume(dbvol);
-                                    header.setSubsurface(dbsub);
-                                    header.setTimeStamp(latestTimestamp);
-                                    //header.setSequence(dbsub.getSequence());
-                                  populate(header);
-                                  setOfHeadersInJob.add(header);
-
-                                  //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
-                                  //dbjob.getSubsurfaceJobs().add(dbSubjob);
-                                 // dbjob.setSequences(setOfSequencesInJob);
-                                  dbjob.setHeaders(setOfHeadersInJob);
-                                  jobService.updateJob(dbjob.getId(), dbjob);
-                                  System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
-                                      headerService.getMultipleInstances(dbjob, dbsub);
-                                }else{
-                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
-                                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
-                                      headerService.getMultipleInstances(dbjob, dbsub);
-                                }
-
-                      return "Finished With sub: "+dbsub.getSubsurface();
-                  };
-                 callableTasks.add(callableTask);
-              }
-              
-              List<Future<String>> futures;
-              try {
-                  futures = exec.invokeAll(callableTasks);
-                  for(Future f:futures){
-                      if(f.isDone())
-                  System.out.println(" got future result "+f.get());
-                    }
-              } catch (InterruptedException ex) {
-                  Logger.getLogger(HeaderExtractor.class.getName()).log(Level.SEVERE, null, ex);
-              }  catch (ExecutionException ex) {
-                  Logger.getLogger(HeaderExtractor.class.getName()).log(Level.SEVERE, null, ex);
-              }
-              
-          }
-         
-          
-          // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
-                
-                   ((JobType1Model)job).setHeadersCommited(true);
-                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
-          exec.shutdown();
+        /* if(job.getType().equals(JobType0Model.PROCESS_2D)){
+        
+        
+        for(Volume0 vol:volumes){
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get());
+        Volume dbvol=volumeService.getVolume(vol.getId());
+        //Job dbjob=dbvol.getJob();
+        String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+        List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
+        for(SubsurfaceHeaders sub:subsInVol){
+        
+        Callable<String> callableTask = ()->{
+        
+        
+        
+        String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+        
+        Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+        Sequence dbseq=dbsub.getSequence();
+        setOfSubsurfacesInJob.add(dbsub);
+        SubsurfaceJob dbSubjob;
+        if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
+        dbSubjob=new SubsurfaceJob();
+        dbSubjob.setJob(dbjob);
+        dbSubjob.setSubsurface(dbsub);
+        dbSubjob.setUpdateTime(updateTime);
+        dbSubjob.setSummaryTime(summaryTime);
+        subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+        }
+        dbjob.getSubsurfaceJobs().add(dbSubjob);
+        //jobService.updateJob(dbjob.getId(), dbjob);
+        //setOfSequencesInJob.add(dbseq);
+        
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
+        
+        
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
+        String latestTimestamp=sub.getTimeStamp();
+        if(headerService.getHeadersFor(dbvol,dbsub,latestTimestamp)==null){
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
+        Header header=new Header();
+        header.setJob(dbvol.getJob());
+        header.setSubsurfaceJob(dbSubjob);
+        header.setVolume(dbvol);
+        header.setSubsurface(dbsub);
+        header.setTimeStamp(latestTimestamp);
+        //header.setSequence(dbsub.getSequence());
+        populate(header);
+        setOfHeadersInJob.add(header);
+        
+        //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+        //dbjob.getSubsurfaceJobs().add(dbSubjob);
+        // dbjob.setSequences(setOfSequencesInJob);
+        dbjob.setHeaders(setOfHeadersInJob);
+        //  jobService.updateJob(dbjob.getId(), dbjob);
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+        headerService.getMultipleInstances(dbjob, dbsub);
+        }else{
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+        headerService.getMultipleInstances(dbjob, dbsub);
         }
         
+        return "Finished With sub: "+dbsub.getSubsurface();
+        };
+        callableTasks.add(callableTask);
+        }
+        
+        List<Future<String>> futures;
+        try {
+        futures = exec.invokeAll(callableTasks);
+        for(Future f:futures){
+        if(f.isDone())
+        System.out.println(" got future result "+f.get());
+        }
+        } catch (InterruptedException ex) {
+        Logger.getLogger(HeaderExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        }  catch (ExecutionException ex) {
+        Logger.getLogger(HeaderExtractor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        }
+        
+        
+        // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+        
+        ((JobType1Model)job).setHeadersCommited(true);
+        System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
+        exec.shutdown();
+        }
+        */
         
         
         //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type2 extraction
-        if(job.getType().equals(JobType0Model.SEGD_LOAD)){
+        if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
            
             
           for(Volume0 vol:volumes){
@@ -297,7 +297,7 @@ public class HeaderExtractor {
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 
-                   ((JobType2Model)job).setHeadersCommited(true);
+                   //((JobType2Model)job).setHeadersCommited(true);
                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
        
           

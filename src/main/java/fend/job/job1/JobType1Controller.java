@@ -111,6 +111,7 @@ public class JobType1Controller implements JobType0Controller{
 
     void setModel(JobType1Model item) {
         model=item;
+        System.out.println("fend.job.job1.JobType1Controller.setModel(): calling job from db "+model.getId());
         dbjob=jobService.getJob(model.getId());
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);

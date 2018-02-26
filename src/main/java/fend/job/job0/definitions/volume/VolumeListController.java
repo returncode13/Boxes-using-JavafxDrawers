@@ -114,6 +114,7 @@ public class VolumeListController {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
+        System.out.println("fend.job.job0.definitions.volume.VolumeListController.setModel(): calling job from db");
         dbjob=jobService.getJob(parentjob.getId());
         
         

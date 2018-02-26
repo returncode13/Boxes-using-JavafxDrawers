@@ -45,7 +45,7 @@ public class WorkflowServiceImpl implements WorkflowService{
     }
 
     @Override
-    public List<Workflow> getWorkFlowWith(String md5, Volume vol) {
+    public Workflow getWorkFlowWith(String md5, Volume vol) {
         return wdao.getWorkFlowWith(md5, vol);
     }
 
@@ -57,6 +57,11 @@ public class WorkflowServiceImpl implements WorkflowService{
     @Override
     public Workflow getWorkflowRunBeforeTime(String time, Volume vol) {
         return wdao.getWorkflowRunBeforeTime(time, vol);
+    }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Volume v) {
+        return wdao.getHighestWorkFlowVersionFor(v);
     }
     
 }
