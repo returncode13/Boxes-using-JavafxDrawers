@@ -186,7 +186,7 @@ public class DugLogManager {
                         return "Created log entry for "+li.linename.getSubsurface();
                      }
                  };
-                System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+li.linename);
+                System.out.println("middleware.dugex.DugLogManager.<init>: Adding a task for "+li.linename.getSubsurface());
                 tasks.add(task);
                     
             }

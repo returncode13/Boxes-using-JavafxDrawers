@@ -110,7 +110,7 @@ public class Job implements Serializable{
     
      @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
-    private Set<Subsurface> subsurfaces;
+    private Set<Subsurface> subsurfaces=new HashSet<>();
     /*
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.

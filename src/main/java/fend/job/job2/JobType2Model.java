@@ -550,18 +550,22 @@ public class JobType2Model implements JobType0Model {
        
     }
 
+    public void setSequenceHeaders(ObservableList<SequenceHeaders> sequenceHeaders) {
+        this.sequenceHeaders = sequenceHeaders;
+    }
+
    
 
     public ObservableList<SequenceHeaders> getSequenceHeaders() {
-        retrieveHeaders();
+     //   retrieveHeaders();
         return sequenceHeaders;
     }
     
-     void retrieveHeaders() {
-        HeaderLoader headerloader=new HeaderLoader(this);
-        sequenceHeaders=headerloader.getSequenceHeaders();
-        
-    }
+    /* void retrieveHeaders() {
+    HeaderLoader headerloader=new HeaderLoader(this);
+    sequenceHeaders=headerloader.getSequenceHeaders();
+    
+    }*/
     
 
     @Override

@@ -10,6 +10,7 @@ import db.model.Job;
 import db.model.Volume;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -40,9 +41,18 @@ public class VolumeDAOImpl implements VolumeDAO {
     @Override
     public Volume getVolume(Long volid) {
         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         String hql="from Volume where id =:volid";
+        List<Volume> results=null;
         try{
-            Volume v = (Volume) session.get(Volume.class, volid);
-            return v;
+            transaction=session.beginTransaction();
+             Query query=session.createQuery(hql);
+            query.setParameter("volid", volid);
+            //Volume v = (Volume) session.get(Volume.class, volid);
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.VolumeDAOImpl.getVolume(): returning volume : "+results.get(0).getId());
+            return results.get(0);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -58,8 +68,14 @@ public class VolumeDAOImpl implements VolumeDAO {
     public void deleteVolume(Long volid) {
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
+       
         try{
             transaction=session.beginTransaction();
+           
+            
+            
+            
+            
            Volume v = (Volume) session.get(Volume.class, volid);
             session.delete(v);
             transaction.commit();

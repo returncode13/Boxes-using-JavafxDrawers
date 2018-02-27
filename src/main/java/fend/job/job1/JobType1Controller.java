@@ -62,6 +62,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
+import middleware.dugex.HeaderLoader;
 
 /**
  *
@@ -383,8 +384,31 @@ parent.addChild(model);*/
     
     @FXML
     void showTable(ActionEvent event) {
-            LineTableModel lineTableModel=new LineTableModel(model);
-            LineTableView lineTableView=new LineTableView(lineTableModel);
+        final HeaderLoader headerloader=new HeaderLoader(model);
+            Task<String> headerLoaderTask=new Task<String>(){
+                @Override
+                protected String call() throws Exception {
+                    headerloader.retrieveHeaders();
+                    
+                    return "Finished loading of headers for "+model.getNameproperty().get();
+                }
+                
+            };
+            headerLoaderTask.setOnSucceeded(e->{
+                    model.setSequenceHeaders(headerloader.getSequenceHeaders());
+                    LineTableModel lineTableModel=new LineTableModel(model);
+                    LineTableView lineTableView=new LineTableView(lineTableModel);
+            });
+         
+        
+            headerLoaderTask.setOnRunning(e->{});
+            headerLoaderTask.setOnFailed(e->{
+                headerLoaderTask.getException().printStackTrace();
+            });
+        
+            exec.execute(headerLoaderTask);
+            
+            
     }
     
      @FXML

@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,7 +44,7 @@ public class Header implements Serializable{
     
      
     
-    @OneToMany(mappedBy = "header")
+    @OneToMany(mappedBy = "header",fetch = FetchType.EAGER)
     private Set<Log> logs;
     
     /*@OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)

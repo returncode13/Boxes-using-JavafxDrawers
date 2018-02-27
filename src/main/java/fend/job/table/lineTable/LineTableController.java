@@ -9,6 +9,7 @@ import com.jfoenix.controls.JFXTreeTableRow;
 import com.jfoenix.controls.JFXTreeTableView;
 import db.model.Header;
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -16,11 +17,19 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
+import fend.job.table.log.HeaderLogModel;
+import fend.job.table.log.HeaderLogView;
+import fend.job.table.log.VersionLogsModel;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -45,13 +54,20 @@ public class LineTableController extends Stage{
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     private JobService jobService=new JobServiceImpl();
     private HeaderService headerService=new HeaderServiceImpl();
-            
+    private Executor exec;        
     
      @FXML
     private JFXTreeTableView<SequenceHeaders> treetableView;
 
+     
     void setModel(LineTableModel item) {
+        
         model=item;
+        exec=Executors.newCachedThreadPool(r->{
+            Thread t=new Thread(r);
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     void setView(LineTableView vw) {
@@ -102,6 +118,50 @@ public class LineTableController extends Stage{
              headerService.updateHeader(h.getHeaderId(), h);
              
          });
+         
+         showLogsMenuItem.setOnAction(e->{
+                Long id=row.getItem().getId();
+             /*Subsurface s=row.getItem().getSubsurface();
+             Long jobId=model.getJob().getId();
+             Job job=jobService.getJob(jobId);
+             Subsurface sub=subsurfaceService.getSubsurface(id);*/
+              Set<VersionLogsModel> versionModels=new HashSet<>();
+             Task<String> loghTask=new Task<String>(){
+                    @Override
+                    protected String call() throws Exception {
+                        Header h=headerService.getHeader(id);
+                        Set<Log> logs=h.getLogs();
+
+                        for(Log l:logs){
+                           VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath());
+                           versionModels.add(vlm);
+                        }
+                   
+                        return "Finished extracting logs for : "+h.getHeaderId();
+                    
+                    }
+                 
+             };
+             
+             loghTask.setOnSucceeded(ee->{
+             
+                    HeaderLogModel headerLogModel=new HeaderLogModel();
+                    headerLogModel.setLogsmodel(new ArrayList<>(versionModels));
+                    HeaderLogView headerLogView=new HeaderLogView(headerLogModel);
+             
+             });
+             
+             loghTask.setOnRunning(ee->{});
+             loghTask.setOnFailed(ee->{
+                 loghTask.getException().printStackTrace();
+             });
+                exec.execute(loghTask);
+                
+                
+                
+         });
+         
+         
          
          
          return row;

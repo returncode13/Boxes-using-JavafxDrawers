@@ -43,7 +43,13 @@ public class HeaderLoader {
     public HeaderLoader(JobType0Model job) {
         this.job = job;
         //Job dbjob=jobService.getJob(this.job.getId());
-        Job dbjob=job.getDatabaseJob();
+       
+        
+    }
+
+    
+    public void retrieveHeaders(){
+         Job dbjob=job.getDatabaseJob();
 //        List<Header> headersInJob=headerService.getHeadersFor(dbjob);
         Set<Header> headersInJob=dbjob.getHeaders();
         List<Volume0> feVolsInJob=job.getVolumes();
@@ -113,9 +119,9 @@ public class HeaderLoader {
         }
         
         
-        
     }
-
+    
+    
     public ObservableList<SequenceHeaders> getSequenceHeaders() {
         return sequenceHeaders;
     }

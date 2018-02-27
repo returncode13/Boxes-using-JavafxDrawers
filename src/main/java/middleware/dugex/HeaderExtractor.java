@@ -255,7 +255,7 @@ public class HeaderExtractor {
                               populate(header);
                               setOfHeadersInJob.add(header);
                               dbjob.setHeaders(setOfHeadersInJob);
-                              //dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+                              dbjob.setSubsurfaces(setOfSubsurfacesInJob);
                               //dbjob.getSubsurfaceJobs().add(dbSubjob);
                              // dbjob.setSequences(setOfSequencesInJob);
                               
@@ -291,7 +291,7 @@ public class HeaderExtractor {
                  }
             
                     
-                    jobService.updateJob(dbjob.getId(), dbjob);
+                 //   jobService.updateJob(dbjob.getId(), dbjob);
                     job.setDatabaseJob(dbjob);
               
           }

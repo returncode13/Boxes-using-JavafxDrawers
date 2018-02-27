@@ -10,6 +10,7 @@ import java.util.List;
 import db.model.Workspace;
 import java.util.ArrayList;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -96,16 +97,42 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
       }
     }
 
-    @Override
+    /*   @Override
+    public List<Workspace> listWorkspaces() {
+    Session hibsession = HibernateUtil.getSessionFactory().openSession();
+    List<Workspace> sessList=new ArrayList<>();
+    Transaction transaction=null;
+    System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces()");
+    try{
+    transaction=hibsession.beginTransaction();
+    sessList=hibsession.createCriteria(Workspace.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+    System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces(): no of workspaces returned : "+sessList.size());
+    transaction.commit();
+    
+    }catch(Exception e){
+    e.printStackTrace();
+    }finally{
+    hibsession.close();
+    }
+    return sessList;
+    }
+    */
+     @Override
     public List<Workspace> listWorkspaces() {
         Session hibsession = HibernateUtil.getSessionFactory().openSession();
         List<Workspace> sessList=new ArrayList<>();
       Transaction transaction=null;
+      String hql="from Workspace";
+      List<Workspace> result=null;
         System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces()");
       try{
+          System.out.println("db.dao.WorkspaceDAOImpl.beginTransactions");
           transaction=hibsession.beginTransaction();
-          sessList=hibsession.createCriteria(Workspace.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
-          System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces(): no of workspaces returned : "+sessList.size());
+          System.out.println("db.dao.WorkspaceDAOImpl.started Transaction");
+        //  sessList=hibsession.createCriteria(Workspace.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+        Query query=hibsession.createQuery(hql);
+        result=query.list();
+          System.out.println("db.dao.WorkspaceDAOImpl.listWorkspaces(): no of workspaces returned : "+result.size());
           transaction.commit();
           
       }catch(Exception e){
@@ -113,7 +140,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
       }finally{
           hibsession.close();
       }
-      return sessList;
+      return result;
     }
     
     

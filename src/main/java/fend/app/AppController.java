@@ -446,8 +446,8 @@ public class AppController extends Stage{
              });
              
              sm.getName().addListener((obs,old,newname)->{
-                 System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): nameEntered: "+newname);
- if(!AppProperties.INSTALL) System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): owner: "+currentUser.getInitials());
+                 System.out.println("fend.app.AppController.startNewWorkspace(): nameEntered: "+newname);
+ if(!AppProperties.INSTALL) System.out.println("fend.app.AppController.startNewWorkspace(): owner: "+currentUser.getInitials());
                  if(newname.length()>0){
                      
                  
@@ -462,7 +462,8 @@ public class AppController extends Stage{
                 if(newValue){
                     User u=null;
                    if(!AppProperties.INSTALL) {
-                       u=userService.getUser(currentUser.getId());
+                      // u=userService.getUser(currentUser.getId());
+                      u=currentUser;
                        System.out.println("fend.app.AppController.startNewWorkspace(): creating a new Workspace for user "+u.getInitials());
                    }
                     
@@ -615,6 +616,7 @@ public class AppController extends Stage{
     }
     
     private void logUser(){
+        System.out.println("fend.app.AppController.logUser(): starting a usermodel");
         UserModel userModel=new UserModel();
         UserView userView=new UserView(userModel);
         if(userModel.getLoginSucceeded()){

@@ -69,6 +69,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public void deleteVariableArgument(Long vaid) {
+        System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgument()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -76,6 +77,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
             VariableArgument l= (VariableArgument) session.get(VariableArgument.class, vaid);
             session.delete(l);
             transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgument():..done deleting "+vaid);
         }catch(Exception e){
             e.printStackTrace();
         }finally{

@@ -79,26 +79,26 @@ public class JobDAOImpl implements JobDAO{
             
             Job oldJs=(Job) session.get(Job.class, jobId);
             oldJs.setWorkspace(newJs.getWorkspace());
-            oldJs.setVolumes(newJs.getVolumes());
+           // oldJs.setVolumes(newJs.getVolumes());
             oldJs.setNameJobStep(newJs.getNameJobStep());
             oldJs.setAlert(newJs.isAlert());
            // oldJs.setJobVolumeMap(newJs.getJobVolumeMap());
             oldJs.setInsightVersions(newJs.getInsightVersions());
             
-            oldJs.setHeaders(newJs.getHeaders());
-            oldJs.setDescendants(newJs.getDescendants());
-            oldJs.setAncestors(newJs.getAncestors());
-            oldJs.setLinksWithJobAsChild(newJs.getLinksWithJobAsChild());
-            oldJs.setLinksWithJobAsParent(newJs.getLinksWithJobAsParent());
-            oldJs.setLogs(newJs.getLogs());
+          //  oldJs.setHeaders(newJs.getHeaders());
+          //  oldJs.setDescendants(newJs.getDescendants());
+         //   oldJs.setAncestors(newJs.getAncestors());
+         //   oldJs.setLinksWithJobAsChild(newJs.getLinksWithJobAsChild());
+        //    oldJs.setLinksWithJobAsParent(newJs.getLinksWithJobAsParent());
+        //    oldJs.setLogs(newJs.getLogs());
             oldJs.setNodetype(newJs.getNodetype());
-            oldJs.setQcmatrix(newJs.getQcmatrix());
-            oldJs.setVariableArguments(newJs.getVariableArguments());
-            oldJs.setDoubts(newJs.getDoubts());
-            oldJs.setSummaries(newJs.getSummaries());
+        //    oldJs.setQcmatrix(newJs.getQcmatrix());
+       // //    oldJs.setVariableArguments(newJs.getVariableArguments());
+        //    oldJs.setDoubts(newJs.getDoubts());
+       //     oldJs.setSummaries(newJs.getSummaries());
             //oldJs.setSequences(newJs.getSequences());
-            oldJs.setSubsurfaceJobs(newJs.getSubsurfaceJobs());
-            oldJs.setSubsurfaces(newJs.getSubsurfaces());
+        //    oldJs.setSubsurfaceJobs(newJs.getSubsurfaceJobs());
+            //oldJs.setSubsurfaces(newJs.getSubsurfaces());
             oldJs.setDepth(newJs.getDepth());
             
             session.update(oldJs);
