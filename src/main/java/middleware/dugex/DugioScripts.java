@@ -34,6 +34,7 @@ public class DugioScripts implements Serializable{
     private File segdLoadSaillineInsightFromGCLogs;
     private File segdLoadCheckIfGCLogsFinished;
     private File subsurfaceInsightVersionForLog;
+    private File workflowDifference;
     
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
@@ -129,6 +130,10 @@ public class DugioScripts implements Serializable{
        
        private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
        "grep -B 1 Started  $1 ";
+       
+       
+       private String workflowDifferenceContents="#!/bin/bash\n" +
+        "/usr/bin/diff -y $1 $2";
        
      public DugioScripts()
     {
@@ -346,6 +351,21 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            workflowDifference=File.createTempFile("workflowDifference", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workflowDifference));
+            bw.write(workflowDifferenceContents);
+            bw.close();
+            workflowDifference.setExecutable(true,false);
+            workflowDifference.deleteOnExit();
+            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           //subsurfaceLog.deleteOnExit();
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
         
     }
     
@@ -410,6 +430,10 @@ public class DugioScripts implements Serializable{
 
     public File getSubsurfaceInsightVersionForLog() {
         return subsurfaceInsightVersionForLog;
+    }
+
+    public File getWorkflowDifference() {
+        return workflowDifference;
     }
     
     

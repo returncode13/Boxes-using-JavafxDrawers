@@ -712,8 +712,9 @@ public class AppController extends Stage{
                
         System.out.println("fend.app.AppController.logout(): removing user: "+u.getInitials()+" from workspace: "+w.getName());
         w.removeUser(u);
-       // u.removeFromWorkspaces(w);
+        u.removeFromWorkspaces(w);
         workspaceService.updateWorkspace(w.getId(), w);
+        userService.updateUser(u.getId(), u);
         currentWorkspace=w;
         if(u.equals(w.getOwner())){
             

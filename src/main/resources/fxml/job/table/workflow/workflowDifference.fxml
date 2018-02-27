@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<fx:root id="AnchorPane" type="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="fend.job.table.workflow.WorkFlowDifferenceController">
+   <children>
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label fx:id="currentHeaderWfVersionLabel" alignment="CENTER" text="current Header workflow version" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox alignment="TOP_CENTER">
+               <children>
+                  <AnchorPane>
+                     <children>
+                        <ComboBox fx:id="lhsVersionComboBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <AnchorPane nodeOrientation="RIGHT_TO_LEFT">
+                     <children>
+                        <ComboBox fx:id="rhsVersionComboBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </HBox>
+            <TextArea fx:id="differenceTextArea" editable="false" VBox.vgrow="ALWAYS" />
+         </children>
+         <padding>
+            <Insets left="5.0" right="5.0" />
+         </padding>
+      </VBox>
+   </children>
+</fx:root>

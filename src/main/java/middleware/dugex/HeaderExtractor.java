@@ -69,6 +69,8 @@ public class HeaderExtractor {
     private DugioScripts dugioscript=new DugioScripts();
     DugioMetaHeader dmh=new DugioMetaHeader();
     ExecutorService exec;
+    double percentageOfProcessorsUsed=0.5;
+    
     
     public HeaderExtractor(JobType0Model j){
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
@@ -199,11 +201,21 @@ public class HeaderExtractor {
               String latestCommitToHeadersTable=headerService.getLatestTimeStampFor(dbvol);   //get the latest(max) timestamp for this volume
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Latest time found "+latestCommitToHeadersTable);
               
+              
+              
+              
+              
+              
               BigInteger latestTimeStampForVol=new BigInteger(latestCommitToHeadersTable);
               
               
                List<Callable<String>> tasks=new ArrayList<>();
-                exec=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+               int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);
+               if(procsUsed <= 1){
+                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): Not enough resources . PR-TCount: "+procsUsed);
+                   return;
+               }
+                exec=Executors.newFixedThreadPool(procsUsed);
             
               
               
@@ -450,33 +462,10 @@ public class HeaderExtractor {
                     System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
                     headerService.createHeader(hdr);
                     
-                    /*   List<Log> logsForHeader=logService.getLogsFor(hdr.getVolume(), hdr.getSubsurface());
-                    Set<Log> setOfLogsForHeader=new HashSet<>(logsForHeader);
-                    hdr.setLogs(setOfLogsForHeader);*/
+                
                     //bulk update for logs belonging to headers
                     logService.bulkUpdateOnLogs(hdr.getVolume(), hdr, hdr.getSubsurface());
-                    /*for(Log l:setOfLogsForHeader){
-                    l.setHeader(hdr);
-                    logService.updateLogs(l.getIdLogs(), l);
-                    }*/
-                  
-                    
-           //         headerService.updateHeader(hdr.getHeaderId(), hdr);    
-                    
-//                headerService.getMultipleInstances(dbjob, hdr.getSubsurface());
-
-
-/*return null;
-}
-}).get();*/
-/*} catch (InterruptedException ex) {
-//Exceptions.printStackTrace(ex);
-ex.printStackTrace();
-} catch (ExecutionException ex) {
-//Exceptions.printStackTrace(ex);
-ex.printStackTrace();
-}
-*/          
+           
          
                          
     }

@@ -11,18 +11,26 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Log;
 import db.model.Subsurface;
+import db.model.Volume;
+import db.model.Workflow;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
+import db.services.WorkflowService;
+import db.services.WorkflowServiceImpl;
 import fend.job.table.log.HeaderLogModel;
 import fend.job.table.log.HeaderLogView;
 import fend.job.table.log.VersionLogsModel;
+import fend.job.table.workflow.WorkFlowDifferenceModel;
+import fend.job.table.workflow.WorkFlowDifferenceView;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -54,7 +62,8 @@ public class LineTableController extends Stage{
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     private JobService jobService=new JobServiceImpl();
     private HeaderService headerService=new HeaderServiceImpl();
-    private Executor exec;        
+    private Executor exec;  
+    private WorkflowService workflowService=new WorkflowServiceImpl();
     
      @FXML
     private JFXTreeTableView<SequenceHeaders> treetableView;
@@ -159,6 +168,53 @@ public class LineTableController extends Stage{
                 
                 
                 
+         });
+         
+         showWorkFlowVersion.setOnAction(e->{
+              Long id=row.getItem().getId();
+            
+           final  WorkFlowDifferenceModel workFlowDifferenceModel=new WorkFlowDifferenceModel();
+             
+             Task<String> workflowTask=new Task<String>(){
+                    @Override
+                    protected String call() throws Exception {
+                        Header h=headerService.getHeader(id);
+                        Volume v=h.getVolume();
+                        List<Workflow> workflows=workflowService.getWorkFlowsFor(v);
+                        System.out.println(".call(): got "+workflows.size()+" for headerID: "+h.getHeaderId()+" vol: "+v.getId());
+                        Map<Long,Workflow> mapversionWorkflow=new HashMap<>();
+                        List<Long> versions=new ArrayList<>();
+                        for(Workflow w: workflows){
+                            System.out.println(".call(): map.put:( "+w.getWfversion()+","+w.getId()+")");
+                            mapversionWorkflow.put(w.getWfversion(), w);
+                            versions.add(w.getWfversion());
+                        }
+                        Workflow hdrWorkflw=mapversionWorkflow.get(h.getWorkflowVersion());
+                        System.out.println(".call(): current headers workflow id: "+hdrWorkflw.getId());
+                        workFlowDifferenceModel.setMapOfVersionsVersusWorkflows(mapversionWorkflow);
+                        workFlowDifferenceModel.setLhsObs(versions);
+                        workFlowDifferenceModel.setRhsObs(versions);
+                        workFlowDifferenceModel.setLhsWorkflow(hdrWorkflw);
+                        workFlowDifferenceModel.setChosenHdr(h);
+                   
+                        return "Finished extracting logs for : "+h.getHeaderId();
+                    
+                    }
+                 
+             };
+             
+             
+             workflowTask.setOnSucceeded(ee->{
+             
+                   WorkFlowDifferenceView workFlowDifferenceView=new WorkFlowDifferenceView(workFlowDifferenceModel);
+             
+             });
+             
+             workflowTask.setOnRunning(ee->{});
+             workflowTask.setOnFailed(ee->{
+                 workflowTask.getException().printStackTrace();
+             });
+                exec.execute(workflowTask);
          });
          
          
