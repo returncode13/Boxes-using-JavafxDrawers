@@ -83,6 +83,8 @@ public class WorkFlowDifferenceController extends Stage{
         
         
         lhsVersionComboBox.setValue(currentHdrWf.getWfversion());
+        //rhsVersionComboBox.setValue(currentHdrWf.getWfversion());
+                
         lhsVersionComboBox.valueProperty().addListener(LHS_DIFFERENCE_LISTENER);
         rhsVersionComboBox.valueProperty().addListener(RHS_DIFFERENCE_LISTENER);
         
@@ -109,7 +111,8 @@ public class WorkFlowDifferenceController extends Stage{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             lhs=newValue.longValue();
-            
+            rhs=rhsVersionComboBox.getValue();
+             System.out.println(".changed(): LHS: "+lhs+" RHS: "+rhs);
             Task<Void> ltask=new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
@@ -140,6 +143,8 @@ public class WorkFlowDifferenceController extends Stage{
         @Override
         public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
             rhs=newValue.longValue();
+            lhs=lhsVersionComboBox.getValue();
+            System.out.println(".changed(): LHS: "+lhs+" RHS: "+rhs);
              Task<Void> ltask=new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {

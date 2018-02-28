@@ -69,10 +69,12 @@ public class HeaderExtractor {
     private DugioScripts dugioscript=new DugioScripts();
     DugioMetaHeader dmh=new DugioMetaHeader();
     ExecutorService exec;
-    double percentageOfProcessorsUsed=0.5;
-    
-    
-    public HeaderExtractor(JobType0Model j){
+    double percentageOfProcessorsUsed=AppProperties.PERCENTAGE_OF_PROCESSORS_USED;
+    List<SubsurfaceJob> subsurfaceJobs;
+    List<Header> headers;
+            
+            
+    public HeaderExtractor(JobType0Model j) throws Exception{
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
        // dbjob=jobService.getJob(job.getId());
@@ -90,7 +92,7 @@ public class HeaderExtractor {
         return t;
         });*/
         
-        exec=Executors.newFixedThreadPool(processors);
+     //   exec=Executors.newFixedThreadPool(processors);
         //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type1 extraction
         /* if(job.getType().equals(JobType0Model.PROCESS_2D)){
@@ -189,8 +191,10 @@ public class HeaderExtractor {
         //Set<Sequence> setOfSequencesInJob=new HashSet<>();
         //type2 extraction
         if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
+           subsurfaceJobs=new ArrayList<>();
+           headers=new ArrayList<>();
            
-            
+           
           for(Volume0 vol:volumes){
               
               Volume dbvol=volumeService.getVolume(vol.getId());
@@ -210,12 +214,12 @@ public class HeaderExtractor {
               
               
                List<Callable<String>> tasks=new ArrayList<>();
-               int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);
+               /*int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);
                if(procsUsed <= 1){
-                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): Not enough resources . PR-TCount: "+procsUsed);
-                   return;
-               }
-                exec=Executors.newFixedThreadPool(procsUsed);
+               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Not enough resources . PR-TCount: "+procsUsed);
+               return;
+               }*/
+                exec=Executors.newFixedThreadPool(processorsUsed());
             
               
               
@@ -245,27 +249,33 @@ public class HeaderExtractor {
                                     Sequence dbseq=dbsub.getSequence();
                                     setOfSubsurfacesInJob.add(dbsub);
                                     SubsurfaceJob dbSubjob;
-                                    if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){
-                                        dbSubjob=new SubsurfaceJob();
-                                        dbSubjob.setJob(dbjob);
-                                        dbSubjob.setSubsurface(dbsub);
-                                        dbSubjob.setUpdateTime(updateTime);
-                                        dbSubjob.setSummaryTime(summaryTime);
-                                        subsurfaceJobService.createSubsurfaceJob(dbSubjob);
-                                    }
+                                    // if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //this will always return null. since this job-sub combination does not exist in the database. else the  latestTimeForSub < latestTime in the volume
+                                    dbSubjob=new SubsurfaceJob();
+                                    dbSubjob.setJob(dbjob);
+                                    dbSubjob.setSubsurface(dbsub);
+                                    dbSubjob.setUpdateTime(updateTime);
+                                    dbSubjob.setSummaryTime(summaryTime);
+                                   // subsurfaceJobService.createSubsurfaceJob(dbSubjob);
+                          //         subsurfaceJobs.add(dbSubjob);
+                                   // }
                                     dbjob.getSubsurfaceJobs().add(dbSubjob);
                                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
                                 
                                 System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
                                 Header header=new Header();
-                                header.setJob(dbvol.getJob());
-                                header.setSubsurfaceJob(dbSubjob);
+                                header.setJob(dbjob);
+                               header.setSubsurfaceJob(dbSubjob);
                                 header.setVolume(dbvol);
                                 header.setSubsurface(dbsub);
                                 header.setTimeStamp(latestTimestamp);
+                                
                                 //header.setSequence(dbsub.getSequence());
                               populate(header);
                               setOfHeadersInJob.add(header);
+                              
+                              headers.add(header);
+                                    System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
+                              
                               dbjob.setHeaders(setOfHeadersInJob);
                               dbjob.setSubsurfaces(setOfSubsurfacesInJob);
                               //dbjob.getSubsurfaceJobs().add(dbSubjob);
@@ -303,6 +313,29 @@ public class HeaderExtractor {
                  }
             
                     
+                    /**
+                     * 
+                     * Database ops
+                     * 
+                    */
+                    
+                  
+                   // exec=Executors.newFixedThreadPool(processorsUsed());
+                    for(Header h:headers){
+                        subsurfaceJobs.add(h.getSubsurfaceJob());
+                    }
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
+                    
+                    subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+subsurfaceJobs.size()+" subsurfaceJob entries");
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Committing "+headers.size()+" headers");
+                    headerService.createBulkHeaders(headers);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+headers.size()+" headers");
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Bulk update of logs for headers");
+                    for(Header h:headers){
+                        logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface());
+                    }
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
                  //   jobService.updateJob(dbjob.getId(), dbjob);
                     job.setDatabaseJob(dbjob);
               
@@ -452,7 +485,13 @@ public class HeaderExtractor {
                     hdr.setOffsetInc(offsetInc);
                     
                     System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
-                    Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
+                    Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
+                    
+                   // Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): for header "+
+                            hdr.getHeaderId()+" Latest Log: "+
+                            latestLog.getIdLogs());
+                    
                     hdr.setInsightVersion(latestLog.getInsightVersion());
                     hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
                     hdr.setNumberOfRuns(latestLog.getVersion()+1);
@@ -460,11 +499,11 @@ public class HeaderExtractor {
                     //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
                     
                     System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
-                    headerService.createHeader(hdr);
+                  //  headerService.createHeader(hdr);
                     
                 
                     //bulk update for logs belonging to headers
-                    logService.bulkUpdateOnLogs(hdr.getVolume(), hdr, hdr.getSubsurface());
+                  //  logService.bulkUpdateOnLogs(hdr.getVolume(), hdr, hdr.getSubsurface());
            
          
                          
@@ -513,4 +552,18 @@ public class HeaderExtractor {
                         
     }
     
+    
+    private int processorsUsed() throws Exception{
+        int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);
+               if(procsUsed <= 1){
+                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): Not enough resources . PR-TCount: "+procsUsed);
+                   throw new Exception("Not enough resources . PR-TCount: "+procsUsed);
+               }
+        
+               return procsUsed;
+    }
+    
+    private String timeNow(){
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
 }

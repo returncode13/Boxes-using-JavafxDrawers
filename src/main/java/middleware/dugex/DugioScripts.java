@@ -296,7 +296,7 @@ public class DugioScripts implements Serializable{
             
             //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
            //subsurfaceLog.deleteOnExit();
-        } catch (IOException ex) {
+        } catch (IOException ex) {  
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         

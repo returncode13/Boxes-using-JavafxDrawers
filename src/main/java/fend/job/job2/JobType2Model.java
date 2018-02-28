@@ -7,6 +7,7 @@ package fend.job.job2;
 
 
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -85,7 +86,9 @@ public class JobType2Model implements JobType0Model {
     private BooleanProperty listenToDepthChange;
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
-
+    private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
+    
+    
     public Job getDatabaseJob() {
         return databaseJob;
     }
@@ -636,5 +639,13 @@ public class JobType2Model implements JobType0Model {
         this.finishedCheckingLogs.set(finished);
     }
      
-    
+     @Override
+    public Map<Subsurface, Log> getLatestLogForSubsurfaceMap() {
+        return mapOfLatestLogForSubsurface;
+    }
+
+    @Override
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface, Log> mapOfLatestLogForSubsurface) {
+        this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
+    }
 }

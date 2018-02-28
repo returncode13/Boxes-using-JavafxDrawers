@@ -6,6 +6,7 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,9 @@ import org.hibernate.criterion.Restrictions;
  */
 public class HeaderDAOImpl implements HeaderDAO{
 
+    
+    
+    
     @Override
     public void createHeader(Header h) {
                
@@ -45,6 +49,29 @@ public class HeaderDAOImpl implements HeaderDAO{
             session.close();
         }
         
+    }
+    
+    @Override
+    public void createBulkHeaders(List<Header> headers) {
+        int batchsize=Math.min(headers.size(), AppProperties.HEADERS_MAX_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<headers.size();ii++){
+               session.save(headers.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     @Override
@@ -604,6 +631,8 @@ query.setParameter("subid", sub);
         }
         return result.get(0);
     }
+
+    
 
     
     

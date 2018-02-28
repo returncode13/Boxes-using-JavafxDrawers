@@ -74,6 +74,8 @@ public class DugLogManager {
     private ExecutorService exec;
     private final WorkflowService workflowService=new WorkflowServiceImpl();
     private Set<Workflow> workflowsToBeCreated=new HashSet<>();
+    private Map<Subsurface,Log> latestLogForSub=new HashMap<>();
+    private Set<LogInformation> latestLogSet=new HashSet<>();
     
     public DugLogManager(JobType0Model job) {
         this.job = job;
@@ -183,6 +185,11 @@ public class DugLogManager {
                         log.setWorkflow(li.workflowHolder.workflow);
                         logsService.createLogs(log);
                         
+                            if(latestLogSet.contains(li)){
+                                System.out.println(".call(): for "+li.linename.getSubsurface()+" latestLog: "+log.getIdLogs()+" version: "+li.version);
+                                latestLogForSub.put(li.linename, log);
+                            }
+                        
                         return "Created log entry for "+li.linename.getSubsurface();
                      }
                  };
@@ -195,6 +202,7 @@ public class DugLogManager {
                 for(Future<String> future:futures){
                     System.out.println("future.get: "+future.get());
                 }
+                job.setLatestLogForSubsurfaceMap(latestLogForSub);
                 exec.shutdown();
                 
             } catch (InterruptedException ex) {
@@ -266,11 +274,13 @@ public class DugLogManager {
                         }
                     };
                   
+                    
                
                      System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding a task for "+fw.fwrap.getName());
                     tasks.add(task);
             }
             
+             System.out.println("middleware.dugex.DugLogManager.extractInformation(): Waiting for the logs to finish. number of tasks : "+tasks.size());
             
             try {
                 List<Future<String>> futures=exec.invokeAll(tasks);
@@ -292,7 +302,11 @@ public class DugLogManager {
                                         for(int ver=0;ver<listOfLogsForSub.size();ver++){
                                             listOfLogsForSub.get(ver).version=Long.valueOf(ver);
                                         }
-                                        
+                                        int highest=listOfLogsForSub.size()-1;
+                                      
+                                        System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding highest "+highest+" ==> "+listOfLogsForSub.get(highest).log.getName()+" as latest version "+listOfLogsForSub.get(highest).version+" for "+listOfLogsForSub.get(highest).linename.getSubsurface()+" : ");
+                                        latestLogSet.add(listOfLogsForSub.get(listOfLogsForSub.size()-1));         // the highest version in the sorted equals value (size-1) of the list
+                                       
                                         logInformation.addAll(listOfLogsForSub);
                 }
           
@@ -509,6 +523,12 @@ public class DugLogManager {
                                         for(int ver=0;ver<listOfLogsForSub.size();ver++){
                                             listOfLogsForSub.get(ver).version=Long.valueOf(ver);
                                         }
+                                        //latestLogForSub.put(l.linename,listOfLogsForSub.get(listOfLogsForSub.size()-1));
+                                        int highest=listOfLogsForSub.size()-1;
+                                        System.out.println("middleware.dugex.DugLogManager.getModifiedContents(): Adding highest "+highest+" ==> "+listOfLogsForSub.get(highest).log.getName()+" as latest version "+listOfLogsForSub.get(highest).version+" for "+listOfLogsForSub.get(highest).linename.getSubsurface()+" : ");
+                                        latestLogSet.add(listOfLogsForSub.get(listOfLogsForSub.size()-1));         // the highest version in the sorted equals value (size-1) of the list
+                                       
+                                        
                                     
                                     
                                         /*Log log=logsService.getLogsFor(l.volume, l.linename, l.timestamp, l.log.getAbsolutePath());
@@ -787,6 +807,51 @@ public class DugLogManager {
                                                                             //later=0 if both are equal;
             return later;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 89 * hash + Objects.hashCode(this.log);
+            hash = 89 * hash + Objects.hashCode(this.linename);
+            hash = 89 * hash + Objects.hashCode(this.timestamp);
+            hash = 89 * hash + Objects.hashCode(this.volume);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final LogInformation other = (LogInformation) obj;
+            if (!Objects.equals(this.timestamp, other.timestamp)) {
+                return false;
+            }
+            if (!Objects.equals(this.log, other.log)) {
+                return false;
+            }
+            if (!Objects.equals(this.linename, other.linename)) {
+                return false;
+            }
+            if (!Objects.equals(this.volume, other.volume)) {
+                return false;
+            }
+            return true;
+        }
+
+        
+       
+       
+       
+        
+        
+        
     }
     private class WorkflowHolder{
         String md5;

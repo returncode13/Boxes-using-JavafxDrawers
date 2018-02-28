@@ -7,6 +7,7 @@ package db.dao;
 
 //import app.connections.hibernate.HibernateUtil;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -32,6 +33,29 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         try{
             transaction=session.beginTransaction();
             session.save(subsurfaceJob);
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+     @Override
+    public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs) {
+        int batchsize=Math.min(subsurfaceJobs.size(), AppProperties.HEADERS_MAX_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<subsurfaceJobs.size();ii++){
+               session.save(subsurfaceJobs.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -192,6 +216,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
               
     }
 
+   
    
 
    

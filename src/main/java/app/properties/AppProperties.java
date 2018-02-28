@@ -24,9 +24,14 @@ public class AppProperties {
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
+    
     private String workspaceName=new String("unknown session");
     private String irdbHost=new String("no host assigned");
     private static User currentUser;
+        
+    public static int HEADERS_MAX_BATCH_SIZE=50;                            //control for batch processing.
+    public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
+    
     
     public String getProject() {
         return project;

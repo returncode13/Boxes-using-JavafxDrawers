@@ -19,6 +19,7 @@ import db.model.Volume;
  */
 public interface HeaderDAO {
     public void createHeader(Header h);
+    public void createBulkHeaders(List<Header> headers);
     public Header getHeader(Long hid);
     public void updateHeader(Long hid,Header newH);
     public void deleteHeader(Long hid);

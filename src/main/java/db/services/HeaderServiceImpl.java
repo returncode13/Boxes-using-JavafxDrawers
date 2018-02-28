@@ -26,6 +26,11 @@ public class HeaderServiceImpl implements HeaderService{
     public void createHeader(Header h) {
        hDao.createHeader(h);
     }
+    
+    @Override
+    public void createBulkHeaders(List<Header> headers) {
+        hDao.createBulkHeaders(headers);
+    }
 
     @Override
     public Header getHeader(Long hid) {
@@ -124,6 +129,8 @@ public class HeaderServiceImpl implements HeaderService{
     public String getLatestTimeStampFor(Volume volume) {
         return hDao.getLatestTimeStampFor(volume);
     }
+
+    
     
     
 }

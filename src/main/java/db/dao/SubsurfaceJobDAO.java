@@ -17,6 +17,7 @@ import java.util.List;
  */
 public interface SubsurfaceJobDAO {
     public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob);
+    public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs);
     public SubsurfaceJob getSubsurfaceJob(SubsurfaceJobId id);
     public void updateSubsurfaceJob(SubsurfaceJob nsj);
     public void deleteSubsurfaceJob(SubsurfaceJobId id);

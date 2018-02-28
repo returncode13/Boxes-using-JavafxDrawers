@@ -7,6 +7,8 @@ package fend.job.job0;
 
 
 import db.model.Job;
+import db.model.Log;
+import db.model.Subsurface;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
@@ -19,6 +21,7 @@ import javafx.collections.ObservableSet;
 import fend.volume.volume0.Volume0;
 import fend.workspace.WorkspaceModel;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.property.LongProperty;
 import middleware.sequences.SequenceHeaders;
 
@@ -71,6 +74,9 @@ public interface JobType0Model {
     
     public Job getDatabaseJob();
     public void setDatabaseJob(Job job);
+    public Map<Subsurface,Log> getLatestLogForSubsurfaceMap();
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface,Log> mapOfLatestLogForSubsurface);
+    
     
     @Override
     public boolean equals(Object obj);

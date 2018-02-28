@@ -29,6 +29,13 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob) {
         subsurfaceJobDAO.createSubsurfaceJob(subsurfaceJob);
     }
+    
+     @Override
+    public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs) {
+        subsurfaceJobDAO.createBulkSubsurfaceJob(subsurfaceJobs);
+    }
+    
+    
 
     @Override
     public SubsurfaceJob getSubsurface(SubsurfaceJobId id) {
@@ -76,7 +83,8 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     public String getLatestSummaryTime() {
         return subsurfaceJobDAO.getLatestSummaryTime();
     }
-    
+
+   
    
     
 }

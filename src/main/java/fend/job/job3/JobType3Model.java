@@ -7,6 +7,7 @@ package fend.job.job3;
 
 
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -88,7 +89,7 @@ public class JobType3Model implements JobType0Model {
     private BooleanProperty listenToDepthChange;
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
-
+    
     public Job getDatabaseJob() {
         return databaseJob;
     }
@@ -534,7 +535,7 @@ public class JobType3Model implements JobType0Model {
     
      private void extractHeaders() {
          System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
-         new HeaderExtractor(this);
+         //new HeaderExtractor(this);
         
      }
             
@@ -630,6 +631,16 @@ public class JobType3Model implements JobType0Model {
     @Override
     public void setJobProperties(List<JobModelProperty> jobModelProperties) {
         this.jobProperties=jobModelProperties;
+    }
+
+    @Override
+    public Map<Subsurface, Log> getLatestLogForSubsurfaceMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface, Log> mapOfLatestLogForSubsurface) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
    

@@ -18,6 +18,7 @@ import java.util.Map;
  */
 public interface SubsurfaceJobService {
      public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob);
+      public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs);
     public SubsurfaceJob getSubsurface(SubsurfaceJobId id);
     public void updateSubsurfaceJob(SubsurfaceJob nsj);
     public void deleteSubsurfaceJob(SubsurfaceJobId id);
