@@ -66,18 +66,25 @@ public class DescendantServiceImpl implements DescendantService{
 
     @Override
     public List<Descendant> getDescendantsForJobContainingSub(Job job, Subsurface sub) {
-        List<Descendant> descendantsForJob=descDao.getDescendantsFor(job);
-        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of descendants for job "+job.getNameJobStep()+" size: "+descendantsForJob.size());
+      //  List<Descendant> descendantsForJob=descDao.getDescendantsForJobContainingSubsurface(job,sub);
+        
+        
+        List<Descendant> result=descDao.getDescendantsForJobContainingSubsurface(job,sub);
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): results for descendants of "+job.getId()+" that contain sub "+sub.getId());
+        for(Descendant d:result){
+            System.out.println(""+d.getDescendant().getId());
+        }
+        /*System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of descendants for job "+job.getNameJobStep()+" size: "+descendantsForJob.size());
         List<Descendant> result=new ArrayList<>();
         for(Descendant desc:descendantsForJob){
-            Job descJob=desc.getDescendant();
-            System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+descJob.getNameJobStep()+" ==> "+descJob.getSubsurfaces().size());
-            if(descJob.getSubsurfaces().contains(sub)){
-                System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+descJob.getNameJobStep());
-                result.add(desc);
-                        
-            }
+        Job descJob=desc.getDescendant();
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+descJob.getNameJobStep()+" ==> "+descJob.getSubsurfaces().size());
+        if(descJob.getSubsurfaces().contains(sub)){
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+descJob.getNameJobStep());
+        result.add(desc);
+        
         }
+        }*/
         return  result;
     }
 

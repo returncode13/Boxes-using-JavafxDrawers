@@ -117,7 +117,7 @@ public class Job implements Serializable{
     private Set<Sequence> sequences;*/
      
     @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
-    private Set<SubsurfaceJob> subsurfaceJobs=new HashSet<>();
+    private Set<SubsurfaceJob> subsurfaceJobs =new HashSet<>();
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Summary> summaries;

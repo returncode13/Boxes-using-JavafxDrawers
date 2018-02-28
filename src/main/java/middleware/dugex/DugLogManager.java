@@ -83,9 +83,11 @@ public class DugLogManager {
        // this.dbJob=jobService.getJob(this.job.getId());
        this.dbJob=this.job.getDatabaseJob();
       
-        System.out.println("middleware.dugex.DugLogManager.<init>(): got job .now querying for volumes");
+        System.out.println("middleware.dugex.DugLogManager.<init>(): got job .now querying for volumes ");
         
         List<Volume0> vols=job.getVolumes();
+        System.out.println("middleware.dugex.DugLogManager.<init>(): Number of Volumes present: "+vols.size());
+        
         for(Volume0 vol:vols){
             System.out.println("middleware.dugex.DugLogManager.<init>()..fetching db vol: +"+vol.getId());
             Volume dbVol=volumeService.getVolume(vol.getId());
@@ -114,6 +116,7 @@ public class DugLogManager {
                 fw.fwrap=f;
                 String time=hackTimeStamp(f);
                 BigInteger timeofFile=new BigInteger(time);
+                System.out.println("middleware.dugex.DugLogManager.<init>(): for file "+fw.fwrap.getName()+" time of file : "+timeofFile+" latestTimeforVol: "+latestTimeForVolumeInt+" compares: "+latestTimeForVolumeInt.compareTo(timeofFile));
                 if(latestTimeForVolumeInt.compareTo(timeofFile)<0 && !exclusionList.contains(fw) ) {
                     filesToCommit.add(fw);
                 }

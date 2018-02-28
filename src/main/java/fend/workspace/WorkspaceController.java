@@ -1453,7 +1453,8 @@ public class WorkspaceController {
         Set<String> variableSet = new HashSet<>();
         Set<Job> argumentSet = new HashSet<>();
         List<Subsurface> subsurfaceList = subsurfaceService.getSubsurfaceList();
-        dbWorkspace = workspaceService.getWorkspace(dbWorkspace.getId());
+       // dbWorkspace = workspaceService.getWorkspace(dbWorkspace.getId());
+       dbWorkspace=model.getWorkspace();
          Map<Job,List<Subsurface>> mapForSummary=subsurfaceJobService.getSubsurfaceJobsForSummary();   //all entries where updateTime>summaryTime
          String latestSummaryTime=subsurfaceJobService.getLatestSummaryTime();
         for (Subsurface subb : subsurfaceList) {
@@ -1468,7 +1469,9 @@ public class WorkspaceController {
                     summary.setSubsurface(subb);
                     summary.setJob(l.getParent());
                     summary.setWorkspace(dbWorkspace);
+                    System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Creating summary for "+summary.getId());
                     summaryService.createSummary(summary);
+                    System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Created summary for "+summary.getId());
                 }
                 //if ((summaryforCurrentJob = summaryService.getSummaryFor(subb.getSequence(), l.getChild())) == null) {             //create an entry for child summaryforCurrentJob 
                 if ((summary = summaryService.getSummaryFor(subb, l.getChild())) == null) {             //create an entry for child summaryforCurrentJob 
@@ -1477,7 +1480,9 @@ public class WorkspaceController {
                     summary.setSubsurface(subb);
                     summary.setJob(l.getChild());
                     summary.setWorkspace(dbWorkspace);
+                     System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Creating summary for "+summary.getId());
                     summaryService.createSummary(summary);
+                    System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Created summary for "+summary.getId());
                 }
 
                /**
@@ -1492,9 +1497,9 @@ public class WorkspaceController {
                 }
                 
                 //dependency
-                
+                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Getting descendants");
                List<Descendant> descendantsThatContainSub=descendantService.getDescendantsForJobContainingSub(l.getChild(), subb);
-               
+                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Got descendants");
                 System.out.println(".call(): size of descendants of job: id: "+l.getChild().getId()+" name: "+l.getChild().getNameJobStep()+" that contain: "+subb.getSubsurface()+" == "+descendantsThatContainSub.size());
                 Dot dot = l.getDot();                     //the dot to which the link belongs\\
                
@@ -1614,8 +1619,8 @@ public class WorkspaceController {
         
         
         
-        
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): inside Link : " + l.getId() + " " + l.getParent().getNameJobStep() + "--->" + l.getChild().getNameJobStep());
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts()");
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): inside Link : " + l.getId() + " " + l.getParent().getNameJobStep() + "--->" + l.getChild().getNameJobStep());
                 String function = dot.getFunction();
                 Double tolerance = dot.getTolerance();
                 Double error = dot.getError();
@@ -1641,9 +1646,9 @@ public class WorkspaceController {
                     }
 
                 }
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): Sub: " + subb.getSubsurface() + " linkParent: " + l.getParent().getNameJobStep() + " linkChild: " + l.getChild().getNameJobStep());
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): function: " + function);
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): setting var-args");
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Sub: " + subb.getSubsurface() + " linkParent: " + l.getParent().getNameJobStep() + " linkChild: " + l.getChild().getNameJobStep());
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): function: " + function);
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): setting var-args");
                 for (Map.Entry<String, Double> entry : mapForVariableSetting.entrySet()) {
                     String key = entry.getKey();
                     Double value = entry.getValue();
@@ -1658,9 +1663,9 @@ public class WorkspaceController {
 
                 Double y = mapForVariableSetting.get("y0");
                 Double evaluated = Math.abs(y - result) / y;
-                System.out.println("fend.workspace.WorkspaceController.getSummary(): result = " + result + " evaluated difference/y = " + evaluated);
+                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): result = " + result + " evaluated difference/y = " + evaluated);
                 if (evaluated <= tolerance) {
-                    System.out.println("fend.workspace.WorkspaceController.getSummary(): no doubt");
+                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): no doubt");
                     //check for any existing doubt.
                     //clear tracedependency flag.
                     //clear all doubtstatus messages related to doubt
@@ -1717,7 +1722,7 @@ public class WorkspaceController {
                     
                     
                 } else if ((evaluated <= error && evaluated > tolerance) || (evaluated > error)) {
-                    System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt");
+                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): creating doubt");
                     String dotState = dot.getStatus();
                     
                     
@@ -1733,7 +1738,7 @@ public class WorkspaceController {
 
                     if (dotState.equals(DotModel.JOIN)) {
                         if ((doubtService.getDoubtFor(subb, l.getChild(), dot, doubtTypeTraces)) == null) {
-                            System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt entry for " + subb.getSubsurface() + " job: " + l.getChild().getId() + " : " + l.getChild().getNameJobStep());
+                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): creating doubt entry for " + subb.getSubsurface() + " job: " + l.getChild().getId() + " : " + l.getChild().getNameJobStep());
                             doubt = new Doubt();
                             doubt.setChildJob(l.getChild());
                             doubt.setSubsurface(subb);
@@ -1785,13 +1790,13 @@ public class WorkspaceController {
                                         dsds.setTimeStamp(updateT);
                                         doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
                                     }
-                                System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses assosciated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): doubstatuses assosciated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                             }
                         }
                     } else {
                         for (Job child : argumentSet) {                     //In states SPLIT and NJS , the argument set comprises of only children. since P=f(C1,C2,..Cn);
                             if ((doubtService.getDoubtFor(subb, child, dot, doubtTypeTraces)) == null) {
-                                System.out.println("fend.workspace.WorkspaceController.getSummary(): creating doubt entry for " + subb.getSubsurface() + " job: " + child.getId() + " : " + child.getNameJobStep());
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): creating doubt entry for " + subb.getSubsurface() + " job: " + child.getId() + " : " + child.getNameJobStep());
                                 doubt = new Doubt();
                                 doubt.setChildJob(child);
                                 doubt.setSubsurface(subb);
@@ -1846,7 +1851,7 @@ public class WorkspaceController {
                                         dsds.setStatus(DoubtStatusModel.YES);
                                         doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
                                     }
-                                    System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
+                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): doubstatuses associated with Doubt: " + doubt.getId() + " " + ds.getStatus() + " comment: " + ds.getReason() + " time: " + ds.getTimeStamp());
                                 }
 
                             }
@@ -1925,6 +1930,7 @@ public class WorkspaceController {
                 SubsurfaceJob dbSubChildjob=subsurfaceJobService.getSubsurfaceJobFor(l.getChild(), subb);
                             dbSubChildjob.setSummaryTime(summaryTime);
                             subsurfaceJobService.updateSubsurfaceJob(dbSubChildjob);    
+//                            subsurfaceJobService.updateSummaryTimeFor(l.getChild(),subb,summaryTime);
                             
                 SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), subb);
                             dbSubParentjob.setSummaryTime(summaryTime);
@@ -2345,5 +2351,10 @@ public class WorkspaceController {
                             /*SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), sub);
                             dbSubParentjob.setSummaryTime(summaryTime);
                             subsurfaceJobService.updateSubsurfaceJob(dbSubParentjob);    */
+    }
+    
+    
+     private String timeNow(){
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }
 }

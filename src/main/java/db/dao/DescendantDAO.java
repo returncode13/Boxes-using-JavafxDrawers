@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.Descendant;
 import db.model.Job;
+import db.model.Subsurface;
 import java.util.List;
 
 /**
@@ -23,5 +24,7 @@ public interface DescendantDAO  {
     public List<Descendant> getDescendantsFor(Job job);
     public void clearTableForJob(Job dbjob);
     public Descendant getDescendantFor(Job job, Job descendant);
+
+    public List<Descendant> getDescendantsForJobContainingSubsurface(Job job, Subsurface sub);
     
 }

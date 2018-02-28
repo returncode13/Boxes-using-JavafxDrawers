@@ -8,12 +8,14 @@ package db.dao;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Descendant;
 import db.model.Job;
+import db.model.Subsurface;
 import java.util.Iterator;
 
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -201,5 +203,26 @@ public class DescendantDAOImpl implements DescendantDAO {
         System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): No ancestors found for "+job.getNameJobStep()+"("+job.getId()+")"+" ancestor "+descendant.getNameJobStep()+" ("+descendant.getId()+")");
         return null;
     }
+
+    @Override
+    public List<Descendant> getDescendantsForJobContainingSubsurface(Job job, Subsurface sub) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Descendant> result=null;
+        Transaction transaction=null;
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hql="select d from Descendant  d INNER JOIN d.job  dj INNER JOIN dj.subsurfaceJobs  djsj WHERE  djsj.pk.job =:jobAsked AND djsj.pk.subsurface =:subsurfaceAsked";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("jobAsked", job);
+            query.setParameter("subsurfaceAsked", sub);
+            result=query.list();
+            transaction.commit();
+            System.out.println("db.dao.DescendantDAOImpl.getDescendantsForJobContainingSubsurface(): returning result of size "+result.size());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    } 
     
 }
