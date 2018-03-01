@@ -253,7 +253,7 @@ public class DugLogManager {
                     
                     String value;
                     while((value=br.readLine())!=null){
-                            //System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                            System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
                             String linename=value.substring(9,value.indexOf(" "));
                             String insight=value.substring(value.indexOf(" ")+9);
                             //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
@@ -653,7 +653,7 @@ public class DugLogManager {
                 String content=new String();
                 
                 while((value=br.readLine())!=null){
-                    System.out.println("middleware.dugex.DugLogManager.getWorkFlowforSegD(): "+value);
+                    //System.out.println("middleware.dugex.DugLogManager.getWorkFlowforSegD(): "+value);
                     content+=value;
                     content+="\n";
                 };
@@ -711,7 +711,7 @@ public class DugLogManager {
                 String value;
                 String content=new String();
                 while((value=br.readLine())!=null){
-                    System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): "+value);
+                   // System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): "+value);
                     content+=value;
                     content+="\n";
                 };

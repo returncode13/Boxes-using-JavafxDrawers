@@ -11,6 +11,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -41,6 +42,8 @@ public interface HeaderService {
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
 
     public String getLatestTimeStampFor(Volume dbvol);
+    public List<Header> getChosenHeadersForWorkspace(Workspace W);
+    
     
     
 }

@@ -11,6 +11,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 //import fend.session.node.headers.SubSurfaceHeaders;
 
 /**
@@ -45,6 +46,8 @@ public interface HeaderDAO {
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
 
     public String getLatestTimeStampFor(Volume volume);
+
+    public List<Header> getChosenHeadersForWorkspace(Workspace W);
     
     
 }

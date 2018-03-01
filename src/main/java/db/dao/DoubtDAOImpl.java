@@ -11,14 +11,17 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Link;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Dot;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.List;
 import java.util.Set;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -43,6 +46,30 @@ public class DoubtDAOImpl implements DoubtDAO{
             session.close();
         }
     }
+    
+    @Override
+    public void createBulkDoubts(List<Doubt> doubts) {
+        int batchsize=Math.min(doubts.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<doubts.size();ii++){
+               session.save(doubts.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
 
     @Override
     public void updateDoubt(Long dsid, Doubt newds) {
@@ -79,6 +106,31 @@ public class DoubtDAOImpl implements DoubtDAO{
         }    
     }
 
+    
+    @Override
+    public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated) {
+        int batchsize=Math.min(doubtsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<doubtsToBeUpdated.size();ii++){
+               session.update(doubtsToBeUpdated.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
+    
     @Override
     public Doubt getDoubt(Long dsid) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -109,6 +161,35 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
     }
 
+    
+    @Override
+    public void deleteBulkDoubts(List<Long> doubtsToBeDeletedIds) {
+        // int batchsize=Math.min(doubtsToBeDeleted.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        if(doubtsToBeDeletedIds.isEmpty()) return;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        String hql="DELETE  Doubt d WHERE d.id IN (:ids)";
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+            /*for(int ii=0;ii<doubtsToBeDeleted.size();ii++){
+            session.delete(doubtsToBeDeleted.get(ii));
+            if(ii%batchsize ==0){
+            session.flush();
+            session.clear();
+            }
+            }
+            */
+            
+            Query query=session.createQuery(hql);
+            query.setParameterList("ids", doubtsToBeDeletedIds);
+            int result=query.executeUpdate();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
     
     /*   @Override
     public List<Doubt> getDoubtsForLink(Link link) {
@@ -497,6 +578,35 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
         return result;
     }
+
+    @Override
+    public List<Doubt> getAllDoubtsFor(Workspace w) {
+        
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction=null;
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hql="select d from Doubt  d INNER JOIN d.dot  dt  WHERE  dt.workspace =:wrk";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("wrk", w);
+            result=query.list();
+            transaction.commit();
+            
+            System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsFor(): size of doubts returned : "+result.size());
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    } 
+
+    
+    
+
+        
+    
 
    
     

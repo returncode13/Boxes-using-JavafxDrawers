@@ -90,14 +90,14 @@ public class Job implements Serializable{
     private Set<Descendant> descendants=new HashSet<>();
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
-    private Set<QcMatrixRow> qcmatrix;
+    private Set<QcMatrixRow> qcmatrix=new HashSet<>();
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Log> logs;
     
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
-    private Set<Header> headers;
+    private Set<Header> headers=new HashSet<>();
     
     @OneToMany(mappedBy = "parent",fetch=FetchType.EAGER)
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links

@@ -29,4 +29,8 @@ public interface SummaryDAO {
  public List<Summary> getSummariesForJobSeq(Job job,Sequence seq);
  public List<Summary> getSummariesForJobSub(Job job,Subsurface sub,Workspace W);
  public List<Summary> getSummariesFor(Workspace W);
+
+    public void createBulkSummaries(List<Summary> summaries);
+
+    public void udpateBulkSummaries(List<Summary> summariesToBeUpdated);
 }

@@ -24,6 +24,8 @@ public interface LinkService {
     public void deleteLink(Long id);
     public void updateLink(Long id,Link newLink);
     public void clearLinksforJob(Job job,Dot dot);      //clear links where either child=job or parent=job
-    public Set<Link> getLinksContainingSubsurface(Subsurface s,Workspace w,Map<Job,List<Subsurface>> mapForSummary); //return links where s belongs to both parent.getSub() AND child.getSub(); in workspace w
+ //   public Set<Link> getLinksContainingSubsurface(Subsurface s,Workspace w,Map<Job,List<Subsurface>> mapForSummary); //return links where s belongs to both parent.getSub() AND child.getSub(); in workspace w
     public List<Link> getLinkBetweenParentAndChild(Job parent,Job Child,Dot dot);
+    public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W,Subsurface sub);
+    public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W);
 }

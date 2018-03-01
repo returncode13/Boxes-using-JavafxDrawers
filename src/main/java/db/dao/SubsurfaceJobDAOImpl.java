@@ -43,7 +43,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
      @Override
     public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs) {
-        int batchsize=Math.min(subsurfaceJobs.size(), AppProperties.HEADERS_MAX_BATCH_SIZE);
+        int batchsize=Math.min(subsurfaceJobs.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{

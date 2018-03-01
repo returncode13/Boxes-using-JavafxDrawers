@@ -104,7 +104,8 @@ public class SummaryController extends Stage{
          //first get a list of all the subsurfaces.
          model.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
          try {//if workspace.lastUpdateTime > workspace.lastSummaryTime. then execute Summary
-            this.model.getWorkspaceController().summarize();
+           // this.model.getWorkspaceController().summarize();
+           this.model.getWorkspaceController().summarizeInMemory();
         } catch (Exception ex) {
             Logger.getLogger(SummaryController.class.getName()).log(Level.SEVERE, null, ex);
         }

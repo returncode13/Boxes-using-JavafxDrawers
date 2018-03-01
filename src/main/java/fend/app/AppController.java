@@ -473,8 +473,8 @@ public class AppController extends Stage{
                             dbWorkspace.setOwner(u);
                             //Set<User> us=dbWorkspace.getUsers();
                             Set<User> us=new HashSet<>();
-                            us.add(u);
-                            dbWorkspace.setUsers(us);
+                           // us.add(u);
+                          //  dbWorkspace.setUsers(us);     //Doubtful
                            // u.addToWorkspaces(dbWorkspace);
                            System.out.println("fend.app.AppController.startNewWorkspace(): updating the workspace");
                            

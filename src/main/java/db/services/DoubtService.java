@@ -14,6 +14,7 @@ import db.model.Job;
 import db.model.Link;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 import java.util.List;
 import java.util.Set;
@@ -43,4 +44,13 @@ public interface DoubtService {
     public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
     public Doubt getCauseOfInheritedDoubtForType(Subsurface sub, Job job,DoubtType doubtType);             //return the doubt of type doubttype which resulted in an inherited doubt in job
     public List<Doubt> getDoubtFor(Subsurface sub, Job job);
+    public List<Doubt> getAllDoubtsFor(Workspace w);
+
+    public void createBulkDoubts(List<Doubt> causes);
+
+    public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated);
+
+    public void deleteBulkDoubts(List<Long> doubtsToBeDeleted);
+
+    
 }

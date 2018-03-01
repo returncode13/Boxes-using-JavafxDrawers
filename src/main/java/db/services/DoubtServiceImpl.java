@@ -16,6 +16,7 @@ import db.model.Job;
 import db.model.Link;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,26 @@ public class DoubtServiceImpl implements DoubtService{
     @Override
     public List<Doubt> getDoubtFor(Subsurface sub, Job job) {
         return dsDAO.getDoubtFor(sub, job);
+    }
+
+    @Override
+    public List<Doubt> getAllDoubtsFor(Workspace w) {
+        return dsDAO.getAllDoubtsFor(w);
+    }
+
+    @Override
+    public void createBulkDoubts(List<Doubt> doubts) {
+        dsDAO.createBulkDoubts(doubts);
+    }
+
+    @Override
+    public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated) {
+        dsDAO.updateBulkDoubts(doubtsToBeUpdated);
+     }
+
+    @Override
+    public void deleteBulkDoubts(List<Long> doubtsToBeDeleted) {
+        dsDAO.deleteBulkDoubts(doubtsToBeDeleted);
     }
 
     

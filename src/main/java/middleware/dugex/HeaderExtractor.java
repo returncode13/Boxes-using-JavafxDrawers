@@ -484,13 +484,13 @@ public class HeaderExtractor {
                     hdr.setOffsetMin(offsetMin);
                     hdr.setOffsetInc(offsetInc);
                     
-                    System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
+                   // System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
                     Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
                     
                    // Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
-                    System.out.println("middleware.dugex.HeaderExtractor.populate(): for header "+
-                            hdr.getHeaderId()+" Latest Log: "+
-                            latestLog.getIdLogs());
+                   /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for header "+
+                   hdr.getHeaderId()+" Latest Log: "+
+                   latestLog.getIdLogs());*/
                     
                     hdr.setInsightVersion(latestLog.getInsightVersion());
                     hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());

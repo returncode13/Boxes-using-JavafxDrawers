@@ -13,6 +13,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -128,6 +129,11 @@ public class HeaderServiceImpl implements HeaderService{
     @Override
     public String getLatestTimeStampFor(Volume volume) {
         return hDao.getLatestTimeStampFor(volume);
+    }
+
+    @Override
+    public List<Header> getChosenHeadersForWorkspace(Workspace W) {
+        return hDao.getChosenHeadersForWorkspace(W);
     }
 
     

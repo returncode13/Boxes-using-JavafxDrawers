@@ -17,6 +17,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 //import fend.session.node.headers.SubSurfaceHeaders;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -53,7 +54,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public void createBulkHeaders(List<Header> headers) {
-        int batchsize=Math.min(headers.size(), AppProperties.HEADERS_MAX_BATCH_SIZE);
+        int batchsize=Math.min(headers.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -570,6 +571,7 @@ query.setParameter("subid", sub);
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
          Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
+            System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor() started ");
             Set<Header> result=null;
             try{
                 transaction=session.beginTransaction();
@@ -591,7 +593,7 @@ query.setParameter("subid", sub);
             }finally{
                 session.close();
             }
-            
+            System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor() returnin ");
             if(result.isEmpty())
             {
                 return null;
@@ -630,6 +632,28 @@ query.setParameter("subid", sub);
             session.close();
         }
         return result.get(0);
+    }
+
+    @Override
+    public List<Header> getChosenHeadersForWorkspace(Workspace W) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Header> result=null;
+        String hql="Select h from Header h INNER JOIN h.job j where j.workspace =:wrk and h.chosen=true ";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(hql);
+            query.setParameter("wrk", W);
+            
+            result=query.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
     

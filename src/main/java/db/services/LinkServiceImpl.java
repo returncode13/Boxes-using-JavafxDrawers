@@ -54,46 +54,56 @@ public class LinkServiceImpl implements LinkService {
         linkDAO.clearLinksforJob(job,dot);
     }
 
-    @Override
+    /* @Override
     public Set<Link> getLinksContainingSubsurface(Subsurface s, Workspace w,Map<Job,List<Subsurface>> mapForSummary) {
-          //return links which whose parent and child contain Subsurface S
-        Set<Dot> dotsInWorkspace=w.getDots();
-        Set<Link> links=new HashSet<>();
-       
-        
-        
-        
-        for(Dot dot:dotsInWorkspace){
-            Set<Link> linksinDot=dot.getLinks();
-            for(Link l:linksinDot){
-                Set<Subsurface> parentSubsurfaces=l.getParent().getSubsurfaces();
-               //Set<SubsurfaceJob> parentSubsurfaces=l.getParent().getSubsurfaceJobs();
-                if(!parentSubsurfaces.contains(s)){
-                //if(!parentSubsurfaces.){
-                    continue;
-                }else{
-                    if(l.getChild().getSubsurfaces().contains(s)){
-                        
-                        if((mapForSummary.containsKey(l.getChild()) && mapForSummary.get(l.getChild()).contains(s) )||( mapForSummary.containsKey(l.getParent()) && mapForSummary.get(l.getParent()).contains(s) )){
-                            System.out.println("db.services.LinkServiceImpl.getLinksContainingSubsurface(): Will summarize the link "+l.getParent().getNameJobStep()+" ----> "+l.getChild().getNameJobStep()+" for subsurface : "+s.getSubsurface());
-                            links.add(l);
-                        }
-                    }
-                   // System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
-                }
-            }
-        }
-        
-        return links;
-        
+    //return links which whose parent and child contain Subsurface S
+    Set<Dot> dotsInWorkspace=w.getDots();
+    Set<Link> links=new HashSet<>();
+    
+    
+    
+    
+    for(Dot dot:dotsInWorkspace){
+    Set<Link> linksinDot=dot.getLinks();
+    for(Link l:linksinDot){
+    Set<Subsurface> parentSubsurfaces=l.getParent().getSubsurfaces();
+    //Set<SubsurfaceJob> parentSubsurfaces=l.getParent().getSubsurfaceJobs();
+    if(!parentSubsurfaces.contains(s)){
+    //if(!parentSubsurfaces.){
+    continue;
+    }else{
+    if(l.getChild().getSubsurfaces().contains(s)){
+    
+    if((mapForSummary.containsKey(l.getChild()) && mapForSummary.get(l.getChild()).contains(s) )||( mapForSummary.containsKey(l.getParent()) && mapForSummary.get(l.getParent()).contains(s) )){
+    System.out.println("db.services.LinkServiceImpl.getLinksContainingSubsurface(): Will summarize the link "+l.getParent().getNameJobStep()+" ----> "+l.getChild().getNameJobStep()+" for subsurface : "+s.getSubsurface());
+    links.add(l);
     }
+    }
+    // System.out.println("db.dao.LinkServiceImpl.getLinksContainingSubsurface()");
+    }
+    }
+    }
+    
+    return links;
+    
+    }*/
 
     @Override
     public List<Link> getLinkBetweenParentAndChild(Job parent, Job Child, Dot dot) {
         return linkDAO.getLinkBetweenParentAndChild(parent, Child, dot);
     }
 
-   
+    @Override
+    public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W, Subsurface sub) {
+        return linkDAO.getSummaryLinksForSubsurfaceInWorkspace(W, sub);
+    }
+
+    @Override
+    public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W) {
+        return linkDAO.getSubsurfaceAndLinksForSummary(W);
+    }
+
+    
 
    
 

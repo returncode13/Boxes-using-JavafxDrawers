@@ -6,6 +6,7 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -13,6 +14,7 @@ import db.model.Summary;
 import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.ProjectionList;
@@ -39,6 +41,32 @@ public class SummaryDAOImpl implements  SummaryDAO{
             session.close();
         }
         
+    }
+    
+    @Override
+    public void createBulkSummaries(List<Summary> summaries) {
+        int batchsize=Math.min(summaries.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<summaries.size();ii++){
+                session.saveOrUpdate(summaries.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     @Override
@@ -99,6 +127,32 @@ public class SummaryDAOImpl implements  SummaryDAO{
        }finally{
            session.close();
        }
+    }
+    
+     @Override
+    public void udpateBulkSummaries(List<Summary> summariesToBeUpdated) {
+          int batchsize=Math.min(summariesToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<summariesToBeUpdated.size();ii++){
+                session.update(summariesToBeUpdated.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     @Override
@@ -257,13 +311,21 @@ public class SummaryDAOImpl implements  SummaryDAO{
         Session session=HibernateUtil.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
-         
+         String hql="select s from Summary s INNER JOIN s.job sj WHERE sj.workspace =:w";
          try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Summary.class);
+            /*Criteria criteria=session.createCriteria(Summary.class);
             criteria.add(Restrictions.eq("workspace", W));
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            result=criteria.list();
+            result=criteria.list();*/
+            
+            
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
+            result=query.list();
+            
+             System.out.println("db.dao.SummaryDAOImpl.getSummariesFor(): returning summaries of size : "+result.size());
+            
             transaction.commit();
          }catch(Exception e){
              e.printStackTrace();
@@ -272,5 +334,9 @@ public class SummaryDAOImpl implements  SummaryDAO{
          }
          return result;
     }
+
+    
+
+   
     
 }

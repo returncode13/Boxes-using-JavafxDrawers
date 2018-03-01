@@ -77,5 +77,15 @@ public class SummaryServiceImpl implements SummaryService{
     public List<Summary> getSummariesFor(Workspace W) {
         return summaryDao.getSummariesFor(W);
     }
+
+    @Override
+    public void createBulkSummaries(List<Summary> summaries) {
+        summaryDao.createBulkSummaries(summaries);
+    }
+
+    @Override
+    public void updateBulkSummaries(List<Summary> summariesToBeUpdated) {
+        summaryDao.udpateBulkSummaries(summariesToBeUpdated);
+    }
     
 }

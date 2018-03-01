@@ -9,9 +9,12 @@ import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
+import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
@@ -139,6 +142,70 @@ public class LinkDAOImpl implements LinkDAO{
             criteria.add(Restrictions.eq("dot", dot));
            result=criteria.list();
             
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W, Subsurface sub) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction= null;
+         List<Link> result=null;
+         String hql="SELECT l from Link l INNER JOIN l.parent lp INNER JOIN lp.subsurfaceJobs lpsjs"
+                 + "                      INNER JOIN l.child  lc INNER JOIN lc.subsurfaceJobs lcsjs"
+                 + "                      INNER JOIN l.dot d"
+                 + "                      WHERE lpsjs.pk.subsurface=lcsjs.pk.subsurface "                                                       // all child and parent jobs who contain the same sub
+                 + "                                     AND"
+                 + "                            ( lpsjs.updateTime > lpsjs.summaryTime OR lcsjs.updateTime > lcsjs.summaryTime)"                //job-sub combinations where update > summary  
+                 + "                                     AND"
+                 + "                            d.workspace =:wrkq"                                                                             //current Workspace
+                 + "                                     AND"
+                 + "                            lpsjs.pk.subsurface =:subq";                                                                    //for current sub
+         
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("wrkq", W);
+            query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction= null;
+         List<Object[]> result=null;
+         String hql="SELECT l,lpsjs from Link l INNER JOIN l.parent lp INNER JOIN lp.subsurfaceJobs lpsjs"
+                 + "                      INNER JOIN l.child  lc INNER JOIN lc.subsurfaceJobs lcsjs"
+                 + "                      INNER JOIN l.dot d"
+                 + "                      WHERE lpsjs.pk.subsurface=lcsjs.pk.subsurface "                                                       // all child and parent jobs who contain the same sub
+                 + "                                     AND"
+                 + "                            ( lpsjs.updateTime > lpsjs.summaryTime OR lcsjs.updateTime > lcsjs.summaryTime)"                //job-sub combinations where update > summary  
+                 + "                                     AND"
+                 + "                            d.workspace =:wrkq" ;                                                                            //current Workspace
+                 /*+ "                                     AND"
+                 + "                            lpsjs.pk.subsurface =:subq";                                                                    //for current sub*/
+         
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("wrkq", W);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

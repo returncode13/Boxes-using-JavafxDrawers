@@ -24,4 +24,7 @@ public interface LinkDAO {
     public void updateLink(Long id,Link newLink);
     public void clearLinksforJob(Job job,Dot dot);      //clear links where either child=job or parent=job
     public List<Link> getLinkBetweenParentAndChild(Job parent,Job Child,Dot dot);
+    public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W,Subsurface sub);
+
+    public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W);
 }
