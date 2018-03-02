@@ -12,6 +12,7 @@ import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -96,6 +97,7 @@ public class AncestorDAOImpl implements AncestorDAO{
     public List<Ancestor> getAncestorFor(Job job) {
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
+        System.out.println("db.dao.AncestorDAOImpl.getAncestorFor()");
         Transaction transaction=null;
         String hql="from Ancestor a where a.job = :job";
         try{
@@ -158,6 +160,7 @@ public class AncestorDAOImpl implements AncestorDAO{
     public Ancestor getAncestorFor(Job job, Job ancestor) {
        Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
+        System.out.println("db.dao.AncestorDAOImpl.getAncestorFor()");
         Transaction transaction=null;
         try{
             transaction=sess.beginTransaction();
@@ -193,6 +196,7 @@ public class AncestorDAOImpl implements AncestorDAO{
          Session session = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
+         System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface()");
         //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
         String hql="select d from Ancestor  d INNER JOIN d.job  dj INNER JOIN dj.subsurfaceJobs  djsj WHERE  djsj.pk.job =:jobAsked AND djsj.pk.subsurface =:subsurfaceAsked";
         try{
@@ -203,6 +207,36 @@ public class AncestorDAOImpl implements AncestorDAO{
             result=query.list();
             transaction.commit();
             System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface(): returning "+result.size()+" ancestors for job "+job.getId()+" containing sub : "+sub.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    } 
+    
+    
+    /**
+     * Return all ancestors that contain the same subsurface as the job
+     */
+     public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Object[]> result=null;
+        Transaction transaction=null;
+         System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface()");
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hql="select a,aasj from Ancestor  a INNER JOIN a.ancestor aa INNER JOIN aa.subsurfaceJobs aasj"
+                     + "                           INNER JOIN a.job aj      INNER JOIN aj.subsurfaceJobs ajss"
+                
+                     + "                           WHERE aasj.pk.subsurface=ajss.pk.subsurface"
+                     + "                                     AND"
+                     + "                                 aj.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
+            
+            result=query.list();
+            transaction.commit();
+            System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface(): returning "+result.size());
         }catch(Exception e){
             e.printStackTrace();
         }

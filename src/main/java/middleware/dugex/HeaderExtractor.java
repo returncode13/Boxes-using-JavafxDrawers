@@ -272,7 +272,7 @@ public class HeaderExtractor {
                                 //header.setSequence(dbsub.getSequence());
                               populate(header);
                               setOfHeadersInJob.add(header);
-                              
+                              subsurfaceJobs.add(dbSubjob);
                               headers.add(header);
                                     System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
                               
@@ -321,9 +321,9 @@ public class HeaderExtractor {
                     
                   
                    // exec=Executors.newFixedThreadPool(processorsUsed());
-                    for(Header h:headers){
-                        subsurfaceJobs.add(h.getSubsurfaceJob());
-                    }
+                   /*  for(Header h:headers){
+                   subsurfaceJobs.add(h.getSubsurfaceJob());
+                   }*/
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
                     
                     subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);

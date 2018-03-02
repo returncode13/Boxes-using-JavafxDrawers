@@ -36,10 +36,10 @@ public class Dot {
     @JoinColumn(name="workspace_fk",nullable=false)
     private Workspace workspace;
     
-    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dot")
     private Set<VariableArgument> variableArguments=new HashSet<>();
     
-    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dot")
     private Set<Doubt> doubts=new HashSet<>();
     
     @Column(name="status")
@@ -70,7 +70,7 @@ public class Dot {
         return id;
     }
     
-    @OneToMany(mappedBy = "dot",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "dot")
     private Set<Link> links=new HashSet<>();
 
     public Set<Link> getLinks() {

@@ -23,6 +23,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void createVolume(Volume v) {
+        System.out.println("db.dao.VolumeDAOImpl.createVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         
@@ -40,6 +41,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public Volume getVolume(Long volid) {
+        System.out.println("db.dao.VolumeDAOImpl.getVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
          Transaction transaction=null;
          String hql="from Volume where id =:volid";
@@ -176,6 +178,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void updateVolume(Long volid, Volume newVol) {
+        System.out.println("db.dao.VolumeDAOImpl.updateVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         
@@ -198,6 +201,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public List<Volume> getVolumesForJob(Job job) {
+        System.out.println("db.dao.VolumeDAOImpl.getVolumesForJob()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Volume> results=null;

@@ -22,6 +22,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void createDoubtStatus(DoubtStatus ds) {
+        System.out.println("db.dao.DoubtStatusDAOImpl.createDoubtStatus()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -37,6 +38,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
      @Override
     public void createBulkDoubtStatus(List<DoubtStatus> doubtStatuses) {
+         System.out.println("db.dao.DoubtStatusDAOImpl.createBulkDoubtStatus()");
         int batchsize=Math.min(doubtStatuses.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -92,6 +94,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void updateDoubtStatus(Long id, DoubtStatus newds) {
+        System.out.println("db.dao.DoubtStatusDAOImpl.updateDoubtStatus()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -121,6 +124,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void updateBulkDoubtStatus(List<DoubtStatus> doubtStatusToBeUpdated) {
+        System.out.println("db.dao.DoubtStatusDAOImpl.updateBulkDoubtStatus()");
         int batchsize=Math.min(doubtStatusToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -145,6 +149,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
     @Override
     public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted) {
         //int batchsize=Math.min(doubtStatusToBeDeleted.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        System.out.println("db.dao.DoubtStatusDAOImpl.deleteBulkDoubtStatus()");
         if(idsOfDoubtStatusToBeDeleted.isEmpty()) return;
         Session session = HibernateUtil.getSessionFactory().openSession();
         String hql="DELETE  DoubtStatus d WHERE d.id IN (:ids)";
@@ -173,6 +178,7 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt) {
+        System.out.println("db.dao.DoubtStatusDAOImpl.getDoubtStatusForDoubt()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<DoubtStatus> results=null;

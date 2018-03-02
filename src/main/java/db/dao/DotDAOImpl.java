@@ -100,41 +100,42 @@ public class DotDAOImpl implements DotDAO{
 
     @Override
     public void clearUnattachedDots(Workspace ws) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        /* Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
-            
+        
         Criteria criteria=session.createCriteria(Dot.class);
         criteria.add(Restrictions.eq("workspace",ws));
         
         List results=criteria.list();
-     
         
-            if(results.size()>0){
-             
-         Transaction transaction=session.beginTransaction();
-            for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-                    Dot dot = (Dot) iterator.next();
-                    if(dot.getLinks()==null||dot.getLinks().isEmpty()){
-                        session.delete(dot);
-                    }
-                    
-                }
+        
+        if(results.size()>0){
+        
+        Transaction transaction=session.beginTransaction();
+        for (Iterator iterator = results.iterator(); iterator.hasNext();) {
+        Dot dot = (Dot) iterator.next();
+        if(dot.getLinks()==null||dot.getLinks().isEmpty()){
+        session.delete(dot);
+        }
+        
+        }
         transaction.commit();
         
         
         }
         }catch(Exception e){
-            e.printStackTrace();
+        e.printStackTrace();
         }finally{
-            session.close();
-        }
+        session.close();
+        }*/
     }
 
     @Override
     public void updateStatus(Long id, String status) {
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
+        System.out.println("db.dao.DotDAOImpl.updateStatus()");
         String sql=" update Dot set status =:n where id = :id";
               
         try{
@@ -157,6 +158,7 @@ public class DotDAOImpl implements DotDAO{
     public void updateError(Dot dbDot) {
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
+        
         String sql=" update Dot set function =:n where id = :id";
               
         try{
@@ -224,6 +226,7 @@ public class DotDAOImpl implements DotDAO{
     public List<Dot> getDotsInWorkspace(Workspace w) {
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
+        System.out.println("db.dao.DotDAOImpl.getDotsInWorkspace()");
         String sql=" from Dot d where d.workspace =:w";
               List<Dot> results=null;
         try{

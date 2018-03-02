@@ -35,6 +35,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public void createDoubt(Doubt ds) {
         Session session=HibernateUtil.getSessionFactory().openSession();
+        System.out.println("db.dao.DoubtDAOImpl.createDoubt()");
         Transaction transaction=null;
         try{
             transaction=session.beginTransaction();
@@ -49,6 +50,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     
     @Override
     public void createBulkDoubts(List<Doubt> doubts) {
+        System.out.println("db.dao.DoubtDAOImpl.createBulkDoubts()");
         int batchsize=Math.min(doubts.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -74,6 +76,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public void updateDoubt(Long dsid, Doubt newds) {
          Session session = HibernateUtil.getSessionFactory().openSession();
+         System.out.println("db.dao.DoubtDAOImpl.updateDoubt()");
         Transaction transaction = null;
         try{
             transaction=session.beginTransaction();
@@ -110,6 +113,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated) {
         int batchsize=Math.min(doubtsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        System.out.println("db.dao.DoubtDAOImpl.updateBulkDoubts()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -165,6 +169,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public void deleteBulkDoubts(List<Long> doubtsToBeDeletedIds) {
         // int batchsize=Math.min(doubtsToBeDeleted.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        System.out.println("db.dao.DoubtDAOImpl.deleteBulkDoubts()");
         if(doubtsToBeDeletedIds.isEmpty()) return;
         Session session = HibernateUtil.getSessionFactory().openSession();
         String hql="DELETE  Doubt d WHERE d.id IN (:ids)";
@@ -320,6 +325,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job, Dot dot, DoubtType doubtType) {
+        System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -356,6 +362,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
+        System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -445,6 +452,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
      @Override
     public List<Doubt> getDoubtFor(Subsurface sub, Job job) {
+         System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -478,6 +486,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job,  Doubt cause, DoubtType doubtType) {
+        System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
         System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): Inside DAO for sub: "+sub.getId()+" job: "+job.getId()+"  cause: "+cause.getId()+" doubtType: "+doubtType.getIdDoubtType());
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
@@ -515,6 +524,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
+        System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
           Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Doubt> result=null;
@@ -554,6 +564,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getInheritedDoubtFor(Subsurface sub, Job job) {
+        System.out.println("db.dao.DoubtDAOImpl.getInheritedDoubtFor()");
            Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         DoubtTypeDAO dbtypeDao=new DoubtTypeDAOImpl();
@@ -581,7 +592,7 @@ public class DoubtDAOImpl implements DoubtDAO{
 
     @Override
     public List<Doubt> getAllDoubtsFor(Workspace w) {
-        
+        System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<Doubt> result=null;
         Transaction transaction=null;

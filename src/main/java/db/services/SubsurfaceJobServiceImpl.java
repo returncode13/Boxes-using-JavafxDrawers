@@ -84,6 +84,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         return subsurfaceJobDAO.getLatestSummaryTime();
     }
 
+    @Override
+    public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated) {
+        subsurfaceJobDAO.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
+    }
+
    
    
     

@@ -6,7 +6,10 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Dot;
 import db.model.VariableArgument;
+import java.util.List;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -83,6 +86,29 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot) {
+        System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="from VariableArgument v where v.dot =:d";
+        List<VariableArgument> results=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("d", dbDot);
+            results=query.list();
+            
+            transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot(): returning "+results.size()+" variable Arguments for dot "+dbDot.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
     }
     
 }

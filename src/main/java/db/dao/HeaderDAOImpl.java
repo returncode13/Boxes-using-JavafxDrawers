@@ -37,7 +37,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public void createHeader(Header h) {
-               
+               System.out.println("db.dao.HeaderDAOImpl.createHeader()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -54,6 +54,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public void createBulkHeaders(List<Header> headers) {
+        System.out.println("db.dao.HeaderDAOImpl.createBulkHeaders()");
         int batchsize=Math.min(headers.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -91,6 +92,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public void updateHeader(Long hid, Header newH) {
+        System.out.println("db.dao.HeaderDAOImpl.updateHeader()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -167,6 +169,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public List<Header> getHeadersFor(Volume v) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
@@ -186,6 +189,7 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public List<Header> getHeadersFor(Job job) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
@@ -219,6 +223,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
      @Override
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume v) {
+         System.out.println("db.dao.HeaderDAOImpl.getSubsurfacesToBeSummarized()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Header> result=null;
@@ -489,6 +494,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
             List<Header> result=null;
@@ -517,6 +523,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Set<Header> getMultipleInstances(Job job, Subsurface sub) {
+        System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances()");
         Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
             Set<Header> result=null;
@@ -573,6 +580,7 @@ query.setParameter("subid", sub);
 
     @Override
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
+        System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
             System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor() started ");
@@ -616,6 +624,7 @@ query.setParameter("subid", sub);
 
     @Override
     public String getLatestTimeStampFor(Volume volume) {
+        System.out.println("db.dao.HeaderDAOImpl.getLatestTimeStampFor()");
         Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<String> result=null;
@@ -640,6 +649,7 @@ query.setParameter("subid", sub);
 
     @Override
     public List<Header> getChosenHeadersForWorkspace(Workspace W) {
+        System.out.println("db.dao.HeaderDAOImpl.getChosenHeadersForWorkspace()");
         Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Header> result=null;

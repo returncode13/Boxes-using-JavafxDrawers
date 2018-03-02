@@ -28,6 +28,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void createNodePropertyValue(NodePropertyValue npv) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.createNodePropertyValue()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -43,6 +44,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public NodePropertyValue getNodePropertyValue(Long npvid) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValue()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             NodePropertyValue ll=(NodePropertyValue) session.get(NodePropertyValue.class,npvid);
@@ -57,6 +59,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void updateNodePropertyValue(Long npvid, NodePropertyValue newNpv) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.updateNodePropertyValue()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -79,6 +82,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void deleteNodePropertyValue(Long npvid) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.deleteNodePropertyValue()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -95,6 +99,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValuesFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodePropertyValue> result=null;
@@ -122,6 +127,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public NodePropertyValue getNodePropertyValuesFor(Job jobStep, NodeProperty nodeProperty) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValuesFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodePropertyValue> result=null;

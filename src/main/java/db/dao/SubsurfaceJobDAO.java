@@ -27,5 +27,7 @@ public interface SubsurfaceJobDAO {
     public void updateTimeWhereJobEquals(Job parent, String updateTime);
 
     public String getLatestSummaryTime();
+
+    public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated);
           
 }

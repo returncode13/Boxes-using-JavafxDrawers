@@ -28,6 +28,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public void createLink(Link l) {
+        System.out.println("db.dao.LinkDAOImpl.createLink()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -73,6 +74,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public void updateLink(Long id, Link newLink) {
+        System.out.println("db.dao.LinkDAOImpl.updateLink()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -96,6 +98,7 @@ public class LinkDAOImpl implements LinkDAO{
     
     @Override
     public void clearLinksforJob(Job job,Dot dot) {
+        System.out.println("db.dao.LinkDAOImpl.clearLinksforJob()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         
         try{
@@ -131,6 +134,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public List<Link> getLinkBetweenParentAndChild(Job parent, Job child, Dot dot) {
+        System.out.println("db.dao.LinkDAOImpl.getLinkBetweenParentAndChild()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction= null;
          List result=null;
@@ -153,6 +157,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W, Subsurface sub) {
+        System.out.println("db.dao.LinkDAOImpl.getSummaryLinksForSubsurfaceInWorkspace()");
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction= null;
          List<Link> result=null;
@@ -185,6 +190,7 @@ public class LinkDAOImpl implements LinkDAO{
 
     @Override
     public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W) {
+        System.out.println("db.dao.LinkDAOImpl.getSubsurfaceAndLinksForSummary()");
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction= null;
          List<Object[]> result=null;
@@ -203,6 +209,29 @@ public class LinkDAOImpl implements LinkDAO{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
             query.setParameter("wrkq", W);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Link> getLinksForDot(Dot dbDot) {
+        System.out.println("db.dao.LinkDAOImpl.getLinksForDot()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Link> result=null;
+        String hql="from Link l where l.dot = :d";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("d", dbDot);
             //query.setParameter("subq", sub);
             
             result=query.list();

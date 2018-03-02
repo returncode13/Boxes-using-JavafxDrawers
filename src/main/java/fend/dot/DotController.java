@@ -331,7 +331,11 @@ public class DotController extends Stage{
            * Clear all the variableargument entries existing in the database belonging to this dot.
            * 
            **/
-          Set<VariableArgument> variableArguments=dbDot.getVariableArguments();
+          //Set<VariableArgument> variableArguments=dbDot.getVariableArguments();
+          
+          Set<VariableArgument> variableArguments=new HashSet<>(variableArgumentService.getVariableArgumentsForDot(dbDot));
+          
+          
           for(VariableArgument va:variableArguments){
               variableArgumentService.deleteVariableArgument(va.getId());
           }
@@ -438,10 +442,10 @@ public class DotController extends Stage{
                     va.setArgument(arg);
                     va.setDot(dbDot);
                     variableArgumentService.createVariableArgument(va);
-                    dbVariableArguments.add(va);
+                  //  dbVariableArguments.add(va);
                 }
           
-          dbDot.setVariableArguments(dbVariableArguments);
+        //  dbDot.setVariableArguments(dbVariableArguments);
           dotService.updateDot(dbDot.getId(), dbDot);
           model.setDatabaseDot(dbDot);
           System.out.println("fend.dot.DotController.setupModelFormulaField(): setting a new formula field to the dot"); 
@@ -470,7 +474,8 @@ public class DotController extends Stage{
   /*
                 Update the times for all the jobs connected by this dot
 */                
-                Set<Link> dbLinks=dbDot.getLinks();
+                //Set<Link> dbLinks=dbDot.getLinks();
+                Set<Link> dbLinks=new HashSet<>(linkService.getLinksForDot(dbDot));
                 String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                 for(Link dbLink:dbLinks){
                     subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);
@@ -495,7 +500,8 @@ public class DotController extends Stage{
                 /*
                 Update the times for all the jobs connected by this dot
 */                
-                Set<Link> dbLinks=dbDot.getLinks();
+                 //Set<Link> dbLinks=dbDot.getLinks();
+                Set<Link> dbLinks=new HashSet<>(linkService.getLinksForDot(dbDot));
                 String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                 for(Link dbLink:dbLinks){
                     System.out.println(".changed(): updating times on subsurface job entries: ");
@@ -520,7 +526,8 @@ public class DotController extends Stage{
                  /*
                 Update the times for all the jobs connected by this dot
 */                
-                Set<Link> dbLinks=dbDot.getLinks();
+                 //Set<Link> dbLinks=dbDot.getLinks();
+                Set<Link> dbLinks=new HashSet<>(linkService.getLinksForDot(dbDot));
                 String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                 for(Link dbLink:dbLinks){
                     subsurfaceJobService.updateTimeWhereJobEquals(dbLink.getParent(),updateTime);

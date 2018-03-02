@@ -70,49 +70,49 @@ public class Job implements Serializable{
     private Set<Volume> volumes=new HashSet<>();
     
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
     
     @OneToMany(mappedBy = "ancestor")
     private Set<Ancestor> ancestors=new HashSet<>();                    
     
-    @OneToMany(mappedBy ="job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy ="job")
     private Set<Descendant> currentJobInDescendant;
     
-    @OneToMany(mappedBy ="descendant",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy ="descendant")
     private Set<Descendant> descendants=new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<QcMatrixRow> qcmatrix=new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Log> logs;
     
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Header> headers=new HashSet<>();
     
-    @OneToMany(mappedBy = "parent",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "parent")
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links
     
-    @OneToMany(mappedBy = "child",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "child")
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
-    @OneToMany(mappedBy = "argument",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "argument")
     private Set<VariableArgument> variableArguments;
     
-     @ManyToMany(fetch = FetchType.EAGER)
+     @ManyToMany()
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
     private Set<Subsurface> subsurfaces=new HashSet<>();
    
-    @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy ="pk.job")
     private Set<SubsurfaceJob> subsurfaceJobs =new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Summary> summaries;
     
     
-    @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "childJob")
     private Set<Doubt> doubts;
     
   

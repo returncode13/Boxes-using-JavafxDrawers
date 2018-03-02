@@ -80,6 +80,32 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         return null;
     }
 
+      @Override
+    public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated) {
+        int batchsize=Math.min(subsurfaceJobsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<subsurfaceJobsToBeUpdated.size();ii++){
+               session.update(subsurfaceJobsToBeUpdated.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    
+    
+    
     @Override
     public void updateSubsurfaceJob(SubsurfaceJob nsj) {
          Session session =HibernateUtil.getSessionFactory().openSession();
@@ -216,6 +242,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
               
     }
 
+  
    
    
 

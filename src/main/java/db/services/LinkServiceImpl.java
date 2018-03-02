@@ -103,6 +103,11 @@ public class LinkServiceImpl implements LinkService {
         return linkDAO.getSubsurfaceAndLinksForSummary(W);
     }
 
+    @Override
+    public List<Link> getLinksForDot(Dot dbDot) {
+        return linkDAO.getLinksForDot(dbDot);
+    }
+
     
 
    

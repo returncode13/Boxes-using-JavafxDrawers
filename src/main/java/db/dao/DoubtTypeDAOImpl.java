@@ -22,6 +22,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public void createDoubtType(DoubtType dt) {
+        System.out.println("db.dao.DoubtTypeDAOImpl.createDoubtType()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         try{
@@ -37,6 +38,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public void updateDoubtType(Long dtid, DoubtType newdt) {
+        System.out.println("db.dao.DoubtTypeDAOImpl.updateDoubtType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -56,6 +58,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public DoubtType getDoubtType(Long dtid) {
+        System.out.println("db.dao.DoubtTypeDAOImpl.getDoubtType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             DoubtType ll=(DoubtType) session.get(DoubtType.class,dtid);
@@ -86,6 +89,7 @@ public class DoubtTypeDAOImpl implements DoubtTypeDAO {
 
     @Override
     public DoubtType getDoubtTypeByName(String doubtName) {
+        System.out.println("db.dao.DoubtTypeDAOImpl.getDoubtTypeByName()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<DoubtType> result=null;

@@ -154,6 +154,7 @@ public class DescendantDAOImpl implements DescendantDAO {
     @Override
     public List<Descendant> getDescendantsFor(Job job) {
         Session session = HibernateUtil.getSessionFactory().openSession();
+        System.out.println("db.dao.DescendantDAOImpl.getDescendantsFor()");
         Transaction transaction=null;
         List<Descendant> results=null;
         String hql="from Descendant d where d.job =:job";
@@ -183,6 +184,7 @@ public class DescendantDAOImpl implements DescendantDAO {
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Descendant> result=null;
         Transaction transaction=null;
+        System.out.println("db.dao.DescendantDAOImpl.getDescendantFor()");
         try{
             transaction=sess.beginTransaction();
             Criteria criteria= sess.createCriteria(Descendant.class);
@@ -211,6 +213,7 @@ public class DescendantDAOImpl implements DescendantDAO {
     @Override
     public List<Descendant> getDescendantsForJobContainingSubsurface(Job job, Subsurface sub) {
          Session session = HibernateUtil.getSessionFactory().openSession();
+         System.out.println("db.dao.DescendantDAOImpl.getDescendantsForJobContainingSubsurface()");
         List<Descendant> result=null;
         Transaction transaction=null;
         //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";

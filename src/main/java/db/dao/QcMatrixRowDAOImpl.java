@@ -25,6 +25,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void createQcMatrixRow(QcMatrixRow qcmatrix) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.createQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -40,6 +41,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void updateQcMatrixRow(Long qid, QcMatrixRow newq) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.updateQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -63,6 +65,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public QcMatrixRow getQcMatrixRow(Long qid) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             QcMatrixRow h= (QcMatrixRow) session.get(QcMatrixRow.class, qid);
@@ -77,6 +80,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void deleteQcMatrixRow(Long qid) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.deleteQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{

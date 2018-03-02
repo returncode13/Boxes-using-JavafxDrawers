@@ -28,4 +28,6 @@ public interface LinkService {
     public List<Link> getLinkBetweenParentAndChild(Job parent,Job Child,Dot dot);
     public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W,Subsurface sub);
     public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W);
+
+    public List<Link> getLinksForDot(Dot dbDot);
 }

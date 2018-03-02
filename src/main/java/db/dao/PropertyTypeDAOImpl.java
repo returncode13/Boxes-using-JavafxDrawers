@@ -22,6 +22,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void createPropertyType(PropertyType p) {
+        System.out.println("db.dao.PropertyTypeDAOImpl.createPropertyType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -37,6 +38,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public PropertyType getPropertyType(Long pid) {
+        System.out.println("db.dao.PropertyTypeDAOImpl.getPropertyType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             PropertyType ll=(PropertyType) session.get(PropertyType.class,pid);
@@ -51,6 +53,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void updatePropertyType(Long pid, PropertyType np) {
+        System.out.println("db.dao.PropertyTypeDAOImpl.updatePropertyType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -73,6 +76,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public void deletePropertyType(Long pid) {
+        System.out.println("db.dao.PropertyTypeDAOImpl.deletePropertyType()");
        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -89,6 +93,7 @@ public class PropertyTypeDAOImpl implements PropertyTypeDAO {
 
     @Override
     public PropertyType getPropertyTypeObjForName(String propname) {
+        System.out.println("db.dao.PropertyTypeDAOImpl.getPropertyTypeObjForName()");
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<PropertyType> result=null;
         Transaction transaction=null;

@@ -7,7 +7,9 @@ package db.services;
 
 import db.dao.VariableArgumentDAO;
 import db.dao.VariableArgumentDAOImpl;
+import db.model.Dot;
 import db.model.VariableArgument;
+import java.util.List;
 
 /**
  *
@@ -35,6 +37,11 @@ public class VariableArgumentServiceImpl implements VariableArgumentService{
     @Override
     public void deleteVariableArgument(Long vaid) {
         vaDao.deleteVariableArgument(vaid);
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot) {
+        return vaDao.getVariableArgumentsForDot(dbDot);
     }
     
 }

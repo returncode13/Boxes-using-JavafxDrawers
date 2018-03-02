@@ -216,7 +216,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             qctable.setUser(AppProperties.getCurrentUser());
                             qcTableService.updateQcTable(qctable.getId(), qctable);
                             QcMatrixRow dbqcmr=qcMatrixRowService.getQcMatrixRow(qcmrId);
-                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);
+                            SubsurfaceJob dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbqcmr.getJob(), childsub);   //fetch from map
                             dbSubjob.setUpdateTime(updateTime);
                             subsurfaceJobService.updateSubsurfaceJob(dbSubjob);
                         }else{                                                      //create  a new qctable entry

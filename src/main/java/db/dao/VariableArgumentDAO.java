@@ -5,7 +5,9 @@
  */
 package db.dao;
 
+import db.model.Dot;
 import db.model.VariableArgument;
+import java.util.List;
 
 /**
  *
@@ -16,5 +18,7 @@ public interface VariableArgumentDAO {
     public VariableArgument getVariableArgument(Long vaid);
     public void updateVariableArgument(Long vaid,VariableArgument newVa);
     public void deleteVariableArgument(Long vaid);
+
+    public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot);
        
 }

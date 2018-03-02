@@ -36,10 +36,10 @@ public class JobDAOImpl implements JobDAO{
     @Override
     public void createJob(Job js) {
         
-             
+             System.out.println("db.dao.JobDAOImpl.createJob()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
-        System.out.println("db.dao.JobDAOImpl.createJob()");
+        
         try{
             transaction=session.beginTransaction();
             session.saveOrUpdate(js);
@@ -54,9 +54,10 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public Job getJob(Long jobId) {
+        System.out.println("db.dao.JobDAOImpl.getJob()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         
-        System.out.println("db.dao.JobDAOImpl.getJob()");
+       
         try{
             Job js = (Job) session.get(Job.class, jobId);
            // System.out.println("JobDAOIMPL: checking for id "+jobId+" and found "+(js==null?" NULL":js.getIdJob()));
@@ -113,6 +114,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void deleteJob(Long jobId) {
+        System.out.println("db.dao.JobDAOImpl.deleteJob()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction =  null;
         
@@ -175,6 +177,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public List<Long> getDepthOfGraph(Workspace W) {
+        System.out.println("db.dao.JobDAOImpl.getDepthOfGraph()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Long> depths=null;
@@ -200,14 +203,19 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public List<Job> listJobs(Workspace W) {
+        System.out.println("db.dao.JobDAOImpl.listJobs()");
         Session session= HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Job> result=null;
+        String hql="from Job j where j.workspace= :w";
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Job.class);
-            criteria.add(Restrictions.eq("workspace", W));
-            result=criteria.list();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
+            /* Criteria criteria=session.createCriteria(Job.class);
+            criteria.add(Restrictions.eq("workspace", W));*/
+          //  result=criteria.list();
+            result=query.list();
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -219,6 +227,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void updateName(Job dbjob, String name) {
+        System.out.println("db.dao.JobDAOImpl.updateName()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         String sql=" update Job set name =:n where id = :id";
@@ -241,6 +250,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void updateDepth(Job dbjob, Long depth) {
+        System.out.println("db.dao.JobDAOImpl.updateDepth()");
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         String sql=" update Job set depth =:n where id = :id";
@@ -263,6 +273,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public void updateInsightVersionInJob(Job job) {
+        System.out.println("db.dao.JobDAOImpl.updateInsightVersionInJob()");
      Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         String sql=" update Job set insightVersions =:n where id = :id";
@@ -285,6 +296,7 @@ public class JobDAOImpl implements JobDAO{
 
     @Override
     public List<Job> getJobsInWorkspace(Workspace W) {
+        System.out.println("db.dao.JobDAOImpl.getJobsInWorkspace()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         String sql=" from Job j where j.workspace =:w";

@@ -22,6 +22,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void createNodeType(NodeType n) {
+        System.out.println("db.dao.NodeTypeDAOImpl.createNodeType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -37,6 +38,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public NodeType getNodeType(Long nid) {
+        System.out.println("db.dao.NodeTypeDAOImpl.getNodeType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             NodeType ll=(NodeType) session.get(NodeType.class,nid);
@@ -51,6 +53,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void updateNodeType(Long nid, NodeType newNodeType) {
+        System.out.println("db.dao.NodeTypeDAOImpl.updateNodeType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -73,6 +76,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public void deleteNodeType(Long nid) {
+        System.out.println("db.dao.NodeTypeDAOImpl.deleteNodeType()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -89,6 +93,7 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
 
     @Override
     public NodeType getNodeTypeObjForType(Long type) {
+        System.out.println("db.dao.NodeTypeDAOImpl.getNodeTypeObjForType()");
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<NodeType> result=null;
         Transaction transaction=null;

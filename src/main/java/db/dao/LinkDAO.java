@@ -27,4 +27,6 @@ public interface LinkDAO {
     public List<Link> getSummaryLinksForSubsurfaceInWorkspace(Workspace W,Subsurface sub);
 
     public List<Object[]> getSubsurfaceAndLinksForSummary(Workspace W);
+
+    public List<Link> getLinksForDot(Dot dbDot);
 }
