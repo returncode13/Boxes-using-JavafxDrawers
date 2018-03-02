@@ -21,6 +21,7 @@ import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -119,7 +120,8 @@ public class VolumeListController {
         //dbjob=jobService.getJob(parentjob.getId());
         dbjob=parentjob.getDatabaseJob();
         
-        Set<Volume> dbVolumesInJob=dbjob.getVolumes();
+         //Set<Volume> dbVolumesInJob=dbjob.getVolumes();
+        Set<Volume> dbVolumesInJob= new HashSet<>(volumeService.getVolumesForJob(dbjob));
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
             /*if(type.equals(JobType0Model.PROCESS_2D)){

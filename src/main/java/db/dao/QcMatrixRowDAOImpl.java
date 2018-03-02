@@ -119,13 +119,17 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
+        String hql="from QcMatrixRow q where q.job =:j";
         try{
         transaction=session.beginTransaction();
-        Criteria criteria=session.createCriteria(QcMatrixRow.class);
+        /*Criteria criteria=session.createCriteria(QcMatrixRow.class);
         criteria.add(Restrictions.eq("job", sd));
         //criteria.add(Restrictions.eq("present", true));
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        result=criteria.list();
+        result=criteria.list();*/
+            Query query=session.createQuery(hql);
+            query.setParameter("j", sd);
+            result=query.list();
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();

@@ -5,8 +5,11 @@
  */
 package db.services;
 
+import db.model.Job;
+import db.model.User;
 import java.util.List;
 import db.model.Workspace;
+import java.util.Set;
 
 /**
  *
@@ -19,5 +22,9 @@ public interface WorkspaceService {
     public void deleteWorkspace(Long sessionId);
     
     public List<Workspace> listWorkspaces();
+
+    public List<Workspace> getWorkspacesForUser(User u);
+
+    
    
 }

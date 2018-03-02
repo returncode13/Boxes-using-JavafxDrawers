@@ -10,6 +10,7 @@ import db.dao.UserDAOImpl;
 import db.model.User;
 import java.util.List;
 import db.dao.UserDAO;
+import db.model.Workspace;
 
 /**
  *
@@ -42,6 +43,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserWithInitials(String ini) {
         return uDao.getUserWithInitials(ini);
+    }
+
+    @Override
+    public List<User> getUsersInWorkspace(Workspace w) {
+        return uDao.getUsersInWorkspace(w);
     }
 
     

@@ -7,6 +7,8 @@ package db.services;
 
 
 import db.model.User;
+import db.model.Workspace;
+import java.util.List;
 
 
 /**
@@ -20,6 +22,9 @@ public interface UserService {
     public void deleteUser(Long uid);
 
     public User getUserWithInitials(String ini);
+
+    public List<User> getUsersInWorkspace(Workspace currentWorkspace);
+
     
   
 }

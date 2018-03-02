@@ -39,7 +39,7 @@ private String realLineName;
 
 
  
-@OneToMany(mappedBy = "sequence",fetch = FetchType.EAGER)
+@OneToMany(mappedBy = "sequence")
 private Set<Subsurface> subsurfaces;
 
 @OneToMany(mappedBy = "sequence")

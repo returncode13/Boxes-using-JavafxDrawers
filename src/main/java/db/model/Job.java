@@ -51,9 +51,7 @@ public class Job implements Serializable{
     @Column(name = "alert",nullable = true)
     private Boolean alert;
     
-    /*@Column(name = "type",nullable=false)
-    private Long type;*/
-    
+  
     @Column(name="depth",nullable=false)
     private Long depth;
    
@@ -67,20 +65,15 @@ public class Job implements Serializable{
     private Workspace workspace;
     
     
-    
-    /*@Column(name = "pending",nullable = true)
-    private Boolean pending;*/
-    /* @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
-    private Set<JobVolumeMap> jobVolumeMap;*/
-    
-     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)                             //create a member named "job" in the JobVolumeMap class definition
+ 
+     @OneToMany(mappedBy = "job")                             //create a member named "job" in the JobVolumeMap class definition
     private Set<Volume> volumes=new HashSet<>();
     
     
     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
     
-    @OneToMany(mappedBy = "ancestor",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "ancestor")
     private Set<Ancestor> ancestors=new HashSet<>();                    
     
     @OneToMany(mappedBy ="job",fetch=FetchType.EAGER)
@@ -111,11 +104,7 @@ public class Job implements Serializable{
      @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
     private Set<Subsurface> subsurfaces=new HashSet<>();
-    /*
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
-    private Set<Sequence> sequences;*/
-     
+   
     @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
     private Set<SubsurfaceJob> subsurfaceJobs =new HashSet<>();
     
@@ -126,22 +115,7 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
     private Set<Doubt> doubts;
     
-    /*public Job(String nameJobStep, Boolean alert,String insightVersion,Long type) {
-    this.nameJobStep = nameJobStep;
-    this.alert = alert;
-    this.insightVersions=insightVersion;
-    this.type=type;
-    }
-    */
-
-    /*
-    public Job(String nameJobStep, Boolean alert,String insightVersion,NodeType type) {
-    this.nameJobStep = nameJobStep;
-    this.alert = alert;
-    this.insightVersions=insightVersion;
-    this.nodetype=type;
-    }
-    */
+  
     public Job() {
     }
     
@@ -178,24 +152,7 @@ public class Job implements Serializable{
         this.alert = alert;
     }
 
-    /*public Set<JobVolumeMap> getJobVolumeMap() {
-    return jobVolumeMap;
-    }
-    
-    public void setJobVolumeMap(Set<JobVolumeMap> jobVolumeMap) {
-    
-    if(jobVolumeMap!=null)
-    {
-    this.jobVolumeMap.clear();
-    
-    for (Iterator<JobVolumeMap> iterator = jobVolumeMap.iterator(); iterator.hasNext();) {
-    JobVolumeMap next = iterator.next();
-    this.jobVolumeMap.add(next);
-    }
-    }
-    //this.jobVolumeMap = jobVolumeMap;
-    }*/
-   
+ 
 
     public String getInsightVersions() {
         return insightVersions;
@@ -205,30 +162,7 @@ public class Job implements Serializable{
         this.insightVersions = insightVersions;
     }
 
-    /* public Boolean getPending() {
-    return pending;
-    }
-    
-    public void setPending(Boolean pending) {
-    this.pending = pending;
-    }
-    */
-
-    /* public Long getType() {
-    return type;
-    }
-    
-    public void setType(Long type) {
-    this.type = type;
-    }*/
-
-    /*public NodeType getType() {
-    return nodetype;
-    }
-    
-    public void setType(NodeType type) {
-    this.nodetype = type;
-    }*/
+  
 
     public Workspace getWorkspace() {
         return workspace;
@@ -262,69 +196,69 @@ public class Job implements Serializable{
         this.currentJobInDescendant = currentJobInDescendant;
     }
 
-    public Set<QcMatrixRow> getQcmatrix() {
-        return qcmatrix;
+    /* public Set<QcMatrixRow> getQcmatrix() {
+    return qcmatrix;
     }
-
+    
     public void setQcmatrix(Set<QcMatrixRow> qcmatrix) {
-        this.qcmatrix = qcmatrix;
-    }
+    this.qcmatrix = qcmatrix;
+    }*/
 
-    public Set<Link> getLinksWithJobAsParent() {
-        return linksWithJobAsParent;
+    /* public Set<Link> getLinksWithJobAsParent() {
+    return linksWithJobAsParent;
     }
-
+    
     public void setLinksWithJobAsParent(Set<Link> linksWithJobAsParent) {
-        this.linksWithJobAsParent = linksWithJobAsParent;
+    this.linksWithJobAsParent = linksWithJobAsParent;
     }
-
+    
     public Set<Link> getLinksWithJobAsChild() {
-        return linksWithJobAsChild;
+    return linksWithJobAsChild;
     }
-
+    
     public void setLinksWithJobAsChild(Set<Link> linksWithJobAsChild) {
-        this.linksWithJobAsChild = linksWithJobAsChild;
-    }
+    this.linksWithJobAsChild = linksWithJobAsChild;
+    }*/
 
-    public Set<Header> getHeaders() {
+    /*  public Set<Header> getHeaders() {
     return headers;
     }
     
     public void setHeaders(Set<Header> headers) {
     this.headers = headers;
-    }
+    }*/
 
-    public Set<Ancestor> getAncestors() {
-        return ancestors;
+    /* public Set<Ancestor> getAncestors() {
+    return ancestors;
     }
-
+    
     public void setAncestors(Set<Ancestor> ancestors) {
-        this.ancestors = ancestors;
-    }
+    this.ancestors = ancestors;
+    }*/
 
-    public Set<Descendant> getDescendants() {
-        return descendants;
+    /* public Set<Descendant> getDescendants() {
+    return descendants;
     }
-
+    
     public void setDescendants(Set<Descendant> descendants) {
-        this.descendants = descendants;
-    }
+    this.descendants = descendants;
+    }*/
 
-    public Set<Volume> getVolumes() {
-        return volumes;
+    /* public Set<Volume> getVolumes() {
+    return volumes;
     }
-
+    
     public void setVolumes(Set<Volume> volumes) {
-        this.volumes = volumes;
-    }
+    this.volumes = volumes;
+    }*/
 
-    public Set<Log> getLogs() {
-        return logs;
+    /*public Set<Log> getLogs() {
+    return logs;
     }
-
+    
     public void setLogs(Set<Log> logs) {
-        this.logs = logs;
-    }
+    this.logs = logs;
+    }*/
 
     
      public Set<Subsurface> getSubsurfaces() {
@@ -335,13 +269,13 @@ public class Job implements Serializable{
     this.subsurfaces = subsurfaces;
     }
 
-    public Set<VariableArgument> getVariableArguments() {
-        return variableArguments;
+    /* public Set<VariableArgument> getVariableArguments() {
+    return variableArguments;
     }
-
+    
     public void setVariableArguments(Set<VariableArgument> variableArguments) {
-        this.variableArguments = variableArguments;
-    }
+    this.variableArguments = variableArguments;
+    }*/
 
     public Set<Doubt> getDoubts() {
         return doubts;
@@ -367,14 +301,7 @@ public class Job implements Serializable{
         this.summaries = summaries;
     }
 
-    /* public Set<Sequence> getSequences() {
-    return sequences;
-    }
-    
-    public void setSequences(Set<Sequence> sequences) {
-    this.sequences = sequences;
-    }*/
-
+   
     public Set<SubsurfaceJob> getSubsurfaceJobs() {
         return subsurfaceJobs;
     }

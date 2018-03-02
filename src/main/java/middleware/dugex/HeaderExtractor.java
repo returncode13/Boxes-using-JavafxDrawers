@@ -276,7 +276,7 @@ public class HeaderExtractor {
                               headers.add(header);
                                     System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
                               
-                              dbjob.setHeaders(setOfHeadersInJob);
+                              //dbjob.setHeaders(setOfHeadersInJob);
                               dbjob.setSubsurfaces(setOfSubsurfacesInJob);
                               //dbjob.getSubsurfaceJobs().add(dbSubjob);
                              // dbjob.setSequences(setOfSequencesInJob);

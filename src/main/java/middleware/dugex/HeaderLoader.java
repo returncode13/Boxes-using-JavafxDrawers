@@ -20,6 +20,7 @@ import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +52,8 @@ public class HeaderLoader {
     public void retrieveHeaders(){
          Job dbjob=job.getDatabaseJob();
 //        List<Header> headersInJob=headerService.getHeadersFor(dbjob);
-        Set<Header> headersInJob=dbjob.getHeaders();
+        //Set<Header> headersInJob=dbjob.getHeaders();
+        Set<Header> headersInJob=new HashSet<>(headerService.getHeadersFor(dbjob));
         List<Volume0> feVolsInJob=job.getVolumes();
         Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
         System.out.println("middleware.dugex.HeaderLoader.<init>(): Listing all subs in the job.. "+dbjob.getNameJobStep()+" id: "+dbjob.getId());

@@ -155,13 +155,17 @@ public class DescendantDAOImpl implements DescendantDAO {
     public List<Descendant> getDescendantsFor(Job job) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
-        List results=null;
+        List<Descendant> results=null;
+        String hql="from Descendant d where d.job =:job";
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Descendant.class);
+            /*Criteria criteria=session.createCriteria(Descendant.class);
             criteria.add(Restrictions.eq("job", job));
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            results=criteria.list();
+            results=criteria.list();*/
+            Query query=session.createQuery(hql);
+            query.setParameter("job", job);
+            results=query.list();
             transaction.commit();
             System.out.println("db.dao.DescendantDAOImpl.getDescendantsFor(): for job: "+job.getNameJobStep()+" size of descendants returned: "+results.size());
         

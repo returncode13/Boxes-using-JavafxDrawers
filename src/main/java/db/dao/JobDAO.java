@@ -35,5 +35,7 @@ public interface JobDAO {
     public void updateDepth(Job dbjob, Long newValue);
 
     public void updateInsightVersionInJob(Job job);
+
+    public List<Job> getJobsInWorkspace(Workspace W);
     
 }

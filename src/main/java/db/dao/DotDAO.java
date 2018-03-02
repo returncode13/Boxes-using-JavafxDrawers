@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.Dot;
 import db.model.Workspace;
+import java.util.List;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -28,5 +29,7 @@ public interface DotDAO {
     public void updateTolerance(Dot dbDot);
 
     public void updateFunction(Dot dbDot);
+
+    public List<Dot> getDotsInWorkspace(Workspace w);
     
 }

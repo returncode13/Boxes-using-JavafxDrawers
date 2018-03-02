@@ -126,7 +126,7 @@ public class DotController extends Stage{
             dotService.createDot(dbDot);
             model.setId(dbDot.getId());
             model.setDatabaseDot(dbDot);
-            dbWorkspace.addToDots(dbDot);
+          //  dbWorkspace.addToDots(dbDot);
             }
             else{
                 /*dbDot=dotService.getDot(mod.getId());       //else get a reference to the existing dot
@@ -665,8 +665,8 @@ public class DotController extends Stage{
                     //update the ancestor list for the jobs descendants
                     for(Descendant jobsDescendantEntry:Dc){
                         Job jobsDescendant=jobsDescendantEntry.getDescendant();              //jobs descendant
-                        Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
-                        
+                        //Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
+                        Set<Ancestor> ancestorsInJobsDescendant=new HashSet<>(ancestorService.getAncestorFor(dbjob));
                             for(Ancestor anc:Ac){
                                 Job ancestorJobToBeAdded=anc.getAncestor();        //this ancestor is the current jobs ancestor which is now been added to its descendant
                                 Ancestor jobAncestor;
@@ -693,8 +693,8 @@ public class DotController extends Stage{
                     //update the descendant list for the parents ancestors
                     for(Ancestor parentAncestorEntry:Ap){
                         Job parentsAncestor=parentAncestorEntry.getAncestor();  //parents Ancestor
-                        Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
-                        
+                      //  Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
+                        Set<Descendant> descendantsInParentsAncestor=new HashSet<>(descendantService.getDescendantsFor(parentsAncestor));
                         for(Descendant desc:Dp){                    //add all of the parents descendants to the parents ancestors
                             Job descendantToBeAdded=desc.getDescendant();       //descendant to be added to the parents ancestor's list of descendants
                             Descendant parentDescendant;

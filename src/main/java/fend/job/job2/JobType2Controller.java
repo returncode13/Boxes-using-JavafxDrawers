@@ -700,7 +700,8 @@ parent.addChild(model);*/
                     //update the ancestor list for the jobs descendants
                     for(Descendant jobsDescendantEntry:Dc){
                         Job jobsDescendant=jobsDescendantEntry.getDescendant();              //jobs descendant
-                        Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
+                        //Set<Ancestor> ancestorsInJobsDescendant=jobsDescendant.getAncestors();
+                        Set<Ancestor> ancestorsInJobsDescendant=new HashSet<>(ancestorService.getAncestorFor(jobsDescendant));
                         
                             for(Ancestor anc:Ac){
                                 Job ancestorJobToBeAdded=anc.getAncestor();        //this ancestor is the current jobs ancestor which is now been added to its descendant
@@ -728,7 +729,8 @@ parent.addChild(model);*/
                     //update the descendant list for the parents ancestors
                     for(Ancestor parentAncestorEntry:Ap){
                         Job parentsAncestor=parentAncestorEntry.getAncestor();  //parents Ancestor
-                        Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
+                        //Set<Descendant> descendantsInParentsAncestor=parentsAncestor.getDescendants();
+                        Set<Descendant> descendantsInParentsAncestor=new HashSet<>(descendantService.getDescendantsFor(parentsAncestor));
                         
                         for(Descendant desc:Dp){                    //add all of the parents descendants to the parents ancestors
                             Job descendantToBeAdded=desc.getDescendant();       //descendant to be added to the parents ancestor's list of descendants

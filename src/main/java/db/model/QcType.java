@@ -36,7 +36,7 @@ public class QcType implements Serializable {
     private String name;    
 
    
-    @OneToMany(mappedBy = "qctype",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "qctype")
     private Set<QcMatrixRow> qcmatrix;
     
     

@@ -189,11 +189,15 @@ public class HeaderDAOImpl implements HeaderDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
+        String hql="from Header h where h.job = :j";
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Header.class);
+            /*Criteria criteria=session.createCriteria(Header.class);
             criteria.add(Restrictions.eq("job", job));
-            result=criteria.list();
+            result=criteria.list();*/
+                Query query=session.createQuery(hql);
+                query.setParameter("j", job);
+                result=query.list();
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

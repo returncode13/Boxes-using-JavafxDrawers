@@ -201,15 +201,19 @@ public class VolumeDAOImpl implements VolumeDAO {
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Volume> results=null;
+        String hql="from Volume v where v.job = :j";
         try{
             transaction=session.beginTransaction();
             
-            Criteria criteria=session.createCriteria(Volume.class);
-            criteria.add(Restrictions.eq("job", job));
-            results=criteria.list();
+            /*Criteria criteria=session.createCriteria(Volume.class);
+            criteria.add(Restrictions.eq("job", job));*/
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            results=query.list();
+            transaction.commit();
             
         }catch(Exception e){
-            
+            e.printStackTrace();
         }finally{
             session.close();
         }

@@ -1129,7 +1129,9 @@ public class WorkspaceController {
     private void loadSession() {
         Workspace dbWorkspace = workspaceService.getWorkspace(model.getId());
 
-        Set<Job> jobsInDb = dbWorkspace.getJobs();
+        //Set<Job> jobsInDb = dbWorkspace.getJobs();
+        Set<Job> jobsInDb=new HashSet<>(jobService.getJobsInWorkspace(dbWorkspace));
+        
         List<JobType0Model> frontEndJobModels = new ArrayList<>();
 
         Map<Long, JobType0Model> idFrontEndJobMap = new HashMap<>();              //used to link the nodes later. alook up map
@@ -1179,7 +1181,8 @@ public class WorkspaceController {
 
             }
 
-            Set<Volume> dbvols = dbj.getVolumes();
+            Set<Volume> dbvols = new HashSet<>(volumeService.getVolumesForJob(dbj));
+            
             List<Volume0> frontEndVolumeModels = new ArrayList<>();
             for (Volume dbv : dbvols) {
                 Volume0 fevol = null;
@@ -1214,7 +1217,8 @@ public class WorkspaceController {
         }
         model.setObservableJobs(new HashSet<>(frontEndJobModels));       //front end jobs and volumes set in workspace model
 
-        Set<Dot> dots = dbWorkspace.getDots();
+        //Set<Dot> dots = dbWorkspace.getDots();
+        Set<Dot> dots=new HashSet<>(dotService.getDotsInWorkspace(dbWorkspace));
         System.out.println("fend.workspace.WorkspaceController.loadSession(): the size of  dots retrieved : " + dots.size());
         List<DotModel> frontEndDotModels = new ArrayList<>();
 

@@ -19,4 +19,6 @@ public interface UserWorkspaceService {
     public void deleteUserWorkspace(Long id);
     public void updateUserWorkspace(Long id,UserWorkspace newUserWorkspace);
     public UserWorkspace getUserWorkspaceFor(User user,Workspace workspace);
+
+    public void remove(User u, Workspace w);
 }

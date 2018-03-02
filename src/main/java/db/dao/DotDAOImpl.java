@@ -219,5 +219,27 @@ public class DotDAOImpl implements DotDAO{
             session.close();
         }
     }
+
+    @Override
+    public List<Dot> getDotsInWorkspace(Workspace w) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" from Dot d where d.workspace =:w";
+              List<Dot> results=null;
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("w", w);
+            
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.DotDAOImpl.getDotsInWorkspace(): returning "+results.size()+" dots for the workspace");
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
     
 }

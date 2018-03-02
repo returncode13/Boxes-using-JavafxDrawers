@@ -22,4 +22,6 @@ public interface UserDAO {
   // public List<User> getUsersForSession(Sessions sessions);  //get users for current session
 
     public User getUserWithInitials(String ini);
+
+    public List<User> getUsersInWorkspace(Workspace w);
 }

@@ -87,6 +87,11 @@ public class JobServiceImpl implements JobService {
         jobStepDAO.updateInsightVersionInJob(job);
     }
 
+    @Override
+    public List<Job> getJobsInWorkspace(Workspace W) {
+        return jobStepDAO.getJobsInWorkspace(W);
+    }
+
     
     
 }

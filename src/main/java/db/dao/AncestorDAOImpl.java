@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -95,12 +96,17 @@ public class AncestorDAOImpl implements AncestorDAO{
         Session sess = HibernateUtil.getSessionFactory().openSession();
         List<Ancestor> result=null;
         Transaction transaction=null;
+        String hql="from Ancestor a where a.job = :job";
         try{
             transaction=sess.beginTransaction();
-            Criteria criteria= sess.createCriteria(Ancestor.class);
+            /*Criteria criteria= sess.createCriteria(Ancestor.class);
             criteria.add(Restrictions.eq("job", job));
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            result=criteria.list();
+            result=criteria.list();*/
+            Query query=sess.createQuery(hql);
+            query.setParameter("job", job);
+            result=query.list();
+                    
             transaction.commit();
             System.out.println("db.dao.AncestorDAOImpl.getAncestorFor(): returning ancestor list of size "+result.size()+" for job: "+job.getNameJobStep());
            

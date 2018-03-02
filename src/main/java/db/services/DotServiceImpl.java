@@ -9,6 +9,7 @@ import db.dao.DotDAO;
 import db.dao.DotDAOImpl;
 import db.model.Dot;
 import db.model.Workspace;
+import java.util.List;
 import javafx.beans.property.StringProperty;
 
 /**
@@ -62,6 +63,11 @@ public class DotServiceImpl implements DotService{
     @Override
     public void updateError(Dot dbDot) {
         dotDao.updateError(dbDot);
+    }
+
+    @Override
+    public List<Dot> getDotsInWorkspace(Workspace w) {
+        return dotDao.getDotsInWorkspace(w);
     }
     
 }

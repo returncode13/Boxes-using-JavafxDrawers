@@ -283,6 +283,31 @@ public class JobDAOImpl implements JobDAO{
         }
     }
 
+    @Override
+    public List<Job> getJobsInWorkspace(Workspace W) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" from Job j where j.workspace =:w";
+              List<Job> results=null;
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("w", W);
+            
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.JobDAOImpl.getJobsInWorkspace(): returning "+results.size()+" jobs for the workspace");
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+
+
+
     
     
     

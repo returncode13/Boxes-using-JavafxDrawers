@@ -6,6 +6,8 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
+import db.model.User;
 import java.util.List;
 import db.model.Workspace;
 import java.util.ArrayList;
@@ -67,7 +69,7 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
          // s.setJobs(newSession.getJobs());
          // s.setDots(newSession.getDots());
          // System.out.println("db.dao.WorkspaceDAOImpl.updateWorkspace(): "+newSession.getName()+" has "+newSession.getUsers().size()+" users");
-          s.setUsers(newSession.getUsers());
+         // s.setUsers(newSession.getUsers());
           s.setOwner(newSession.getOwner());
           session.update(s);
           transaction.commit();
@@ -142,6 +144,31 @@ public class WorkspaceDAOImpl implements WorkspaceDAO {
       }
       return result;
     }
-    
+
+    @Override
+    public List<Workspace> getWorkspacesForUser(User u) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Workspace> result=null;
+        Transaction transaction=null;
+        String hql="Select w from Workspace w INNER JOIN w.userWorkspaceEntries uws"
+                 + "                           WHERE uws.pk.user = :usr";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("usr", u);
+            result=query.list();
+            
+            System.out.println("db.dao.WorkspaceDAOImpl.getWorkspacesForUser(): returning "+result.size()+" workspaces for user "+u.getInitials());
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+              
+    }
+
+   
     
 }
