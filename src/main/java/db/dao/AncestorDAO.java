@@ -8,6 +8,7 @@ package db.dao;
 import java.util.List;
 import db.model.Ancestor;
 import db.model.Job;
+import db.model.Subsurface;
 
 /**
  *
@@ -23,7 +24,7 @@ public interface AncestorDAO {
 
     public void clearTableForJob(Job dbjob);
     public Ancestor getAncestorFor(Job job,Job ancestor); 
-   
+   public List<Ancestor> getAncestorsForJobContainingSubsurface(Job job, Subsurface sub);
     
     
 }

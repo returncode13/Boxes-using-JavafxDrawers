@@ -5,9 +5,11 @@
  */
 package db.services;
 
+import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -23,6 +25,8 @@ public interface SubsurfaceService {
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface);
 
     public List<Subsurface> getSubsurfaceList();
+
+    public List<Subsurface> getSubsurfacesPresentInJob(Job parentJob);
     
     
 }

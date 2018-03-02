@@ -260,14 +260,14 @@ public class Job implements Serializable{
     this.logs = logs;
     }*/
 
-    
-     public Set<Subsurface> getSubsurfaces() {
+    /*
+    public Set<Subsurface> getSubsurfaces() {
     return subsurfaces;
     }
     
     public void setSubsurfaces(Set<Subsurface> subsurfaces) {
     this.subsurfaces = subsurfaces;
-    }
+    }*/
 
     /* public Set<VariableArgument> getVariableArguments() {
     return variableArguments;
@@ -277,13 +277,13 @@ public class Job implements Serializable{
     this.variableArguments = variableArguments;
     }*/
 
-    public Set<Doubt> getDoubts() {
-        return doubts;
+    /*public Set<Doubt> getDoubts() {
+    return doubts;
     }
-
+    
     public void setDoubts(Set<Doubt> doubts) {
-        this.doubts = doubts;
-    }
+    this.doubts = doubts;
+    }*/
 
     public Long getDepth() {
         return depth;
@@ -292,23 +292,24 @@ public class Job implements Serializable{
     public void setDepth(Long depth) {
         this.depth = depth;
     }
-
+    
+    /*
     public Set<Summary> getSummaries() {
-        return summaries;
+    return summaries;
     }
-
+    
     public void setSummaries(Set<Summary> summaries) {
-        this.summaries = summaries;
-    }
+    this.summaries = summaries;
+    }*/
 
    
-    public Set<SubsurfaceJob> getSubsurfaceJobs() {
-        return subsurfaceJobs;
+    /*public Set<SubsurfaceJob> getSubsurfaceJobs() {
+    return subsurfaceJobs;
     }
-
+    
     public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
-        this.subsurfaceJobs = subsurfaceJobs;
-    }
+    this.subsurfaceJobs = subsurfaceJobs;
+    }*/
     
     
     

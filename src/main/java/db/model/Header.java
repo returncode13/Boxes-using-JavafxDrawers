@@ -44,7 +44,7 @@ public class Header implements Serializable{
     
      
     
-    @OneToMany(mappedBy = "header",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "header")
     private Set<Log> logs;
     
     /*@OneToMany(mappedBy = "headers",cascade = CascadeType.ALL,orphanRemoval = true)

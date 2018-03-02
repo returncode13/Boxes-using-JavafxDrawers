@@ -13,9 +13,12 @@ import db.services.AcquisitionService;
 import db.services.AcquisitionServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,12 +38,15 @@ public class AcquisitionLoader {
     private AcquisitionService acquisitionService=new AcquisitionServiceImpl();
     private ObservableList<SequenceHeaders> sequenceHeaders=FXCollections.observableArrayList();
     private Map<Sequence,List<AcquisitionSubsurfaceHeaders>> lookupmap=new HashMap<>();
+    private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+    
     
     public AcquisitionLoader(JobType0Model job){
         this.job=job;
         Job dbjob=jobService.getJob(this.job.getId());
         List<Acquisition> acquisitions=acquisitionService.getEntireAcquistion();
-        Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+        //Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+         Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbjob));
         System.out.println("middleware.dugex.AcquisitionLoader.<init>(): "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
         for(Subsurface s:subsinJob){
             System.out.println(""+s.getSubsurface());

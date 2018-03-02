@@ -17,6 +17,8 @@ import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.LogService;
+import db.services.LogServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.WorkflowService;
@@ -64,6 +66,7 @@ public class LineTableController extends Stage{
     private HeaderService headerService=new HeaderServiceImpl();
     private Executor exec;  
     private WorkflowService workflowService=new WorkflowServiceImpl();
+    private LogService logservice=new LogServiceImpl();
     
      @FXML
     private JFXTreeTableView<SequenceHeaders> treetableView;
@@ -139,7 +142,8 @@ public class LineTableController extends Stage{
                     @Override
                     protected String call() throws Exception {
                         Header h=headerService.getHeader(id);
-                        Set<Log> logs=h.getLogs();
+                        //Set<Log> logs=h.getLogs();
+                        Set<Log> logs=new HashSet<>(logservice.getLogsFor(h));
 
                         for(Log l:logs){
                            VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath());

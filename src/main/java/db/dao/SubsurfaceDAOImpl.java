@@ -8,8 +8,10 @@ package db.dao;
 import db.model.Sequence;
 import db.model.Subsurface;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -159,6 +161,33 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
             session.close();
         }
         return result;
+    }
+
+    @Override 
+    public List<Subsurface> getSubsurfacesPresentInJob(Job job) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Subsurface> results=null;
+        String hql="Select s from Subsurface s INNER JOIN s.subsurfaceJobs sjs "
+                + "                            WHERE sjs.pk.job = :j";
+        try{
+          //  transaction=session.getTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            results=query.list();
+            System.out.println("db.dao.SubsurfaceDAOImpl.getSubsurfacesPresentInJob(): returning "+results.size()+" subsurfaces for job: "+job.getNameJobStep()+" ("+job.getId()+")");
+            /*if(!transaction.wasCommitted()){
+            transaction.commit();
+            }*/
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+                
+      
     }
     
 }

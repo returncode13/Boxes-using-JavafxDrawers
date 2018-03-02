@@ -232,7 +232,8 @@ public class TraceCellController {
              if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
                  model.setCellProperty(true);
                                 //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-                 DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                 //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                 DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
                  if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
                      model.setOverride(true);
                      
@@ -288,9 +289,10 @@ public class TraceCellController {
                 if(doubt!=null){
                     
                
-                        DoubtStatus ds=(new ArrayList<>(doubt.
-                                getDoubtStatuses()))
-                                .get(0);
+                    /* DoubtStatus ds=(new ArrayList<>(doubt.
+                    getDoubtStatuses()))
+                    .get(0);*/
+                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
                         OverrideModel ovrModel=new OverrideModel(model);
 
                         Link l=doubt.getLink();
@@ -380,7 +382,8 @@ public class TraceCellController {
                  
                  if(model.isInheritance()){
                      
-                   DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                  // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                  DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                    if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
                       /// System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting INHERITED_OVERRIDE");
                        traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_INHERITED_OVERRRIDE);
@@ -421,7 +424,8 @@ public class TraceCellController {
                                 Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                                 if(model.isInheritance()){
                                     //red4
-                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                                         String status=ds.getStatus();
                                             if(status.equals(DoubtStatusModel.OVERRIDE)){
                                                 //red5
@@ -447,7 +451,8 @@ public class TraceCellController {
                                 Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                                 if(model.isInheritance()){
                                     //red7
-                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                                         String status=ds.getStatus();
                                         if(status.equals(DoubtStatusModel.OVERRIDE)){
                                             //red8
@@ -467,7 +472,8 @@ public class TraceCellController {
                     Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                     if(model.isInheritance()){
                         //red9
-                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                         String status=ds.getStatus();
                         if(status.equals(DoubtStatusModel.OVERRIDE)){
                             //red10

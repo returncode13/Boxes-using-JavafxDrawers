@@ -252,19 +252,41 @@ public class AncestorServiceImpl implements AncestorService{
     
  @Override
     public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub) {
-        List<Ancestor> ancestorsForJob=ancDao.getAncestorFor(job);
+        /*List<Ancestor> ancestorsForJob=ancDao.getAncestorFor(job);
         System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of descendants for job "+job.getNameJobStep()+" size: "+ancestorsForJob.size());
         List<Ancestor> result=new ArrayList<>();
         for(Ancestor anc:ancestorsForJob){
-            Job ancJob=anc.getAncestor();
-            System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+ancJob.getNameJobStep()+" ==> "+ancJob.getSubsurfaces().size());
-            if(ancJob.getSubsurfaces().contains(sub)){
-                System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+ancJob.getNameJobStep());
-                result.add(anc);
-                        
-            }
+        Job ancJob=anc.getAncestor();
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+ancJob.getNameJobStep()+" ==> "+ancJob.getSubsurfaces().size());
+        if(ancJob.getSubsurfaces().contains(sub)){
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+ancJob.getNameJobStep());
+        result.add(anc);
+        
         }
-        return  result;
+        }
+        return  result;*/
+        
+        
+        /*   Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Ancestor> result=null;
+        Transaction transaction=null;
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hql="select d from Ancestor  d INNER JOIN d.job  dj INNER JOIN dj.subsurfaceJobs  djsj WHERE  djsj.pk.job =:jobAsked AND djsj.pk.subsurface =:subsurfaceAsked";
+        try{
+        transaction=session.beginTransaction();
+        Query query=session.createQuery(hql);
+        query.setParameter("jobAsked", job);
+        query.setParameter("subsurfaceAsked", sub);
+        result=query.list();
+        transaction.commit();
+        System.out.println("db.dao.DescendantDAOImpl.getDescendantsForJobContainingSubsurface(): returning result of size "+result.size());
+        }catch(Exception e){
+        e.printStackTrace();
+        }
+        return result;*/
+        
+        
+        return ancDao.getAncestorsForJobContainingSubsurface(job, sub);
     }
     
    

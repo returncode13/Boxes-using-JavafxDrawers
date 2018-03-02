@@ -17,6 +17,7 @@ import db.services.DoubtStatusServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.override.confirmation.OverrideConfirmationModel;
 import fend.summary.override.confirmation.OverrideConfirmationView;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
@@ -158,7 +159,8 @@ public class OverrideController extends Stage{
                         model.getCellModel().setOverride(false);
                         }*/
                         
-                            Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
+                           // Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
+                            Set<DoubtStatus> inhDoubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inhDoubt));
                                 for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
                                         System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
                                         inhDoubtStat.setStatus(status);

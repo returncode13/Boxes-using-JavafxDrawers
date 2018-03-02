@@ -14,6 +14,8 @@ import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.job.job0.JobType0Model;
@@ -40,7 +42,8 @@ public class HeaderLoader {
     private ObservableList<SubsurfaceHeaders> subsurfaceHeaders=FXCollections.observableArrayList();
     private ObservableList<SequenceHeaders> sequenceHeaders=FXCollections.observableArrayList();
     private Map<Sequence,List<SubsurfaceHeaders>> lookupmap=new HashMap<>();
-    
+     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+     
     public HeaderLoader(JobType0Model job) {
         this.job = job;
         //Job dbjob=jobService.getJob(this.job.getId());
@@ -55,7 +58,9 @@ public class HeaderLoader {
         //Set<Header> headersInJob=dbjob.getHeaders();
         Set<Header> headersInJob=new HashSet<>(headerService.getHeadersFor(dbjob));
         List<Volume0> feVolsInJob=job.getVolumes();
-        Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+       // Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+                Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbjob));
+
         System.out.println("middleware.dugex.HeaderLoader.<init>(): Listing all subs in the job.. "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
         for(Subsurface s:subsinJob){
             System.out.println(""+s.getSubsurface());

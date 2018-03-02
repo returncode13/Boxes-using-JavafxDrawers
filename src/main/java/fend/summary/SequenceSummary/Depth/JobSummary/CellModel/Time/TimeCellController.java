@@ -236,7 +236,8 @@ public class TimeCellController {
                // model.getJobSummaryModel().getFeModelTimeCellModel().setCellProperty(true);
                  
                                 //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-                 DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                 //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                 DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
                  if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
                      model.setOverride(true);
                  }else{
@@ -289,7 +290,8 @@ public class TimeCellController {
                 }
               // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
                 Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),timeDoubtType);
-                DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
                 OverrideModel ovrModel=new OverrideModel(model);
                 
                 Link l=doubt.getLink();
@@ -356,7 +358,8 @@ public class TimeCellController {
                  
                  if(model.isInheritance()){
                      
-                   DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                  // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                  DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                    if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
                       // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting INHERITED_OVERRIDE");
                        timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_INHERITED_OVERRRIDE);
@@ -397,7 +400,8 @@ public class TimeCellController {
                                 Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                                 if(model.isInheritance()){
                                     //red4
-                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                       // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                       DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                                         String status=ds.getStatus();
                                             if(status.equals(DoubtStatusModel.OVERRIDE)){
                                                 //red5
@@ -423,7 +427,8 @@ public class TimeCellController {
                                 Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                                 if(model.isInheritance()){
                                     //red7
-                                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                      //  DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                                      DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                                         String status=ds.getStatus();
                                         if(status.equals(DoubtStatusModel.OVERRIDE)){
                                             //red8
@@ -443,7 +448,8 @@ public class TimeCellController {
                     Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
                     if(model.isInheritance()){
                         //red9
-                        DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                         String status=ds.getStatus();
                         if(status.equals(DoubtStatusModel.OVERRIDE)){
                             //red10

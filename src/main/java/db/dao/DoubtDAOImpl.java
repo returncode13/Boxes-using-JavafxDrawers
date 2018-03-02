@@ -90,7 +90,7 @@ public class DoubtDAOImpl implements DoubtDAO{
             ll.setLink(newds.getLink());
             ll.setSubsurface(newds.getSubsurface());
             ll.setUser(newds.getUser());
-            ll.setDoubtStatuses(newds.getDoubtStatuses());
+            //ll.setDoubtStatuses(newds.getDoubtStatuses());
             ll.setInheritedDoubts(newds.getInheritedDoubts());
             ll.setDoubtCause(newds.getDoubtCause());
             ll.setSequence(newds.getSequence());

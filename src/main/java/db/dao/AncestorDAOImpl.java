@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
+import db.model.Subsurface;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,5 +187,26 @@ public class AncestorDAOImpl implements AncestorDAO{
       
     }
          
+    
+     @Override
+    public List<Ancestor> getAncestorsForJobContainingSubsurface(Job job, Subsurface sub) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Ancestor> result=null;
+        Transaction transaction=null;
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hql="select d from Ancestor  d INNER JOIN d.job  dj INNER JOIN dj.subsurfaceJobs  djsj WHERE  djsj.pk.job =:jobAsked AND djsj.pk.subsurface =:subsurfaceAsked";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("jobAsked", job);
+            query.setParameter("subsurfaceAsked", sub);
+            result=query.list();
+            transaction.commit();
+            System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface(): returning "+result.size()+" ancestors for job "+job.getId()+" containing sub : "+sub.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    } 
 
 }

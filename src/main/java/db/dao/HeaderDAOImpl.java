@@ -128,7 +128,7 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setTextfilepath(newH.getTextfilepath());
             h.setMultipleInstances(newH.getModified());
             h.setChosen(newH.getChosen());
-            h.setLogs(newH.getLogs());
+            //h.setLogs(newH.getLogs());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/

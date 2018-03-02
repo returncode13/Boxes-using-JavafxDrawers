@@ -7,6 +7,7 @@ package db.services;
 
 import db.dao.DoubtStatusDAO;
 import db.dao.DoubtStatusDAOImpl;
+import db.model.Doubt;
 import db.model.DoubtStatus;
 import java.util.List;
 
@@ -52,6 +53,11 @@ public class DoubtStatusServiceImpl implements DoubtStatusService{
     @Override
     public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted) {
         dsDao.deleteBulkDoubtStatus(idsOfDoubtStatusToBeDeleted);
+    }
+
+    @Override
+    public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt) {
+        return dsDao.getDoubtStatusForDoubt(doubt);
     }
     
 }

@@ -15,6 +15,8 @@ import db.model.Summary;
 import db.model.Workspace;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
+import db.services.DoubtStatusService;
+import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import db.services.JobService;
@@ -83,7 +85,7 @@ public class SummaryController extends Stage{
     private DoubtType insightDoubtType;
     private DoubtType inheritanceDoubtType;
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
-    
+    private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
     // @FXML
    // private TableView<SequenceSummary> table;
     
@@ -279,7 +281,9 @@ public class SummaryController extends Stage{
                         jsm.getTimeCellModel().setCellProperty(x.getTimeSummary());
                         if(x.getTimeSummary()){
                             Doubt d=doubtService.getDoubtFor(sub, job, timeDoubtType);
-                            DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                           // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                           
+                           DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
                             String state=ds.getState();
                              jsm.getTimeCellModel().setState(state);
                             String status=ds.getStatus();
@@ -293,7 +297,8 @@ public class SummaryController extends Stage{
                         jsm.getTraceCellModel().setCellProperty(x.getTraceSummary());
                         if(x.getTraceSummary()){
                             Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
-                            DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                           // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                           DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
                             String state=ds.getState();
                             jsm.getTraceCellModel().setState(state);
                             String status=ds.getStatus();
@@ -309,7 +314,8 @@ public class SummaryController extends Stage{
                         jsm.getQcCellModel().setCellProperty(x.getQcSummary());
                         if(x.getQcSummary()){
                             Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
-                            DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                            //DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                            DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
                             String state=ds.getState();
                             jsm.getQcCellModel().setState(state);
                             String status=ds.getStatus();

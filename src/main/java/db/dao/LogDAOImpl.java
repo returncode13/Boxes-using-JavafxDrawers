@@ -117,7 +117,7 @@ public class LogDAOImpl implements LogDAO{
         try{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Log.class);
-            criteria.add(Restrictions.eq("headers", h));
+            criteria.add(Restrictions.eq("header", h));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){

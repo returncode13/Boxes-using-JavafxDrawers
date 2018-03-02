@@ -25,6 +25,8 @@ public interface DoubtStatusService {
 
     public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted);
 
+    public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt);
+
   
     
 }

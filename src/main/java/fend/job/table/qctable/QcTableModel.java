@@ -13,12 +13,15 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.JobType0Model;
 import fend.job.table.qctable.seq.QcTableSequence;
 import fend.job.table.qctable.seq.sub.QcTableSubsurface;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -42,6 +45,7 @@ public class QcTableModel {
      private ObservableList<QcTableSequence> qctableSequences;
     private JobService jobService=new JobServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
 
     public QcTableModel(JobType0Model fejob) {
         this.fejob = fejob;
@@ -64,7 +68,8 @@ public class QcTableModel {
          //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModelParent with id: "+femod.getId()+" name: "+femod.getName().get());
         }
         
-        Set<Subsurface> subsinJob=parentJob.getSubsurfaces();
+        //Set<Subsurface> subsinJob=parentJob.getSubsurfaces();
+        Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(parentJob));
      //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+parentJob.getId()+" size: "+subsinJob.size());
         for(Subsurface s:subsinJob){
             Sequence seq=s.getSequence();

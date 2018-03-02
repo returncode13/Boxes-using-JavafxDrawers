@@ -7,6 +7,7 @@ package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
 import app.properties.AppProperties;
+import db.model.Doubt;
 import db.model.DoubtStatus;
 import java.util.List;
 import org.hibernate.Query;
@@ -168,6 +169,28 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<DoubtStatus> results=null;
+        String hql="from DoubtStatus ds where ds.doubt= :dbt";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("dbt", doubt);
+            results=query.list();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+        
     }
     
 }

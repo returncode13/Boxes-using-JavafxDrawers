@@ -7,6 +7,7 @@ package db.services;
 
 import db.dao.SubsurfaceDAO;
 import db.dao.SubsurfaceDAOImpl;
+import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
@@ -52,6 +53,11 @@ public class SubsurfaceServiceImpl implements SubsurfaceService{
     @Override
     public List<Subsurface> getSubsurfaceForSequence(Sequence seq) {
         return sDao.getSubsurfaceForSequence(seq);
+    }
+
+    @Override
+    public List<Subsurface> getSubsurfacesPresentInJob(Job parentJob) {
+        return sDao.getSubsurfacesPresentInJob(parentJob);
     }
     
 }
