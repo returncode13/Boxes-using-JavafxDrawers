@@ -240,7 +240,7 @@ public class DescendantDAOImpl implements DescendantDAO {
         Transaction transaction=null;
           System.out.println("db.dao.DescendantDAOImpl.getDescendantsSubsurfaceJobsForSummary()");
         
-        String hql="select d,ddsj from Descendant  d INNER JOIN d.descendant dd INNER JOIN dd.subsurfaceJobs ddsj"
+        String hql="select d,ddsj,dj from Descendant  d INNER JOIN d.descendant dd INNER JOIN dd.subsurfaceJobs ddsj"
                      + "                           INNER JOIN d.job dj      INNER JOIN dj.subsurfaceJobs djss"
                 
                      + "                           WHERE ddsj.pk.subsurface=djss.pk.subsurface"

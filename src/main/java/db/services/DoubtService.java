@@ -44,7 +44,7 @@ public interface DoubtService {
     public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
     public Doubt getCauseOfInheritedDoubtForType(Subsurface sub, Job job,DoubtType doubtType);             //return the doubt of type doubttype which resulted in an inherited doubt in job
     public List<Doubt> getDoubtFor(Subsurface sub, Job job);
-    public List<Doubt> getAllDoubtsFor(Workspace w);
+    public List<Doubt> getAllDoubtsExceptInheritanceFor(Workspace w);
 
     public void createBulkDoubts(List<Doubt> causes);
 
@@ -52,6 +52,8 @@ public interface DoubtService {
 
     public void deleteBulkDoubts(List<Long> doubtsToBeDeleted);
     public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W,DoubtType type);
+
+    public List<Doubt> getInheritedDoubtsForCause(Doubt doubt);
 
     
 }

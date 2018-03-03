@@ -39,6 +39,10 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
      @Override
     public void createBulkDoubtStatus(List<DoubtStatus> doubtStatuses) {
+        
+        if(doubtStatuses.isEmpty()){
+            return;
+        }
          System.out.println("db.dao.DoubtStatusDAOImpl.createBulkDoubtStatus()");
         int batchsize=Math.min(doubtStatuses.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -125,6 +129,9 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void updateBulkDoubtStatus(List<DoubtStatus> doubtStatusToBeUpdated) {
+        if(doubtStatusToBeUpdated.isEmpty()){
+            return;
+        }
         System.out.println("db.dao.DoubtStatusDAOImpl.updateBulkDoubtStatus()");
         int batchsize=Math.min(doubtStatusToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -149,6 +156,9 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
 
     @Override
     public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted) {
+        if(idsOfDoubtStatusToBeDeleted.isEmpty()){
+            return;
+        }
         //int batchsize=Math.min(doubtStatusToBeDeleted.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         System.out.println("db.dao.DoubtStatusDAOImpl.deleteBulkDoubtStatus()");
         if(idsOfDoubtStatusToBeDeleted.isEmpty()) return;

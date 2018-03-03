@@ -9,6 +9,7 @@ import db.dao.VariableArgumentDAO;
 import db.dao.VariableArgumentDAOImpl;
 import db.model.Dot;
 import db.model.VariableArgument;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -42,6 +43,11 @@ public class VariableArgumentServiceImpl implements VariableArgumentService{
     @Override
     public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot) {
         return vaDao.getVariableArgumentsForDot(dbDot);
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w) {
+        return vaDao.getVariableArgumentsForWorkspace(w);
     }
     
 }

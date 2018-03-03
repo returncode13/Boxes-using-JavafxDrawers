@@ -75,7 +75,8 @@ public class FormulaFieldModel {
         function.set(dbDot.getFunction());
         tolerance.set(dbDot.getTolerance()==null?0.0:dbDot.getTolerance());
         error.set(dbDot.getError()==null?0.0:dbDot.getError());
-        dbVariableArguments=dbDot.getVariableArguments();
+        //dbVariableArguments=dbDot.getVariableArguments();
+        dbVariableArguments=new HashSet<>(variableArgumentService.getVariableArgumentsForDot(dbDot));
         variableArgumentMap.clear();
         for(VariableArgument va:dbVariableArguments){
             variableArgumentMap.put(va.getVariable(), va.getArgument());

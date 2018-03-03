@@ -8,6 +8,7 @@ package db.dao;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Dot;
 import db.model.VariableArgument;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -103,6 +104,29 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
             
             transaction.commit();
             System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot(): returning "+results.size()+" variable Arguments for dot "+dbDot.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w) {
+         System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForWorkspace()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="select v from VariableArgument v INNER JOIN v.dot d WHERE d.workspace =:w";
+        List<VariableArgument> results=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w",w);
+            results=query.list();
+            
+            transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot(): returning "+results.size()+" variable Arguments for workspace "+w.getId());
         }catch(Exception e){
             e.printStackTrace();
         }finally{

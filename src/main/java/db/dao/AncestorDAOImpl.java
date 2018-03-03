@@ -223,7 +223,7 @@ public class AncestorDAOImpl implements AncestorDAO{
         Transaction transaction=null;
          System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface()");
         //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
-        String hql="select a,aasj from Ancestor  a INNER JOIN a.ancestor aa INNER JOIN aa.subsurfaceJobs aasj"
+        String hql="select a,aasj,aj from Ancestor  a INNER JOIN a.ancestor aa INNER JOIN aa.subsurfaceJobs aasj"
                      + "                           INNER JOIN a.job aj      INNER JOIN aj.subsurfaceJobs ajss"
                 
                      + "                           WHERE aasj.pk.subsurface=ajss.pk.subsurface"

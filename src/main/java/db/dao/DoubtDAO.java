@@ -47,7 +47,7 @@ public interface DoubtDAO {
     public List<Doubt> getDoubtFor(Sequence seq, Job job,DoubtType doubtType);
     public List<Doubt> getInheritedDoubtFor(Subsurface sub, Job job);
     public List<Doubt> getDoubtFor(Subsurface sub, Job job);
-    public List<Doubt> getAllDoubtsFor(Workspace w);
+    public List<Doubt> getAllDoubtsExceptInheritanceFor(Workspace w);
 
     public void createBulkDoubts(List<Doubt> doubts);
 
@@ -55,4 +55,7 @@ public interface DoubtDAO {
 
     public void deleteBulkDoubts(List<Long> doubtsToBeDeleted);
     public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W,DoubtType type);
+
+    public List<Doubt> getInheritedDoubtsForCause(Doubt cause);
+   
 }

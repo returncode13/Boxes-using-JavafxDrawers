@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXTextField;
 import db.model.Doubt;
 import db.model.DoubtStatus;
 import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
 import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
@@ -19,6 +20,7 @@ import fend.summary.override.confirmation.OverrideConfirmationModel;
 import fend.summary.override.confirmation.OverrideConfirmationView;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -39,7 +41,9 @@ public class OverrideController extends Stage{
     private OverrideModel model;
     private OverrideView view;
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
-
+    private DoubtService doubtService=new DoubtServiceImpl();
+    
+    
      @FXML
     private JFXTextArea userCommentTextArea;
 
@@ -147,7 +151,8 @@ public class OverrideController extends Stage{
                 
                 
                 Doubt doubt=ds.getDoubt();
-                Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
+                //Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
+                List<Doubt> inheritedDoubts=doubtService.getInheritedDoubtsForCause(doubt);
                 for (Iterator<Doubt> iterator = inheritedDoubts.iterator(); iterator.hasNext();) {
                     Doubt inhDoubt = iterator.next();
                     

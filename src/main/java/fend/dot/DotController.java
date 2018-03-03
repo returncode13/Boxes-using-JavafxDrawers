@@ -432,7 +432,8 @@ public class DotController extends Stage{
           variableArgumentMap=model.getVariableArgumentModel().getVariableArgumentMap();
           observableLhsArgs=model.getVariableArgumentModel().getObservableLhsArgs();
           observableRhsArgs=model.getVariableArgumentModel().getObservableRhsArgs();
-           dbVariableArguments=dbDot.getVariableArguments();
+          // dbVariableArguments=dbDot.getVariableArguments();
+          dbVariableArguments=new HashSet<>(variableArgumentService.getVariableArgumentsForDot(dbDot));
           setVariableArgumentMap();                        
           for (Map.Entry<String, Job> entry : variableArgumentMap.entrySet()) {
                     String variable = entry.getKey();

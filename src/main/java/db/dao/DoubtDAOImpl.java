@@ -112,6 +112,9 @@ public class DoubtDAOImpl implements DoubtDAO{
     
     @Override
     public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated) {
+        if(doubtsToBeUpdated.isEmpty()){
+            return;
+        }
         int batchsize=Math.min(doubtsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         System.out.println("db.dao.DoubtDAOImpl.updateBulkDoubts()");
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -168,6 +171,9 @@ public class DoubtDAOImpl implements DoubtDAO{
     
     @Override
     public void deleteBulkDoubts(List<Long> doubtsToBeDeletedIds) {
+        if(doubtsToBeDeletedIds.isEmpty()){
+            return;
+        }
         // int batchsize=Math.min(doubtsToBeDeleted.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         System.out.println("db.dao.DoubtDAOImpl.deleteBulkDoubts()");
         if(doubtsToBeDeletedIds.isEmpty()) return;
@@ -591,13 +597,13 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
 
     @Override
-    public List<Doubt> getAllDoubtsFor(Workspace w) {
+    public List<Doubt> getAllDoubtsExceptInheritanceFor(Workspace w) {
         System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         List<Doubt> result=null;
         Transaction transaction=null;
         //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
-        String hql="select d from Doubt  d INNER JOIN d.childJob  dj  WHERE  dj.workspace =:wrk";
+        String hql="select d from Doubt  d INNER JOIN d.dot  dt  WHERE  dt.workspace =:wrk";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
@@ -646,6 +652,27 @@ public class DoubtDAOImpl implements DoubtDAO{
         
         return result;
         
+    }
+
+    @Override
+    public List<Doubt> getInheritedDoubtsForCause(Doubt cause) {
+        System.out.println("db.dao.DoubtDAOImpl.getInheritedDoubtsForCause()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction=null;
+        String hql="from Doubt d where d.doubtCause =:c";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("c", cause);
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return result;
     }
 
     
