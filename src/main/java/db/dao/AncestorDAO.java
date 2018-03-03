@@ -9,6 +9,7 @@ import java.util.List;
 import db.model.Ancestor;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -25,6 +26,6 @@ public interface AncestorDAO {
     public void clearTableForJob(Job dbjob);
     public Ancestor getAncestorFor(Job job,Job ancestor); 
    public List<Ancestor> getAncestorsForJobContainingSubsurface(Job job, Subsurface sub);
-    
+    public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W); // Return all ancestors that contain the same subsurface as the job
     
 }

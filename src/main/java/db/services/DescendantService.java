@@ -9,6 +9,7 @@ import java.util.Set;
 import db.model.Descendant;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -24,5 +25,5 @@ public interface DescendantService {
     public List<Descendant> getDescendantsFor(Job job);
     public List<Descendant> getDescendantsForJobContainingSub(Job job,Subsurface sub);
     public Descendant getDescendantFor(Job job, Job descendant);
-   
+    public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W);// Return all descendants that contain the same subsurface as the job
 }

@@ -144,6 +144,11 @@ public class DoubtServiceImpl implements DoubtService{
         dsDAO.deleteBulkDoubts(doubtsToBeDeleted);
     }
 
+    @Override
+    public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W, DoubtType type) {
+        return dsDAO.getAllDoubtsJobsAndSubsurfacesFor(W, type);
+    }
+
     
     
 }

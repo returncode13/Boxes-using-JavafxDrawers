@@ -199,7 +199,8 @@ public class WorkspaceController {
     private   List<Long> idsOfCausalDoubtsToBeDeleted=new ArrayList<>();            //doubts that need to be deleted SECOND! ( used when a doubt was initially set but then the underlying condition is fixed before the next summary)
     private   List<Long> idsOfInheritedDoubtsToBeDeleted=new ArrayList<>();            //doubts that need to be deleted  FIRST( used when a doubt was initially set but then the underlying condition is fixed before the next summary)
     private   List<Long> idsOfDoubtStatusToBeDeleted=new ArrayList<>();            //doubtStatus that need to be deleted ( for deleted doubts)
-    
+    private   Map<AncestorKey,List<Ancestor>> ancestorMapForSummary=new HashMap<>();    // each key (job,sub) has a list of ancestors (jobs that contain the sub)
+    private   Map<DescendantKey,List<Descendant>> descendantMapForSummary = new HashMap<>(); // each key (job,sub) has a list of descendants (jobs that contain the sub)
     private double percentageOfProcessorsUsed=AppProperties.PERCENTAGE_OF_PROCESSORS_USED;
     
     
@@ -1092,10 +1093,10 @@ public class WorkspaceController {
 //                  System.out.println(g1Child.getId()%1000+" -A- "+feAncestorJob.getId()%1000);
                     System.out.println("fend.workspace.WorkspaceController.saveWorkspace(): Creating ancestor for job: " + dbjob.getNameJobStep() + " " + dbjob.getId() + " Ancestor: " + feAncestorJob.getNameproperty().get() + " " + feAncestorJob.getId());
 
-                    Job anc = jobService.getJob(feAncestorJob.getId());
+                    Job desc = jobService.getJob(feAncestorJob.getId());
                     Ancestor ancestor = new Ancestor();
                     ancestor.setJob(dbjob);
-                    ancestor.setAncestor(anc);
+                    ancestor.setAncestor(desc);
                     dbAncestors.add(ancestor);
 
                 }
@@ -1521,6 +1522,13 @@ public class WorkspaceController {
         subsurfaceLinkMap.clear();
         headerMap.clear();
         subsurfaceJobSummaryTimeMap.clear();
+        idsOfCausalDoubtsToBeDeleted.clear();
+        idsOfDoubtStatusToBeDeleted.clear();
+        idsOfInheritedDoubtsToBeDeleted.clear();
+        
+        ancestorMapForSummary.clear();
+        descendantMapForSummary.clear();
+        
         
         for (Summary summary : existingSummariesForWorkspace) {
           SummaryKey key=new SummaryKey();
@@ -1574,6 +1582,42 @@ public class WorkspaceController {
          System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Finished Building the map of subs of size: "+headerMap.size());
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory(): size of the subsurfaceLinkMap: "+subsurfaceLinkMap.values().size());
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory(): size of the headerMap        : "+headerMap.size());
+        
+        
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Fetching the list of ancestors for summary" );
+        List<Object[]> ancestorsForSummary=ancestorService.getAncestorsSubsurfaceJobsForSummary(dbWorkspace);
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Fetched "+ancestorsForSummary.size()+" ancestors for summary");
+        
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Fetching the list of descendants for summary" );
+        List<Object[]> descendantsForSummary=descendantService.getDescendantsSubsurfaceJobsForSummary(dbWorkspace);
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Fetched "+descendantsForSummary.size()+" descendants for summary");
+        
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Populating the ancestor Map");
+        for(Object[] ancestorForSummary : ancestorsForSummary){
+            SubsurfaceJob sj = (SubsurfaceJob) ancestorForSummary[1];
+            Ancestor anc=(Ancestor) ancestorForSummary[0];
+            AncestorKey key = generateAncestorKey(sj.getJob(), sj.getSubsurface());
+            if(!ancestorMapForSummary.containsKey(key)){
+                ancestorMapForSummary.put(key, new ArrayList<Ancestor>());
+                ancestorMapForSummary.get(key).add(anc);
+            }else{
+                ancestorMapForSummary.get(key).add(anc);
+            }
+        }
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" populated the ancestor Map");
+        System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Populating the Descendant Map");
+        for(Object[] descendantForSummary  : descendantsForSummary){
+            SubsurfaceJob sj = (SubsurfaceJob) descendantForSummary[1];
+            Descendant desc=(Descendant) descendantForSummary[0];
+            DescendantKey key = generateDescendantKey(sj.getJob(), sj.getSubsurface());
+            if(!descendantMapForSummary.containsKey(key)){
+                descendantMapForSummary.put(key, new ArrayList<Descendant>());
+                descendantMapForSummary.get(key).add(desc);
+            }else{
+                descendantMapForSummary.get(key).add(desc);
+            }
+        }
+        
         
         
         Map<String, Double> mapForVariableSetting = new HashMap<>();
@@ -1654,15 +1698,20 @@ public class WorkspaceController {
                 BigInteger creationTime=new BigInteger(l.getCreationTime());
                 BigInteger latestSummaryT=new BigInteger(latestSummaryTime);
                 if(creationTime.compareTo(latestSummaryT)==1){     //creation time is greater than the epoch summaryTime
-                    List<Ancestor> ancestorsThatContainSub=ancestorService.getAncestorsForJobContainingSub(l.getChild(), subb);
+                   // List<Ancestor> ancestorsThatContainSub=ancestorService.getAncestorsForJobContainingSub(l.getChild(), subb);
+                    AncestorKey ancestorKey=generateAncestorKey(l.getChild(), subb);
+                    List<Ancestor> ancestorsThatContainSub=ancestorMapForSummary.get(ancestorKey);
                             
                     inheritDoubtFromAncestors(l,subb, ancestorsThatContainSub);
                 }
                 
                 //dependency
-                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Getting descendants");
-               List<Descendant> descendantsThatContainSub=descendantService.getDescendantsForJobContainingSub(l.getChild(), subb);
-                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Got descendants");
+                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Getting descendants from the map");
+               //List<Descendant> descendantsThatContainSub=descendantService.getDescendantsForJobContainingSub(l.getChild(), subb);
+               
+               DescendantKey descendantKey=generateDescendantKey(l.getChild(), subb);
+                List<Descendant> descendantsThatContainSub=descendantMapForSummary.get(descendantKey);
+//                System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"   Got descendants");
                 System.out.println(".call(): size of descendants of job: id: "+l.getChild().getId()+" name: "+l.getChild().getNameJobStep()+" that contain: "+subb.getSubsurface()+" == "+descendantsThatContainSub.size());
                 Dot dot = l.getDot();                     //the dot to which the link belongs\\
                
@@ -2721,9 +2770,10 @@ public class WorkspaceController {
                  **/
     
     private void inheritDoubtFromAncestors(Link l,Subsurface sub, List<Ancestor> ancestorsThatContainSub) {
+        System.out.println("fend.workspace.WorkspaceController.inheritDoubtFromAncestors()  "+l.getId()+"  for sub "+sub.getSubsurface());
         for(Ancestor anc:ancestorsThatContainSub){
             List<Doubt> doubtsInAncestor=doubtService.getDoubtFor(sub, anc.getAncestor());
-            if(doubtsInAncestor==null) continue;    //no doubt in current anc for current sub. check next anc
+            if(doubtsInAncestor==null) continue;    //no doubt in current desc for current sub. check next desc
              SummaryKey summaryKey=generateSummaryKey(sub, anc.getAncestor());
              Summary summaryforCurrentJob;
                                     if(!summaryMap.containsKey(summaryKey)){
@@ -2883,7 +2933,7 @@ public class WorkspaceController {
      
      /**
       * 
-      * Keys for Doubt Map (summarizeInMemory())
+      *  Keys for Doubt Map (summarizeInMemory())
       **/
      
      
@@ -3008,6 +3058,79 @@ public class WorkspaceController {
         
     }
     
+    
+    
+    private class AncestorKey{
+        Job job;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 23 * hash + Objects.hashCode(this.job);
+            hash = 23 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final AncestorKey other = (AncestorKey) obj;
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+    }
+    
+    
+    private class DescendantKey{
+         Job job;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 23 * hash + Objects.hashCode(this.job);
+            hash = 23 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final AncestorKey other = (AncestorKey) obj;
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+        
+    }
      
      private SummaryKey generateSummaryKey(Subsurface sub,Job job){
          SummaryKey key=new SummaryKey();
@@ -3043,6 +3166,23 @@ public class WorkspaceController {
          return  key;
      }
      
+     
+     private AncestorKey generateAncestorKey(Job job,Subsurface sub){
+         AncestorKey key = new AncestorKey();
+         key.job=job;
+         key.subsurface=sub;
+         
+         return key;
+                
+     }
+     
+     private DescendantKey generateDescendantKey(Job job, Subsurface sub){
+         DescendantKey key = new DescendantKey();
+         key.job=job;
+         key.subsurface=sub;
+         
+         return key;
+     }
      
      private int processorsUsed() throws Exception{
         int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);

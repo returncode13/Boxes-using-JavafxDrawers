@@ -24,6 +24,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import db.dao.AncestorDAO;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -287,6 +288,11 @@ public class AncestorServiceImpl implements AncestorService{
         
         
         return ancDao.getAncestorsForJobContainingSubsurface(job, sub);
+    }
+
+    @Override
+    public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W) {
+        return ancDao.getAncestorsSubsurfaceJobsForSummary(W);
     }
     
    

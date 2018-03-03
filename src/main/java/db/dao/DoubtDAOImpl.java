@@ -597,7 +597,7 @@ public class DoubtDAOImpl implements DoubtDAO{
         List<Doubt> result=null;
         Transaction transaction=null;
         //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
-        String hql="select d from Doubt  d INNER JOIN d.dot  dt  WHERE  dt.workspace =:wrk";
+        String hql="select d from Doubt  d INNER JOIN d.childJob  dj  WHERE  dj.workspace =:wrk";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
@@ -609,9 +609,44 @@ public class DoubtDAOImpl implements DoubtDAO{
             
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
         }
         return result;
     } 
+
+    
+
+    @Override
+    public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W,DoubtType type) {
+        System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsJobsAndSubsurfacesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction =null;
+        String hql="select d from Doubt d INNER JOIN d.childJob dj"
+                + "                       INNER JOIN d.doubtType dt"
+                + "                       WHERE dt =:ty"
+                + "                         AND"
+                + "                             dj.workspace =:w";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
+            query.setParameter("ty", type);
+            result=query.list();
+            
+            transaction.commit();
+            System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsJobsAndSubsurfacesFor(): returing "+result.size()+" doubts for workspace "+W.getId()+" type: "+type.getName());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+            
+        }
+        
+        return result;
+        
+    }
 
     
     

@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Descendant;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -26,5 +27,5 @@ public interface DescendantDAO  {
     public Descendant getDescendantFor(Job job, Job descendant);
 
     public List<Descendant> getDescendantsForJobContainingSubsurface(Job job, Subsurface sub);
-    
+    public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W);// Return all descendants that contain the same subsurface as the job
 }

@@ -9,6 +9,7 @@ import app.connections.hibernate.HibernateUtil;
 import app.properties.AppProperties;
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -187,6 +188,31 @@ public class DoubtStatusDAOImpl implements DoubtStatusDAO{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
             query.setParameter("dbt", doubt);
+            results=query.list();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+        
+    }
+
+    @Override
+    public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W) {
+        System.out.println("db.dao.DoubtStatusDAOImpl.getAllDoubtStatusInWorkspace()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<DoubtStatus> results=null;
+        String hql="select ds from DoubtStatus ds INNER JOIN ds.doubt dbt"
+                + "                               INNER JOIN dbt.childJob cj"
+                + "                               WHERE cj.workspace = :w ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
             results=query.list();
             
             transaction.commit();

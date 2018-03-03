@@ -15,6 +15,7 @@ import java.util.Set;
 import db.model.Descendant;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -91,6 +92,11 @@ public class DescendantServiceImpl implements DescendantService{
     @Override
     public Descendant getDescendantFor(Job job, Job descendant) {
         return descDao.getDescendantFor(job, descendant);
+    }
+
+    @Override
+    public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W) {
+        return descDao.getDescendantsSubsurfaceJobsForSummary(W);
     }
     
 

@@ -2,6 +2,7 @@ package db.dao;
 
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
 import java.util.List;
 
 /*
@@ -27,4 +28,5 @@ public interface DoubtStatusDAO {
     public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted);
 
     public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt);
+    public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W);
 }

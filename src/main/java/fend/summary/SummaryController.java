@@ -5,6 +5,7 @@
  */
 package fend.summary;
 
+import app.properties.AppProperties;
 import db.model.Doubt;
 import db.model.DoubtStatus;
 import db.model.DoubtType;
@@ -43,6 +44,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +67,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -101,6 +105,12 @@ public class SummaryController extends Stage{
          qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
          insightDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
          inheritanceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+         Map<TimeJobSubKey,Doubt> timeDoubtMap=new HashMap<>();
+         Map<TraceJobSubKey,Doubt> traceDoubtMap=new HashMap<>();
+         Map<QcJobSubKey,Doubt> qcDoubtMap=new HashMap<>();
+         
+         
+         Map<Doubt,DoubtStatus> doubtStatusMap=new HashMap<>();
          
          Map<Sequence,SequenceSummary> seqSummaryMap=new HashMap<>();
          //first get a list of all the subsurfaces.
@@ -111,10 +121,49 @@ public class SummaryController extends Stage{
         } catch (Exception ex) {
             Logger.getLogger(SummaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+         
+         
+         Workspace workspace=this.model.getWorkspaceController().getModel().getWorkspace();
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Time doubts for workspace : "+workspace.getId());
+         List<Doubt> timeDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, timeDoubtType);
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+timeDoubtsInWorkspace.size()+"time related doubts");
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Trace doubts for workspace : "+workspace.getId());
+         List<Doubt> traceDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, traceDoubtType);
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+traceDoubtsInWorkspace.size()+"trace related doubts");
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Qc doubts for workspace : "+workspace.getId());
+         List<Doubt> qcDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, qcDoubtType);
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+qcDoubtsInWorkspace.size()+"qc related doubts");
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the time Map");
+            for(Doubt timeDoubt:timeDoubtsInWorkspace){
+                TimeJobSubKey timeKey=generateTimeJobSubKey(timeDoubt.getChildJob(), timeDoubt.getSubsurface());
+                timeDoubtMap.put(timeKey, timeDoubt);
+            }
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the time Map with "+timeDoubtMap.size());
+         
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the trace Map");
+            for(Doubt traceDoubt:traceDoubtsInWorkspace){
+                TraceJobSubKey traceKey=generateTraceJobSubKey(traceDoubt.getChildJob(), traceDoubt.getSubsurface());
+                traceDoubtMap.put(traceKey, traceDoubt);
+            }
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the trace Map with "+traceDoubtMap.size());
+         
+         
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the qc Map");
+            for(Doubt qcDoubt:qcDoubtsInWorkspace){
+                QcJobSubKey qcKey=generateQcJobSubKey(qcDoubt.getChildJob(), qcDoubt.getSubsurface());
+                qcDoubtMap.put(qcKey, qcDoubt);
+            }
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the qc Map with "+qcDoubtMap.size());
                     System.out.println("fend.summary.SummaryController.setModel(): building summary table");
 
-
+                    
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all doubt status for workspace");           
+         List<DoubtStatus> doubtstatusForWorkspace=doubtStatusService.getAllDoubtStatusInWorkspace(workspace);
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" fetched "+doubtstatusForWorkspace.size()+" doubtstatus entries for workspace");
+         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the doubtstatus map");
+         for (DoubtStatus doubtStatus : doubtstatusForWorkspace) {
+             doubtStatusMap.put(doubtStatus.getDoubt(), doubtStatus);
+         }
                    
                     Workspace dbWorkspace=workspaceService.getWorkspace(model.getWorkspaceController().getModel().getId());
                     List<Long> depths=jobService.getDepthOfGraph(dbWorkspace);
@@ -242,20 +291,20 @@ public class SummaryController extends Stage{
                     
                     List<Summary> summariesInWorkspace=summaryService.getSummariesFor(dbWorkspace);
                    //  Set<Summary> summariesInWorkspace=new LinkedHashSet<>(summaryService.getSummariesFor(dbWorkspace));
-                    System.out.println("fend.summary.SummaryController.setModel(): size of SummariesFromWorkspace: "+summariesInWorkspace.size());
+                   // System.out.println("fend.summary.SummaryController.setModel(): size of SummariesFromWorkspace: "+summariesInWorkspace.size());
                     for(Summary x:summariesInWorkspace){
                         Long depth=x.getDepth();
                         Sequence seq=x.getSequence();
                         Subsurface sub=x.getSubsurface();
                         Job job=x.getJob();
-                        System.out.println("fend.summary.SummaryController.setModel(): from summaries :");
+                        /*System.out.println("fend.summary.SummaryController.setModel(): from summaries :");
                         System.out.println("Seq: "+seq.getSequenceno());
                         System.out.println("Sub: "+sub.getSubsurface());
                         System.out.println("Dep: "+depth);
                         System.out.println("Job: "+job.getNameJobStep());
                         System.out.println("fend.summary.SummaryController.setModel(): size  of SeqsummaryMap.get("+seq.getSequenceno()+"): "+
-                                seqSummaryMap.get(seq).
-                                        getChildren().size());
+                        seqSummaryMap.get(seq).
+                        getChildren().size());*/
                         JobSummaryModel seqJsm=seqSummaryMap.get(seq).getDepth(depth).getJobSummaryModel(job);
                         seqJsm.setActive(true);
                         seqJsm.getTimeCellModel().setActive(true);
@@ -280,10 +329,13 @@ public class SummaryController extends Stage{
                         jsm.getTimeCellModel().setActive(true);
                         jsm.getTimeCellModel().setCellProperty(x.getTimeSummary());
                         if(x.getTimeSummary()){
-                            Doubt d=doubtService.getDoubtFor(sub, job, timeDoubtType);
+                           // Doubt d=doubtService.getDoubtFor(sub, job, timeDoubtType);
                            // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
+                           TimeJobSubKey timeKey=generateTimeJobSubKey(job, sub);
+                           Doubt d=timeDoubtMap.get(timeKey);
                            
-                           DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                          // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                          DoubtStatus ds=doubtStatusMap.get(d);
                             String state=ds.getState();
                              jsm.getTimeCellModel().setState(state);
                             String status=ds.getStatus();
@@ -296,9 +348,12 @@ public class SummaryController extends Stage{
                         jsm.getTraceCellModel().setActive(true);
                         jsm.getTraceCellModel().setCellProperty(x.getTraceSummary());
                         if(x.getTraceSummary()){
-                            Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
+                          //  Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
+                          TraceJobSubKey traceKey=generateTraceJobSubKey(job, sub);
+                          Doubt d=traceDoubtMap.get(traceKey);
                            // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
-                           DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                          // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                          DoubtStatus ds=doubtStatusMap.get(d);
                             String state=ds.getState();
                             jsm.getTraceCellModel().setState(state);
                             String status=ds.getStatus();
@@ -313,9 +368,12 @@ public class SummaryController extends Stage{
                         jsm.getQcCellModel().setActive(true);
                         jsm.getQcCellModel().setCellProperty(x.getQcSummary());
                         if(x.getQcSummary()){
-                            Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
+                           // Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
+                           QcJobSubKey qcKey=generateQcJobSubKey(job, sub);
+                           Doubt d=qcDoubtMap.get(qcKey);
                             //DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
-                            DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                           // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
+                           DoubtStatus ds=doubtStatusMap.get(d);
                             String state=ds.getState();
                             jsm.getQcCellModel().setState(state);
                             String status=ds.getStatus();
@@ -337,7 +395,7 @@ public class SummaryController extends Stage{
                         
                         jsm.setInheritance(x.getInheritanceSummary());
                         */
-                        System.out.println("fend.summary.SummaryController.setModel(): Changed flags on the jobsummary model for depth: "+depth+" job: "+job.getNameJobStep()+" seq: "+seq.getSequenceno()+" sub: "+sub.getSubsurface());
+                      //  System.out.println("fend.summary.SummaryController.setModel(): Changed flags on the jobsummary model for depth: "+depth+" job: "+job.getNameJobStep()+" seq: "+seq.getSequenceno()+" sub: "+sub.getSubsurface());
                     }
                     
          
@@ -517,4 +575,152 @@ public class SummaryController extends Stage{
         }
     };
     
+    
+    private class TimeJobSubKey{
+        Job job;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 29 * hash + Objects.hashCode(this.job);
+            hash = 29 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TimeJobSubKey other = (TimeJobSubKey) obj;
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+              
+    }
+    
+    
+    private class TraceJobSubKey{
+        Job job;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 97 * hash + Objects.hashCode(this.job);
+            hash = 97 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TraceJobSubKey other = (TraceJobSubKey) obj;
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+
+        
+        
+              
+    }
+    
+    
+    private class QcJobSubKey{
+        Job job;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 53 * hash + Objects.hashCode(this.job);
+            hash = 53 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final QcJobSubKey other = (QcJobSubKey) obj;
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+
+       
+        
+        
+              
+    }
+    
+    
+    private TimeJobSubKey generateTimeJobSubKey(Job job,Subsurface sub){
+        TimeJobSubKey key=new TimeJobSubKey();
+        key.job=job;
+        key.subsurface=sub;
+        
+        return key;
+    }
+    
+    
+    private TraceJobSubKey generateTraceJobSubKey(Job job,Subsurface sub){
+        TraceJobSubKey key=new TraceJobSubKey();
+        key.job=job;
+        key.subsurface=sub;
+        
+        return key;
+                
+    }
+    
+    private QcJobSubKey generateQcJobSubKey(Job job,Subsurface sub){
+        QcJobSubKey key=new QcJobSubKey();
+        key.job=job;
+        key.subsurface=sub;
+        
+        return key;
+                
+    }
+    
+     private String timeNow(){
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
 }

@@ -7,6 +7,7 @@ package db.services;
 
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -27,6 +28,6 @@ public interface DoubtStatusService {
 
     public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt);
 
-  
+   public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W);
     
 }

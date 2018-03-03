@@ -9,6 +9,7 @@ import app.connections.hibernate.HibernateUtil;
 import db.model.Descendant;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.Iterator;
 
 import java.util.List;
@@ -231,5 +232,34 @@ public class DescendantDAOImpl implements DescendantDAO {
         }
         return result;
     } 
+
+    @Override
+    public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        List<Object[]> result=null;
+        Transaction transaction=null;
+          System.out.println("db.dao.DescendantDAOImpl.getDescendantsSubsurfaceJobsForSummary()");
+        
+        String hql="select d,ddsj from Descendant  d INNER JOIN d.descendant dd INNER JOIN dd.subsurfaceJobs ddsj"
+                     + "                           INNER JOIN d.job dj      INNER JOIN dj.subsurfaceJobs djss"
+                
+                     + "                           WHERE ddsj.pk.subsurface=djss.pk.subsurface"
+                     + "                                     AND"
+                     + "                                 dj.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", W);
+            
+            result=query.list();
+            transaction.commit();
+           
+            System.out.println("db.dao.DescendantDAOImpl.getDescendantsSubsurfaceJobsForSummary(): returning "+result.size());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return result;
+        
+    }
     
 }

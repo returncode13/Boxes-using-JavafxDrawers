@@ -54,4 +54,5 @@ public interface DoubtDAO {
     public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated);
 
     public void deleteBulkDoubts(List<Long> doubtsToBeDeleted);
+    public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W,DoubtType type);
 }

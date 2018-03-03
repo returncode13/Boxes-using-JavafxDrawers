@@ -9,6 +9,7 @@ import db.dao.DoubtStatusDAO;
 import db.dao.DoubtStatusDAOImpl;
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -58,6 +59,11 @@ public class DoubtStatusServiceImpl implements DoubtStatusService{
     @Override
     public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt) {
         return dsDao.getDoubtStatusForDoubt(doubt);
+    }
+
+    @Override
+    public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W) {
+        return dsDao.getAllDoubtStatusInWorkspace(W);
     }
     
 }
