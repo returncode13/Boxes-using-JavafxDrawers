@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Link",schema = "obpmanager")
-public class Link {
+public class Link implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

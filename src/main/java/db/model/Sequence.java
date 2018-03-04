@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -23,7 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="sequence",schema="public")
-public class Sequence {
+public class Sequence implements Serializable {
 @Id
 @GeneratedValue
 private Long id;

@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.AssociationOverride;
@@ -30,7 +31,7 @@ import javax.persistence.Transient;
         @AssociationOverride(name="pk.subsurface",joinColumns = @JoinColumn(name="id"))
         })
 
-public class SubsurfaceJob {
+public class SubsurfaceJob implements Serializable {
     @EmbeddedId
     private SubsurfaceJobId pk=new SubsurfaceJobId();
     

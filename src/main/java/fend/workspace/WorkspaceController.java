@@ -1590,7 +1590,7 @@ public class WorkspaceController {
             InheritanceKey key=new InheritanceKey();
             key.job=inheritedDoubt.getChildJob();
             key.subsurface=inheritedDoubt.getSubsurface();
-            key.cause=inheritedDoubt.getDoubtCause();
+            key.causeDoubtType=inheritedDoubt.getDoubtCause().getDoubtType();
             
             inheritanceMap.put(key, inheritedDoubt);
             Doubt cause=inheritedDoubt.getDoubtCause();
@@ -1642,7 +1642,7 @@ public class WorkspaceController {
             DoubtType dbtype=doubtStatus.getDoubt().getDoubtType();
             if(dbtype.equals(doubtTypeInherit)){            //fill the inheritanceDoubtStatusMap
                 
-                    InheritanceKey ikey=generateInheritanceKey(doubtStatus.getDoubt().getChildJob(), doubtStatus.getDoubt().getSubsurface(), doubtStatus.getDoubt().getDoubtCause());
+                    InheritanceKey ikey=generateInheritanceKey(doubtStatus.getDoubt().getChildJob(), doubtStatus.getDoubt().getSubsurface(), doubtStatus.getDoubt().getDoubtCause().getDoubtType());
                     if(!inheritanceDoubtStatusMap.containsKey(ikey)){
                         inheritanceDoubtStatusMap.put(ikey, new ArrayList<>());
                         inheritanceDoubtStatusMap.get(ikey).add(doubtStatus);
@@ -2141,7 +2141,7 @@ public class WorkspaceController {
                             //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
                             //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
                             Set<DoubtStatus> inheritedDoubtStatusFromExisting=new HashSet<>();
-                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt.getDoubtType());
                             if(inheritanceDoubtStatusMap.containsKey(ikey)){    //replace by inheritDoubtStatusMap
                                 inheritedDoubtStatusFromExisting=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                             }
@@ -2169,7 +2169,7 @@ public class WorkspaceController {
                                  System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Deleting inherited id: "+inheritedDoubtE.getId());
                            // doubtService.deleteDoubt(inheritedDoubtE.getId());
                            idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtE.getId());
-                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt.getDoubtType());
                             inheritanceMap.remove(tobeDeleted);
                             tempArrayOfInhTobeDeleted.add(inheritedDoubtE);
                            
@@ -2321,7 +2321,7 @@ public class WorkspaceController {
                              //InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
                              
                             Set<DoubtStatus> inheritedDoubtStatusE=new HashSet<>();      //get all the doubtstatus belonging to this inheritance
-                             InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                             InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt.getDoubtType());
                           
                             if(inheritanceDoubtStatusMap.containsKey(ikey)){  //replace iwth inheritanceDoubtStatusMap
                                 inheritedDoubtStatusE=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
@@ -2355,7 +2355,7 @@ public class WorkspaceController {
                                 
                           //  doubtService.deleteDoubt(inheritedDoubtE.getId());
                           idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtE.getId());
-                          InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                          InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt.getDoubtType());
                             inheritanceMap.remove(tobeDeleted);
                             tempArrayOfInhTobeDeleted.add(inheritedDoubtE);
                          // inheritanceMap.remove(pkey);
@@ -2630,7 +2630,7 @@ public class WorkspaceController {
                                     //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
                                     //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
                                     Set<DoubtStatus> inheritedDoubtStatusFromPrev=new HashSet<>();
-                                    InheritanceKey ikey=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), inheritedDoubtP.getDoubtCause());
+                                    InheritanceKey ikey=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), inheritedDoubtP.getDoubtCause().getDoubtType());
                                             if(inheritanceDoubtStatusMap.containsKey(ikey)){    //replace with inheritanceDoubtStatusMap
                                                 inheritedDoubtStatusFromPrev=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                                             }
@@ -2662,7 +2662,7 @@ public class WorkspaceController {
 
                                     //doubtService.deleteDoubt(inheritedDoubtE.getId());
                                     idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtP.getId());
-                                    InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), previousErroneousDoubt);
+                                    InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), previousErroneousDoubt.getDoubtType());
                                          inheritanceMap.remove(tobeDeleted);
                                         tempArrayOfInhTobeDeleted.add(inheritedDoubtP);
                                    // inheritanceMap.remove(pkey);
@@ -2824,7 +2824,7 @@ public class WorkspaceController {
                             //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
                            // Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
                             Set<DoubtStatus> inheritedDoubtStatusFromExisting=new HashSet<>();  //use inheritanceDoubtStatusMap
-                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), inheritedDoubt.getDoubtCause());
+                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), inheritedDoubt.getDoubtCause().getDoubtType());
                                     
                             if(inheritanceDoubtStatusMap.containsKey(ikey)){
                                 inheritedDoubtStatusFromExisting=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
@@ -2855,7 +2855,7 @@ public class WorkspaceController {
                                  System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
                             //doubtService.deleteDoubt(inheritedDoubtE.getId());
                             idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubt.getId());
-                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), existingDoubt);
+                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), existingDoubt.getDoubtType());
                             inheritanceMap.remove(tobeDeleted);
                             tempArrayOfInhTobeDeleted.add(inheritedDoubt);
                             
@@ -2941,7 +2941,7 @@ public class WorkspaceController {
                     Doubt d;
                   // if((d=doubtService.getDoubtFor(subb, job, cause, doubtTypeInherit))==null){
                  //  DoubtKey pkey=generateDoubtKey(subb, job, dot, doubtTypeInherit);
-                 InheritanceKey key=generateInheritanceKey(job, subb, cause);
+                 InheritanceKey key=generateInheritanceKey(job, subb, cause.getDoubtType());
                  
                        if(!inheritanceMap.containsKey(key)){
                                 System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Creating a new INHERITANCE DOUBT for "+job.getNameJobStep()+" sub: "+subb.getSubsurface()+" cause: "+cause.getChildJob().getNameJobStep());
@@ -3202,7 +3202,7 @@ public class WorkspaceController {
                     continue;
                 }
                 
-                InheritanceKey key=generateInheritanceKey(l.getChild(), sub, cause);
+                InheritanceKey key=generateInheritanceKey(l.getChild(), sub, cause.getDoubtType());
                 if(!inheritanceMap.containsKey(key)){
                 //if((inheritedDoubtInCurrentJob=doubtService.getDoubtFor(sub, l.getChild(),cause, doubtTypeInherit))==null){
                     inheritedDoubtInCurrentJob=new Doubt();
@@ -3551,14 +3551,14 @@ public class WorkspaceController {
      private class InheritanceKey{
          Job job;
          Subsurface subsurface;
-         Doubt cause;
+         DoubtType causeDoubtType;
 
         @Override
         public int hashCode() {
-            int hash = 7;
-            hash = 71 * hash + Objects.hashCode(this.job);
-            hash = 71 * hash + Objects.hashCode(this.subsurface);
-            hash = 71 * hash + Objects.hashCode(this.cause);
+            int hash = 3;
+            hash = 19 * hash + Objects.hashCode(this.job);
+            hash = 19 * hash + Objects.hashCode(this.subsurface);
+            hash = 19 * hash + Objects.hashCode(this.causeDoubtType);
             return hash;
         }
 
@@ -3580,11 +3580,13 @@ public class WorkspaceController {
             if (!Objects.equals(this.subsurface, other.subsurface)) {
                 return false;
             }
-            if (!Objects.equals(this.cause, other.cause)) {
+            if (!Objects.equals(this.causeDoubtType, other.causeDoubtType)) {
                 return false;
             }
             return true;
         }
+
+      
          
          
      }
@@ -3641,11 +3643,11 @@ public class WorkspaceController {
      }
      
      
-     private InheritanceKey generateInheritanceKey(Job job,Subsurface sub,Doubt cause){
+     private InheritanceKey generateInheritanceKey(Job job,Subsurface sub,DoubtType causeDoubtType){
          InheritanceKey key =new InheritanceKey();
          key.job=job;
          key.subsurface=sub;
-         key.cause=cause;
+         key.causeDoubtType= causeDoubtType;
          
          return key;
                  
