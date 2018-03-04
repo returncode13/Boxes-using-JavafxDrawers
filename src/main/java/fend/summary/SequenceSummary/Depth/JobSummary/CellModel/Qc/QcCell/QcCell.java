@@ -5,6 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCell;
 
+import db.model.DoubtType;
 import db.model.Job;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellView;
@@ -27,11 +28,12 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
     Job job;
     String type=DoubtTypeModel.QC;
 
-    public QcCell(int depthId, Job jobkey) {
+    public QcCell(int depthId, Job jobkey,DoubtType qcType) {
         
        this.depthId=depthId;
        this.job=jobkey;
        model=new QcCellModel();
+       model.setCellDoubtType(qcType);
        view=new QcCellView(model);
         
     }

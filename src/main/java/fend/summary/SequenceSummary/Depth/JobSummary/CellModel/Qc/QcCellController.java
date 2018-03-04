@@ -69,8 +69,9 @@ public class QcCellController {
 
     
     public void setModel(QcCellModel item) {
-        qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC );
+        //qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC );
         model=item;
+        qcDoubtType=model.getCellDoubtType();
        
        
          if(model.isActive()){

@@ -81,7 +81,8 @@ public class TraceCellController {
           labelColor();
        
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
+        //traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
+        traceDoubtType=model.getCellDoubtType();
         
         model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
         

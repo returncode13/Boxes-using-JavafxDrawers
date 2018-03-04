@@ -69,9 +69,10 @@ public class TimeCellController {
 
     
     public void setModel(TimeCellModel item) {
-        timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+        
         model=item;
-       
+       //timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+       timeDoubtType=model.getCellDoubtType();
        
          if(model.isActive()){
         timeLabel.setDisable(false);

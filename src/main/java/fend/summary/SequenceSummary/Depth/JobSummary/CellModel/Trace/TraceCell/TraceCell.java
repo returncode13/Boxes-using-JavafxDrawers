@@ -5,6 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell;
 
+import db.model.DoubtType;
 import db.model.Job;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellView;
@@ -27,11 +28,12 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
     Job job;
     String type=DoubtTypeModel.TIME;
 
-    public TraceCell(int depthId, Job jobkey) {
+    public TraceCell(int depthId, Job jobkey,DoubtType traceType) {
         
        this.depthId=depthId;
        this.job=jobkey;
        model=new TraceCellModel();
+       model.setCellDoubtType(traceType);
        view=new TraceCellView(model);
         
     }

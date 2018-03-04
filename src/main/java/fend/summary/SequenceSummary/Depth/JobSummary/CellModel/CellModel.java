@@ -5,6 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel;
 
+import db.model.DoubtType;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -27,7 +28,8 @@ public interface CellModel {
     public void setInheritance(boolean value) ;
     public BooleanProperty inheritanceProperty();
     
-    
+    public DoubtType getCellDoubtType();
+    public void setCellDoubtType(DoubtType type);
     
     public boolean isOverride();    
     public void setOverride(boolean value); 

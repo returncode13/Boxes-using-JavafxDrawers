@@ -440,7 +440,7 @@ public class SummaryController extends Stage{
                 });
                 
                  //jobcolumn.setCellFactory(param->new JobSummaryCell(depthId,jobkey,this.model));
-                 timeColumn.setCellFactory(param->new TimeCell(depthId,jobkey));
+                 timeColumn.setCellFactory(param->new TimeCell(depthId,jobkey,timeDoubtType));
                  jobcolumn.getColumns().add(timeColumn);
                   //<==End of Time column
                   //Beginning Trace Column ==>
@@ -452,7 +452,7 @@ public class SummaryController extends Stage{
                        return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getTraceCellModel().isActive());
                     }
                 });
-                traceColumn.setCellFactory(param->new TraceCell(depthId,jobkey));
+                traceColumn.setCellFactory(param->new TraceCell(depthId,jobkey,traceDoubtType));
                  jobcolumn.getColumns().add(traceColumn);
                  
                  
@@ -467,7 +467,7 @@ public class SummaryController extends Stage{
                        return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getQcCellModel().isActive());
                     }
                 });
-                qcColumn.setCellFactory(param->new QcCell(depthId,jobkey));
+                qcColumn.setCellFactory(param->new QcCell(depthId,jobkey,qcDoubtType));
                  jobcolumn.getColumns().add(qcColumn);
                  
                  

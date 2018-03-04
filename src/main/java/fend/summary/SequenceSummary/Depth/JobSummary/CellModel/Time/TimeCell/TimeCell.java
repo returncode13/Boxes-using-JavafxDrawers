@@ -5,6 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell;
 
+import db.model.DoubtType;
 import db.model.Job;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellView;
@@ -26,11 +27,12 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
     Job job;
     String type=DoubtTypeModel.TIME;
 
-    public TimeCell(int depthId, Job jobkey) {
+    public TimeCell(int depthId, Job jobkey,DoubtType timeDoubtType) {
         
        this.depthId=depthId;
        this.job=jobkey;
        model=new TimeCellModel();
+       model.setCellDoubtType(timeDoubtType);
        view=new TimeCellView(model);
         
     }

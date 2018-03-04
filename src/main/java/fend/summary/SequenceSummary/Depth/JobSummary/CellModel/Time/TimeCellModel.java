@@ -5,6 +5,7 @@
  */
 package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time;
 
+import db.model.DoubtType;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
@@ -30,6 +31,7 @@ public class TimeCellModel implements CellModel{
     private final BooleanProperty inheritance = new SimpleBooleanProperty(false);                                   //inheritance=true  => inherited DOUBT  . inheritance=false ==> inherited OVERRIDE
     private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?
 
+    private DoubtType cellDoubtType;
     
     private JobSummaryModel jobSummaryModel;
     private final BooleanProperty showOverride = new SimpleBooleanProperty();                                       //used to show the override dialog in the TimeCellController
@@ -153,4 +155,13 @@ public class TimeCellModel implements CellModel{
         return showOverride;
     }
     
+     @Override
+    public DoubtType getCellDoubtType() {
+        return this.cellDoubtType;
+    }
+
+    @Override
+    public void setCellDoubtType(DoubtType type) {
+        cellDoubtType=type;
+    }
 }
