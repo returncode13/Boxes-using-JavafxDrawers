@@ -185,7 +185,8 @@ public class WorkspaceController {
     private ExecutorService execService;
     
     
-    private   Map<Doubt,List<DoubtStatus>> doubtDoubtStatusMap=new HashMap<>();            //map of doubts and its associated doubt statuses
+    private   Map<DoubtKey,List<DoubtStatus>> causeDoubtStatusMap=new HashMap<>();            //map of doubts and its associated doubt statuses. This includes all types of doubts excluding INHERITANCE
+    private   Map<InheritanceKey,List<DoubtStatus>> inheritanceDoubtStatusMap=new HashMap<>(); //map of inherited doubts and their doubt statuses.
     private   Map<Doubt,List<Doubt>> causeAndAssociatedInheritanceMap=new HashMap<>();    //map between cause and its list of inherited doubts
     private   Map<InheritanceKey,Doubt> inheritanceMap=new HashMap<>();                 //unique identifier of each inherited doubt (Job, Sub, Cause)
     private   Map<Dot,List<VariableArgument>> variableArgumentMap=new HashMap<>();
@@ -193,21 +194,21 @@ public class WorkspaceController {
     private   Map<Subsurface,Set<Link>> subsurfaceLinkMap=new HashMap<>();
     private   Map<HeaderKey,Header> headerMap=new HashMap<>(); 
     private   Map<SummaryKey,Summary> summaryMap=new HashMap<>();                 //used to check if an entry exists in the database
-    private   Map<DoubtKey,Doubt> causeDoubtMap=new HashMap<>();                       //used to check if an entry exists in the database (ONLY non inheritance types)
+    private   Map<DoubtKey,Doubt> causeDoubtMap=new HashMap<>();                       //used to check if an entry exists in the database (ONLY non inherited doubts)
         
     private   List<Summary> newSummaries=new ArrayList<>();   //summaries that will be created in the database
     private   List<Summary> summariesToBeUpdated=new ArrayList<>();  //existing summaries that need to be updated;
-    private   List<Doubt> causes=new ArrayList<>();           //doubts that will be created in the database
-    private   List<Doubt> doubtsToBeUpdated=new ArrayList<>();  //doubts to be updated
+    private   List<Doubt> newCausesToBeAdded=new ArrayList<>();           //doubts that will be created in the database
+    //private   List<Doubt> doubtsToBeUpdated=new ArrayList<>();  //doubts to be updated
     private   List<DoubtStatus> doubtStatusForCause=new ArrayList<>();    //doubtstatus that will be created in the database
     private   List<DoubtStatus> doubtStatusToBeUpdated=new ArrayList<>();    //doubtstatus to be updated
-    private   List<Doubt> inheritedDoubts=new ArrayList<>();          //inherited doubts created AFTER causes
+    private   List<Doubt> inheritedDoubts=new ArrayList<>();          //inherited doubts created AFTER newCausesToBeAdded
     private   List<DoubtStatus> inheritedDoubtStatus=new ArrayList<>();   //inherited doubtstatus...redundant?
     private   List<Long> idsOfCausalDoubtsToBeDeleted=new ArrayList<>();            //doubts that need to be deleted SECOND! ( used when a doubt was initially set but then the underlying condition is fixed before the next summary)
     private   List<Long> idsOfInheritedDoubtsToBeDeleted=new ArrayList<>();            //doubts that need to be deleted  FIRST( used when a doubt was initially set but then the underlying condition is fixed before the next summary)
     private   List<Long> idsOfDoubtStatusToBeDeleted=new ArrayList<>();            //doubtStatus that need to be deleted ( for deleted doubts)
-    private   Map<AncestorKey,List<Ancestor>> ancestorMapForSummary=new HashMap<>();    // each key (job,sub) has a list of ancestors (jobs that contain the sub)
-    private   Map<DescendantKey,List<Descendant>> descendantMapForSummary = new HashMap<>(); // each key (job,sub) has a list of descendants (jobs that contain the sub)
+    private   Map<AncestorKey,List<Ancestor>> ancestorMapForSummary=new HashMap<>();    // each pkey (job,sub) has a list of ancestors (jobs that contain the sub)
+    private   Map<DescendantKey,List<Descendant>> descendantMapForSummary = new HashMap<>(); // each pkey (job,sub) has a list of descendants (jobs that contain the sub)
     private double percentageOfProcessorsUsed=AppProperties.PERCENTAGE_OF_PROCESSORS_USED;
     
     
@@ -541,9 +542,9 @@ public class WorkspaceController {
                 System.out.println("fend.workspace.WorkspaceController.getSummary(): function: " + function);
                 System.out.println("fend.workspace.WorkspaceController.getSummary(): setting var-args");
                 for (Map.Entry<String, Double> entry : mapForVariableSetting.entrySet()) {
-                    String key = entry.getKey();
+                    String pkey = entry.getKey();
                     Double value = entry.getValue();
-                    System.out.println(key + " = " + value);
+                    System.out.println(pkey + " = " + value);
                 }
 
                 Expression e = new ExpressionBuilder(function)
@@ -1531,15 +1532,20 @@ public class WorkspaceController {
         
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" retrieved "+inheritanceDoubtsInWorkspace.size()+ " inheritance doubts");
         
-        doubtDoubtStatusMap.clear();
+        
+        
+       
+        
+        inheritanceDoubtStatusMap.clear();
+        causeDoubtStatusMap.clear();
         causeAndAssociatedInheritanceMap.clear();
         inheritanceMap.clear(); 
         summaryMap.clear(); 
         causeDoubtMap.clear();
         newSummaries.clear();
         summariesToBeUpdated.clear();
-        causes.clear();
-        doubtsToBeUpdated.clear();
+        newCausesToBeAdded.clear();
+//        doubtsToBeUpdated.clear();
         doubtStatusForCause.clear();
         doubtStatusToBeUpdated.clear();
         inheritedDoubts.clear();
@@ -1547,6 +1553,8 @@ public class WorkspaceController {
         subsurfaceLinkMap.clear();
         headerMap.clear();
         subsurfaceJobSummaryTimeMap.clear();
+        
+        
         idsOfCausalDoubtsToBeDeleted.clear();
         idsOfDoubtStatusToBeDeleted.clear();
         idsOfInheritedDoubtsToBeDeleted.clear();
@@ -1600,16 +1608,27 @@ public class WorkspaceController {
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Building the elements map");
         
         for(Object[] element: elementsToSummarize){
-            SubsurfaceJob sj=(SubsurfaceJob) element[1];
+            SubsurfaceJob sjc=(SubsurfaceJob) element[2];
+            SubsurfaceJob sjp=(SubsurfaceJob) element[1];
             Link value=(Link) element[0];
-            Subsurface key=sj.getSubsurface(); 
-            if(!subsurfaceLinkMap.containsKey(key)){
-                subsurfaceLinkMap.put(key, new HashSet<>());
-                subsurfaceLinkMap.get(key).add(value);
+            /* Subsurface pkey=sjp.getSubsurface();
+            if(!subsurfaceLinkMap.containsKey(pkey)){
+            subsurfaceLinkMap.put(pkey, new HashSet<>());
+            subsurfaceLinkMap.get(pkey).add(value);
             }else{
-                subsurfaceLinkMap.get(key).add(value);
+            subsurfaceLinkMap.get(pkey).add(value);
+            }*/
+            
+             Subsurface ckey=sjc.getSubsurface(); 
+            if(!subsurfaceLinkMap.containsKey(ckey)){
+                subsurfaceLinkMap.put(ckey, new HashSet<>());
+                subsurfaceLinkMap.get(ckey).add(value);
+            }else{
+                subsurfaceLinkMap.get(ckey).add(value);
             }
-            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sj.getJob(), sj.getSubsurface()), sj);
+            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjp.getJob(), sjp.getSubsurface()), sjp);
+            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjc.getJob(), sjc.getSubsurface()), sjc);
+            
         }
         
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Retrieving all doubtstatus for this workspace");
@@ -1618,12 +1637,31 @@ public class WorkspaceController {
         System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() : "+timeNow()+" Retrieved "+doubstatusForWorkspace.size()+" doubtstatus for this workspace");
         
         for(DoubtStatus doubtStatus:doubstatusForWorkspace){
-            Doubt key=doubtStatus.getDoubt();
-            if(!doubtDoubtStatusMap.containsKey(key)){
-                doubtDoubtStatusMap.put(key, new ArrayList<DoubtStatus>());
-                doubtDoubtStatusMap.get(key).add(doubtStatus);
-            }else{
-                doubtDoubtStatusMap.get(key).add(doubtStatus);
+            //Doubt key=doubtStatus.getDoubt();
+            
+            DoubtType dbtype=doubtStatus.getDoubt().getDoubtType();
+            if(dbtype.equals(doubtTypeInherit)){            //fill the inheritanceDoubtStatusMap
+                
+                    InheritanceKey ikey=generateInheritanceKey(doubtStatus.getDoubt().getChildJob(), doubtStatus.getDoubt().getSubsurface(), doubtStatus.getDoubt().getDoubtCause());
+                    if(!inheritanceDoubtStatusMap.containsKey(ikey)){
+                        inheritanceDoubtStatusMap.put(ikey, new ArrayList<>());
+                        inheritanceDoubtStatusMap.get(ikey).add(doubtStatus);
+                        
+                    }else{
+                        inheritanceDoubtStatusMap.get(ikey).add(doubtStatus);
+                    }
+            }else{                                          //fill the causeDoubtStatusMap
+                
+            
+            
+            
+                    DoubtKey key=generateDoubtKey(doubtStatus.getDoubt().getSubsurface(), doubtStatus.getDoubt().getChildJob(), doubtStatus.getDoubt().getDot(), doubtStatus.getDoubt().getDoubtType());
+                    if(!causeDoubtStatusMap.containsKey(key)){
+                        causeDoubtStatusMap.put(key, new ArrayList<>());
+                        causeDoubtStatusMap.get(key).add(doubtStatus);
+                    }else{
+                        causeDoubtStatusMap.get(key).add(doubtStatus);
+                    }
             }
         }
         
@@ -1741,6 +1779,7 @@ public class WorkspaceController {
                                         System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Creating summary for "+summary.getId());
                                         //summaryService.createSummary(summary);
                                         newSummaries.add(summary);
+                                        summaryMap.put(summaryKey, summary);
                                         System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Created summary for "+summary.getId());
                                     }
                 //if ((summaryforCurrentJob = summaryService.getSummaryFor(subb.getSequence(), l.getChild())) == null) {             //create an entry for child summaryforCurrentJob 
@@ -1755,6 +1794,7 @@ public class WorkspaceController {
                                          System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Creating summary for "+summary.getId());
                                         //summaryService.createSummary(summary);
                                         newSummaries.add(summary);
+                                        summaryMap.put(summaryKey, summary);
                                         System.out.println("fend.workspace.WorkspaceController.summarize(): "+timeNow()+"    Created summary for "+summary.getId());
                                     }else{
                                         summary=summaryMap.get(summaryKey);
@@ -1794,7 +1834,7 @@ public class WorkspaceController {
                
                     checkForDependencyDoubts(l,dot,mapForVariableSetting,variableSet,argumentSet,subb,summary,descendantsThatContainSub);
                    // checkForQcDoubts(l,dot,subb,summary,descendantsThatContainSub);
-                //    checkForTimeDoubts(l, dot, subb, summary,descendantsThatContainSub);
+                    checkForTimeDoubts(l, dot, subb, summary,descendantsThatContainSub);
                     
                 //summaryService.updateSummary(summary.getId(), summary);
                 summariesToBeUpdated.add(summary);
@@ -1834,11 +1874,14 @@ public class WorkspaceController {
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory(): size of lists: ");
                 System.out.println("        summaries to be created: "+newSummaries.size());
                 System.out.println("        summaries to be updated: "+summariesToBeUpdated.size());
-                System.out.println("        doubts    to be created: "+causes.size());
+                System.out.println("        doubts    to be created: "+newCausesToBeAdded.size());
                 System.out.println("inherited  doubts to be created: "+inheritedDoubts.size());
-                System.out.println("           doubts to be updated: "+doubtsToBeUpdated.size());
+//                System.out.println("           doubts to be updated: "+doubtsToBeUpdated.size());
                 System.out.println("       doubstatus to be created: "+doubtStatusForCause.size());
                 System.out.println("       doubstatus to be updated: "+doubtStatusToBeUpdated.size()); 
+                System.out.println("       doubstatus to be created: "+doubtStatusForCause.size());
+                System.out.println("inh    doubstatus to be created: "+inheritedDoubtStatus.size()); 
+                
                 System.out.println("       doubstatus to be deleted: "+idsOfDoubtStatusToBeDeleted.size()); 
                 System.out.println("           doubts to be deleted: "+idsOfCausalDoubtsToBeDeleted.size());
                 System.out.println("inherited  doubts to be deleted: "+idsOfInheritedDoubtsToBeDeleted.size());
@@ -1851,15 +1894,29 @@ public class WorkspaceController {
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updating "+summariesToBeUpdated.size()+" summaries");
                 summaryService.updateBulkSummaries(summariesToBeUpdated);
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updated "+summariesToBeUpdated.size()+" summaries");
-                System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Creating "+causes.size()+" doubts");
-                doubtService.createBulkDoubts(causes);
-                System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Created "+causes.size()+" doubts");
+                System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Creating "+newCausesToBeAdded.size()+" doubts");
+              
+                
+                execService=Executors.newFixedThreadPool(processorsUsed());
+                
+                Callable<String> cdoubtCallable=new Callable<String>(){
+                        @Override
+                        public String call() throws Exception {
+                            doubtService.createBulkDoubts(newCausesToBeAdded);
+                            System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Created "+newCausesToBeAdded.size()+" doubts");
+                            return "Finished creating all causal doubts ";
+                        }
+
+                };
+                Future<String> future=execService.submit(cdoubtCallable);
+                String result=future.get();
+                
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Creating "+inheritedDoubts.size()+" Inherited doubts");
                 doubtService.createBulkDoubts(inheritedDoubts);
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Created "+inheritedDoubts.size()+" Inherited doubts");
-                System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updating "+doubtsToBeUpdated.size()+"  doubts");
-                doubtService.updateBulkDoubts(doubtsToBeUpdated);
-                System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updated "+doubtsToBeUpdated.size()+"  doubts");
+           //     System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updating "+doubtsToBeUpdated.size()+"  doubts");
+           //     doubtService.updateBulkDoubts(doubtsToBeUpdated);
+            //    System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Updated "+doubtsToBeUpdated.size()+"  doubts");
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Creating "+doubtStatusForCause.size()+"  doubt status for cause");
                 doubtStatusService.createBulkDoubtStatus(doubtStatusForCause);
                 System.out.println("fend.workspace.WorkspaceController.summarizeInMemory() "+timeNow()+" Created "+doubtStatusForCause.size()+"  doubt status for cause");
@@ -1956,9 +2013,9 @@ public class WorkspaceController {
                 System.out.println(".call(): size of descendants of job: id: "+l.getChild().getId()+" name: "+l.getChild().getNameJobStep()+" that contain: "+subb.getSubsurface()+" == "+descendantsThatContainSub.size());
                 Dot dot = l.getDot();                     //the dot to which the link belongs\\
                
-                    checkForDependencyDoubts(l,dot,mapForVariableSetting,variableSet,argumentSet,subb,summary,descendantsThatContainSub);
+                   // checkForDependencyDoubts(l,dot,mapForVariableSetting,variableSet,argumentSet,subb,summary,descendantsThatContainSub);
                     //checkForQcDoubts(l,dot,subb,summary,descendantsThatContainSub);
-                    checkForTimeDoubts(l, dot, subb, summary,descendantsThatContainSub);
+                   // checkForTimeDoubts(l, dot, subb, summary,descendantsThatContainSub);
                     
                 summaryService.updateSummary(summary.getId(), summary);
             }
@@ -1997,7 +2054,10 @@ public class WorkspaceController {
                         doubt.setDoubtType(doubtTypeTime);
                         //doubt.setUser(user);
                       //  doubtService.createDoubt(doubt);
-                        causes.add(doubt);
+                        newCausesToBeAdded.add(doubt);
+                        causeDoubtMap.put(key, doubt);
+                        
+                        
                         summary.setTimeSummary(true);
                         DoubtStatus doubtStatus = new DoubtStatus();
                         doubtStatus.setReason(DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName()));
@@ -2008,6 +2068,13 @@ public class WorkspaceController {
                         //doubtStatus.setUser(user);
                        // doubtStatusService.createDoubtStatus(doubtStatus);
                        doubtStatusForCause.add(doubtStatus);
+                       if(!causeDoubtStatusMap.containsKey(key)){
+                           causeDoubtStatusMap.put(key, new ArrayList<>());
+                           causeDoubtStatusMap.get(key).add(doubtStatus);
+                       }else{
+                           causeDoubtStatusMap.get(key).add(doubtStatus);
+                       }
+                       
                         doubt.addToDoubtStatuses(doubtStatus);
                        // doubtService.updateDoubt(doubt.getId(), doubt);
                        //doubtsToBeUpdated.add(doubt);
@@ -2020,8 +2087,8 @@ public class WorkspaceController {
                         //Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                         //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(doubt));
                         Set<DoubtStatus> doubtStatuses=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(doubt)){
-                                doubtStatuses=new HashSet<>(doubtDoubtStatusMap.get(doubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatuses=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
                         summary.setTimeSummary(true);
                         for (DoubtStatus d : doubtStatuses) {
@@ -2035,7 +2102,7 @@ public class WorkspaceController {
                     System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts()");
                     System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts() "+l.getParent().getNameJobStep()+ "<----->"+l.getChild().getNameJobStep()+" has passed the check for time. Checking for any existing doubt entries..so as to clear them");
                     Doubt existingDoubt;
-                    DoubtKey key=generateDoubtKey(subb, hchild, dot, doubtTypeTime);
+                    DoubtKey key=generateDoubtKey(subb, l.getChild(), dot, doubtTypeTime);
                     //if((existingDoubt=doubtService.getDoubtFor(subb, l.getChild(), dot, doubtTypeTime))==null){
                     if(!causeDoubtMap.containsKey(key)){
                         //do nothing ..as no doubt exists
@@ -2047,56 +2114,77 @@ public class WorkspaceController {
                         //Set<DoubtStatus> doubtStatus=existingDoubt.getDoubtStatuses();                                                   //level O-2
                        // Set<DoubtStatus> doubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(existingDoubt));
                        Set<DoubtStatus> doubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(existingDoubt)){
-                                doubtStatus=new HashSet<>(doubtDoubtStatusMap.get(existingDoubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatus=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
+                            List<DoubtStatus> tempDel=new ArrayList<>();
                         for(DoubtStatus doubtStat:doubtStatus){
                             System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): deleting doubtstatus: "+doubtStat.getId() );
                          //   doubtStatusService.deleteDoubtStatus(doubtStat.getId());
                          idsOfDoubtStatusToBeDeleted.add(doubtStat.getId());
+                         tempDel.add(doubtStat);
+                         
                         }
+                        causeDoubtStatusMap.get(key).removeAll(tempDel);
                         System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): all doubtstatus messages related to "+existingDoubt.getId()+" have now been deleted.");
                         System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+existingDoubt.getId());
                         
-                       // Set<Doubt> inheritedDoubts=existingDoubt.getInheritedDoubts();
-                       List<Doubt> inheritedDoubts=new ArrayList<>();
+                       // Set<Doubt> inheritedFromExistingDoubts=existingDoubt.getInheritedDoubts();
+                       List<Doubt> inheritedFromExistingDoubts=new ArrayList<>();
                        if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
-                           inheritedDoubts=causeAndAssociatedInheritanceMap.get(existingDoubt);
+                           inheritedFromExistingDoubts=causeAndAssociatedInheritanceMap.get(existingDoubt);
                        }
-                              
-                        for(Doubt inheritedDoubt:inheritedDoubts){
-                            System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+existingDoubt.getId());
+                               List<Doubt> tempArrayOfInhTobeDeleted=new ArrayList<>();
+                        for(Doubt inheritedDoubtE:inheritedFromExistingDoubts){
+                            System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): found inherited doubt id: "+inheritedDoubtE.getId()+" with existingCause Id: "+existingDoubt.getId());
                             
-                            //Set<DoubtStatus> doubtStatuses=inheritedDoubt.getDoubtStatuses();
-                            //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubt));
-                            Set<DoubtStatus> inheritedDoubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(inheritedDoubt)){
-                                inheritedDoubtStatus=new HashSet<>(doubtDoubtStatusMap.get(inheritedDoubt));
+                            //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
+                            //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
+                            Set<DoubtStatus> inheritedDoubtStatusFromExisting=new HashSet<>();
+                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                            if(inheritanceDoubtStatusMap.containsKey(ikey)){    //replace by inheritDoubtStatusMap
+                                inheritedDoubtStatusFromExisting=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                             }
-                                for(DoubtStatus inhdbt:inheritedDoubtStatus){
-                                    System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
+                            List<DoubtStatus> temL=new ArrayList<>();
+                                for(DoubtStatus inhdbt:inheritedDoubtStatusFromExisting){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubtE.getId()+""
                                             + "\nDeleting doubtstatus: "+inhdbt.getId());
                                   //  doubtStatusService.deleteDoubtStatus(inhdbt.getId());
                                   idsOfDoubtStatusToBeDeleted.add(inhdbt.getId());
+                                  temL.add(inhdbt);
+                                  
                                 }
-                                System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
+                                inheritanceDoubtStatusMap.get(ikey).removeAll(temL);
+                                
+                                System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): all doubtStatus related to "+inheritedDoubtE.getId()+" have now been deleted");
                                  Summary inhsummary;
-                                 SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubt.getChildJob());
-                               //if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){
+                                 SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubtE.getChildJob());
+                               //if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubtE.getChildJob()))!=null){
                                if(summaryMap.containsKey(summaryKey)){
                                    inhsummary=summaryMap.get(summaryKey);
                                    System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Summary entry for inherited(Time) summary id: "+inhsummary.getId()+" set to "+false);
                                    inhsummary.setTimeInheritanceSummary(false);   //if yes then set the inheritance to false
-                              //     summariesToBeUpdated.add(inhsummary);
+                                   summariesToBeUpdated.add(inhsummary);
                                }
-                                 System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
-                           // doubtService.deleteDoubt(inheritedDoubt.getId());
-                           idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubt.getId());
-                            
+                                 System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Deleting inherited id: "+inheritedDoubtE.getId());
+                           // doubtService.deleteDoubt(inheritedDoubtE.getId());
+                           idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtE.getId());
+                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                            inheritanceMap.remove(tobeDeleted);
+                            tempArrayOfInhTobeDeleted.add(inheritedDoubtE);
+                           
                         }
+                        
+                        
+                         if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
+                                   
+                                System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): removing the inherited doubt from the causeAndAssociatedInheritanceMap: ");
+                                causeAndAssociatedInheritanceMap.get(existingDoubt).removeAll(tempArrayOfInhTobeDeleted);
+                            }
                         System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): all inherited doubts cleared for id: "+existingDoubt.getId()+"\nDeleting id: "+existingDoubt.getId());
                        // doubtService.deleteDoubt(existingDoubt.getId());
                        idsOfCausalDoubtsToBeDeleted.add(existingDoubt.getId());
+                       causeDoubtMap.remove(key);
                     }
                     System.out.println("fend.workspace.WorkspaceController.checkForTimeDoubts(): Setting summary to false for job: "+l.getChild().getNameJobStep()+" sub: "+subb.getSubsurface());
                     summary.setTimeSummary(false);
@@ -2113,6 +2201,10 @@ public class WorkspaceController {
                             SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(l.getChild(), subb);
                 if(subsurfaceJobSummaryTimeMap.containsKey(sjkey)){
                 subsurfaceJobSummaryTimeMap.get(sjkey).setSummaryTime(summaryTime);
+            }   
+                SubsurfaceJobKey spjkey=generateSubsurfaceJobKey(l.getParent(), subb);
+                if(subsurfaceJobSummaryTimeMap.containsKey(spjkey)){
+                subsurfaceJobSummaryTimeMap.get(spjkey).setSummaryTime(summaryTime);
             }   
                             /*  SubsurfaceJob dbSubParentjob=subsurfaceJobService.getSubsurfaceJobFor(l.getParent(), subb);
                             dbSubParentjob.setSummaryTime(summaryTime);
@@ -2174,6 +2266,7 @@ public class WorkspaceController {
                                     "evaluated.result = "+result);
                 Double evaluated = Math.abs(y - result) / y;
                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): result = " + result + " evaluated difference/y = " + evaluated);
+                
                 if (evaluated <= tolerance) {
                     System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): no doubt");
                     //check for any existing doubt.
@@ -2197,60 +2290,92 @@ public class WorkspaceController {
                        // Set<DoubtStatus> doubtStatus=existingDoubt.getDoubtStatuses();
                       //  Set<DoubtStatus> doubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(existingDoubt));
                       Set<DoubtStatus> doubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(existingDoubt)){
-                                doubtStatus=new HashSet<>(doubtDoubtStatusMap.get(existingDoubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatus=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
+                            List<DoubtStatus> tempDelete=new ArrayList<>();
                         for(DoubtStatus doubtStat:doubtStatus){
                             System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): deleting doubtstatus: "+doubtStat.getId() );
                             //doubtStatusService.deleteDoubtStatus(doubtStat.getId());
                             idsOfDoubtStatusToBeDeleted.add(doubtStat.getId());
+                            tempDelete.add(doubtStat);
+                            
                         }
+                        
+                        causeDoubtStatusMap.get(key).removeAll(tempDelete);
                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtstatus messages related to "+existingDoubt.getId()+" have now been deleted.");
                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+existingDoubt.getId());
                         
-                       // Set<Doubt> inheritedDoubts=existingDoubt.getInheritedDoubts();
-                        List<Doubt> inheritedDoubts=new ArrayList<>();
+                       // Set<Doubt> inheritedFromExistingDoubts=existingDoubt.getInheritedDoubts();
+                        List<Doubt> inheritedDoubtsFromExisting=new ArrayList<>();
                        if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
-                           inheritedDoubts=causeAndAssociatedInheritanceMap.get(existingDoubt);
+                           inheritedDoubtsFromExisting=causeAndAssociatedInheritanceMap.get(existingDoubt);
                        }
-                        for(Doubt inheritedDoubt:inheritedDoubts){
-                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+existingDoubt.getId());
+                       List<Doubt> tempArrayOfInhTobeDeleted=new ArrayList<>();
+                       
+                        for(Doubt inheritedDoubtE:inheritedDoubtsFromExisting){
+                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found inherited doubt id: "+inheritedDoubtE.getId()+" with existingCause Id: "+existingDoubt.getId());
                             
-                            //Set<DoubtStatus> doubtStatuses=inheritedDoubt.getDoubtStatuses();
-                            //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubt));
-                            Set<DoubtStatus> inheritedDoubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(inheritedDoubt)){
-                                inheritedDoubtStatus=new HashSet<>(doubtDoubtStatusMap.get(inheritedDoubt));
+                            //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
+                            //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
+                             //InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                             
+                            Set<DoubtStatus> inheritedDoubtStatusE=new HashSet<>();      //get all the doubtstatus belonging to this inheritance
+                             InheritanceKey ikey=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                          
+                            if(inheritanceDoubtStatusMap.containsKey(ikey)){  //replace iwth inheritanceDoubtStatusMap
+                                inheritedDoubtStatusE=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                             }
-                                for(DoubtStatus inhdbt:inheritedDoubtStatus){
-                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
+                            List<DoubtStatus> tempInheritDelete=new ArrayList<>() ;
+                                for(DoubtStatus inhdbt:inheritedDoubtStatusE){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubtE.getId()+""
                                             + "\nDeleting doubtstatus: "+inhdbt.getId());
                                    // doubtStatusService.deleteDoubtStatus(inhdbt.getId());
                                    idsOfDoubtStatusToBeDeleted.add(inhdbt.getId());
+                                   tempInheritDelete.add(inhdbt);
+                                   
                                 }
-                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
+                                inheritanceDoubtStatusMap.get(ikey).removeAll(tempInheritDelete);
+                                        
+                                
+                              //  causeDoubtStatusMap.get(inheritedDoubtE).removeAll(tempInheritDelete);  //replace iwth inheritanceDoubtStatusMap
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtStatus related to "+inheritedDoubtE.getId()+" have now been deleted");
                                  Summary inhsummary;
                                  
-                                 SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubt.getChildJob());
-                             //  if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){
+                                 SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubtE.getChildJob());
+                             //  if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubtE.getChildJob()))!=null){
                              if(summaryMap.containsKey(summaryKey)){
                                    inhsummary=summaryMap.get(summaryKey);
                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Summary entry for inherited(Trace) summary id: "+inhsummary.getId()+" set to "+false);
                                    inhsummary.setTraceInheritanceSummary(false);   //if yes then set the inheritance to false
-                                  // summariesToBeUpdated.add(inhsummary);
+                                   summariesToBeUpdated.add(inhsummary);
                                }
-                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
+                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Deleting inherited id: "+inheritedDoubtE.getId());
                                 
                                 
-                          //  doubtService.deleteDoubt(inheritedDoubt.getId());
-                          idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubt.getId());
-                            
+                          //  doubtService.deleteDoubt(inheritedDoubtE.getId());
+                          idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtE.getId());
+                          InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtE.getChildJob(), inheritedDoubtE.getSubsurface(), existingDoubt);
+                            inheritanceMap.remove(tobeDeleted);
+                            tempArrayOfInhTobeDeleted.add(inheritedDoubtE);
+                         // inheritanceMap.remove(pkey);
+                          
                             
                             
                         }
+                        
+                            if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
+                                   
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): removing the inherited doubt from the causeAndAssociatedInheritanceMap: ");
+                                causeAndAssociatedInheritanceMap.get(existingDoubt).removeAll(tempArrayOfInhTobeDeleted);
+                            }
+                        
+                        
+                        
                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all inherited doubts cleared for id: "+existingDoubt.getId()+"\nDeleting id: "+existingDoubt.getId());
                         //doubtService.deleteDoubt(existingDoubt.getId());
                         idsOfCausalDoubtsToBeDeleted.add(existingDoubt.getId());
+                        causeDoubtMap.remove(key);
                     }
                     System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Setting summary to false for job: "+l.getChild().getNameJobStep()+" sub: "+subb.getSubsurface());
                     summary.setTraceSummary(false);
@@ -2287,7 +2412,7 @@ public class WorkspaceController {
                             doubt.setDoubtType(doubtTypeTraces);
                             //doubt.setUser(user);
                            // doubtService.createDoubt(doubt);
-                           causes.add(doubt);
+                           newCausesToBeAdded.add(doubt);
                            causeDoubtMap.put(key, doubt);
                            
                             DoubtStatus doubtStatus = new DoubtStatus();
@@ -2303,6 +2428,12 @@ public class WorkspaceController {
                             //doubtStatus.setUser(user);
                           //  doubtStatusService.createDoubtStatus(doubtStatus);
                             doubtStatusForCause.add(doubtStatus);
+                            if(!causeDoubtStatusMap.containsKey(key)){
+                                causeDoubtStatusMap.put(key, new ArrayList<DoubtStatus>());
+                                causeDoubtStatusMap.get(key).add(doubtStatus);
+                            }else{
+                                causeDoubtStatusMap.get(key).add(doubtStatus);
+                            }
                            // doubt.addToDoubtStatuses(doubtStatus);
                            // doubtService.updateDoubt(doubt.getId(), doubt);
                            //doubtsToBeUpdated.add(doubt);
@@ -2325,19 +2456,21 @@ public class WorkspaceController {
                             //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(doubt));
                             
                             Set<DoubtStatus> doubtStatuses=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(doubt)){
-                                doubtStatuses=new HashSet<>(doubtDoubtStatusMap.get(doubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatuses=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
                             for (DoubtStatus ds : doubtStatuses) {
                                  if(redFlag){
-                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                       // DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                       DoubtStatus dsds=ds;
                                         dsds.setState(DoubtStatusModel.ERROR);
                                         dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                         dsds.setTimeStamp(updateT);
                                         //doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);asd
                                         doubtStatusToBeUpdated.add(dsds);
                                     }else{
-                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        //DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        DoubtStatus dsds=ds;
                                         dsds.setState(DoubtStatusModel.WARNING);
                                         dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                         dsds.setTimeStamp(updateT);
@@ -2362,7 +2495,8 @@ public class WorkspaceController {
                                 doubt.setDoubtType(doubtTypeTraces);
                                 //doubt.setUser(user);
                                // doubtService.createDoubt(doubt);
-                                causes.add(doubt);
+                                newCausesToBeAdded.add(doubt);
+                                causeDoubtMap.put(key, doubt);
                                 //summary.setTraceSummary(true);
                                 
                                 
@@ -2379,7 +2513,17 @@ public class WorkspaceController {
                                 //doubtStatus.setUser(user);
                                 //doubtStatusService.createDoubtStatus(doubtStatus);
                                 doubtStatusForCause.add(doubtStatus);
-                                doubt.addToDoubtStatuses(doubtStatus);
+                                if(!causeDoubtStatusMap.containsKey(key)){
+                                    causeDoubtStatusMap.put(key, new ArrayList<>());
+                                    causeDoubtStatusMap.
+                                            get(key).
+                                            add(doubtStatus);
+                                }else{
+                                    causeDoubtStatusMap.
+                                            get(key).
+                                            add(doubtStatus);
+                                }
+                              //  doubt.addToDoubtStatuses(doubtStatus);
                                 ///doubtService.updateDoubt(doubt.getId(), doubt);
                               //  doubtsToBeUpdated.add(doubt);
                                 summary.setTraceSummary(true);
@@ -2397,15 +2541,16 @@ public class WorkspaceController {
                                // Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                                 //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(doubt));
                                 Set<DoubtStatus> doubtStatuses=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(doubt)){
-                                doubtStatuses=new HashSet<>(doubtDoubtStatusMap.get(doubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatuses=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
                                 summary.setTraceSummary(true);
                              //   summariesToBeUpdated.add(summary);
                                 String updateT=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
                                 for (DoubtStatus ds : doubtStatuses) {
                                     if(redFlag){
-                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                       //DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                       DoubtStatus dsds=ds;
                                         dsds.setState(DoubtStatusModel.ERROR);
                                         dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                         dsds.setTimeStamp(updateT);
@@ -2413,7 +2558,8 @@ public class WorkspaceController {
                                         //doubtStatusService.updateDoubtStatus(dsds.getId(),dsds);
                                          doubtStatusToBeUpdated.add(dsds);
                                     }else{
-                                        DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                       // DoubtStatus dsds=doubtStatusService.getDoubtStatus(ds.getId());
+                                        DoubtStatus dsds=ds;
                                         dsds.setState(DoubtStatusModel.WARNING);
                                         dsds.setReason(DoubtStatusModel.getNewDoubtTraceMessage(function, tolerance, error, evaluated, y, doubtTypeTraces.getName()));
                                         dsds.setTimeStamp(updateT);
@@ -2453,12 +2599,13 @@ public class WorkspaceController {
                             }else{
                                 //get all doubtStatus for the existing doubt
                                 previousErroneousDoubt=causeDoubtMap.get(key);
-                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found an existing doubt to a previous failed condition: id. "+previousErroneousDoubt.getId());
+                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found an existing doubt to a previous failed condition: id. "+previousErroneousDoubt.getId()+""
+                                        + " key: ("+key.subsurface.getSubsurface()+","+key.job.getNameJobStep()+", DOT: "+key.dot.getId()+","+key.doubtType.getName()+")");
                                 //Set<DoubtStatus> doubtStatus=previousErroneousDoubt.getDoubtStatuses();
                                // Set<DoubtStatus> doubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(previousErroneousDoubt));
                                Set<DoubtStatus> doubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(previousErroneousDoubt)){
-                                doubtStatus=new HashSet<>(doubtDoubtStatusMap.get(previousErroneousDoubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatus=new HashSet<>(causeDoubtStatusMap.get(key));  //get the doubtstatus related to the previous error
                             }
                                 for(DoubtStatus doubtStat:doubtStatus){
                                     System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): updating doubtstatus: "+doubtStat.getId() );
@@ -2470,46 +2617,64 @@ public class WorkspaceController {
                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtstatus messages related to "+previousErroneousDoubt.getId()+" have now been deleted.");
                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+previousErroneousDoubt.getId());
 
-                               // Set<Doubt> inheritedDoubts=previousErroneousDoubt.getInheritedDoubts();
-                                List<Doubt> inheritedDoubts=new ArrayList<>();
+                               // Set<Doubt> inheritedFromExistingDoubts=previousErroneousDoubt.getInheritedDoubts();
+                                List<Doubt> inheritedDoubtsInPrevious=new ArrayList<>();
                                     if(causeAndAssociatedInheritanceMap.containsKey(previousErroneousDoubt)){
-                                        inheritedDoubts=causeAndAssociatedInheritanceMap.get(previousErroneousDoubt);
+                                        inheritedDoubtsInPrevious=causeAndAssociatedInheritanceMap.get(previousErroneousDoubt);
                                     }
-                                for(Doubt inheritedDoubt:inheritedDoubts){
-                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+previousErroneousDoubt.getId());
+                                    
+                                    List<Doubt> tempArrayOfInhTobeDeleted=new ArrayList<>();
+                                for(Doubt inheritedDoubtP:inheritedDoubtsInPrevious){
+                                    System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found inherited doubt id: "+inheritedDoubtP.getId()+" with existingCause Id: "+previousErroneousDoubt.getId());
 
-                                    //Set<DoubtStatus> doubtStatuses=inheritedDoubt.getDoubtStatuses();
-                                    //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubt));
-                                    Set<DoubtStatus> inheritedDoubtStatus=new HashSet<>();
-                                            if(doubtDoubtStatusMap.containsKey(inheritedDoubt)){
-                                                inheritedDoubtStatus=new HashSet<>(doubtDoubtStatusMap.get(inheritedDoubt));
+                                    //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
+                                    //Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
+                                    Set<DoubtStatus> inheritedDoubtStatusFromPrev=new HashSet<>();
+                                    InheritanceKey ikey=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), inheritedDoubtP.getDoubtCause());
+                                            if(inheritanceDoubtStatusMap.containsKey(ikey)){    //replace with inheritanceDoubtStatusMap
+                                                inheritedDoubtStatusFromPrev=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                                             }
-                                        for(DoubtStatus inhdbt:inheritedDoubtStatus){
-                                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
+                                            List<DoubtStatus> teDel=new ArrayList<>();
+                                        for(DoubtStatus inhdbt:inheritedDoubtStatusFromPrev){
+                                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubtP.getId()+""
                                                     + "\nDeleting doubtstatus: "+inhdbt.getId());
                                             //doubtStatusService.deleteDoubtStatus(inhdbt.getId());
                                             idsOfDoubtStatusToBeDeleted.add(inhdbt.getId());
+                                            
+                                            teDel.add(inhdbt);
+                                            
                                         }
-                                        System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
+                                        
+                                        inheritanceDoubtStatusMap.get(ikey).removeAll(teDel) ; //use inheritanceDoubtStatusMap
+                                        System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all doubtStatus related to "+inheritedDoubtP.getId()+" have now been deleted");
                                          Summary inhsummary;
-                                      // if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubt.getChildJob());
-                             //  if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){
-                                    SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubt.getChildJob());
+                                      // if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubtE.getChildJob()))!=null){SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubtE.getChildJob());
+                             //  if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubtE.getChildJob()))!=null){
+                                    SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubtP.getChildJob());
                                     if(summaryMap.containsKey(summaryKey)){
                                             inhsummary=summaryMap.get(summaryKey);
                                            System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Summary entry for inherited(Trace) summary id: "+inhsummary.getId()+" set to "+false);
                                            inhsummary.setTraceInheritanceSummary(false);   //if yes then set the inheritance to false
                                       //     summariesToBeUpdated.add(inhsummary);
                                        }
-                                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
+                                         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): Deleting inherited id: "+inheritedDoubtP.getId());
 
 
-                                    //doubtService.deleteDoubt(inheritedDoubt.getId());
-                                    idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubt.getId());
-
+                                    //doubtService.deleteDoubt(inheritedDoubtE.getId());
+                                    idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubtP.getId());
+                                    InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubtP.getChildJob(), inheritedDoubtP.getSubsurface(), previousErroneousDoubt);
+                                         inheritanceMap.remove(tobeDeleted);
+                                        tempArrayOfInhTobeDeleted.add(inheritedDoubtP);
+                                   // inheritanceMap.remove(pkey);
 
 
                                 }
+                                
+                                 if(causeAndAssociatedInheritanceMap.containsKey(previousErroneousDoubt)){
+                                   
+                                                System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): removing the inherited doubt from the causeAndAssociatedInheritanceMap: ");
+                                                causeAndAssociatedInheritanceMap.get(previousErroneousDoubt).removeAll(tempArrayOfInhTobeDeleted);
+                                            }
                                 System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): all inherited doubts cleared for id: "+previousErroneousDoubt.getId()+"\nDeleting id: "+previousErroneousDoubt.getId());
                                
                             }
@@ -2529,6 +2694,10 @@ public class WorkspaceController {
                 subsurfaceJobSummaryTimeMap.get(sjkey).setSummaryTime(summaryTime);
             }    
             
+            SubsurfaceJobKey spjkey=generateSubsurfaceJobKey(l.getParent(), subb);
+                if(subsurfaceJobSummaryTimeMap.containsKey(spjkey)){
+                subsurfaceJobSummaryTimeMap.get(spjkey).setSummaryTime(summaryTime);
+            }   
             
             /*SubsurfaceJob dbSubChildjob=subsurfaceJobService.getSubsurfaceJobFor(l.getChild(), subb);
             dbSubChildjob.setSummaryTime(summaryTime);
@@ -2573,8 +2742,9 @@ public class WorkspaceController {
                         doubt.setDoubtType(doubtTypeQc);
                         //doubt.setUser(user)
                         //doubtService.createDoubt(doubt);
-                        causes.add(doubt);
-                            
+                        newCausesToBeAdded.add(doubt);
+                        causeDoubtMap.put(key, doubt);
+                        
                         summary.setQcSummary(true);
                     //    summariesToBeUpdated.add(summary);
                         DoubtStatus doubtStatus = new DoubtStatus();
@@ -2586,6 +2756,12 @@ public class WorkspaceController {
                         //doubtStatus.setUser(user);
                        // doubtStatusService.createDoubtStatus(doubtStatus);
                        doubtStatusForCause.add(doubtStatus);
+                       if(!causeDoubtStatusMap.containsKey(key)){
+                           causeDoubtStatusMap.put(key, new ArrayList<DoubtStatus>());
+                           causeDoubtStatusMap.get(key).add(doubtStatus);
+                       }else{
+                           causeDoubtStatusMap.get(key).add(doubtStatus);
+                       }
                         doubt.addToDoubtStatuses(doubtStatus);
                     //    doubtService.updateDoubt(doubt.getId(), doubt);
                     //doubtsToBeUpdated.add(doubt);
@@ -2597,8 +2773,8 @@ public class WorkspaceController {
                         //Set<DoubtStatus> doubtStatuses = doubt.getDoubtStatuses();
                         //Set<DoubtStatus> doubtStatuses = new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(doubt));
                         Set<DoubtStatus> doubtStatuses=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(doubt)){
-                                doubtStatuses=new HashSet<>(doubtDoubtStatusMap.get(doubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatuses=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
                         summary.setQcSummary(true);
                         for (DoubtStatus d : doubtStatuses) {
@@ -2620,37 +2796,49 @@ public class WorkspaceController {
                        // Set<DoubtStatus> doubtStatus=existingDoubt.getDoubtStatuses();
                         //Set<DoubtStatus> doubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(existingDoubt));
                         Set<DoubtStatus> doubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(existingDoubt)){
-                                doubtStatus=new HashSet<>(doubtDoubtStatusMap.get(existingDoubt));
+                            if(causeDoubtStatusMap.containsKey(key)){
+                                doubtStatus=new HashSet<>(causeDoubtStatusMap.get(key));
                             }
+                            List<DoubtStatus> tempDel=new ArrayList<>();
                         for(DoubtStatus doubtStat:doubtStatus){
                             System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): deleting doubtstatus: "+doubtStat.getId() );
                             //doubtStatusService.deleteDoubtStatus(doubtStat.getId());
                             idsOfDoubtStatusToBeDeleted.add(doubtStat.getId());
+                            tempDel.add(doubtStat);
+                            
                         }
+                        
+                        causeDoubtStatusMap.get(existingDoubt).removeAll(tempDel);
                         System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all doubtstatus messages related to "+existingDoubt.getId()+" have now been deleted.");
                         System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Checking to see if there were any inherited doubts related to doubt id: "+existingDoubt.getId());
                         
-                       // Set<Doubt> inheritedDoubts=existingDoubt.getInheritedDoubts();
+                       // Set<Doubt> inheritedFromExistingDoubts=existingDoubt.getInheritedDoubts();
                         List<Doubt> inheritedDoubts=new ArrayList<>();
                        if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
                            inheritedDoubts=causeAndAssociatedInheritanceMap.get(existingDoubt);
                        }
+                       List<Doubt> tempArrayOfInhTobeDeleted=new ArrayList<>();
                         for(Doubt inheritedDoubt:inheritedDoubts){
                             System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): found inherited doubt id: "+inheritedDoubt.getId()+" with existingCause Id: "+existingDoubt.getId());
                             
-                            //Set<DoubtStatus> doubtStatuses=inheritedDoubt.getDoubtStatuses();
-                           // Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubt));
-                            Set<DoubtStatus> inheritedDoubtStatus=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(inheritedDoubt)){
-                                inheritedDoubtStatus=new HashSet<>(doubtDoubtStatusMap.get(inheritedDoubt));
+                            //Set<DoubtStatus> doubtStatuses=inheritedDoubtE.getDoubtStatuses();
+                           // Set<DoubtStatus> doubtStatuses=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inheritedDoubtE));
+                            Set<DoubtStatus> inheritedDoubtStatusFromExisting=new HashSet<>();  //use inheritanceDoubtStatusMap
+                            InheritanceKey ikey=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), inheritedDoubt.getDoubtCause());
+                                    
+                            if(inheritanceDoubtStatusMap.containsKey(ikey)){
+                                inheritedDoubtStatusFromExisting=new HashSet<>(inheritanceDoubtStatusMap.get(ikey));
                             }
-                                for(DoubtStatus inhdbt:inheritedDoubtStatus){
+                            List<DoubtStatus> tempI=new ArrayList<>();
+                                for(DoubtStatus inhdbt:inheritedDoubtStatusFromExisting){
                                     System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): found doubtstatus id: "+inhdbt.getId()+" related to the inherited doubt :"+inheritedDoubt.getId()+""
                                             + "\nDeleting doubtstatus: "+inhdbt.getId());
                                     //doubtStatusService.deleteDoubtStatus(inhdbt.getId());
                                     idsOfDoubtStatusToBeDeleted.add(inhdbt.getId());
+                                    tempI.add(inhdbt);
+                                    
                                 }
+                                inheritanceDoubtStatusMap.get(ikey).removeAll(tempI);   //replace with inheritanceDoubtStatusMap
                                 System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all doubtStatus related to "+inheritedDoubt.getId()+" have now been deleted");
                                
                                 
@@ -2658,21 +2846,33 @@ public class WorkspaceController {
                                 Summary inhsummary;
                                  SummaryKey summaryKey=generateSummaryKey(subb, inheritedDoubt.getChildJob());
                                     if(summaryMap.containsKey(summaryKey)){
-                              // if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubt.getChildJob()))!=null){
+                              // if((inhsummary=summaryService.getSummaryFor(subb, inheritedDoubtE.getChildJob()))!=null){
                                    inhsummary=summaryMap.get(summaryKey);
                                    System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Summary entry for inherited(QC) summary id: "+inhsummary.getId()+" set to "+false);
                                    inhsummary.setQcInheritanceSummary(false);   //if yes then set the inheritance to false
+                                   //
                                }
                                  System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Deleting inherited id: "+inheritedDoubt.getId());
-                            //doubtService.deleteDoubt(inheritedDoubt.getId());
+                            //doubtService.deleteDoubt(inheritedDoubtE.getId());
                             idsOfInheritedDoubtsToBeDeleted.add(inheritedDoubt.getId());
+                            InheritanceKey tobeDeleted=generateInheritanceKey(inheritedDoubt.getChildJob(), inheritedDoubt.getSubsurface(), existingDoubt);
+                            inheritanceMap.remove(tobeDeleted);
+                            tempArrayOfInhTobeDeleted.add(inheritedDoubt);
                             
+                           // inheritanceMap.remove(pkey);
                             
                             
                         }
+                        if(causeAndAssociatedInheritanceMap.containsKey(existingDoubt)){
+                                   
+                                System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): removing the inherited doubt from the causeAndAssociatedInheritanceMap: ");
+                                causeAndAssociatedInheritanceMap.get(existingDoubt).removeAll(tempArrayOfInhTobeDeleted);
+                            }
                         System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): all inherited doubts cleared for id: "+existingDoubt.getId()+"\nDeleting id: "+existingDoubt.getId());
                        // doubtService.deleteDoubt(existingDoubt.getId());
                        idsOfCausalDoubtsToBeDeleted.add(existingDoubt.getId());
+                       causeDoubtMap.remove(key);
+                               
                     }
                     System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Setting summary to false for job: "+jchild.getNameJobStep()+" sub: "+subb.getSubsurface());
                     summary.setQcSummary(false);
@@ -2686,6 +2886,10 @@ public class WorkspaceController {
                 SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(l.getChild(), subb);
                 if(subsurfaceJobSummaryTimeMap.containsKey(sjkey)){
                 subsurfaceJobSummaryTimeMap.get(sjkey).setSummaryTime(summaryTime);
+            }   
+                SubsurfaceJobKey spjkey=generateSubsurfaceJobKey(l.getParent(), subb);
+                if(subsurfaceJobSummaryTimeMap.containsKey(spjkey)){
+                subsurfaceJobSummaryTimeMap.get(spjkey).setSummaryTime(summaryTime);
             }   
                 
                 /*
@@ -2701,10 +2905,10 @@ public class WorkspaceController {
 
     private void passingDoubtToDescendants(Link l, Dot dot, Subsurface subb, Doubt cause,List<Descendant> descendantsThatContainSub) {
         
-        
+        System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants()");
                 Job inhParent = l.getParent();
                 Job inhChild = l.getChild();
-                System.out.println("fend.workspace.WorkspaceController.summarize(): Checking for inheritance. "+inhParent.getNameJobStep()+" <----> "+inhChild.getNameJobStep()+" TYPE: "+cause.getDoubtType().getName()+" size of Descendants: "+descendantsThatContainSub.size());
+                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Checking for inheritance. "+inhParent.getNameJobStep()+" <----> "+inhChild.getNameJobStep()+" TYPE: "+cause.getDoubtType().getName()+" size of Descendants: "+descendantsThatContainSub.size());
                 
                 Set<Job> inhJob=new HashSet<>();
                 for(Descendant desc:descendantsThatContainSub){
@@ -2727,20 +2931,20 @@ public class WorkspaceController {
                                 summary.setWorkspace(dbWorkspace);
                               //  summaryService.createSummary(summary);
                               newSummaries.add(summary);
-                                
+                              summaryMap.put(summaryKey, summary);
                             }else{
                                         summary=summaryMap.get(summaryKey);
                                     }
                      
                      
-                    System.out.println("fend.workspace.WorkspaceController.inherit(): checking for Desc: "+job.getNameJobStep()+" <---- Descendant of ---"+l.getChild().getNameJobStep());
+                    System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): checking for Desc: "+job.getNameJobStep()+" <---- Descendant of ---"+l.getChild().getNameJobStep());
                     Doubt d;
                   // if((d=doubtService.getDoubtFor(subb, job, cause, doubtTypeInherit))==null){
-                 //  DoubtKey key=generateDoubtKey(subb, job, dot, doubtTypeInherit);
+                 //  DoubtKey pkey=generateDoubtKey(subb, job, dot, doubtTypeInherit);
                  InheritanceKey key=generateInheritanceKey(job, subb, cause);
                  
                        if(!inheritanceMap.containsKey(key)){
-                                System.out.println("fend.workspace.WorkspaceController.inherit(): Creating a new INHERITANCE DOUBT for "+job.getNameJobStep()+" sub: "+subb.getSubsurface()+" cause: "+cause.getChildJob().getNameJobStep());
+                                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Creating a new INHERITANCE DOUBT for "+job.getNameJobStep()+" sub: "+subb.getSubsurface()+" cause: "+cause.getChildJob().getNameJobStep());
                                 d=new Doubt();
                                 d.setDoubtType(doubtTypeInherit);
                                 d.setChildJob(job);
@@ -2755,7 +2959,14 @@ public class WorkspaceController {
                                // doubtService.createDoubt(d);
                                inheritedDoubts.add(d);
                                inheritanceMap.put(key, d);
-                                System.out.println("fend.workspace.WorkspaceController.inherit(): Setting the inheritance flag in summaryEntry# "+summary.getId());
+                               if(!causeAndAssociatedInheritanceMap.containsKey(cause)){
+                                   causeAndAssociatedInheritanceMap.put(cause, new ArrayList<Doubt>());
+                                   causeAndAssociatedInheritanceMap.get(cause).add(d);
+                               }else{
+                                   causeAndAssociatedInheritanceMap.get(cause).add(d);
+                               }
+                               
+                                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Setting the inheritance flag in summaryEntry# "+summary.getId());
                                 
                                 if(cause.getDoubtType().equals(doubtTypeTime)){
                                      summary.setTimeInheritanceSummary(true);
@@ -2777,6 +2988,14 @@ public class WorkspaceController {
                                // doubtStatusService.createDoubtStatus(doubtStatus);
                               // doubtStatusForCause.add(doubtStatus);
                               inheritedDoubtStatus.add(doubtStatus);
+                              
+                              if(!inheritanceDoubtStatusMap.containsKey(key)){               //replace with inheritanceDoubtStatusMap
+                                  inheritanceDoubtStatusMap.put(key,new ArrayList<>());
+                                  inheritanceDoubtStatusMap.get(key).add(doubtStatus);
+                              }else{
+                                  inheritanceDoubtStatusMap.get(key).add(doubtStatus);
+                              }
+                                      
                                 //d.addToDoubtStatuses(doubtStatus);
                                // doubtService.updateDoubt(d.getId(), d);
                                //doubtsToBeUpdated.add(d);
@@ -2787,10 +3006,15 @@ public class WorkspaceController {
                                 //summaryService.updateSummary(summary.getId(), summary);
                              //   summariesToBeUpdated.add(summary);
                          }else{
-                                d=causeDoubtMap.get(key);
-                                System.out.println("fend.workspace.WorkspaceController.inherit(): Existing entry for INHERITANCE doubt found for "+job.getNameJobStep()+" sub: "+subb.getSubsurface()+" cause: "+cause.getChildJob().getNameJobStep()+ " with id: "+d.getId());
-                                System.out.println("fend.workspace.WorkspaceController.inherit():  "+d.getDoubtType().getName()+" on "+d.getChildJob().getNameJobStep()+" cause: "+d.getDoubtCause().getChildJob().getNameJobStep()+" message: ");
-                                System.out.println("fend.workspace.WorkspaceController.inherit(): Setting the inheritance flag in summaryEntry# "+summary.getId());
+                           d=inheritanceMap.get(key);
+                                
+                                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Existing entry for INHERITANCE doubt found for "+
+                                        job.getNameJobStep()+" sub: "+
+                                        subb.getSubsurface()+" cause: "+
+                                        cause.getChildJob().getNameJobStep()+ " with id: "+
+                                        d.getId());
+                                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants():  "+d.getDoubtType().getName()+" on "+d.getChildJob().getNameJobStep()+" cause: "+d.getDoubtCause().getChildJob().getNameJobStep()+" message: ");
+                                System.out.println("fend.workspace.WorkspaceController.passingDoubtToDescendants(): Setting the inheritance flag in summaryEntry# "+summary.getId());
                                 if(cause.getDoubtType().equals(doubtTypeTime)){
                                      summary.setTimeInheritanceSummary(true);
                                 }
@@ -2805,13 +3029,16 @@ public class WorkspaceController {
                       
                            // List<DoubtStatus> dsMessages=doubtStatusService.getDoubtStatusForDoubt(d);
                            Set<DoubtStatus> dsMessages=new HashSet<>();
-                            if(doubtDoubtStatusMap.containsKey(d)){
-                                dsMessages=new HashSet<>(doubtDoubtStatusMap.get(d));
+                            if(inheritanceDoubtStatusMap.containsKey(key)){      //replace with inheritanceDoubtStatusMap
+                                dsMessages=new HashSet<>(inheritanceDoubtStatusMap.get(key));
                             }
                             for(DoubtStatus dsmess:dsMessages){
                                 System.out.println("STATUS "+dsmess.getStatus()+" MSG: "+dsmess.getReason());
                             }
                         }
+                       
+                        
+                       
                 }
         
     }
@@ -2945,9 +3172,9 @@ public class WorkspaceController {
                                 summaryforCurrentJob.setSubsurface(sub);
                                 summaryforCurrentJob.setJob(l.getChild());
                                 summaryforCurrentJob.setWorkspace(dbWorkspace);
-                                //summaryService.createSummary(summaryforCurrentJob);
+                                summaryService.createSummary(summaryforCurrentJob);
                                 newSummaries.add(summaryforCurrentJob);
-                                
+                                summaryMap.put(summaryKey, summaryforCurrentJob);
                             }else{
                                         summaryforCurrentJob=summaryMap.get(summaryKey);
                                     }
@@ -2961,9 +3188,11 @@ public class WorkspaceController {
                     continue;
                 }
                 //DoubtStatus causeDs=new ArrayList<>(cause.getDoubtStatuses()).get(0);
+                //Skip inheritance if cause is in state WARNING
                 List<DoubtStatus> dx=new ArrayList<>();
-                            if(doubtDoubtStatusMap.containsKey(cause)){
-                                dx=doubtDoubtStatusMap.get(cause);
+                DoubtKey dkey=generateDoubtKey(cause.getSubsurface(), cause.getChildJob(), cause.getDot(), cause.getDoubtType());
+                            if(causeDoubtStatusMap.containsKey(dkey)){
+                                dx=causeDoubtStatusMap.get(dkey);
                             }
                 //DoubtStatus causeDs=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
                 DoubtStatus causeDs=dx.get(0);
@@ -2986,6 +3215,14 @@ public class WorkspaceController {
                    // doubtService.createDoubt(inheritedDoubtInCurrentJob);
                    inheritedDoubts.add(inheritedDoubtInCurrentJob);
                    inheritanceMap.put(key, inheritedDoubtInCurrentJob);
+                             
+                                if(!causeAndAssociatedInheritanceMap.containsKey(cause)){
+                                   causeAndAssociatedInheritanceMap.put(cause, new ArrayList<Doubt>());
+                                   causeAndAssociatedInheritanceMap.get(cause).add(inheritedDoubtInCurrentJob);
+                               }else{
+                                   causeAndAssociatedInheritanceMap.get(cause).add(inheritedDoubtInCurrentJob);
+                               }
+                                
                      if(cause.getDoubtType().equals(doubtTypeTime)){
                                      summaryforCurrentJob.setTimeInheritanceSummary(true);
                                 }
@@ -3005,6 +3242,12 @@ public class WorkspaceController {
                                 //doubtStatus.setUser(user);
                                // doubtStatusService.createDoubtStatus(doubtStatus);
                                inheritedDoubtStatus.add(doubtStatus);
+                               if(!inheritanceDoubtStatusMap.containsKey(key)){
+                                   inheritanceDoubtStatusMap.put(key, new ArrayList<>());
+                                   inheritanceDoubtStatusMap.get(key).add(doubtStatus);
+                               }else{
+                                   inheritanceDoubtStatusMap.get(key).add(doubtStatus);
+                               }
                                // inheritedDoubtInCurrentJob.addToDoubtStatuses(doubtStatus);
                                 //doubtService.updateDoubt(inheritedDoubtInCurrentJob.getId(), inheritedDoubtInCurrentJob);
                                // doubtsToBeUpdated.add(inheritedDoubtInCurrentJob);
@@ -3013,14 +3256,14 @@ public class WorkspaceController {
                                 //doubtService.updateDoubt(cause.getId(), cause);
                               //  doubtsToBeUpdated.add(cause);
                                // summaryService.updateSummary(summaryforCurrentJob.getId(), summaryforCurrentJob);
-                          //     summariesToBeUpdated.add(summaryforCurrentJob);
+                               summariesToBeUpdated.add(summaryforCurrentJob);
                 }else{
                     inheritedDoubtInCurrentJob=inheritanceMap.get(key);
                     System.out.println("fend.workspace.WorkspaceController.inheritDoubtFromAncestors(): inherited doubt already present inside job:"
                             + " "+inheritedDoubtInCurrentJob.getChildJob().getNameJobStep()+" for sub: "+inheritedDoubtInCurrentJob.getSubsurface().getSubsurface()+" "
                                     + " INH_id: "+inheritedDoubtInCurrentJob.getId() +" with cause id: "+inheritedDoubtInCurrentJob.getDoubtCause().getId());
                     if(cause.getDoubtType().equals(doubtTypeTime)){
-                                     summaryforCurrentJob.setTimeInheritanceSummary(true);
+                                     summaryforCurrentJob.setTimeInheritanceSummary(true); 
                                 }
                                 if(cause.getDoubtType().equals(doubtTypeTraces)){
                                      summaryforCurrentJob.setTraceInheritanceSummary(true);
@@ -3028,6 +3271,7 @@ public class WorkspaceController {
                                 if(cause.getDoubtType().equals(doubtTypeQc)){
                                      summaryforCurrentJob.setQcInheritanceSummary(true);
                                 }
+                                summariesToBeUpdated.add(summaryforCurrentJob);
                              //   summariesToBeUpdated.add(summaryforCurrentJob);
                     
                    // summaryService.updateSummary(summaryforCurrentJob.getId(), summaryforCurrentJob);
@@ -3037,6 +3281,9 @@ public class WorkspaceController {
             
             
         }
+        
+        
+        
         
         
         /* String summaryTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);

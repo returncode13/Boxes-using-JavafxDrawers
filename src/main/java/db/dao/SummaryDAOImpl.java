@@ -45,6 +45,10 @@ public class SummaryDAOImpl implements  SummaryDAO{
     
     @Override
     public void createBulkSummaries(List<Summary> summaries) {
+        System.out.println("db.dao.SummaryDAOImpl.createBulkSummaries()");
+        if(summaries.isEmpty()){
+            return;
+        }
         int batchsize=Math.min(summaries.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
          Session session = HibernateUtil.getSessionFactory().openSession();
          Transaction transaction=null;
@@ -131,6 +135,10 @@ public class SummaryDAOImpl implements  SummaryDAO{
     
      @Override
     public void udpateBulkSummaries(List<Summary> summariesToBeUpdated) {
+         System.out.println("db.dao.SummaryDAOImpl.udpateBulkSummaries()");
+        if(summariesToBeUpdated.isEmpty()) {
+            return;
+        }
           int batchsize=Math.min(summariesToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
          Session session = HibernateUtil.getSessionFactory().openSession();
          Transaction transaction=null;

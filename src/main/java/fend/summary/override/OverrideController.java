@@ -170,7 +170,7 @@ public class OverrideController extends Stage{
                                         System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
                                         inhDoubtStat.setStatus(status);
                                         inhDoubtStat.setUser(AppProperties.getCurrentUser());
-                                        doubtStatusService.updateDoubtStatus(inhDoubt.getId(), inhDoubtStat);
+                                        doubtStatusService.updateDoubtStatus(inhDoubtStat.getId(), inhDoubtStat);
                                 }
                     }
                             

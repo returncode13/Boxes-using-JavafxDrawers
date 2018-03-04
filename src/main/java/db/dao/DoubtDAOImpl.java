@@ -51,6 +51,8 @@ public class DoubtDAOImpl implements DoubtDAO{
     @Override
     public void createBulkDoubts(List<Doubt> doubts) {
         System.out.println("db.dao.DoubtDAOImpl.createBulkDoubts()");
+        if(doubts.isEmpty()) return;
+        
         int batchsize=Math.min(doubts.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -665,7 +667,8 @@ public class DoubtDAOImpl implements DoubtDAO{
             transaction = session.beginTransaction();
             Query query=session.createQuery(hql);
             query.setParameter("c", cause);
-            
+            result=query.list();
+            transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
         }finally{

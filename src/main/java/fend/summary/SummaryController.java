@@ -282,7 +282,7 @@ public class SummaryController extends Stage{
                             Subsurface sub = entry1.getKey();
                             SequenceSummary subSummary = entry1.getValue();
                             
-                                System.out.println("fend.summary.SummaryController.setModel(): FOUND Seq: "+seqSummary.getSequence().getSequenceno()+" sub: "+subSummary.getSubsurface().getSubsurface());
+                               // System.out.println("fend.summary.SummaryController.setModel(): FOUND Seq: "+seqSummary.getSequence().getSequenceno()+" sub: "+subSummary.getSubsurface().getSubsurface());
                             
                         }
 

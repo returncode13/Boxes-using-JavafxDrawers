@@ -194,7 +194,7 @@ public class LinkDAOImpl implements LinkDAO{
          Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction= null;
          List<Object[]> result=null;
-         String hql="SELECT l,lpsjs from Link l INNER JOIN l.parent lp INNER JOIN lp.subsurfaceJobs lpsjs"
+         String hql="SELECT l,lpsjs,lcsjs from Link l INNER JOIN l.parent lp INNER JOIN lp.subsurfaceJobs lpsjs"
                  + "                      INNER JOIN l.child  lc INNER JOIN lc.subsurfaceJobs lcsjs"
                  + "                      INNER JOIN l.dot d"
                  + "                      WHERE lpsjs.pk.subsurface=lcsjs.pk.subsurface "                                                       // all child and parent jobs who contain the same sub
