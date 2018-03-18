@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.app;
+package fend.app.console;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.layout.AnchorPane;
 
 /**
  *
- * @author sharath nair <sharath.nair@polarcus.com>
+ * @author sharath
  */
-public class AppView extends AnchorPane {
-     private FXMLLoader fXMLLoader;
+public class ConsoleView extends AnchorPane{
+    private FXMLLoader fXMLLoader;
     private final URL location;
-    private AppController controller;
+    private ConsoleController controller;
     
-    public AppView(AppModel model)
+    public ConsoleView(ConsoleModel model)
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/app/console/console.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -37,7 +36,7 @@ public class AppView extends AnchorPane {
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(AppController)fXMLLoader.getController();
+                controller=(ConsoleController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
@@ -51,12 +50,4 @@ public class AppView extends AnchorPane {
                 throw new RuntimeException(e);
             }
     }
-
-    public AppController getController() {
-        return controller;
-    }
-    
-    
-    
-    
 }

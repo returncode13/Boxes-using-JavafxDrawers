@@ -8,11 +8,7 @@ package fend.app;
 import fend.app.AppModel;
 import fend.app.AppView;
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.shape.CubicCurveTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 
 /**
@@ -33,6 +29,13 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
         AppModel appmodel=new AppModel();
         AppView appview=new AppView(appmodel);
+        Scene scene=appview.getController().getAppScene();
+        String title=appview.getController().getTitle();
+        primaryStage.setTitle(title);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        
+        
         /*  WorkspaceModel model=new WorkspaceModel();
         WorkspaceView node=new WorkspaceView(model);*/
        

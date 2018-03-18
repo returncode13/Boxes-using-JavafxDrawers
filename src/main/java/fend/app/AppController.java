@@ -13,6 +13,7 @@ import app.settings.database.DataBaseSettingsNode;
 import app.settings.ssh.SShSettings;
 import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
+import com.jfoenix.controls.JFXTextArea;
 import db.model.NodeProperty;
 import db.model.NodeType;
 import db.model.PropertyType;
@@ -74,6 +75,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.input.MouseEvent;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -95,7 +97,7 @@ public class AppController extends Stage{
     private NodePropertyService nodePropertyService=new NodePropertyServiceImpl();
     private PropertyTypeService propertyTypeService=new PropertyTypeServiceImpl();
     private UserWorkspaceService userWorkspaceService=new UserWorkspaceServiceImpl();
-    
+    private Scene appScene;
      @FXML
     private MenuBar menubar;
 
@@ -134,8 +136,20 @@ public class AppController extends Stage{
     
     @FXML
     private StackPane basePane;
+    
+    
+     @FXML
+    private JFXTextArea smallerLog;
+
+    
     private String titleHeader = "PQMan: "+AppProperties.VERSION;
 
+    
+      @FXML
+    void openLargerLog(MouseEvent event) {
+          System.out.println("fend.app.AppController.openLargerLog(): Opening the console");       
+    }
+    
     
     
     @FXML
@@ -618,12 +632,24 @@ public class AppController extends Stage{
 
     void setView(AppView view) {
         this.view=view;
-        
-         this.setTitle(titleHeader);
-         this.setScene(new Scene(view));
-         this.initModality(Modality.APPLICATION_MODAL);
-         this.showAndWait();
+        appScene=new Scene(this.view);
+         //this.setTitle(titleHeader);
+         //this.setScene(new Scene(view));
+        // this.initModality(Modality.APPLICATION_MODAL);
+         //this.showAndWait();
+         //this.show();
     }
+
+    public Scene getAppScene() {
+        return appScene;
+    }
+
+    public String getTitleHeader() {
+        return titleHeader;
+    }
+    
+    
+    
     
     private void logUser(){
         System.out.println("fend.app.AppController.logUser(): starting a usermodel");
