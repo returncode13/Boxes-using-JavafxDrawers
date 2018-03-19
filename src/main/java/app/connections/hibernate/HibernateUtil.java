@@ -52,7 +52,7 @@ public class HibernateUtil {
      private static String password = "Polarcus123";
      private static String connectionIP = "10.105.1.38";     
      private static SSHManager instance; 
-     private static int sshLocalPort=5433;    //bind anduril and Kiba
+     private static int sshLocalPort=AppProperties.APPLICATION_PORT_ON_LOCAL;    //bind anduril and Kiba
      //private static int sshLocalPort=5432;    //bind local on polarcus machines
      private static int dbPort=5432;
      private static String strDbUSer="fgeo";  //Kiba   . CHANGE this in the file hibernate.cfg.xml

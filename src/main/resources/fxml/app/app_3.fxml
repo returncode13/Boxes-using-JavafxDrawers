@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root style="-fx-background-color: black;" stylesheets="@../../styles/bootstrap3.css" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.app.AppController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER" maxHeight="-Infinity" style="-fx-background-color: #2f2f2f;">
+                           <children>
+                              <MenuBar fx:id="menubar" style="-fx-text-fill: white; -fx-background-color: #2f2f2f;" stylesheets="@../../styles/bootstrap3.css" HBox.hgrow="ALWAYS">
+                                <menus>
+                                  <Menu mnemonicParsing="false" style="-fx-background-color: #606060;" text="File">
+                                    <items>
+                                          <MenuItem fx:id="startWorkspace" mnemonicParsing="false" onAction="#startNewWorkspace" text="Start a new Workspace" />
+                                          <MenuItem fx:id="saveCurrentWorkspace" mnemonicParsing="false" onAction="#saveCurrentSession" text="Save current Workspace" />
+                                          <MenuItem fx:id="saveSessionAs" mnemonicParsing="false" onAction="#saveSessionAs" text="Save Session As.." />
+                                          <MenuItem fx:id="loadWorkspace" mnemonicParsing="false" onAction="#loadSession" text="Load Workspace" />
+                                      <MenuItem fx:id="exit" mnemonicParsing="false" onAction="#exitTheProgram" text="Exit" />
+                                    </items>
+                                  </Menu>
+                                  <Menu mnemonicParsing="false" style="-fx-background-color: #606060;" text="Edit">
+                                    <items>
+            
+                                                      
+                                                <MenuItem fx:id="settings" mnemonicParsing="false" onAction="#settings" text="SSH Settings" />
+                                    
+                                                      
+                                      <MenuItem fx:id="dbsettings" mnemonicParsing="false" onAction="#dbsettings" text="Database Settings" />
+                                    </items>
+                                  </Menu>
+                                  <Menu mnemonicParsing="false" style="-fx-background-color: #606060;" text="Help">
+                                    <items>
+                                      <MenuItem fx:id="idAbout" mnemonicParsing="false" onAction="#about" text="About" />
+                                          <MenuItem id="bug" fx:id="idAbout1" mnemonicParsing="false" onAction="#about" text="Report a bug" />
+                                    </items>
+                                  </Menu>
+                                </menus>
+                              </MenuBar>
+                              <Pane prefHeight="41.0" prefWidth="30.0" />
+                              <Pane layoutX="1958.0" layoutY="10.0" prefHeight="41.0" prefWidth="47.0" />
+                           </children>
+                        </HBox>
+                        <StackPane fx:id="basePane" style="-fx-background-color: #2f2f2f;" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <VBox style="-fx-background-color: #2f2f2f;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Pane prefHeight="41.0" prefWidth="30.0" />
+                        <Button fx:id="userBtn" maxWidth="113.0" mnemonicParsing="false" onAction="#loginAsUser" prefHeight="100.0" prefWidth="113.0" style="-fx-background-color: black; -fx-text-fill: white; -fx-background-radius: 10em; -fx-min-width: 100px; -fx-min-height: 100px; -fx-max-width: 100px; -fx-max-height: 100px; -fx-background-insets: 0px; -fx-padding: 0px; -fx-border-radius: 10em; -fx-border-width: 1;" stylesheets="@../../styles/bootstrap3.css" text="USER">
+                           <padding>
+                              <Insets right="2.0" />
+                           </padding>
+                        </Button>
+                        <Pane prefHeight="41.0" prefWidth="30.0" VBox.vgrow="ALWAYS" />
+                        <AnchorPane>
+                           <children>
+                              <JFXTextArea fx:id="smallerLog" editable="false" onMouseClicked="#openLargerLog" prefColumnCount="3" prefRowCount="3" style="-fx-background-color: black; -fx-text-fill: green;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+   </children>
+   <effect>
+      <Glow />
+   </effect>
+</fx:root>

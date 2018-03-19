@@ -125,11 +125,18 @@ import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.SVGPath;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
 import middleware.dugex.DugLogManager;
@@ -210,19 +217,31 @@ public class WorkspaceController {
     private   Map<AncestorKey,List<Ancestor>> ancestorMapForSummary=new HashMap<>();    // each pkey (job,sub) has a list of ancestors (jobs that contain the sub)
     private   Map<DescendantKey,List<Descendant>> descendantMapForSummary = new HashMap<>(); // each pkey (job,sub) has a list of descendants (jobs that contain the sub)
     private double percentageOfProcessorsUsed=AppProperties.PERCENTAGE_OF_PROCESSORS_USED;
-    
+    private double dividerWidth=0.90;
     
     @FXML
     private AnchorPane baseWindow;              //depth =0 
 
     @FXML
-    private SplitPane splitpane;                //depth =1 
+    private HBox hbox;
+    /*@FXML
+    private SplitPane splitpane;                //depth =1 */
 
     @FXML
     private ScrollPane scrollpane;              //depth =2 
+    
+    private ScrollBar vscrollBar; 
+    
+     @FXML
+    private AnchorPane anchorPane2;
+    
     @FXML
     private AnchorPane interactivePane;         //depth =3 
 
+     @FXML
+    private Button chartButton;
+
+    
     @FXML
     private Button add;
     
@@ -238,6 +257,12 @@ public class WorkspaceController {
     @FXML
     private Button summaryButton;
 
+    @FXML
+    void chart(ActionEvent event) {
+        System.out.println("fend.workspace.WorkspaceController.chart(): Pending implementation for charts");
+    }
+    
+    
     @FXML
     void addBox(ActionEvent event) {
         Job dbjob = new Job();
@@ -830,14 +855,26 @@ public class WorkspaceController {
     }
 
     void setModel(WorkspaceModel item) {
-        splitpane.prefWidthProperty().bind(baseWindow.widthProperty());
-        splitpane.prefHeightProperty().bind(baseWindow.heightProperty());
-        scrollpane.prefWidthProperty().bind(splitpane.widthProperty());
-        scrollpane.prefHeightProperty().bind(splitpane.heightProperty());
+//        splitpane.prefWidthProperty().bind(baseWindow.widthProperty());
+  //      splitpane.prefHeightProperty().bind(baseWindow.heightProperty());
+   //     scrollpane.prefWidthProperty().bind(splitpane.widthProperty());
+   //     scrollpane.prefHeightProperty().bind(splitpane.heightProperty());
+        
+    //    fixDivider();
+        hbox.prefWidthProperty().bind(baseWindow.widthProperty());
+        hbox.prefHeightProperty().bind(baseWindow.heightProperty());
+        scrollpane.prefWidthProperty().bind(hbox.widthProperty());
+        scrollpane.prefHeightProperty().bind(hbox.heightProperty());
         interactivePane.prefWidthProperty().bind(scrollpane.widthProperty());
         interactivePane.prefHeightProperty().bind(scrollpane.heightProperty());
         interactivePane.getChildren().addListener(jobLinkChangeListener);
         loadingProperty.addListener(loadingListener);
+        createGraphAndChartsButton();
+        createSummaryButton();
+       // moveScrollPanesToTheLeft();
+        
+        
+        
         model = item;
         //dbWorkspace = workspaceService.getWorkspace(model.getId());
         dbWorkspace=model.getWorkspace();
@@ -3301,6 +3338,32 @@ public class WorkspaceController {
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }
 
+    private void moveScrollPanesToTheLeft() {
+        vscrollBar=new ScrollBar();
+        vscrollBar.setOrientation(Orientation.VERTICAL);
+        vscrollBar.minProperty().bind(scrollpane.vminProperty());
+        vscrollBar.maxProperty().bind(scrollpane.vmaxProperty());
+        vscrollBar.visibleAmountProperty().bind(scrollpane.heightProperty().divide(interactivePane.heightProperty()));
+        scrollpane.vvalueProperty().bindBidirectional(vscrollBar.valueProperty());
+        scrollpane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        anchorPane2.getChildren().addAll(vscrollBar);
+        
+    }
+
+   
+
+     /* private void fixDivider() {
+     splitpane.setDividerPositions(dividerWidth);
+     SplitPane.Divider divider=splitpane.getDividers().get(0);
+     divider.positionProperty().addListener(new ChangeListener<Number>(){
+     @Override
+     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+     divider.setPosition(dividerWidth);
+     }
+     
+     });
+     }*/
+
    
      /**
       * 
@@ -3665,4 +3728,137 @@ public class WorkspaceController {
                return procsUsed;
     }
     
+     
+    //createGraphAndChartsButton();
+    
+    private static SVGPath createPath(String s,String fill,String hoverFill){
+        SVGPath path=new SVGPath();
+        
+       path.getStyleClass().add("svg");
+        path.setContent(s);
+        path.setStyle("-fill:"+fill+";-hover-fill:"+hoverFill+";");
+        return path;
+    }
+    
+    private void createGraphAndChartsButton(){
+        
+        
+
+//<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        Group svg=new Group(
+                /*createPath("M1,38.599c-0.553,0-1,0.447-1,1s0.447,1,1,1c1.163,0,2.08,0.375,2.803,1.146C5.914,44,5.63,48.732,5.625,48.849v12.75    c0,3.211,0.892,5.688,2.649,7.356c2.109,2.004,4.771,2.146,5.479,2.146c0.098,0,0.158-0.004,0.174-0\n" +
+                ".004    c0.552-0.027,0.976-0.498,0.947-1.051c-0.029-0.554-0.508-0.98-1.051-0.947c-0.026,0.012-2.385,0.104-4.172-1.594    c-1.346-1.277-2.026-3.265-2.026-5.906L7.623,48.916c0.016-0.229,0.348-5.644-2.356-8.533c-0.279-0.298-0.581-0.561-0.901\n" +
+                "-0.783    c0.32-0.224,0.622-0.484,0.901-0.784c2.704-2.893,2.372-8.305,2.358-8.466v-12.75c0-2.631,0.676-4.612,2.01-5.891    c1.767-1.694,4.158-1.614,4.193-1.61c0.551,0.034,1.017-0.396,1.046-0.947c0.027-0.552-0.396-1.021-0.947-1.051    c-0.\n" +
+                "138,0.002-3.25-0.14-5.651,2.143c-1.759,1.67-2.649,4.146-2.649,7.356l0.002,12.817c0.09,1.317-0.064,5.151-1.821,7.032    C3.082,38.223,2.165,38.599,1,38.599z", "red", "darkred"),
+                
+                createPath("M78.752,41.153c0.555,0,1-0.444,1-0.999c0-0.554-0.445-1-1-1c-1.164,0-2.08-0.375-2.803-1.146    c-2.111-2.255-1.828-6.989-1.822-7.104v-12.75c0-3.212-0.895-5.688-2.648-7.356c-2.4-2.281-5.521-2.144-5.65-2.143    c-0.5\n" +
+                "53,0.029-0.977,0.499-0.947,1.052c0.029,0.552,0.498,0.976,1.053,0.946c0.025-0.009,2.383-0.104,4.17,1.595    c1.35,1.276,2.025,3.265,2.025,5.906l0.002,12.684c-0.016,0.229-0.348,5.641,2.355,8.532c0.281,0.3,0.582,0.561,0.902,0.782    c-0.32,0\n" +
+                ".227-0.621,0.484-0.902,0.784c-2.703,2.896-2.371,8.307-2.357,8.465v12.75c0,2.633-0.676,4.613-2.01,5.895    c-1.768,1.689-4.164,1.607-4.191,1.607c-0.531-0.028-1.018,0.396-1.047,0.947c-0.027,0.551,0.396,1.021,0.947,1.051    c0.018,0,0.074,0.\n" +
+                "002,0.174,0.002c0.705,0,3.367-0.141,5.479-2.145c1.761-1.67,2.648-4.146,2.648-7.357l-0.003-12.813    c-0.09-1.318,0.063-5.152,1.821-7.031C76.67,41.532,77.586,41.153,78.752,41.153z", "red", "darkred")*/
+                
+                createPath("M493.692,476.023H296.139v35.679H494.16c10.521,0,18.915-9.108,17.728-19.869" +
+"C510.883,482.732,502.849,476.023,493.692,476.023z", "#808285", "#808285"),
+                createPath("M493.566,511.703H17.84c-9.852,0-17.84-7.987-17.84-17.84V18.137c0-9.852,7.987-17.84,17.84-17.84" +
+"s17.84,7.987,17.84,17.84v457.886h457.886c9.852,0,17.84,7.987,17.84,17.84C511.405,503.715,503.418,511.703,493.566,511.703z", "#A7A9AC", "#A7A9AC"),
+                createPath("M493.566,100.2h-40.437v411.503h40.437c9.852,0,17.84-7.987,17.84-17.84V118.04\n" +
+"	C511.405,108.187,503.418,100.2,493.566,100.2z", "#48A792", "#48A792"),
+                createPath("M493.566,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V118.04c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v375.823C511.405,503.715,503.418,511.703,493.566,511.703z", "#85EDC1", "#85EDC1"),
+                createPath("M335.387,225.078H294.95v286.625h40.437c9.852,0,17.84-7.987,17.84-17.84V242.918\n" +
+"	C353.226,233.065,345.239,225.078,335.387,225.078z", "#FF9900", "#FF9900"),
+                createPath("M335.387,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V242.918c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v250.945C353.226,503.715,345.239,511.703,335.387,511.703z", "#FFDB2D", "#FFDB2D"),
+                 createPath("M176.019,351.145h-40.437v160.557h40.437c9.852,0,17.84-7.987,17.84-17.84V368.985\n" +
+"	C193.858,359.133,185.871,351.145,176.019,351.145z", "#FC0023", "#FC0023"),
+                createPath("M176.019,511.703H96.334c-9.852,0-17.84-7.987-17.84-17.84V368.985c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v124.878C193.858,503.715,185.871,511.703,176.019,511.703z", "#FF4F19", "#FF4F19")
+                
+               // createPath("M20,20h60v60h-60z", "red", "darkred")
+        );
+        Bounds bounds=svg.getBoundsInParent();
+        double scale=Math.min(20/bounds.getWidth(),20/bounds.getHeight());
+        svg.setScaleX(scale);
+        svg.setScaleY(scale);
+        
+        chartButton.setGraphic(svg);
+        chartButton.setMaxSize(157,48);
+        chartButton.setMinSize(157, 48);
+        chartButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
+    private void createSummaryButton(){
+        
+        //<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        
+        
+        
+        Group svg=new Group(
+                /*createPath("M1,38.599c-0.553,0-1,0.447-1,1s0.447,1,1,1c1.163,0,2.08,0.375,2.803,1.146C5.914,44,5.63,48.732,5.625,48.849v12.75    c0,3.211,0.892,5.688,2.649,7.356c2.109,2.004,4.771,2.146,5.479,2.146c0.098,0,0.158-0.004,0.174-0\n" +
+                ".004    c0.552-0.027,0.976-0.498,0.947-1.051c-0.029-0.554-0.508-0.98-1.051-0.947c-0.026,0.012-2.385,0.104-4.172-1.594    c-1.346-1.277-2.026-3.265-2.026-5.906L7.623,48.916c0.016-0.229,0.348-5.644-2.356-8.533c-0.279-0.298-0.581-0.561-0.901\n" +
+                "-0.783    c0.32-0.224,0.622-0.484,0.901-0.784c2.704-2.893,2.372-8.305,2.358-8.466v-12.75c0-2.631,0.676-4.612,2.01-5.891    c1.767-1.694,4.158-1.614,4.193-1.61c0.551,0.034,1.017-0.396,1.046-0.947c0.027-0.552-0.396-1.021-0.947-1.051    c-0.\n" +
+                "138,0.002-3.25-0.14-5.651,2.143c-1.759,1.67-2.649,4.146-2.649,7.356l0.002,12.817c0.09,1.317-0.064,5.151-1.821,7.032    C3.082,38.223,2.165,38.599,1,38.599z", "red", "darkred"),
+                
+                createPath("M78.752,41.153c0.555,0,1-0.444,1-0.999c0-0.554-0.445-1-1-1c-1.164,0-2.08-0.375-2.803-1.146    c-2.111-2.255-1.828-6.989-1.822-7.104v-12.75c0-3.212-0.895-5.688-2.648-7.356c-2.4-2.281-5.521-2.144-5.65-2.143    c-0.5\n" +
+                "53,0.029-0.977,0.499-0.947,1.052c0.029,0.552,0.498,0.976,1.053,0.946c0.025-0.009,2.383-0.104,4.17,1.595    c1.35,1.276,2.025,3.265,2.025,5.906l0.002,12.684c-0.016,0.229-0.348,5.641,2.355,8.532c0.281,0.3,0.582,0.561,0.902,0.782    c-0.32,0\n" +
+                ".227-0.621,0.484-0.902,0.784c-2.703,2.896-2.371,8.307-2.357,8.465v12.75c0,2.633-0.676,4.613-2.01,5.895    c-1.768,1.689-4.164,1.607-4.191,1.607c-0.531-0.028-1.018,0.396-1.047,0.947c-0.027,0.551,0.396,1.021,0.947,1.051    c0.018,0,0.074,0.\n" +
+                "002,0.174,0.002c0.705,0,3.367-0.141,5.479-2.145c1.761-1.67,2.648-4.146,2.648-7.357l-0.003-12.813    c-0.09-1.318,0.063-5.152,1.821-7.031C76.67,41.532,77.586,41.153,78.752,41.153z", "red", "darkred")*/
+                
+                createPath("M494.345,459.034H17.655C7.904,459.034,0,451.13,0,441.379V70.621\n" +
+"	c0-9.751,7.904-17.655,17.655-17.655h476.69c9.751,0,17.655,7.904,17.655,17.655v370.759\n" +
+                        "	C512,451.129,504.095,459.034,494.345,459.034z", "#062751", "#062751"),
+                createPath("M0,105.931h512v-35.31c0-9.751-7.904-17.655-17.655-17.655H17.655C7.904,52.966,0,60.87,0,70.621\n" +
+"	V105.931z", "#C3E678", "#C3E678"),
+                createPath("M61.793,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,216.737,66.668,220.69,61.793,220.69z", "#D7DEED", "#D7DEED"),
+                new Group(
+                        createPath("M203.034,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C211.862,216.737,207.91,220.69,203.034,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M414.897,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C423.724,216.737,419.772,220.69,414.897,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M344.276,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C353.103,216.737,349.151,220.69,344.276,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M485.517,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C494.345,216.737,490.392,220.69,485.517,220.69z", "#8F96AC", "#8F96AC")
+                ),
+                
+                createPath("M61.793,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,305.013,66.668,308.966,61.793,308.966z", "#C3E678", "#C3E678"),
+                new Group(
+                                createPath("M203.034,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+                "		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C211.862,305.013,207.91,308.966,203.034,308.966z", "#D7DEED", "#D7DEED"),
+                                createPath("M414.897,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C423.724,305.013,419.772,308.966,414.897,308.966z", "#D7DEED", "#D7DEED"),
+                        createPath("M344.276,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C353.103,305.013,349.151,308.966,344.276,308.966z", "#D7DEED", "D7DEED"),
+                        createPath("M485.517,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C494.345,305.013,490.392,308.966,485.517,308.966z", "#D7DEED", "#D7DEED"),
+                        createPath("M273.655,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C282.483,349.151,278.53,353.103,273.655,353.103z", "#D7DEED", "#D7DEED"),
+                        createPath("M132.414,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C141.241,349.151,137.289,353.103,132.414,353.103z", "#D7DEED", "D7DEED")
+                        
+                ),
+                createPath("M61.793,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,349.151,66.668,353.103,61.793,353.103z", "#C3E678", "#C3E678")
+                
+                /*
+                createPath("M61.793,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,305.013,66.668,308.966,61.793,308.966z", "#C3E678", "#C3E678")/*,
+                createPath("", "yellow", "orange"),
+                createPath("", "red", "darkred"),
+                createPath("", "green", "darkgreen"),
+                createPath("", "green", "darkgreen"),
+                createPath("", "blue", "blue")*/
+                
+               // createPath("M20,20h60v60h-60z", "red", "darkred")
+        );
+        Bounds bounds=svg.getBoundsInParent();
+        double scale=Math.min(25/bounds.getWidth(),25/bounds.getHeight());
+        svg.setScaleX(scale);
+        svg.setScaleY(scale);
+        
+        summaryButton.setGraphic(svg);
+        summaryButton.setMaxSize(157,48);
+        summaryButton.setMinSize(157, 48);
+        summaryButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
 }
