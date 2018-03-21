@@ -71,10 +71,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.control.ContentDisplay;
@@ -89,7 +92,7 @@ import javax.xml.bind.Unmarshaller;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AppController extends Stage{
+public class AppController extends Stage implements Initializable{
     private AppModel model;
     private AppView view;
     private WorkspaceService workspaceService=new WorkspaceServiceImpl();
@@ -145,7 +148,41 @@ public class AppController extends Stage{
      @FXML
     private JFXTextArea smallerLog;
 
+     @FXML
+     private Button acqButton;
+     
+     
+     @FXML
+     private Button segdButton;
+     
+    @FXML
+    private Button textButton;
     
+    @FXML
+    private Button button2D;
+      
+     @FXML
+     void addAcqNode(ActionEvent e){
+         
+     }
+     
+     
+     
+    @FXML
+    void addSegdNode(ActionEvent event) {
+
+    }
+    
+    @FXML
+    void addTextNode(ActionEvent event) {
+
+    }
+    
+    
+    @FXML
+    void add2DNode(ActionEvent event) {
+
+    }
     private String titleHeader = "PQMan: "+AppProperties.VERSION;
 
     
@@ -346,6 +383,9 @@ public class AppController extends Stage{
         //            userService.updateUser(currentUser.getUser_id(), currentUser);
         }*/
     }
+    
+    
+    
     
     @FXML
     void loadSession(ActionEvent event) {
@@ -847,6 +887,11 @@ public class AppController extends Stage{
         System.out.println("fend.app.AppController.logout(): user: "+
                 u.getInitials()+" is logged into "
                 +workspacesForUser.size()+" workspaces");
+        
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         
     }
 }

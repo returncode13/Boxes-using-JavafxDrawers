@@ -12,6 +12,7 @@ and open the template in the editor.
 
 .button {
     -fx-focus-color: transparent;
+    
 }
 
 .button:focus{
