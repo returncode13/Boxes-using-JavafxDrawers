@@ -18,10 +18,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
+import fend.job.job4.definitions.volume.listFiles.ListFilesModel;
+import fend.job.job4.definitions.volume.listFiles.ListFilesNode;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
+import fend.volume.volume4.Volume4;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -38,6 +43,8 @@ public class VolumeListController {
     private Job dbjob;
     private VolumeService volumeService=new VolumeServiceImpl();
     private JobService jobService=new JobServiceImpl();
+    private ListFilesModel listFilesModel;
+    
     
      @FXML
     private JFXListView<Volume0> volumeListView;
@@ -54,12 +61,16 @@ public class VolumeListController {
         if(f==null){
             return;
         }
-        if(!f.getName().endsWith(".p190")){
-            System.out.println("fend.job.job4.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
-            return;
-        }
         
+        List<String> filenames=new ArrayList<>();
+        File[] fileL=f.listFiles();
+                for(int i=0;i<fileL.length;i++){
+                    filenames.add(fileL[i].getName());
+                }
         
+               
+                
+                
         Volume vol=new Volume();
         vol.setNameVolume(f.getName());
         vol.setPathOfVolume(f.getAbsolutePath());
@@ -67,45 +78,23 @@ public class VolumeListController {
         vol.setJob(dbjob);
         volumeService.createVolume(vol);
         
+        
+        
+        
         //type=1L;  <--for demo
-        if(type.equals(JobType0Model.PROCESS_2D)){
-            Volume1 volume1=new Volume1(parentjob);
-            volume1.setId(vol.getId());
-            volume1.setName(f.getName());
-            volume1.setVolume(f);
-           
-            model.addToVolumeList(volume1);
+        if(type.equals(JobType0Model.TEXT)){
+        Volume4 volume4=new Volume4(parentjob);
+        volume4.setId(vol.getId());
+        volume4.setName(f.getName());
+        volume4.setVolume(f);
+        
+        model.addToVolumeList(volume4);
+        
+            listFilesModel=new ListFilesModel(filenames,volume4);
+            ListFilesNode lfnode=new ListFilesNode(listFilesModel);
         }
-        /* if(type.equals(JobType0Model.SEGD_LOAD)){
-        Volume2 volume2=new Volume2(parentjob);
-        volume2.setId(vol.getId());
-        volume2.setName(f.getName());
-        volume2.setVolume(f);
-        
-        model.addToVolumeList(volume2);
-        }
-        if(type.equals(JobType0Model.ACQUISITION)){
-        //TO DO.
         
         
-        /*Volume2 volume2=new Volume2(parentjob);
-        volume2.setId(vol.getId());
-        volume2.setName(f.getName());
-        volume2.setVolume(f);
-        
-        model.addToVolumeList(volume2);*/
-   // }
-    /*if(type.equals(JobType0Model.TEXT)){
-        //TO DO.
-        
-        
-        /*Volume2 volume2=new Volume2(parentjob);
-        volume2.setId(vol.getId());
-        volume2.setName(f.getName());
-        volume2.setVolume(f);
-        
-        model.addToVolumeList(volume2);*/
-   /* }*/
     }
     
      

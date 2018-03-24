@@ -141,6 +141,22 @@ public class AppController extends Stage implements Initializable{
     private Button userBtn;
     
     
+    
+     @FXML
+    private Button newWorkspace;
+
+    @FXML
+    private Button loadExistingWorkspace;
+
+    @FXML
+    private Button connect;
+
+    @FXML
+    private Button databaseSettings;
+
+    
+    
+    
     @FXML
     private StackPane basePane;
     
@@ -148,41 +164,8 @@ public class AppController extends Stage implements Initializable{
      @FXML
     private JFXTextArea smallerLog;
 
-     @FXML
-     private Button acqButton;
-     
-     
-     @FXML
-     private Button segdButton;
-     
-    @FXML
-    private Button textButton;
     
-    @FXML
-    private Button button2D;
-      
-     @FXML
-     void addAcqNode(ActionEvent e){
-         
-     }
      
-     
-     
-    @FXML
-    void addSegdNode(ActionEvent event) {
-
-    }
-    
-    @FXML
-    void addTextNode(ActionEvent event) {
-
-    }
-    
-    
-    @FXML
-    void add2DNode(ActionEvent event) {
-
-    }
     private String titleHeader = "PQMan: "+AppProperties.VERSION;
 
     

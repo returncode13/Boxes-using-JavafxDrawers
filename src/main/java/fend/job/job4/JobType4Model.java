@@ -88,10 +88,12 @@ public class JobType4Model implements JobType0Model {
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
 
+    @Override
     public Job getDatabaseJob() {
         return databaseJob;
     }
 
+    @Override
     public void setDatabaseJob(Job databaseJob) {
         this.databaseJob = databaseJob;
     }
