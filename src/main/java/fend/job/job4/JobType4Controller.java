@@ -56,6 +56,7 @@ import java.util.LinkedHashSet;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 
 /**
  *
@@ -310,9 +311,20 @@ parent.addChild(model);*/
      
      */
     
-     @FXML
+    @FXML
     void extractHeadersForJob(ActionEvent event) {
             showTable.setDisable(true);
+            qctable.setDisable(true);
+            
+            Task<Void> timeStampAndMd5ExtractionTask=new Task<Void>(){
+                @Override
+                protected Void call() throws Exception {
+                    //put extraction code here
+                    return null;
+                }
+                
+            };
+                    
             model.extractLogs();
             
     }

@@ -64,12 +64,12 @@ public class SShSettingsController extends Stage {
     
     @FXML
     void applySettings(ActionEvent event) {
-        /* smodel.setDbPassword(NdbPass);
+        smodel.setDbPassword(NdbPass);
         smodel.setDbUser(NdbU);
         smodel.setSshHost(NsshHost);
         smodel.setSshUser(NsshUser);
         smodel.setSshPassword(NsshPass);
-        */
+        
         System.out.println("landing.settings.SettingsController.applySettings():" );
         System.out.println("host   : "+NsshHost);
         System.out.println("sshuser: "+NsshUser);

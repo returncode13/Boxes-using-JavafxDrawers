@@ -79,10 +79,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Screen;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -196,15 +198,10 @@ public class AppController extends Stage implements Initializable{
         InputStream is=null;
         try {
           DataBaseSettings  databaseSettingsModel=new DataBaseSettings();
-            //    System.out.println("landing.LandingController.dbsettings(): looking for "+getClass().getClassLoader().getResource(dbSettingXml).getFile());
-            //File dbFile=new File(dbSettingXml);
-            /*ClassLoader classLoader=Thread.currentThread().getContextClassLoader();
-            InputStream is=classLoader.getResourceAsStream(dbSettingXml);*/
-            // File dbFile=new File(getClass().getClassLoader().getResource(dbSettingXml).getFile());
-            // File dbFile=
+            
             System.out.println("fend.app.AppController.dbsettings()");
             System.out.println("fend.app.AppController.dbsettings() looking for "+System.getProperty("user.home")+ "  file: "+Connections.dbSettingXml);
-         //   logger.info("looking for  file: "+dbSettingXml+" under "+ System.getProperty("user.home"));
+         
             File dbFile=new File(System.getProperty("user.home"),Connections.dbSettingXml);
             is = new FileInputStream(dbFile);
             try {
@@ -231,16 +228,11 @@ public class AppController extends Stage implements Initializable{
                 marshallerObj.marshal(databaseSettingsModel, new File(System.getProperty("user.home"),Connections.dbSettingXml));
                 
             } catch (JAXBException ex) {
-                //Logger.getLogger(LandingController.class.getName()).log(Level.SEVERE, null, ex);
-                //logger.log(Level.SEVERE, null, ex);
-                //logger.severe("JAXBException: "+ex.getMessage());
+               
             }
             
         } catch (FileNotFoundException ex) {
-            //logger.log(Level.SEVERE, "File not found!: {0}", ex.getMessage());
-          //  logger.severe("File not found");
-            //logger.log(Level.SEVERE, null, ex);
-            //Exceptions.printStackTrace(ex);'
+            
             ex.printStackTrace();
             
             
@@ -261,13 +253,7 @@ public class AppController extends Stage implements Initializable{
         InputStream is=null;
         try {
            SShSettings settingsModel=new SShSettings();
-            /*URL sshLocationURL=getClass().getClassLoader().getResource(sshSettingXml);
-            File sFile=new File(sshSettingXml);*/
-            //System.out.println("landing.LandingController.settings(): looking for "+sshLocationURL.getFile());
-            //File sFile=new File(sshLocationURL.getFile());
             
-            /* ClassLoader classLoader=Thread.currentThread().getContextClassLoader();
-            InputStream is=classLoader.getResourceAsStream(sshSettingXml);*/
             System.out.println("fend.app.AppController.settings() looking for "+System.getProperty("user.home")+ "  file: "+Connections.sshSettingXml);
            // logger.info("looking for "+System.getProperty("user.home")+ "  file: "+sshSettingXml);
             File sFile=new File(System.getProperty("user.home"),Connections.sshSettingXml);
@@ -711,10 +697,13 @@ public class AppController extends Stage implements Initializable{
 
     void setView(AppView view) {
         this.view=view;
-        appScene=new Scene(this.view);
-         //this.setTitle(titleHeader);
-         //this.setScene(new Scene(view));
-        // this.initModality(Modality.APPLICATION_MODAL);
+        Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+        appScene=new Scene(this.view,visualBounds.getWidth(),visualBounds.getHeight());
+       /*Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
+       this.setScene(new Scene(view,visualBounds.getWidth(),visualBounds.getHeight()));*/
+         this.setTitle(titleHeader);
+         
+         //this.initModality(Modality.APPLICATION_MODAL);
          //this.showAndWait();
          //this.show();
     }

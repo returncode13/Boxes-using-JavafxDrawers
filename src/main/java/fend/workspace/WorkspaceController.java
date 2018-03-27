@@ -443,40 +443,7 @@ public class WorkspaceController {
     
     @FXML
     void addText(ActionEvent event) {
-        /*Job dbjob = new Job();
-        Long typeOfJob = JobType0Model.TEXT;
-        NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
-        dbjob.setNodetype(nodetype);
-        dbjob.setWorkspace(dbWorkspace);
-        
-        dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
-        jobService.createJob(dbjob);
-        
-        JobType4Model job = new JobType4Model(this.model);
-        job.setId(dbjob.getId());
-        
-        List<JobModelProperty> jobProperties=job.getJobProperties();
-        for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
-        JobModelProperty jobProperty = iterator.next();
-        NodePropertyValue npv=new NodePropertyValue();
-        npv.setJob(dbjob);
-        PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
-        NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
-        npv.setNodeProperty(nodeProperty);
-        npv.setValue(jobProperty.getPropertyValue());
-        nodePropertyValueService.createNodePropertyValue(npv);
-        
-        
-        
-        }
-        
-        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
-        changeProperty.bind(job.getChangeProperty());
-        changeProperty.addListener(workspaceChangedListener);
-        
-        changePropertyList.add(changeProperty);
-        JobType4View jobview = new JobType4View(job, interactivePane);
-        interactivePane.getChildren().add(jobview);*/
+       
         
          Job dbjob = new Job();
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);

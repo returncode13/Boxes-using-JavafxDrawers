@@ -32,6 +32,7 @@ import javax.xml.bind.Unmarshaller;
 
 import app.settings.ssh.SShSettings;
 import app.connections.manager.ssh.SSHManager;
+import app.properties.AppProperties;
 
 /**
  *
@@ -42,8 +43,8 @@ public class DataBaseSettingsController extends Stage{
     private static SSHManager instance;
     final private String urltemplate="jdbc:postgresql://localhost:5432/template1";
     final private String url="jdbc:postgresql://localhost:5432/";
-    private static int[] sshLocalPort={5432,5433,5444,5445,5446,5447,5448,5449,5450};   
-    private static int dbPort=5432;
+  //  private static int[] sshLocalPort={5432,5433,5444,5445,5446,5447,5448,5449,5450};   
+    private static int dbPortOnRemote=5432;
     
     private DataBaseSettings dbsmodel;
     private DataBaseSettingsNode dbnode;
@@ -141,7 +142,7 @@ public class DataBaseSettingsController extends Stage{
        // fail();
                 }else
                    {
-         String errorMessage1=instance.setPortForwarding(sshLocalPort[0], dbPort);
+         String errorMessage1=instance.setPortForwarding(AppProperties.APPLICATION_PORT_ON_LOCAL, dbPortOnRemote);
                        System.out.println("app.settings.database.DataBaseSettingsController.lookUpDatabases(): SSH CONNECTION ESTABLISHED ? "+errorMessage1 );
          System.out.println(errorMessage1);
      }

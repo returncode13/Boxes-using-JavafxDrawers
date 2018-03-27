@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.app;
+package fend.project;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.layout.AnchorPane;
 
 /**
  *
- * @author sharath nair <sharath.nair@polarcus.com>
+ * @author sharath
  */
-public class AppView extends AnchorPane {
+public class ProjectView extends AnchorPane{
      private FXMLLoader fXMLLoader;
     private final URL location;
-    private AppController controller;
+    private ProjectController controller;
     
-    public AppView(AppModel model)
+    public ProjectView(ProjectModel lsm)
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_9.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/project/project.fxml");
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -35,16 +34,21 @@ public class AppView extends AnchorPane {
             fXMLLoader.setBuilderFactory(new JavaFXBuilderFactory());
            
             try{
+                
                 fXMLLoader.load(location.openStream());
-           
-                controller=(AppController)fXMLLoader.getController();
+                
+                
+                controller=(ProjectController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
-                //setId(UUID.randomUUID().getMostSignificantBits()+"");
-                //controller.setId(Long.valueOf(getId()));
-                controller.setModel(model);
+               
+               // sc.setId(Long.valueOf(getId()));
+                
+                controller.setModel(lsm);
                 controller.setView(this) ;
+                
+               
                
                 
             }catch(IOException e){
@@ -52,11 +56,9 @@ public class AppView extends AnchorPane {
             }
     }
 
-    public AppController getController() {
+    public ProjectController getController() {
         return controller;
     }
-    
-    
     
     
 }

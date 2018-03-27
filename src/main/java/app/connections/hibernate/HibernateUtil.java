@@ -73,7 +73,7 @@ public class HibernateUtil {
      
      
     private static SessionFactory buildSessionFactory(){
-        System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+Connections.sshSettingXml);
+       /* System.out.println("hibUtil.HibernateUtil.buildSessionFactory() : Loading the connection configurations "+Connections.sshSettingXml);
         
          File sFile=new File(System.getProperty("user.home"),Connections.sshSettingXml);
          File dbFile=new File(System.getProperty("user.home"),Connections.dbSettingXml);
@@ -143,51 +143,24 @@ public class HibernateUtil {
      }
 
     
-     // call sendCommand for each command and the output 
-     //(without prompts) is returned
-    
-     // close only after all commands are sent
-    // instance.close();
-     //assertEquals(expResult, result);
-    
-            
-            
-            
-           /*
-            Configuration configuration=new Configuration().setInterceptor(new AppInterceptor());
-            //Configuration configuration=new Configuration();
-            configuration.configure("hibernate.cfg.xml");
-            System.out.println("Configuration file loaded :"+configuration.getProperties().toString());
-            System.out.println("Configuration file loaded :"+configuration.getProperty("hibernate.connection.username"));
-            
-            ServiceRegistry serviceRegistry =new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            System.out.println("Service Registry built: "+serviceRegistry.toString());
-            
-            SessionFactory sessionFactory = configuration.buildSessionFactory( serviceRegistry);
-            System.out.println("returning sessionFactory from buildSessionFactory: "+sessionFactory.toString() );
-            return sessionFactory;
-*/  
-            Map<String,String> persistenceMap=new HashMap<>();
-            persistenceMap.put("javax.persistence.jdbc.url",database);
-            
-           
-            emfactory=Persistence.createEntityManagerFactory("PQMan",persistenceMap);
-            //emfactory=Persistence.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU");
-            //emfactory=provider.createEntityManagerFactory("landing_OBPManagerMaven-2_jar_1.0-SNAPSHOTPU",null);
-            String result = instance.sendCommand(command);
-            //sessionFactory=emfactory.unwrap(SessionFactory.class);
-            
-            //sessionFactory=emfactory.unwrap(Session.class).getSessionFactory();
+
+              /* Map<String,String> persistenceMap=new HashMap<>();
+              persistenceMap.put("javax.persistence.jdbc.url",database);
+              
+              
+              emfactory=Persistence.createEntityManagerFactory("PQMan",persistenceMap);*/
+          //  String result = instance.sendCommand(command);
+         
             sessionFactory=emfactory.unwrap(SessionFactory.class);
-            System.out.println(result);
+          //  System.out.println(result);
            return sessionFactory;
            
-        }
-        catch(Throwable ex){
-            System.err.println("Initial SessionFactory Creation failed");
-            ex.printStackTrace();
-            throw new ExceptionInInitializerError(ex);
-        }
+           /*  }
+           catch(Throwable ex){
+           System.err.println("Initial SessionFactory Creation failed");
+           ex.printStackTrace();
+           throw new ExceptionInInitializerError(ex);
+           }*/
     }
     
   
@@ -195,6 +168,10 @@ public class HibernateUtil {
     public static SessionFactory getSessionFactory() {
         if(sessionFactory==null ){sessionFactory=buildSessionFactory();if(sessionFactory!=null) System.out.println("returning sessionFactory from getSessionFactory");}
         return sessionFactory;
+    }
+    
+    public static void setEntityManagerFactory(EntityManagerFactory em){
+        emfactory=em;
     }
     
 }

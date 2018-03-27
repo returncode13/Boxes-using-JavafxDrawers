@@ -21,6 +21,7 @@ public class AppProperties {
     
     //public static final String INSIGHT_LOCATION="/d/sw/Insight";
     public static final String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
+    
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
@@ -34,6 +35,8 @@ public class AppProperties {
     
     
     public static int APPLICATION_PORT_ON_LOCAL=5433;
+    final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";
+
     
     public String getProject() {
         return project;
