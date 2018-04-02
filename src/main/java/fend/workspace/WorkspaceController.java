@@ -238,9 +238,9 @@ public class WorkspaceController {
     @FXML
     private AnchorPane interactivePane;         //depth =3 
 
-     @FXML
+    /*  @FXML
     private Button chartButton;
-
+    
     
     @FXML
     private Button add;
@@ -250,21 +250,20 @@ public class WorkspaceController {
     
     @FXML
     private Button acqbtn;
-
+    
     @FXML
     private Button textBtn;
     
     @FXML
-    private Button summaryButton;
-
-    @FXML
-    void chart(ActionEvent event) {
+    private Button summaryButton;*/
+   // @FXML
+   public void chart(ActionEvent event) {
         System.out.println("fend.workspace.WorkspaceController.chart(): Pending implementation for charts");
     }
     
     
-    @FXML
-    void addBox(ActionEvent event) {
+  //  @FXML
+    public void addBox(ActionEvent event) {
         Job dbjob = new Job();
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
          JobType1Model job = new JobType1Model(this.model);
@@ -324,8 +323,8 @@ public class WorkspaceController {
 
     }
     
-    @FXML
-    void addSEGD(ActionEvent event) {
+   // @FXML
+    public void addSEGD(ActionEvent event) {
         Job dbjob = new Job();
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         JobType2Model job = new JobType2Model(WorkspaceController.this.model);
@@ -401,8 +400,8 @@ public class WorkspaceController {
         
     }
 
-    @FXML
-    void addAcq(ActionEvent event) {
+   // @FXML
+    public void addAcq(ActionEvent event) {
         Job dbjob = new Job();
         Long typeOfJob = JobType0Model.ACQUISITION;
         NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
@@ -441,8 +440,8 @@ public class WorkspaceController {
         interactivePane.getChildren().add(jobview);
     }
     
-    @FXML
-    void addText(ActionEvent event) {
+    //@FXML
+    public void addText(ActionEvent event) {
        
         
          Job dbjob = new Job();
@@ -504,8 +503,8 @@ public class WorkspaceController {
 
     
     
-    @FXML 
-    void getSummary(ActionEvent event) throws Exception {
+    //@FXML 
+    public void getSummary(ActionEvent event) throws Exception {
             
         Task<String> summaryTask = new Task<String>(){
             @Override
@@ -891,8 +890,8 @@ public class WorkspaceController {
         interactivePane.prefHeightProperty().bind(scrollpane.heightProperty());
         interactivePane.getChildren().addListener(jobLinkChangeListener);
         loadingProperty.addListener(loadingListener);
-        createGraphAndChartsButton();
-        createSummaryButton();
+     //   createGraphAndChartsButton();
+     //   createSummaryButton();
        // moveScrollPanesToTheLeft();
         
         
@@ -3762,22 +3761,15 @@ public class WorkspaceController {
         return path;
     }
     
+  /*
     private void createGraphAndChartsButton(){
         
         
 
 //<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-        Group svg=new Group(
-                /*createPath("M1,38.599c-0.553,0-1,0.447-1,1s0.447,1,1,1c1.163,0,2.08,0.375,2.803,1.146C5.914,44,5.63,48.732,5.625,48.849v12.75    c0,3.211,0.892,5.688,2.649,7.356c2.109,2.004,4.771,2.146,5.479,2.146c0.098,0,0.158-0.004,0.174-0\n" +
-                ".004    c0.552-0.027,0.976-0.498,0.947-1.051c-0.029-0.554-0.508-0.98-1.051-0.947c-0.026,0.012-2.385,0.104-4.172-1.594    c-1.346-1.277-2.026-3.265-2.026-5.906L7.623,48.916c0.016-0.229,0.348-5.644-2.356-8.533c-0.279-0.298-0.581-0.561-0.901\n" +
-                "-0.783    c0.32-0.224,0.622-0.484,0.901-0.784c2.704-2.893,2.372-8.305,2.358-8.466v-12.75c0-2.631,0.676-4.612,2.01-5.891    c1.767-1.694,4.158-1.614,4.193-1.61c0.551,0.034,1.017-0.396,1.046-0.947c0.027-0.552-0.396-1.021-0.947-1.051    c-0.\n" +
-                "138,0.002-3.25-0.14-5.651,2.143c-1.759,1.67-2.649,4.146-2.649,7.356l0.002,12.817c0.09,1.317-0.064,5.151-1.821,7.032    C3.082,38.223,2.165,38.599,1,38.599z", "red", "darkred"),
-                
-                createPath("M78.752,41.153c0.555,0,1-0.444,1-0.999c0-0.554-0.445-1-1-1c-1.164,0-2.08-0.375-2.803-1.146    c-2.111-2.255-1.828-6.989-1.822-7.104v-12.75c0-3.212-0.895-5.688-2.648-7.356c-2.4-2.281-5.521-2.144-5.65-2.143    c-0.5\n" +
-                "53,0.029-0.977,0.499-0.947,1.052c0.029,0.552,0.498,0.976,1.053,0.946c0.025-0.009,2.383-0.104,4.17,1.595    c1.35,1.276,2.025,3.265,2.025,5.906l0.002,12.684c-0.016,0.229-0.348,5.641,2.355,8.532c0.281,0.3,0.582,0.561,0.902,0.782    c-0.32,0\n" +
-                ".227-0.621,0.484-0.902,0.784c-2.703,2.896-2.371,8.307-2.357,8.465v12.75c0,2.633-0.676,4.613-2.01,5.895    c-1.768,1.689-4.164,1.607-4.191,1.607c-0.531-0.028-1.018,0.396-1.047,0.947c-0.027,0.551,0.396,1.021,0.947,1.051    c0.018,0,0.074,0.\n" +
-                "002,0.174,0.002c0.705,0,3.367-0.141,5.479-2.145c1.761-1.67,2.648-4.146,2.648-7.357l-0.003-12.813    c-0.09-1.318,0.063-5.152,1.821-7.031C76.67,41.532,77.586,41.153,78.752,41.153z", "red", "darkred")*/
-                
+       
+    Group svg=new Group(
+              
                 createPath("M493.692,476.023H296.139v35.679H494.16c10.521,0,18.915-9.108,17.728-19.869" +
 "C510.883,482.732,502.849,476.023,493.692,476.023z", "#808285", "#808285"),
                 createPath("M493.566,511.703H17.84c-9.852,0-17.84-7.987-17.84-17.84V18.137c0-9.852,7.987-17.84,17.84-17.84" +
@@ -3807,6 +3799,10 @@ public class WorkspaceController {
         chartButton.setMinSize(157, 48);
         chartButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
     }
+    
+    */
+    
+    /*
     private void createSummaryButton(){
         
         //<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
@@ -3814,16 +3810,7 @@ public class WorkspaceController {
         
         
         Group svg=new Group(
-                /*createPath("M1,38.599c-0.553,0-1,0.447-1,1s0.447,1,1,1c1.163,0,2.08,0.375,2.803,1.146C5.914,44,5.63,48.732,5.625,48.849v12.75    c0,3.211,0.892,5.688,2.649,7.356c2.109,2.004,4.771,2.146,5.479,2.146c0.098,0,0.158-0.004,0.174-0\n" +
-                ".004    c0.552-0.027,0.976-0.498,0.947-1.051c-0.029-0.554-0.508-0.98-1.051-0.947c-0.026,0.012-2.385,0.104-4.172-1.594    c-1.346-1.277-2.026-3.265-2.026-5.906L7.623,48.916c0.016-0.229,0.348-5.644-2.356-8.533c-0.279-0.298-0.581-0.561-0.901\n" +
-                "-0.783    c0.32-0.224,0.622-0.484,0.901-0.784c2.704-2.893,2.372-8.305,2.358-8.466v-12.75c0-2.631,0.676-4.612,2.01-5.891    c1.767-1.694,4.158-1.614,4.193-1.61c0.551,0.034,1.017-0.396,1.046-0.947c0.027-0.552-0.396-1.021-0.947-1.051    c-0.\n" +
-                "138,0.002-3.25-0.14-5.651,2.143c-1.759,1.67-2.649,4.146-2.649,7.356l0.002,12.817c0.09,1.317-0.064,5.151-1.821,7.032    C3.082,38.223,2.165,38.599,1,38.599z", "red", "darkred"),
-                
-                createPath("M78.752,41.153c0.555,0,1-0.444,1-0.999c0-0.554-0.445-1-1-1c-1.164,0-2.08-0.375-2.803-1.146    c-2.111-2.255-1.828-6.989-1.822-7.104v-12.75c0-3.212-0.895-5.688-2.648-7.356c-2.4-2.281-5.521-2.144-5.65-2.143    c-0.5\n" +
-                "53,0.029-0.977,0.499-0.947,1.052c0.029,0.552,0.498,0.976,1.053,0.946c0.025-0.009,2.383-0.104,4.17,1.595    c1.35,1.276,2.025,3.265,2.025,5.906l0.002,12.684c-0.016,0.229-0.348,5.641,2.355,8.532c0.281,0.3,0.582,0.561,0.902,0.782    c-0.32,0\n" +
-                ".227-0.621,0.484-0.902,0.784c-2.703,2.896-2.371,8.307-2.357,8.465v12.75c0,2.633-0.676,4.613-2.01,5.895    c-1.768,1.689-4.164,1.607-4.191,1.607c-0.531-0.028-1.018,0.396-1.047,0.947c-0.027,0.551,0.396,1.021,0.947,1.051    c0.018,0,0.074,0.\n" +
-                "002,0.174,0.002c0.705,0,3.367-0.141,5.479-2.145c1.761-1.67,2.648-4.146,2.648-7.357l-0.003-12.813    c-0.09-1.318,0.063-5.152,1.821-7.031C76.67,41.532,77.586,41.153,78.752,41.153z", "red", "darkred")*/
-                
+               
                 createPath("M494.345,459.034H17.655C7.904,459.034,0,451.13,0,441.379V70.621\n" +
 "	c0-9.751,7.904-17.655,17.655-17.655h476.69c9.751,0,17.655,7.904,17.655,17.655v370.759\n" +
                         "	C512,451.129,504.095,459.034,494.345,459.034z", "#062751", "#062751"),
@@ -3872,15 +3859,15 @@ public class WorkspaceController {
                 createPath("", "blue", "blue")*/
                 
                // createPath("M20,20h60v60h-60z", "red", "darkred")
-        );
-        Bounds bounds=svg.getBoundsInParent();
+      /*  );
+      //  Bounds bounds=svg.getBoundsInParent();
         double scale=Math.min(25/bounds.getWidth(),25/bounds.getHeight());
-        svg.setScaleX(scale);
+      /*  svg.setScaleX(scale);
         svg.setScaleY(scale);
         
         summaryButton.setGraphic(svg);
         summaryButton.setMaxSize(157,48);
         summaryButton.setMinSize(157, 48);
         summaryButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-    }
+    }*/
 }

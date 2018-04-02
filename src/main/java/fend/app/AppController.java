@@ -14,7 +14,9 @@ import app.settings.ssh.SShSettings;
 import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
 import com.jfoenix.controls.JFXTextArea;
+import db.model.Job;
 import db.model.NodeProperty;
+import db.model.NodePropertyValue;
 import db.model.NodeType;
 import db.model.PropertyType;
 import db.model.User;
@@ -60,11 +62,15 @@ import db.services.UserService;
 import db.services.UserWorkspaceService;
 import db.services.UserWorkspaceServiceImpl;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.property.JobModelProperty;
 import fend.job.job0.property.properties.JobType0Properties;
 import fend.job.job1.properties.JobType1Properties;
 import fend.job.job2.properties.JobType2Properties;
+import fend.job.job3.JobType3Model;
+import fend.job.job3.JobType3View;
 import fend.job.job3.properties.JobType3Properties;
 import fend.job.job4.properties.JobType4Properties;
+import fend.workspace.WorkspaceController;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -83,6 +89,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Screen;
 import javax.xml.bind.JAXBContext;
@@ -100,6 +107,8 @@ public class AppController extends Stage implements Initializable{
     private WorkspaceService workspaceService=new WorkspaceServiceImpl();
     private UserService userService=new UserServiceImpl();
     private Workspace currentWorkspace=null;
+   // private WorkspaceModel currentWorkspaceModel=null;
+    private WorkspaceController currentWorkspaceController=null;
     private User currentUser=null;
     private User previousUser=null;
     private NodeTypeService nodeTypeService=new NodeTypeServiceImpl();
@@ -107,6 +116,7 @@ public class AppController extends Stage implements Initializable{
     private PropertyTypeService propertyTypeService=new PropertyTypeServiceImpl();
     private UserWorkspaceService userWorkspaceService=new UserWorkspaceServiceImpl();
     private Scene appScene;
+    
      @FXML
     private MenuBar menubar;
 
@@ -182,6 +192,63 @@ public class AppController extends Stage implements Initializable{
     void about(ActionEvent event) {
 
     }
+    
+     @FXML
+    private Button button2D;
+
+    @FXML
+    private Button acqButton;
+
+    @FXML
+    private Button segdButton;
+
+    @FXML
+    private Button textButton;
+
+    @FXML
+    private Button summaryButton;
+
+    @FXML
+    private Button chartButton;
+    
+     @FXML
+    void add2DNode(ActionEvent event) {
+        currentWorkspaceController.addBox(event);
+    }
+
+    @FXML
+    void addAcqNode(ActionEvent event) {
+        currentWorkspaceController.addAcq(event);
+    }
+
+    @FXML
+    void addSegdNode(ActionEvent event) {
+        currentWorkspaceController.addSEGD(event);
+    }
+
+    @FXML
+    void addTextNode(ActionEvent event) {
+        currentWorkspaceController.addText(event);
+    }
+    
+    
+    @FXML
+    void drawCharts(ActionEvent event) {
+        currentWorkspaceController.chart(event);
+    }
+
+    @FXML
+    void startSummary(ActionEvent event) {
+        try {
+            currentWorkspaceController.getSummary(event);
+        } catch (Exception ex) {
+            Logger.getLogger(AppController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    
+    
 
     @FXML
     void dbsettings(ActionEvent event) {
@@ -375,6 +442,7 @@ public class AppController extends Stage implements Initializable{
         frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());
         frontEndWorkspaceModel.setWorkspace(workspaceToBeLoaded);
         WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
+        currentWorkspaceController=frontEndWorkspaceView.getController();
         frontEndWorkspaceView.getController().setLoading(true);
        
         /*
@@ -498,6 +566,116 @@ public class AppController extends Stage implements Initializable{
         userBtn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
     }
     
+    
+    
+   
+    
+    private void createGraphAndChartsButton(){
+        
+        
+
+//<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        Group svg=new Group(
+                
+                createPath("M493.692,476.023H296.139v35.679H494.16c10.521,0,18.915-9.108,17.728-19.869" +
+"C510.883,482.732,502.849,476.023,493.692,476.023z", "#808285", "#808285"),
+                createPath("M493.566,511.703H17.84c-9.852,0-17.84-7.987-17.84-17.84V18.137c0-9.852,7.987-17.84,17.84-17.84" +
+"s17.84,7.987,17.84,17.84v457.886h457.886c9.852,0,17.84,7.987,17.84,17.84C511.405,503.715,503.418,511.703,493.566,511.703z", "#A7A9AC", "#A7A9AC"),
+                createPath("M493.566,100.2h-40.437v411.503h40.437c9.852,0,17.84-7.987,17.84-17.84V118.04\n" +
+"	C511.405,108.187,503.418,100.2,493.566,100.2z", "#48A792", "#48A792"),
+                createPath("M493.566,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V118.04c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v375.823C511.405,503.715,503.418,511.703,493.566,511.703z", "#85EDC1", "#85EDC1"),
+                createPath("M335.387,225.078H294.95v286.625h40.437c9.852,0,17.84-7.987,17.84-17.84V242.918\n" +
+"	C353.226,233.065,345.239,225.078,335.387,225.078z", "#FF9900", "#FF9900"),
+                createPath("M335.387,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V242.918c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v250.945C353.226,503.715,345.239,511.703,335.387,511.703z", "#FFDB2D", "#FFDB2D"),
+                 createPath("M176.019,351.145h-40.437v160.557h40.437c9.852,0,17.84-7.987,17.84-17.84V368.985\n" +
+"	C193.858,359.133,185.871,351.145,176.019,351.145z", "#FC0023", "#FC0023"),
+                createPath("M176.019,511.703H96.334c-9.852,0-17.84-7.987-17.84-17.84V368.985c0-9.852,7.987-17.84,17.84-17.84\n" +
+"	h79.684c9.852,0,17.84,7.987,17.84,17.84v124.878C193.858,503.715,185.871,511.703,176.019,511.703z", "#FF4F19", "#FF4F19")
+                
+               // createPath("M20,20h60v60h-60z", "red", "darkred")
+        );
+        Bounds bounds=svg.getBoundsInParent();
+        double scale=Math.min(20/bounds.getWidth(),20/bounds.getHeight());
+        svg.setScaleX(scale);
+        svg.setScaleY(scale);
+        
+        chartButton.setGraphic(svg);
+        chartButton.setMaxSize(157,48);
+        chartButton.setMinSize(157, 48);
+        chartButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
+    
+    private void createSummaryButton(){
+        
+        //<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+        
+        
+        
+        Group svg=new Group(
+              
+                createPath("M494.345,459.034H17.655C7.904,459.034,0,451.13,0,441.379V70.621\n" +
+"	c0-9.751,7.904-17.655,17.655-17.655h476.69c9.751,0,17.655,7.904,17.655,17.655v370.759\n" +
+                        "	C512,451.129,504.095,459.034,494.345,459.034z", "#062751", "#062751"),
+                createPath("M0,105.931h512v-35.31c0-9.751-7.904-17.655-17.655-17.655H17.655C7.904,52.966,0,60.87,0,70.621\n" +
+"	V105.931z", "#C3E678", "#C3E678"),
+                createPath("M61.793,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,216.737,66.668,220.69,61.793,220.69z", "#D7DEED", "#D7DEED"),
+                new Group(
+                        createPath("M203.034,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C211.862,216.737,207.91,220.69,203.034,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M414.897,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C423.724,216.737,419.772,220.69,414.897,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M344.276,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C353.103,216.737,349.151,220.69,344.276,220.69z", "#8F96AC", "#8F96AC"),
+                        createPath("M485.517,220.69h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C494.345,216.737,490.392,220.69,485.517,220.69z", "#8F96AC", "#8F96AC")
+                ),
+                
+                createPath("M61.793,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,305.013,66.668,308.966,61.793,308.966z", "#C3E678", "#C3E678"),
+                new Group(
+                                createPath("M203.034,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+                "		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C211.862,305.013,207.91,308.966,203.034,308.966z", "#D7DEED", "#D7DEED"),
+                                createPath("M414.897,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C423.724,305.013,419.772,308.966,414.897,308.966z", "#D7DEED", "#D7DEED"),
+                        createPath("M344.276,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C353.103,305.013,349.151,308.966,344.276,308.966z", "#D7DEED", "D7DEED"),
+                        createPath("M485.517,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C494.345,305.013,490.392,308.966,485.517,308.966z", "#D7DEED", "#D7DEED"),
+                        createPath("M273.655,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C282.483,349.151,278.53,353.103,273.655,353.103z", "#D7DEED", "#D7DEED"),
+                        createPath("M132.414,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"		h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C141.241,349.151,137.289,353.103,132.414,353.103z", "#D7DEED", "D7DEED")
+                        
+                ),
+                createPath("M61.793,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,349.151,66.668,353.103,61.793,353.103z", "#C3E678", "#C3E678")
+                
+                /*
+                createPath("M61.793,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
+"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,305.013,66.668,308.966,61.793,308.966z", "#C3E678", "#C3E678")/*,
+                createPath("", "yellow", "orange"),
+                createPath("", "red", "darkred"),
+                createPath("", "green", "darkgreen"),
+                createPath("", "green", "darkgreen"),
+                createPath("", "blue", "blue")*/
+                
+               // createPath("M20,20h60v60h-60z", "red", "darkred")
+        );
+        Bounds bounds=svg.getBoundsInParent();
+        double scale=Math.min(25/bounds.getWidth(),25/bounds.getHeight());
+        svg.setScaleX(scale);
+        svg.setScaleY(scale);
+        
+        summaryButton.setGraphic(svg);
+        summaryButton.setMaxSize(157,48);
+        summaryButton.setMinSize(157, 48);
+        summaryButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
+    
+    
     @FXML
     void startNewWorkspace(ActionEvent event) {
         if(!AppProperties.INSTALL){
@@ -576,6 +754,8 @@ public class AppController extends Stage implements Initializable{
                     model.setName(dbWorkspace.getName());
                     model.setWorkspace(dbWorkspace);
                     WorkspaceView node=new WorkspaceView(model);
+                    //currentWorkspaceModel=model;
+                    currentWorkspaceController=node.getController();
                     basePane.getChildren().add(node);
                     
                     
@@ -692,6 +872,10 @@ public class AppController extends Stage implements Initializable{
     
     void setModel(AppModel model) {
         this.model=model;
+        createGraphAndChartsButton();
+        createSummaryButton();
+        //createNewWorkspaceButton();
+        //createLoadWorkspaceButton();
         //createUserButton();
     }
 
@@ -865,5 +1049,58 @@ public class AppController extends Stage implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
+    }
+
+    private void createLoadWorkspaceButton() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void createNewWorkspaceButton() {
+        double[] points=new double[]{31,50, 33,50, 33,33, 50,33, 50,31, 33,31, 33,14, 31,14,
+ 31,31, 14,31, 14,33, 31,33};
+        Polyline plusSign=new Polyline(points);
+        
+        Group svg=new Group(
+                
+                createPath("M31.999,64C32,64,32,64,32.001,64c8.548,0,16.584-3.33,22" +
+".627-9.373c6.044-6.043,9.371-14.08,9.371-22.628    s-3.328-16.584-9.371-22.627C4" +
+"8.584,3.329,40.549,0,32.001,0c0,0-0.001,0-0.002,0C23.451,0,15.415,3.329,9.372,9." +
+"373    c-6.044,6.044-9.371,14.081-9.371,22.628s3.328,16.584,9.371,22.627C15.416," +
+"60.671,23.451,64,31.999,64z M10.786,10.787    C16.452,5.121,23.986,2,32.001,2c0." +
+"001,0,0.001,0,0.002,0c8.012,0,15.546,3.121,21.211,8.786c5.666,5.666,8.785,13.2,8" +
+".785,21.213    s-3.119,15.548-8.785,21.214S40.015,62,32.001,62h-0.002c-0.001,0-0" +
+".001,0-0.002,0c-8.012,0-15.546-3.121-21.211-8.786    c-5.666-5.666-8.785-13.2-8." +
+"785-21.213C2.001,23.987,5.12,16.453,10.786,10.787z", "#808285", "#808285")//,
+                /* createPath("M493.566,511.703H17.84c-9.852,0-17.84-7.987-17.84-17.84V18.137c0-9.852,7.987-17.84,17.84-17.84" +
+                "s17.84,7.987,17.84,17.84v457.886h457.886c9.852,0,17.84,7.987,17.84,17.84C511.405,503.715,503.418,511.703,493.566,511.703z", "#A7A9AC", "#A7A9AC"),
+                createPath("M493.566,100.2h-40.437v411.503h40.437c9.852,0,17.84-7.987,17.84-17.84V118.04\n" +
+                "	C511.405,108.187,503.418,100.2,493.566,100.2z", "#48A792", "#48A792"),
+                createPath("M493.566,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V118.04c0-9.852,7.987-17.84,17.84-17.84\n" +
+                "	h79.684c9.852,0,17.84,7.987,17.84,17.84v375.823C511.405,503.715,503.418,511.703,493.566,511.703z", "#85EDC1", "#85EDC1"),
+                createPath("M335.387,225.078H294.95v286.625h40.437c9.852,0,17.84-7.987,17.84-17.84V242.918\n" +
+                "	C353.226,233.065,345.239,225.078,335.387,225.078z", "#FF9900", "#FF9900"),
+                createPath("M335.387,511.703h-79.684c-9.852,0-17.84-7.987-17.84-17.84V242.918c0-9.852,7.987-17.84,17.84-17.84\n" +
+                "	h79.684c9.852,0,17.84,7.987,17.84,17.84v250.945C353.226,503.715,345.239,511.703,335.387,511.703z", "#FFDB2D", "#FFDB2D"),
+                createPath("M176.019,351.145h-40.437v160.557h40.437c9.852,0,17.84-7.987,17.84-17.84V368.985\n" +
+                "	C193.858,359.133,185.871,351.145,176.019,351.145z", "#FC0023", "#FC0023"),
+                createPath("M176.019,511.703H96.334c-9.852,0-17.84-7.987-17.84-17.84V368.985c0-9.852,7.987-17.84,17.84-17.84\n" +
+        "	h79.684c9.852,0,17.84,7.987,17.84,17.84v124.878C193.858,503.715,185.871,511.703,176.019,511.703z", "#FF4F19", "#FF4F19")*/
+                
+               // createPath("M20,20h60v60h-60z", "red", "darkred")
+        );
+        Bounds bounds=svg.getBoundsInParent();
+        double scale=Math.min(80/bounds.getWidth(),80/bounds.getHeight());
+        svg.setScaleX(scale);
+        svg.setScaleY(scale);
+        
+        newWorkspace.setGraphic(svg);
+        /* newWorkspace.setMaxSize(157,48);
+        newWorkspace.setMinSize(157, 48);*/
+        newWorkspace.setStyle("-fx-background-radius : 50em;"
+                + "-fx-border-radius:50em;"
+                + "-fx-padding: 0px;"
+                + "-fx-border-width: 1;");
+        //newWorkspace.getStylesheets().add("")
+        newWorkspace.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
     }
 }

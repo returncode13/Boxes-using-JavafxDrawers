@@ -473,7 +473,10 @@ public class DoubtDAOImpl implements DoubtDAO{
            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
            
             result=criteria.list();
-            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning doubts of size: "+result.size()+" for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
+            System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning doubts of size: "+result.size()+" "
+                    + ""
+                    + "for sub: "+sub.getSubsurface()+" "
+                            + "job: "+job.getNameJobStep());
             transaction.commit();
             
         }catch(Exception e){
@@ -546,7 +549,11 @@ public class DoubtDAOImpl implements DoubtDAO{
            
            
             result=criteria.list();
-        if(sub!=null) System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning a list of doubts of size: "+result.size()+" for "+sub.getSubsurface()+" job: "+job.getNameJobStep()+" doubttype: "+doubtType.getIdDoubtType()+" name: "+doubtType.getName());
+        if(sub!=null) System.out.println("db.dao.DoubtDAOImpl.getDoubtFor(): returning a list of doubts of size: "+result.size()+""
+                + " for "+sub.getSubsurface()+""
+                        + " job: "+job.getNameJobStep()+""
+                                + " doubttype: "+doubtType.getIdDoubtType()+""
+                                        + " name: "+doubtType.getName());
                 for(Doubt d:result){
                    if(!doubtType.getName().equals(DoubtTypeModel.INHERIT)) System.out.println("id: "+d.getId()+" sub: "+d.getSubsurface().getId()+" job: "+d.getChildJob().getId()+" dbttype: "+d.getDoubtType().getIdDoubtType()+" -- "+d.getDoubtType().getName()+" dot: "+d.getDot().getId()+
                             " link: "+d.getLink().getId());

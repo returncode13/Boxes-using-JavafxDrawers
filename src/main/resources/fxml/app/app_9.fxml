@@ -63,8 +63,12 @@
                               </AnchorPane>
                               <HBox alignment="CENTER" GridPane.rowIndex="3">
                                  <children>
-                                    <Button fx:id="newWorkspace" mnemonicParsing="false" onAction="#startNewWorkspace" text="+" />
-                                    <Button fx:id="loadExistingWorkspace" mnemonicParsing="false" onAction="#loadSession" text="L" />
+                                    <VBox>
+                                       <children>
+                                          <Button fx:id="newWorkspace" mnemonicParsing="false" onAction="#startNewWorkspace" text="+" />
+                                          <Button fx:id="loadExistingWorkspace" mnemonicParsing="false" onAction="#loadSession" text="L" />
+                                       </children>
+                                    </VBox>
                                  </children>
                               </HBox>
                            </children>
