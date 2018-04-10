@@ -53,9 +53,13 @@ import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import middleware.dugex.HeaderExtractor;
 
 /**
  *
@@ -75,8 +79,8 @@ public class JobType3Controller implements JobType0Controller{
     private DescendantService descendantService=new DescendantServiceImpl();
     
     private BooleanProperty checkForHeaders;
-    
-    
+    private HeaderExtractor headerExtractor=null;
+    private Executor exec;
     
     @FXML
     private JFXTextField name;
@@ -107,6 +111,12 @@ public class JobType3Controller implements JobType0Controller{
         model.getHeadersCommited().addListener(headerExtractionListener);
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
+      
+      exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
         
     }
 
@@ -312,8 +322,42 @@ parent.addChild(model);*/
     
      @FXML
     void extractHeadersForJob(ActionEvent event) {
-            showTable.setDisable(true);
-            model.extractLogs();
+            
+           // model.extractLogs();
+            
+                  if(headerExtractor==null){
+                  Task<Void> headerExtractionTask=new Task<Void>() {
+                      @Override
+                      protected Void call() throws Exception {
+                          headerExtractor=new HeaderExtractor(model);
+                          return null;
+                      }
+                  };
+                  
+                  headerExtractionTask.setOnFailed(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                       showTable.setDisable(false);
+                       qctable.setDisable(false);
+                       //model.setFinishedCheckingLogs(false);
+                       headerExtractionTask.getException().printStackTrace();
+                  });
+                  
+                  headerExtractionTask.setOnSucceeded(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                      qctable.setDisable(false);
+                      showTable.setDisable(false);
+                     // model.setFinishedCheckingLogs(false);
+                  });
+                  
+                  headerExtractionTask.setOnRunning(e->{
+                      showTable.setDisable(true);
+                      qctable.setDisable(true);
+                  });
+                  exec.execute(headerExtractionTask);
+              }
+            
             
     }
     

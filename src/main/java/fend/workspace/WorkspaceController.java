@@ -402,42 +402,120 @@ public class WorkspaceController {
 
    // @FXML
     public void addAcq(ActionEvent event) {
-        Job dbjob = new Job();
+        /*Job dbjob = new Job();
         Long typeOfJob = JobType0Model.ACQUISITION;
         NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
         dbjob.setNodetype(nodetype);
         dbjob.setWorkspace(dbWorkspace);
-
+        
         dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
         jobService.createJob(dbjob);
-
+        
         
         JobType3Model job = new JobType3Model(this.model);
         job.setId(dbjob.getId());
         
-         List<JobModelProperty> jobProperties=job.getJobProperties();
+        List<JobModelProperty> jobProperties=job.getJobProperties();
         for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
-            JobModelProperty jobProperty = iterator.next();
-            NodePropertyValue npv=new NodePropertyValue();
-            npv.setJob(dbjob);
-            PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
-            NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
-            npv.setNodeProperty(nodeProperty);
-            npv.setValue(jobProperty.getPropertyValue());
-            nodePropertyValueService.createNodePropertyValue(npv);
-            
-            
-            
+        JobModelProperty jobProperty = iterator.next();
+        NodePropertyValue npv=new NodePropertyValue();
+        npv.setJob(dbjob);
+        PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+        NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+        npv.setNodeProperty(nodeProperty);
+        npv.setValue(jobProperty.getPropertyValue());
+        nodePropertyValueService.createNodePropertyValue(npv);
+        
+        
+        
         }
         
         
         BooleanProperty changeProperty = new SimpleBooleanProperty(false);
         changeProperty.bind(job.getChangeProperty());
         changeProperty.addListener(workspaceChangedListener);
-
+        
         changePropertyList.add(changeProperty);
         JobType3View jobview = new JobType3View(job, interactivePane);
-        interactivePane.getChildren().add(jobview);
+        interactivePane.getChildren().add(jobview);*/
+        
+         Job dbjob = new Job();
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        JobType3Model job = new JobType3Model(WorkspaceController.this.model);
+        
+        
+        Task<String> task =new Task<String>(){
+            @Override
+            protected String call() throws Exception {
+                Long typeOfJob = JobType0Model.ACQUISITION;
+                    NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+                    dbjob.setNodetype(nodetype);
+                    dbjob.setWorkspace(dbWorkspace);
+
+                    dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+                    System.out.println("fend.workspace.WorkspaceController.addAcq(): creating  a new job in the database");
+                    jobService.createJob(dbjob);
+
+                    System.out.println(".call(): setting the job id");
+                    job.setId(dbjob.getId());
+                    job.setDatabaseJob(dbjob);
+                    
+                    System.out.println(".call(): getting jobProperties");
+                     List<JobModelProperty> jobProperties=job.getJobProperties();
+                    for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                        JobModelProperty jobProperty = iterator.next();
+                        System.out.println(".call(): for jobProperty "+jobProperty.getPropertyName());
+                        System.out.println("");
+                        System.out.println(".call(): started a new  nodepropertyvalue object");
+                        NodePropertyValue npv=new NodePropertyValue();
+                        System.out.println(".call(): setting npvs job= dbjob");
+                        npv.setJob(dbjob);
+                        System.out.println(".call(): retrieving propertype: "+jobProperty.getPropertyName());
+                        PropertyType propertyType=propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+                        System.out.println(".call(): retrieving nodeProperty for nodetype: "+nodetype.getName()+" and propertytype: "+propertyType.getName());
+                        NodeProperty nodeProperty=nodePropertyService.getNodeProperty(nodetype, propertyType);
+                        System.out.println(".call(): setting npv.nodeproperty");
+                        npv.setNodeProperty(nodeProperty);
+                        System.out.println(".call(): setting npv.nodepropertyValue");
+                        npv.setValue(jobProperty.getPropertyValue());
+                        System.out.println(".call(): creating npv in the database");
+                        nodePropertyValueService.createNodePropertyValue(npv);
+                        System.out.println(".call(): done creating for this property");
+            
+            
+        }
+                    return "finished building an Acq entry: "+dbjob.getId();
+            }
+        };
+        
+        
+      //  BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+      
+      
+      task.setOnFailed(e->{
+          task.getException().printStackTrace();
+      });
+      
+      task.setOnSucceeded(e->{
+          System.out.println("fend.workspace.WorkspaceController.addAcq(): task succeeded. adding on the view.");
+            changeProperty.bind(job.getChangeProperty());
+            changeProperty.addListener(workspaceChangedListener);
+
+            changePropertyList.add(changeProperty);
+            JobType3View jobview = new JobType3View(job, interactivePane);
+            interactivePane.getChildren().add(jobview);
+      });
+      
+      task.setOnRunning(e->{
+          System.out.println("fend.workspace.WorkspaceController.addAcq(): process is running");
+      });
+      
+      exec.execute(task);
+        
+        
+        
+        
+        
     }
     
     //@FXML

@@ -12,7 +12,7 @@ import db.model.User;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="Internal-14.0.14";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="Internal-18.0.0";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.

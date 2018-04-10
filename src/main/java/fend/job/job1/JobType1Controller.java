@@ -602,7 +602,7 @@ parent.addChild(model);*/
                 
             }
         });
-        
+      //  deleteThisJob.setOnAction();
         menu.getItems().addAll(addAChildJob,deleteThisJob);
     }
 

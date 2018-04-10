@@ -89,6 +89,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         subsurfaceJobDAO.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
     }
 
+    @Override
+    public List<Subsurface> getSubsurfacesForJob(Job j) {
+        return subsurfaceJobDAO.getSubsurfacesForJob(j);
+    }
+
    
    
     

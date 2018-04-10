@@ -353,28 +353,40 @@ public class HeaderExtractor {
         
         //if Acquisition
         if(job.getType().equals(JobType0Model.ACQUISITION)){
+            
+            List<SubsurfaceJob> subjobsToBeCommited=new ArrayList<>();
+            
             List<Subsurface> totalSubsurfacesTillNow=subsurfaceService.getSubsurfaceList();
+            List<Subsurface> subsurfacesPresentInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
+            System.out.println("middleware.dugex.HeaderExtractor.<init>(): for job : "+dbjob.getNameJobStep()+" found "+subsurfacesPresentInJob.size()+" subsurfaces");
+            //get all subsurfaces inside a job. S
+            //if dbSub is not present in S then create dbjob,dbsub
+            totalSubsurfacesTillNow.removeAll(subsurfacesPresentInJob);   //keep only the ones left to be added
+            
+            System.out.println("middleware.dugex.HeaderExtractor.<init>(): to add "+totalSubsurfacesTillNow.size());
             
             String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+            String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);   //replace this with time in orca
+            
+            System.out.println("middleware.dugex.HeaderExtractor.<init>(): NOTE THAT THE UPDATE TIME SHOULD BE SET TO THE DATE OF ACQ FROM ORCA!. currently set to now(): "+updateTime);
             for(Subsurface dbsub:totalSubsurfacesTillNow){
                 SubsurfaceJob dbSubjob;
                 
-                  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //if there is no entry then create
+                //  if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //if there is no entry then create
                       dbSubjob=new SubsurfaceJob();
                       dbSubjob.setJob(dbjob);
                       dbSubjob.setSubsurface(dbsub);
-                    //  dbSubjob.setUpdateTime(updateTime);                                 //replace by acquisition time from db
-                      subsurfaceJobService.createSubsurfaceJob(dbSubjob);
-                     // dbjob.getSubsurfaceJobs().add(dbSubjob);
-                      jobService.updateJob(dbjob.getId(), dbjob);
-                  }else{
-                      //do nothing
-                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+ dbjob.getNameJobStep()+" : "+dbsub.getSubsurface()+" already acccounted for");
-                  }
+                      
+                      dbSubjob.setUpdateTime(updateTime);                                 //replace by acquisition time from db
+                      subjobsToBeCommited.add(dbSubjob);
+                
                   
             }
+            
+            subsurfaceJobService.createBulkSubsurfaceJob(subjobsToBeCommited);
+            
         }
-        exec.shutdown();
+       // exec.shutdown();
     }
 
     private void populate(Header hdr) {

@@ -53,7 +53,7 @@ public class Main extends Application{
     private String password;
     private static int dbPortOnRemote=5432;
     
-    final private String urltemplate="jdbc:postgresql://localhost:5432/template1";
+    final private String urltemplate="jdbc:postgresql://localhost:5433/template1";
     private Stage primaryStage;
     
     

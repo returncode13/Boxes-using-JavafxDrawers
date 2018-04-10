@@ -202,7 +202,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         try{
             transaction=session.beginTransaction();
             /*Criteria criteria=session.createCriteria(SubsurfaceJob.class);
-            criteria.add(Restrictions.sqlRestriction(sql));*/
+            criteria.add(Restrictions.sqlRestriction(hql));*/
             Query query= session.createQuery(sql);
             query.setParameter("j", job);
             query.setParameter("up", updateTime);
@@ -240,6 +240,28 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         }
         return result.get(0);
               
+    }
+
+    @Override
+    public List<Subsurface> getSubsurfacesForJob(Job job) {
+         Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Subsurface> result=null;
+        String hql="Select s.id from SubsurfaceJob s where job_id =:j";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            
+            result=query.list();
+            System.out.println("db.dao.SubsurfaceJobDAOImpl.getSubsurfacesForJob(): size of results: "+result.size());
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
     }
 
   

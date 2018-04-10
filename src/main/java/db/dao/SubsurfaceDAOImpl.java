@@ -147,6 +147,7 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
           Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Subsurface> result=null;
+        String hql="Select s from Subsurface s";
         try{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Subsurface.class);

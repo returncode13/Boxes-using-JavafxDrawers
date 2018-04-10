@@ -78,6 +78,7 @@ public class ParentChildEdgeController implements EdgeController{
     private Arrow arrowBeforeDot;
     private Arrow arrowAfterDot;
     
+    private DotView dotview;
 
     void setModel(ParentChildEdgeModel item) {
         model=item;
@@ -99,21 +100,21 @@ public class ParentChildEdgeController implements EdgeController{
         type=job.getType();
         if(type.equals(JobType0Model.PROCESS_2D)) {
                         curve.startXProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.SEGD_LOAD)) {
                         curve.startXProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.ACQUISITION)) {
            
                         curve.startXProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.TEXT)) {
            
                         curve.startXProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),100));
         }
         
         curve.endXProperty().bind(childAnchor.centerXProperty());
@@ -172,10 +173,14 @@ public class ParentChildEdgeController implements EdgeController{
         DotModel dotmodel=model.getDotModel();
         dotnode=new DotView(dotmodel, ParentChildEdgeController.this.interactivePane);
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): created a new dotnode: "+dotnode.getId());
-        node.getChildren().add(dotnode);
+            this.dotview=dotnode;
+        node.getChildren().add(this.dotview);
         
-        dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
-        dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
+       // dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
+       // dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
+       
+       this.dotview.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
+        this.dotview.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
         
         
         JobType0Model job=childJobView.getController().getModel();
@@ -218,12 +223,17 @@ public class ParentChildEdgeController implements EdgeController{
           }
         else{                                    //this is when the dot exists. and when it needs to be "joined" to.
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): binding to dotnode "+dotnode.getId());
-            childAnchor.centerXProperty().bind(dotnode.centerXProperty());
-            childAnchor.centerYProperty().bind(dotnode.centerYProperty());
+            /*childAnchor.centerXProperty().bind(dotnode.centerXProperty());
+            childAnchor.centerYProperty().bind(dotnode.centerYProperty());*/
+            this.dotview=dotnode;
+            childAnchor.centerXProperty().bind(this.dotview.centerXProperty());
+            childAnchor.centerYProperty().bind(this.dotview.centerYProperty());
             
         }
         node.toBack();
-        return dotnode;
+        this.dotview.toFront();
+        //return dotnode;
+        return this.dotview;
     };
     
     /**
@@ -306,6 +316,7 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.setOnMouseDragged(e->{
            
             node.toBack();              ///overriden statement
+            
             //System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
             double newX=e.getX()+dragDelta.x;
             if(newX>0 && newX<ParentChildEdgeController.this.interactivePane.getScene().getWidth()){
@@ -357,6 +368,9 @@ public class ParentChildEdgeController implements EdgeController{
         ParentChildEdgeController.this.arrowBeforeDot.update();
         ParentChildEdgeController.this.arrowAfterDot.update();
         ParentChildEdgeController.this.arrowStart.update();
+        if(dotview!=null){
+            this.dotview.toFront();
+        }
     };
       
  

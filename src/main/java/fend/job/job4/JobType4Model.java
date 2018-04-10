@@ -58,7 +58,7 @@ import middleware.sequences.SequenceHeaders;
  */
 public class JobType4Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
-    final private Long type=4L;
+    final private Long type=JobType0Model.TEXT;
     private Long id;
     private LongProperty depth;
     private StringProperty nameproperty;

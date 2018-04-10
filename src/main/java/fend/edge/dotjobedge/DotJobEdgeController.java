@@ -289,6 +289,7 @@ public class DotJobEdgeController implements EdgeController {
             anchor.setRadius(5);
         }
          this.node.toBack();
+         this.dotnode.toFront();
          
     };
 
@@ -305,5 +306,6 @@ public class DotJobEdgeController implements EdgeController {
         private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
         DotJobEdgeController.this.arrowEnd.update();
         DotJobEdgeController.this.arrowStart.update();
+        this.dotnode.toFront();
     };
 }

@@ -29,5 +29,7 @@ public interface SubsurfaceJobDAO {
     public String getLatestSummaryTime();
 
     public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated);
+
+    public List<Subsurface> getSubsurfacesForJob(Job j);
           
 }
