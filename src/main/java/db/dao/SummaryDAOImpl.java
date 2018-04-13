@@ -113,14 +113,14 @@ public class SummaryDAOImpl implements  SummaryDAO{
        try{
             transaction=session.beginTransaction();
             Summary summary=(Summary) session.get(Summary.class, id);
-            summary.setTimeInheritanceSummary(newSummary.getTimeInheritanceSummary());
-            summary.setTraceInheritanceSummary(newSummary.getTraceInheritanceSummary());
-            summary.setQcInheritanceSummary(newSummary.getQcInheritanceSummary());
-            summary.setInsightInheritanceSummary(newSummary.getInsightInheritanceSummary());
-            summary.setInsightSummary(newSummary.getInsightSummary());
-            summary.setQcSummary(newSummary.getQcSummary());
-            summary.setTimeSummary(newSummary.getTimeSummary());
-            summary.setTraceSummary(newSummary.getTraceSummary());
+            summary.setInheritedTimeFail(newSummary.hasInheritedTimeFail());
+            summary.setInheritedTraceFail(newSummary.hasInheritedTraceFail());
+            summary.setInheritedQcFail(newSummary.hasInheritedQcFail());
+           // summary.setInsightInheritanceSummary(newSummary.getInsightInheritanceSummary());
+            summary.setFailedInsightSummary(newSummary.hasFailedInsightSummary());
+            summary.setFailedQcSummary(newSummary.hasFailedQcSummary());
+            summary.setFailedTimeDependency(newSummary.hasFailedTimeDependency());
+            summary.setFailedTraceDependency(newSummary.hasFailedTraceDependency());
             summary.setJob(newSummary.getJob());
             summary.setSequence(newSummary.getSequence());
             session.update(summary);

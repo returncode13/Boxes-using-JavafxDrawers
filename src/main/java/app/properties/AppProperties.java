@@ -12,7 +12,10 @@ import db.model.User;
  * @author sharath
  */
 public class AppProperties {
-    public static final String VERSION="Internal-18.0.0";             //www.semver.org MAJOR.MINOR.PATCH
+    public static String DEVELOPER_MODE="DEVELOPER";
+    public static String OFFICE_MODE="OFFICE";
+    public static String PRODUCTION_MODE="PRODUCTION";
+    public static final String VERSION="Internal-18.0.1";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
@@ -20,8 +23,10 @@ public class AppProperties {
                                                             */
     
     //public static final String INSIGHT_LOCATION="/d/sw/Insight";
-    public static final String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
+    private static  String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
     
+    
+    public static  String MODE;
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
@@ -34,9 +39,12 @@ public class AppProperties {
     public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
     
     
-    public static int APPLICATION_PORT_ON_LOCAL=5433;
-    final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";
-
+    public static int APPLICATION_PORT_ON_LOCAL=5433;                       //port to be bound on localhost
+    public static int APPLICATION_PORT_ON_REMOTE=5432;                      //irdb host port that is been used by postgres
+    public static final String URLTEMPLATE_FOR_DATABASE_LISTING="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/template1";   //for listing the databases
+    final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";  //for appending to the chosen database
+    public final static String DATABASE_USER="fgeo";
+    
     
     public String getProject() {
         return project;
@@ -70,8 +78,30 @@ public class AppProperties {
         AppProperties.currentUser = currentUser;
     }
 
-   
+    public static String getINSIGHT_LOCATION() {
+        if(MODE.equals(DEVELOPER_MODE)){
+                INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
+        }else{
+            if(MODE.equals(OFFICE_MODE)){
+                INSIGHT_LOCATION="/d/sw/Insight";
+            }else{
+                INSIGHT_LOCATION="/d/sw/Insight";
+            }
+            
+        }
+        return INSIGHT_LOCATION;
+    }
 
+    public static String getMODE() {
+        return MODE;
+    }
+
+    public static void setMODE(String MODE) {
+        AppProperties.MODE = MODE;
+    }
+
+   
+    
     
     
     

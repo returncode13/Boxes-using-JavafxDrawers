@@ -314,9 +314,9 @@ public class SummaryController extends Stage{
                         seqJsm.setQc(seqJsm.isQc()||x.getQcSummary());
                         seqJsm.setInsight(seqJsm.isInsight()||x.getInsightSummary());
                         seqJsm.setInheritance(seqJsm.isInheritance()||x.getInheritanceSummary());*/
-                        seqJsm.getTimeCellModel().setCellProperty(seqJsm.getTimeCellModel().cellHasDoubt()||x.getTimeSummary());
+                        seqJsm.getTimeCellModel().setCellProperty(seqJsm.getTimeCellModel().cellHasDoubt()||x.hasFailedTimeDependency());
                         seqJsm.getTraceCellModel().setActive(true);
-                        seqJsm.getTraceCellModel().setCellProperty(seqJsm.getTraceCellModel().cellHasDoubt()||x.getTraceSummary());
+                        seqJsm.getTraceCellModel().setCellProperty(seqJsm.getTraceCellModel().cellHasDoubt()||x.hasFailedTraceDependency());
                         
                         
                         
@@ -327,8 +327,8 @@ public class SummaryController extends Stage{
                         jsm.setActive(true);
                         jsm.setSubsurface(sub);
                         jsm.getTimeCellModel().setActive(true);
-                        jsm.getTimeCellModel().setCellProperty(x.getTimeSummary());
-                        if(x.getTimeSummary()){
+                        jsm.getTimeCellModel().setCellProperty(x.hasFailedTimeDependency());
+                        if(x.hasFailedTimeDependency()){
                            // Doubt d=doubtService.getDoubtFor(sub, job, timeDoubtType);
                            // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
                            TimeJobSubKey timeKey=generateTimeJobSubKey(job, sub);
@@ -346,8 +346,8 @@ public class SummaryController extends Stage{
                             }
                         }
                         jsm.getTraceCellModel().setActive(true);
-                        jsm.getTraceCellModel().setCellProperty(x.getTraceSummary());
-                        if(x.getTraceSummary()){
+                        jsm.getTraceCellModel().setCellProperty(x.hasFailedTraceDependency());
+                        if(x.hasFailedTraceDependency()){
                           //  Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
                           TraceJobSubKey traceKey=generateTraceJobSubKey(job, sub);
                           Doubt d=traceDoubtMap.get(traceKey);
@@ -366,8 +366,8 @@ public class SummaryController extends Stage{
                            // Doubt cause=doubtService.getCauseOfInheritedDoubtForType(sub, job, traceDoubtType);
                         }
                         jsm.getQcCellModel().setActive(true);
-                        jsm.getQcCellModel().setCellProperty(x.getQcSummary());
-                        if(x.getQcSummary()){
+                        jsm.getQcCellModel().setCellProperty(x.hasFailedQcSummary());
+                        if(x.hasFailedQcSummary()){
                            // Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
                            QcJobSubKey qcKey=generateQcJobSubKey(job, sub);
                            Doubt d=qcDoubtMap.get(qcKey);

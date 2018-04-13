@@ -83,6 +83,66 @@ public class Doubt implements Serializable {
     @OneToMany(mappedBy = "doubtCause",fetch=FetchType.EAGER)
     private Set<Doubt> inheritedDoubts=new HashSet<>();
     
+    @Column(name="reason")
+    private String reason;
+    
+    @Column(name="status")
+    private String status;
+    
+    @Column(name="timestamp")
+    private String timeStamp;
+    
+    @Column(name="comments",columnDefinition = "text" )
+    private String comments;
+    
+    @Column(name="state")
+    private String state;
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
+    
+    
+    
+    
+    
     /*
     @ManyToOne
     @JoinColumn(name="user_fk",nullable=true)

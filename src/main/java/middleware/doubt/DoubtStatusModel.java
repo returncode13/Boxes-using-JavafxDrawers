@@ -31,7 +31,13 @@ public class DoubtStatusModel {
     
     
     
-    
+    public static String getTimeDependencyPassedMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
+        String message=new String();
+        if(doubttype.equals(DoubtTypeModel.TIME)){
+            message=doubttype+": Passed Time Dependency for line "+sub+"the jobs "+parentJob+" ->  childjob: "+childJob+" times ["+parentTime+","+childTime+"]";
+        }
+        return message;
+    }
     
     
     public static String getNewDoubtTimeMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){

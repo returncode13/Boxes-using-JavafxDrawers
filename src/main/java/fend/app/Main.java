@@ -51,16 +51,17 @@ public class Main extends Application{
     private String connectionIP;
     private String userName;
     private String password;
-    private static int dbPortOnRemote=5432;
+    private static int dbPortOnRemote=AppProperties.APPLICATION_PORT_ON_REMOTE;
     
-    final private String urltemplate="jdbc:postgresql://localhost:5433/template1";
+    //final private String URL_TEMPLATE="jdbc:postgresql://localhost:5433/template1";
+    final private String URL_TEMPLATE=AppProperties.URLTEMPLATE_FOR_DATABASE_LISTING;
     private Stage primaryStage;
     
     
-    private String dbUser="fgeo";
+    private String dbUser=AppProperties.DATABASE_USER;
     private String dbPassword="";
     
-    private final String statement="SELECT datname FROM pg_database WHERE datistemplate=false;"; 
+    private final String STATEMENT="SELECT datname FROM pg_database WHERE datistemplate=false;"; 
     private ArrayList<String> dbList=new ArrayList<>();
     
     /**
@@ -227,9 +228,9 @@ public class Main extends Application{
     private void listDatabasesAndConnect() {
          try {
             Class.forName("org.postgresql.Driver").newInstance();
-            Connection connection=DriverManager.getConnection(urltemplate,dbUser,null);
+            Connection connection=DriverManager.getConnection(URL_TEMPLATE,dbUser,null);
            
-            PreparedStatement ps=connection.prepareStatement(statement);
+            PreparedStatement ps=connection.prepareStatement(STATEMENT);
             ResultSet resultSet=ps.executeQuery();
             dbList.clear();
             while(resultSet.next()){

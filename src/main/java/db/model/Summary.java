@@ -42,30 +42,56 @@ public class Summary implements Serializable {
     @Column(name="depth")
     private Long depth;
     
-    @Column(name="time_summary")
-    private Boolean timeSummary=false;
+    @Column(name="time_fail")
+    private Boolean failedTimeDependency=false;
     
-    @Column(name="trace_summary")
-    private Boolean traceSummary=false;
+    @Column(name="trace_fail")
+    private Boolean failedTraceDependency=false;
     
-    @Column(name="qc_summary")
-    private Boolean qcSummary=false;
+    @Column(name="qc_fail")
+    private Boolean failedQcSummary=false;
     
-    @Column(name="insight_summary")
-    private Boolean insightSummary=false;
+    @Column(name="insight_fail")
+    private Boolean failedInsightSummary=false;
     
-    @Column(name="time_inheritance_summary")
-    private Boolean timeInheritanceSummary=false;
+    @Column(name="time_fail_inherited")
+    private Boolean inheritedTimeFail=false;
     
-    @Column(name="trace_inheritance_summary")
-    private Boolean traceInheritanceSummary=false;
+    @Column(name="trace_fail_inherited")
+    private Boolean inheritedTraceFail=false;
     
-    @Column(name="qc_inheritance_summary")
-    private Boolean qcInheritanceSummary=false;
+    @Column(name="qc_fail_inherited")
+    private Boolean inheritedQcFail=false;
     
-    @Column(name="insight_inheritance_summary")
+    
+    @Column(name="time_fail_override")
+    private Boolean overridenTimeFail=false;
+    
+    @Column(name="trace_fail_override")
+    private Boolean overridenTraceFail=false;
+    
+    @Column(name="qc_fail_override")
+    private Boolean overridenQcFail=false;
+    
+    @Column(name="insight_fail_override")
+    private Boolean overridenInsightFail=false;
+    
+    
+    @Column(name="time_fail_warning")
+    private Boolean warningForTime=false;
+    
+    @Column(name="trace_fail_warning")
+    private Boolean warningForTrace=false;
+    
+    @Column(name="qc_fail_warning")
+    private Boolean warningForQc=false;
+    
+    @Column(name="insight_fail_warning")
+    private Boolean warningForInsight=false;
+    
+    /*@Column(name="insight_inheritance_summary")
     private Boolean insightInheritanceSummary=false;
-    
+    */
     
 
     @ManyToOne
@@ -117,69 +143,136 @@ public class Summary implements Serializable {
 
   
 
-    public Boolean getTimeSummary() {
-        return timeSummary;
+    public Boolean hasFailedTimeDependency() {
+        return failedTimeDependency;
     }
 
-    public void setTimeSummary(Boolean timeSummary) {
-        this.timeSummary = timeSummary;
+    public void setFailedTimeDependency(Boolean failedTimeDependency) {
+        this.failedTimeDependency = failedTimeDependency;
     }
 
-    public Boolean getTraceSummary() {
-        return traceSummary;
+    public Boolean hasFailedTraceDependency() {
+        return failedTraceDependency;
     }
 
-    public void setTraceSummary(Boolean traceSummary) {
-        this.traceSummary = traceSummary;
+    public void setFailedTraceDependency(Boolean failedTraceDependency) {
+        this.failedTraceDependency = failedTraceDependency;
     }
 
-    public Boolean getQcSummary() {
-        return qcSummary;
+    public Boolean hasFailedQcSummary() {
+        return failedQcSummary;
     }
 
-    public void setQcSummary(Boolean qcSummary) {
-        this.qcSummary = qcSummary;
+    public void setFailedQcSummary(Boolean failedQcSummary) {
+        this.failedQcSummary = failedQcSummary;
     }
 
-    public Boolean getInsightSummary() {
-        return insightSummary;
+    public Boolean hasFailedInsightSummary() {
+        return failedInsightSummary;
     }
 
-    public void setInsightSummary(Boolean insightSummary) {
-        this.insightSummary = insightSummary;
+    public void setFailedInsightSummary(Boolean failedInsightSummary) {
+        this.failedInsightSummary = failedInsightSummary;
     }
 
-    public Boolean getTimeInheritanceSummary() {
-        return timeInheritanceSummary;
+    public Boolean hasInheritedTimeFail() {
+        return inheritedTimeFail;
     }
 
-    public void setTimeInheritanceSummary(Boolean timeInheritanceSummary) {
-        this.timeInheritanceSummary = timeInheritanceSummary;
+    public void setInheritedTimeFail(Boolean inheritedTimeFail) {
+        this.inheritedTimeFail = inheritedTimeFail;
     }
 
-    public Boolean getTraceInheritanceSummary() {
-        return traceInheritanceSummary;
+    public Boolean hasInheritedTraceFail() {
+        return inheritedTraceFail;
     }
 
-    public void setTraceInheritanceSummary(Boolean traceInheritanceSummary) {
-        this.traceInheritanceSummary = traceInheritanceSummary;
+    public void setInheritedTraceFail(Boolean inheritedTraceFail) {
+        this.inheritedTraceFail = inheritedTraceFail;
     }
 
-    public Boolean getQcInheritanceSummary() {
-        return qcInheritanceSummary;
+    public Boolean hasInheritedQcFail() {
+        return inheritedQcFail;
     }
 
-    public void setQcInheritanceSummary(Boolean qcInheritanceSummary) {
-        this.qcInheritanceSummary = qcInheritanceSummary;
+    public void setInheritedQcFail(Boolean inheritedQcFail) {
+        this.inheritedQcFail = inheritedQcFail;
     }
 
-    public Boolean getInsightInheritanceSummary() {
-        return insightInheritanceSummary;
+    public Boolean hasOverridenTimeFail() {
+        return overridenTimeFail;
     }
 
+    public void setOverridenTimeFail(Boolean overridenTimeFail) {
+        this.overridenTimeFail = overridenTimeFail;
+    }
+
+    public Boolean hasOverridenTraceFail() {
+        return overridenTraceFail;
+    }
+
+    public void setOverridenTraceFail(Boolean overridenTraceFail) {
+        this.overridenTraceFail = overridenTraceFail;
+    }
+
+    public Boolean hasOverridenQcFail() {
+        return overridenQcFail;
+    }
+
+    public void setOverridenQcFail(Boolean overridenQcFail) {
+        this.overridenQcFail = overridenQcFail;
+    }
+
+    public Boolean hasOverridenInsightFail() {
+        return overridenInsightFail;
+    }
+
+    public void setOverridenInsightFail(Boolean overridenInsightFail) {
+        this.overridenInsightFail = overridenInsightFail;
+    }
+
+    public Boolean hasWarningForTime() {
+        return warningForTime;
+    }
+
+    public void setWarningForTime(Boolean warningForTime) {
+        this.warningForTime = warningForTime;
+    }
+
+    public Boolean hasWarningForTrace() {
+        return warningForTrace;
+    }
+
+    public void setWarningForTrace(Boolean warningForTrace) {
+        this.warningForTrace = warningForTrace;
+    }
+
+    public Boolean hasWarningForQc() {
+        return warningForQc;
+    }
+
+    public void setWarningForQc(Boolean warningForQc) {
+        this.warningForQc = warningForQc;
+    }
+
+    public Boolean hasWarningForInsight() {
+        return warningForInsight;
+    }
+
+    public void setWarningForInsight(Boolean warningForInsight) {
+        this.warningForInsight = warningForInsight;
+    }
+    
+    
+    
+
+    /*public Boolean getInsightInheritanceSummary() {
+    return insightInheritanceSummary;
+    }
+    
     public void setInsightInheritanceSummary(Boolean insightInheritanceSummary) {
-        this.insightInheritanceSummary = insightInheritanceSummary;
-    }
+    this.insightInheritanceSummary = insightInheritanceSummary;
+    }*/
     
     
 
