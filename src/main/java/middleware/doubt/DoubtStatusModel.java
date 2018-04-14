@@ -5,6 +5,9 @@
  */
 package middleware.doubt;
 
+import db.model.Doubt;
+import db.model.Job;
+
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
@@ -20,7 +23,7 @@ public class DoubtStatusModel {
     public static String getNewDoubtTraceMessage(String function,Double tolerance,Double error,Double evaluated,Double lhs,String doubttype){
         String message=new String();
         if(doubttype.equals(DoubtTypeModel.TRACES)){
-            message=doubttype+": the RHS of the function "+function+" evaluated to "+evaluated+" with tolerance: "+tolerance+" and error: "+error;
+            message=doubttype+": the RHS of the function "+function+" evaluated ("+evaluated+")  > error("+error+") > tolerance: ("+tolerance+")";
         }
         if(doubttype.equals(DoubtTypeModel.QC)){
             message=doubttype+": one or more of the qcs in the parent job "+function+" has failed in the child: ";
@@ -29,7 +32,19 @@ public class DoubtStatusModel {
         return message;
     } 
     
+    public static String getTraceDependencyWarningMessage(String function,Double tolerance,Double error,Double evaluated,Double lhs,String doubttype){
+        String message=new String();
+        message=doubttype+": the RHS of the function "+function+" evaluated("+evaluated+") < tolerance("+tolerance+") < error ("+error+")";
+        return message;
+    }
     
+     public static String getTraceDependencyPassedMessage(String parentJob,String childJob ,String delta , String tolerance,String error,String sub,String doubttype){
+        String message=new String();
+        if(doubttype.equals(DoubtTypeModel.TRACES)){
+            message=doubttype+": Passed Trace Dependency for line "+sub+"the jobs "+parentJob+" ->  childjob: "+childJob+"  delta("+delta+") <=  tolerance ("+tolerance+")  < error ("+error+")";
+        }
+        return message;
+    }
     
     public static String getTimeDependencyPassedMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
         String message=new String();
@@ -75,5 +90,13 @@ public class DoubtStatusModel {
         }
         
         return message;
+    }
+    
+    
+    public static String getInheritanceMessage(Job desc,Doubt cause){
+        String message=new String();
+        message= cause.getDoubtType().getName()+" : line : "+cause.getSubsurface().getSubsurface()+" : in job : "+desc.getNameJobStep()+""
+                + " has inherited doubt(s) from its parent : "+cause.getChildJob().getNameJobStep();
+                return message;
     }
 }

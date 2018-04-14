@@ -63,6 +63,21 @@ public class Summary implements Serializable {
     @Column(name="qc_fail_inherited")
     private Boolean inheritedQcFail=false;
     
+    @Column(name="insight_fail_inherited")
+    private Boolean inheritedInsightFail=false;
+    
+    @Column(name="time_override_inherited")
+    private Boolean inheritedTimeOverride=false;
+    
+    @Column(name="trace_override_inherited")
+    private Boolean inheritedTraceOverride=false;
+    
+    @Column(name="qc_override_inherited")
+    private Boolean inheritedQcOverride=false;
+    
+    @Column(name="insight_override_inherited")
+    private Boolean inheritedInsightOverride=false;
+    
     
     @Column(name="time_fail_override")
     private Boolean overridenTimeFail=false;
@@ -261,6 +276,46 @@ public class Summary implements Serializable {
 
     public void setWarningForInsight(Boolean warningForInsight) {
         this.warningForInsight = warningForInsight;
+    }
+
+    public Boolean hasInheritedInsightFail() {
+        return inheritedInsightFail;
+    }
+
+    public void setInheritedInsightFail(Boolean inheritedInsightFail) {
+        this.inheritedInsightFail = inheritedInsightFail;
+    }
+
+    public Boolean hasInheritedTimeOverride() {
+        return inheritedTimeOverride;
+    }
+
+    public void setInheritedTimeOverride(Boolean inheritedTimeOverride) {
+        this.inheritedTimeOverride = inheritedTimeOverride;
+    }
+
+    public Boolean hasInheritedTraceOverride() {
+        return inheritedTraceOverride;
+    }
+
+    public void setInheritedTraceOverride(Boolean inheritedTraceOverride) {
+        this.inheritedTraceOverride = inheritedTraceOverride;
+    }
+
+    public Boolean hasInheritedQcOverride() {
+        return inheritedQcOverride;
+    }
+
+    public void setInheritedQcOverride(Boolean inheritedQcOverride) {
+        this.inheritedQcOverride = inheritedQcOverride;
+    }
+
+    public Boolean hasInheritedInsightOverride() {
+        return inheritedInsightOverride;
+    }
+
+    public void setInheritedInsightOverride(Boolean inheritedInsightOverride) {
+        this.inheritedInsightOverride = inheritedInsightOverride;
     }
     
     
