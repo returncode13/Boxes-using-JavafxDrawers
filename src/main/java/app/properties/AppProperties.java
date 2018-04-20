@@ -26,7 +26,7 @@ public class AppProperties {
     private static  String INSIGHT_LOCATION="/home/sharath/programming/obpmanager/dummy";
     
     
-    public static  String MODE;
+    public static  String MODE=DEVELOPER_MODE;
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
     public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");

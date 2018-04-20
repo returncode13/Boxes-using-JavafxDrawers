@@ -3078,6 +3078,7 @@ public class WorkspaceController {
      */
     private Map<SummaryKey, SummaryHolder> sMap = new HashMap<>();
     private Map<DoubtKey, DoubtHolder> dMap = new HashMap<>();
+    private Map<Doubt,List<Long>> iMap=new HashMap<>();
     //private Map<Doubt,DoubtStatus>
 
     /**
@@ -3091,9 +3092,11 @@ public class WorkspaceController {
         headerMap.clear();
         variableArgumentMap.clear();
         descendantMapForSummary.clear();
+        //causeAndAssociatedInheritanceMap.clear();
+        iMap.clear();
     }
 
-    private void summarizeZero() throws Exception {
+    public void summarizeZero() throws Exception {
         /*
             Clear all containers
          */
@@ -3137,6 +3140,36 @@ public class WorkspaceController {
          **/
         
         /**
+         * Get all inherited doubts from the database.
+         * Create a map of <<Doubt> key=cause,List<Doubt> inheritedFromCause>> for lookup.
+         * this map is used to delete inherited doubts before commit operations to db
+         * 
+         **/
+        List<Doubt> inheritanceDoubtsInWorkspace = doubtService.getAllDoubtsJobsAndSubsurfacesFor(dbWorkspace, doubtTypeInherit);
+         for (Doubt inheritedDoubt : inheritanceDoubtsInWorkspace) {
+             /* InheritanceKey key = new InheritanceKey();
+             key.job = inheritedDoubt.getChildJob();
+             key.subsurface = inheritedDoubt.getSubsurface();
+             key.causeDoubtType = inheritedDoubt.getDoubtCause().getDoubtType();
+             
+             inheritanceMap.put(key, inheritedDoubt);*/
+            Doubt cause = inheritedDoubt.getDoubtCause();
+            if (!causeAndAssociatedInheritanceMap.containsKey(cause)) {
+                causeAndAssociatedInheritanceMap.put(cause, new ArrayList<Doubt>());
+                causeAndAssociatedInheritanceMap.get(cause).add(inheritedDoubt);
+            } else {
+                causeAndAssociatedInheritanceMap.get(cause).add(inheritedDoubt);
+            }
+            
+            if(!iMap.containsKey(cause)){
+                iMap.put(cause, new ArrayList<>());
+                iMap.get(cause).add(inheritedDoubt.getId());
+            }else{
+                iMap.get(cause).add(inheritedDoubt.getId());
+            }
+        }
+        
+        /**
          * Retrieve all links that need to be summarized
          * 
          **/
@@ -3168,7 +3201,7 @@ public class WorkspaceController {
          **/
         
         /**
-         * Get chosenheaders for dependency checks
+         * Get chosen headers for dependency checks
          * Create a headerMap<HeaderKey(job,subsurface),Header> and populate it
          */
         
@@ -3250,9 +3283,8 @@ public class WorkspaceController {
                 @Override
                 public String call() throws Exception {
 
-                    Map<String, Double> mapForVariableSetting = new HashMap<>();
-                    Set<String> variableSet = new HashSet<>();
-                    Set<Job> argumentSet = new HashSet<>();
+                    
+                   
 
                     for(Link link : links){
                         /**
@@ -3350,23 +3382,66 @@ public class WorkspaceController {
         
         
         List<Doubt> newDoubts=new ArrayList<>();
-        List<Doubt> deleteDoubts=new ArrayList<>();
+        List<Long> deleteDoubts=new ArrayList<>();
         List<Doubt> updateDoubts=new ArrayList<>();
-        List<Doubt> inheritedDoubts=new ArrayList<>();
+        List<Doubt> newInheritedDoubts=new ArrayList<>();
+        List<Long> inheritedDoubtsToDelete=new ArrayList<>();
         
         for(DoubtHolder dh:dMap.values()){
             if(dh.create) {
                 newDoubts.add(dh.cause);
-                inheritedDoubts.addAll(dh.inheritedDoubts);
+                newInheritedDoubts.addAll(dh.inheritedDoubts);
             }
             else if(dh.update){
                 updateDoubts.add(dh.cause);
-                inheritedDoubts.addAll(dh.inheritedDoubts);
+                /**
+                 * delete all inherited doubts related to this cause from the database(where update=true)
+                 * get all these inherited doubts to be deleted from the inheritanceMap<Cause,InheritedDoubts>
+                 **/
+                if(iMap.containsKey(dh.cause)){
+                    inheritedDoubtsToDelete.addAll(iMap.get(dh.cause));
+                }
+                newInheritedDoubts.addAll(dh.inheritedDoubts);
                 
             }else if(dh.delete){
-                deleteDoubts.add(dh.cause);
+                deleteDoubts.add(dh.cause.getId());
+                if(iMap.containsKey(dh.cause)){
+                    inheritedDoubtsToDelete.addAll(iMap.get(dh.cause));
+                }
             }
         }
+        
+        List<Summary> newSummaries=new ArrayList<>();
+        List<Summary> updateSummaries=new ArrayList<>();
+        
+        for(SummaryHolder sh:sMap.values()){
+            if(sh.create){
+                newSummaries.add(sh.summary);
+            }
+            if(!sh.create && sh.update){
+                updateSummaries.add(sh.summary);
+            }
+        }
+        
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): Will create: "+newDoubts.size()+" new doubts");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will update: "+updateDoubts.size()+" existing doubts");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will delete: "+deleteDoubts.size()+" existing doubts");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will delete: "+inheritedDoubtsToDelete.size()+" existing inherited doubts as part of rebuild");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will create: "+newInheritedDoubts.size()+" new inherited doubts");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will create: "+newSummaries.size()+" new summaries");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero(): will update: "+updateSummaries.size()+" existing summaries");
+        doubtService.deleteBulkDoubts(inheritedDoubtsToDelete);                 
+        doubtService.createBulkDoubts(newDoubts);
+        doubtService.updateBulkDoubts(updateDoubts);
+        doubtService.createBulkDoubts(newInheritedDoubts);
+        doubtService.deleteBulkDoubts(deleteDoubts);
+        summaryService.createBulkSummaries(newSummaries);
+        summaryService.updateBulkSummaries(updateSummaries);
+        
+        
+        
+        
+        
         
     }
     
