@@ -108,6 +108,11 @@ public class LinkServiceImpl implements LinkService {
         return linkDAO.getLinksForDot(dbDot);
     }
 
+    @Override
+    public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace) {
+        return linkDAO.getDotJobListForWorkspace(dbWorkspace);
+    }
+
     
 
    

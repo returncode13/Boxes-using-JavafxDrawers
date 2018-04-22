@@ -99,7 +99,9 @@ public class DoubtDAOImpl implements DoubtDAO{
             ll.setInheritedDoubts(newds.getInheritedDoubts());
             ll.setDoubtCause(newds.getDoubtCause());
             ll.setSequence(newds.getSequence());
-            
+            ll.setStatus(newds.getStatus());
+            ll.setState(newds.getState());
+            ll.setComments(newds.getComments());
             session.update(ll);
             
             

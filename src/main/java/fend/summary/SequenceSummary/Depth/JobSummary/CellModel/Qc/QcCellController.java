@@ -53,12 +53,7 @@ public class QcCellController {
         if(model.getJobSummaryModel().getSubsurface()!=null){
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.qcClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
-            System.out.println("doubt   : "+model.cellHasDoubt());
-            System.out.println("state   : "+model.getState());
-            System.out.println("inherit : "+model.isInheritance());
-            System.out.println("override: "+model.isOverride());
-            System.out.println("query   : "+model.isQuery());
-            System.out.println("showOver: "+model.isShowOverride());
+            
             
             
             
@@ -88,11 +83,11 @@ public class QcCellController {
         model.activeProperty().addListener(ACTIVE_LISTENER);
         
         
-        model.cellProperty().addListener(QC_DOUBT_LISTENER);
+        /*  model.cellProperty().addListener(QC_DOUBT_LISTENER);
         
         model.inheritanceProperty().addListener(QC_INHERITANCE_LISTENER);
         
-        model.overrideProperty().addListener(QC_OVERRIDE_LISTENER);
+        model.overrideProperty().addListener(QC_OVERRIDE_LISTENER); */
         
         
         
@@ -213,42 +208,30 @@ public class QcCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-             //String typeToBeQueried=model.getContextAskedForDoubtType();
-             /* if(model.getJobSummaryModel().getSubsurface()!=null)
-             System.out.println(".changed(): Query listener called on "+model.
-             getJobSummaryModel().
-             getSubsurface().
-             getSubsurface()+" for "+
-             
-             model.
-             getJobSummaryModel().
-             getJob().
-             getNameJobStep());
-             */
-             
-             model.cellProperty().removeListener(QC_DOUBT_LISTENER);
-             model.inheritanceProperty().removeListener(QC_INHERITANCE_LISTENER);
-             model.overrideProperty().removeListener(QC_OVERRIDE_LISTENER);
-             
-             //does a doubt exist for the current model params (job,sub,doubttype) ?
-             Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),qcDoubtType);
+            
+            /*  model.cellProperty().removeListener(QC_DOUBT_LISTENER);
+            model.inheritanceProperty().removeListener(QC_INHERITANCE_LISTENER);
+            model.overrideProperty().removeListener(QC_OVERRIDE_LISTENER);
+            
+            //does a doubt exist for the current model params (job,sub,doubttype) ?
+            Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),qcDoubtType);
             if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-                model.setCellProperty(true);
-               // model.getJobSummaryModel().getFeModelQcCellModel().setCellProperty(true);
-                 
-                                //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-                 //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                 DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-                 if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                     model.setOverride(true);
-                 }else{
-                     model.setOverride(false);
-                 }
-             }else{           //else isTime()=false
-                model.setCellProperty(false);
+            model.setCellProperty(true);
+            // model.getJobSummaryModel().getFeModelQcCellModel().setCellProperty(true);
+            
+            //if there is a doubt, then fetch the status .i.e is the doubt overriden?
+            //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+            DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+            if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+            model.setOverride(true);
+            }else{
+            model.setOverride(false);
+            }
+            }else{           //else isTime()=false
+            model.setCellProperty(false);*/
                // model.getJobSummaryModel().getFeModelQcCellModel().setCellProperty(false);
                  
-             }
+           //  }
             //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
             //is not null then there;s an inherited doubt. set model.inheritance = true
             //if null then there is no inherited doubt. set model.inheritance = false;
@@ -264,9 +247,9 @@ public class QcCellController {
            labelColor();
             
              
-             model.cellProperty().addListener(QC_DOUBT_LISTENER);
-             model.inheritanceProperty().addListener(QC_INHERITANCE_LISTENER);
-             model.overrideProperty().addListener(QC_OVERRIDE_LISTENER);
+           /*   model.cellProperty().addListener(QC_DOUBT_LISTENER);
+           model.inheritanceProperty().addListener(QC_INHERITANCE_LISTENER);
+           model.overrideProperty().addListener(QC_OVERRIDE_LISTENER);*/
          
              
             
@@ -279,217 +262,79 @@ public class QcCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
                   if(model.getJobSummaryModel().getSubsurface()!=null){
-                    System.out.println(".changed(): show overrride dialog for "+model.
-                        getJobSummaryModel().
-                        getSubsurface().
-                        getSubsurface()+
-                        " job: "+
-                        model.
-                                getJobSummaryModel().
-                                getJob().
-                                getNameJobStep());
+                   System.out.println(".changed(): show overrride dialog for " + model.
+                              getJobSummaryModel().
+                              getSubsurface().
+                              getSubsurface()
+                              + " job: "
+                              + model.
+                                      getJobSummaryModel().
+                                      getJob().
+                                      getNameJobStep());
+
+                      // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
+                      Doubt doubt = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
+                      //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                      // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                      OverrideModel ovrModel = new OverrideModel(model);
+
+                      Link l = doubt.getLink();
+                      String linkDesc = l.getParent().getNameJobStep() + " <---> " + l.getChild().getNameJobStep();
+                      String parentJobName = l.getParent().getNameJobStep();
+                      String doubtStatusReason = doubt.getReason();
+                      String stat = doubt.getStatus();
+                      String userComment = doubt.getComments();
+                      String earlierStat = doubt.getStatus();
+
+                      ovrModel.setDoubt(doubt);
+                      //   ovrModel.setDoubtStatus(ds);
+
+                      ovrModel.setTypeText(qcDoubtType.getName());
+                      ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
+                      ovrModel.setLinkDescription(linkDesc);
+                      ovrModel.setParentJobName(parentJobName);
+                      ovrModel.setDoubtStatusComment(doubt.getReason());
+                      ovrModel.setStatus(stat);
+                      ovrModel.setUserCommentStack(userComment);
+                      ovrModel.setEarlierStatus(earlierStat);
+
+                      OverrideView ovrView = new OverrideView(ovrModel);
+                      model.setShowOverride(false);
                 }
-              // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
-                Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),qcDoubtType);
-                //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-                OverrideModel ovrModel=new OverrideModel(model);
-                
-                Link l=doubt.getLink();
-                String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();
-                String parentJobName=l.getParent().getNameJobStep();
-                String doubtStatusReason=ds.getReason();
-                String stat=ds.getStatus();
-                String userComment=ds.getComments();
-                String earlierStat=ds.getStatus();
-                
-                    
-                    ovrModel.setDoubt(doubt);
-                    ovrModel.setDoubtStatus(ds);
-                    
-                    ovrModel.setTypeText(qcDoubtType.getName());
-                    ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
-                    ovrModel.setLinkDescription(linkDesc);
-                    ovrModel.setParentJobName(parentJobName);                   
-                    ovrModel.setDoubtStatusComment(ds.getReason());
-                    ovrModel.setStatus(stat);
-                    ovrModel.setUserCommentStack(userComment);
-                    ovrModel.setEarlierStatus(earlierStat);
-                    
-                OverrideView ovrView=new OverrideView(ovrModel);
-                model.setShowOverride(false);
             }
         }
     };
      
-     
-     /**
-      * figure out color
-      **/
-     private void applyColor(){
-         if(model.isActive()){
-             
-             if(model.cellHasDoubt()){
-                 if(model.isOverride()){
-                   //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting OVERRIDE");
-                     qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_OVERRRIDE);
-                 }else{
-                     if(model.getState().equals(DoubtStatusModel.ERROR)){
-                       //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting ERROR");
-                         qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_DOUBT);
-                     }
-                     if(model.getState().equals(DoubtStatusModel.WARNING)){
-                      //   System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting WARNING");
-                         qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_WARNING);
-                     }
-                     
-                     
-                 }
-                 
-             }else{
-                 Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
-                 if(cause!=null){
-                     model.setInheritance(true);
-                     //model.getJobSummaryModel().getFeModelQcCellModel().setInheritance(true);
-                 }else{
-                     model.setInheritance(false);
-                     //model.getJobSummaryModel().getFeModelQcCellModel().setInheritance(false);
-                 }
-                         
-                 
-                 if(model.isInheritance()){
-                     
-                   //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                   DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                   if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                      // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting INHERITED_OVERRIDE");
-                       qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_INHERITED_OVERRRIDE);
-                   }else{
-                       //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting INHERITED_DOUBT");
-                       qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_INHERITED_DOUBT);
-                   }
-                     
-                     
-                 }else{
-                     //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting GOOD");
-                     qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_GOOD);
-                             
-                 }
-             }
-             
-             
-         }else{
-         //    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.applyColor(): Setting NO_SEQ_PRESENT");
-             qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-         }
-     }
-     
+
      
      private void labelColor(){
+        
+        
          String color=new String();
+           if (model.isActive()) {
+
+               if (model.hasFailedQcDependency()) {
+                   color = JobSummaryColors.QC_DOUBT;
+               } else if (model.hasInheritedQcFail()) {
+                   color = JobSummaryColors.QC_INHERITED_DOUBT;
+               } else if (model.hasOverridenQcFail()) {
+                   color = JobSummaryColors.QC_OVERRRIDE;
+               } else if (model.hasInheritedQcOverride()) {
+                   color = JobSummaryColors.QC_INHERITED_OVERRRIDE;
+               } else if (model.hasWarningForQc()) {
+                   color = JobSummaryColors.QC_WARNING;
+               } else {
+                   color = JobSummaryColors.QC_GOOD;
+               }
+
+           }else{
+               color=JobSummaryColors.QC_NO_SEQ_PRESENT;
+           }
         
          
-         
-            if(model.isActive()){
-                //red1
-                if(model.cellHasDoubt()){
-                    //red2
-                        if(model.isOverride()){
-                            //red3
-                            //calculate if the model has an inherited doubts.
-                                    
-                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                                if(model.isInheritance()){
-                                    //red4
-                                       // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                                       DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                                        String status=ds.getStatus();
-                                            if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                                //red5
-                                                color=JobSummaryColors.QC_OVERRRIDE;
-                                            }else{
-                                                //green5
-                                                color=JobSummaryColors.QC_INHERITED_DOUBT;
-                                            }
-                                }else{
-                                    //green4
-                                    color=JobSummaryColors.QC_OVERRRIDE;
-                                }
-                        }else{
-                            //green3
-                            //find the state (ERROR/WARNING) of the cells doubt
-                            String state=model.getState();
-                            if(state.equals(DoubtStatusModel.ERROR)){
-                                //red6
-                               // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellController.labelColor(): ERROR state");
-                                color=JobSummaryColors.QC_DOUBT;
-                            }else{
-                                //green6
-                                //state=WARNING
-                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                                if(model.isInheritance()){
-                                    //red7
-                                       // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                                       DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                                        String status=ds.getStatus();
-                                        if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                            //red8
-                                            color=JobSummaryColors.QC_INHERITED_OVERRRIDE;
-                                        }else{
-                                            //green8
-                                            color=JobSummaryColors.QC_INHERITED_DOUBT;
-                                        }
-                                }else{
-                                    //green7
-                                    color=JobSummaryColors.QC_WARNING;
-                                }
-                            }
-                        }
-                }else{
-                    //green2
-                    Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                    if(model.isInheritance()){
-                        //red9
-                       // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                       DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                        String status=ds.getStatus();
-                        if(status.equals(DoubtStatusModel.OVERRIDE)){
-                            //red10
-                            color=JobSummaryColors.QC_INHERITED_OVERRRIDE;
-                        }else{
-                            //green10
-                            color=JobSummaryColors.QC_INHERITED_DOUBT;
-                        }
-                    }else{
-                        //green9
-                        color=JobSummaryColors.QC_GOOD;
-                    }
-                    
-                    
-                }
-            }else{
-                //green1
-                color=JobSummaryColors.QC_NO_SEQ_PRESENT;
-            }
-     
      
      qcLabel.setStyle("-fx-background-color: "+color);
      
      }
-
-    private Doubt calculateIfTheModelHasAnyInheritedDoubt() {
-         /**
-          * calculate if the model has any inherited doubts
-          */
-                                    Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
-                                    if(cause!=null){
-                                        model.setInheritance(true);
-                                        
-                                    }else{
-                                        model.setInheritance(false);
-                                        
-                                    }
-            return cause;
-    }
     
 }

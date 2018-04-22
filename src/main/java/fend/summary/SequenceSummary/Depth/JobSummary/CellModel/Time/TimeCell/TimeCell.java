@@ -25,14 +25,16 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
     TimeCellModel  model;
     int depthId;
     Job job;
-    String type=DoubtTypeModel.TIME;
-
+    //String type=DoubtTypeModel.TIME;
+     DoubtType type;
+     
     public TimeCell(int depthId, Job jobkey,DoubtType timeDoubtType) {
         
        this.depthId=depthId;
        this.job=jobkey;
        model=new TimeCellModel();
        model.setCellDoubtType(timeDoubtType);
+       type=timeDoubtType;
        view=new TimeCellView(model);
         
     }
@@ -44,9 +46,10 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             TimeCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTimeCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            //model.setJobSummaryModel(jsm);
+            model.setJobSummaryModel(jsm);
             //model=new TimeCellModel();
             model=tcm;
+            model.setCellDoubtType(type);
             view.getController().setModel(model);
             /*if(jsm.getSubsurface()==null){
             
@@ -83,7 +86,7 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             
             
             final ContextMenu contextMenu=new ContextMenu();
-            if(model.cellHasDoubt()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+            if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
             overrideMenuItem.setOnAction(e->{
             System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");

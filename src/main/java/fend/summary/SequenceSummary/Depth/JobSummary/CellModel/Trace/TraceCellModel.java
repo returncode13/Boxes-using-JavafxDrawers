@@ -24,12 +24,12 @@ public class TraceCellModel implements CellModel {
     private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     
     
-    private final BooleanProperty traceProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
-    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt). 
-                                                                                                                    //status = WARNING (no doubt).
-                                                                                                                    //status = DOUBT (doubt)  
+    /* private final BooleanProperty traceProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
+    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt).
+    //status = WARNING (no doubt).
+    //status = DOUBT (doubt)
     private final BooleanProperty inheritance = new SimpleBooleanProperty(false);                                   //inheritance=true  => inherited DOUBT  . inheritance=false ==> inherited OVERRIDE
-    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?
+    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?*/
 
     
     private JobSummaryModel jobSummaryModel;
@@ -51,17 +51,17 @@ public class TraceCellModel implements CellModel {
     
     
     
-    public boolean isInheritance() {
-        return inheritance.get();
+    /* public boolean isInheritance() {
+    return inheritance.get();
     }
-
+    
     public void setInheritance(boolean value) {
-        inheritance.set(value);
+    inheritance.set(value);
     }
-
+    
     public BooleanProperty inheritanceProperty() {
-        return inheritance;
-    }   
+    return inheritance;
+    }
     
     
     
@@ -69,15 +69,15 @@ public class TraceCellModel implements CellModel {
     
     
     public boolean isOverride() {
-        return override.get();
+    return override.get();
     }
-
+    
     public void setOverride(boolean value) {
-        override.set(value);
+    override.set(value);
     }
-
+    
     public BooleanProperty overrideProperty() {
-        return override;
+    return override;
     }
     
     
@@ -85,35 +85,35 @@ public class TraceCellModel implements CellModel {
     
     
     
-
+    
     public String getState() {
-        return stateProperty.get();
+    return stateProperty.get();
     }
-
+    
     public void setState(String value) {
-        stateProperty.set(value);
+    stateProperty.set(value);
     }
-
+    
     public StringProperty statePropertyProperty() {
-        return stateProperty;
+    return stateProperty;
     }
     
     
     
     
     
-
+    
     public boolean cellHasDoubt() {
-        return traceProperty.get();
+    return traceProperty.get();
     }
-
+    
     public void setCellProperty(boolean value) {
-        traceProperty.set(value);
+    traceProperty.set(value);
     }
-
+    
     public BooleanProperty cellProperty() {
-        return traceProperty;
-    }
+    return traceProperty;
+    }*/
    
     
     public boolean isActive() {
@@ -157,6 +157,77 @@ public class TraceCellModel implements CellModel {
     }
     
     
+     private BooleanProperty failedTraceDependency=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedTraceFail=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedTraceOverride=new SimpleBooleanProperty(false);
+    private BooleanProperty overridenTraceFail=new SimpleBooleanProperty(false);
+    private BooleanProperty warningForTrace=new SimpleBooleanProperty(false);
+
+    public Boolean hasFailedTraceDependency() {
+        return failedTraceDependency.get();
+    }
+
+    public BooleanProperty failedTraceDependency(){
+        return failedTraceDependency;
+    }
+    
+    public void setFailedTraceDependency(Boolean b) {
+        this.failedTraceDependency.set(b);
+    }
+
+    public BooleanProperty inheritedTraceFail() {
+        return inheritedTraceFail;
+    }
+    
+    public Boolean hasInheritedTraceFail(){
+        return inheritedTraceFail.get();
+    }
+    
+    public void setInheritedTraceFail(Boolean n) {
+        this.inheritedTraceFail.set(n);
+    }
+
+    public BooleanProperty inheritedTraceOverride() {
+        return inheritedTraceOverride;
+    }
+    
+    public Boolean hasInheritedTraceOverride(){
+        return inheritedTraceOverride.get();
+    }
+    
+    public void setInheritedTraceOverride(Boolean i) {
+        this.inheritedTraceOverride.set(i);
+    }
+
+    public BooleanProperty overridenTraceFail() {
+        return overridenTraceFail;
+    }
+    
+    public Boolean hasOverridenTraceFail(){
+        return overridenTraceFail.get();
+    }
+    
+    public void setOverridenTraceFail(Boolean o) {
+        this.overridenTraceFail.set(o);
+    }
+
+    public BooleanProperty warningForTrace() {
+        return warningForTrace;
+    }
+
+    public Boolean hasWarningForTrace(){
+        return warningForTrace.get();
+    }
+    
+    public void setWarningForTrace(Boolean w) {
+        this.warningForTrace.set(w);
+    }
+    
+    
+    
+    
+    
+    
      @Override
     public DoubtType getCellDoubtType() {
         return this.cellDoubtType;
@@ -165,5 +236,39 @@ public class TraceCellModel implements CellModel {
     @Override
     public void setCellDoubtType(DoubtType type) {
         cellDoubtType=type;
+    }
+
+    @Override
+    public boolean cellHasFailedDependency() {
+        return hasFailedTraceDependency();
+    }
+
+    @Override
+    public boolean cellHasInheritedFail() {
+        return hasInheritedTraceFail();
+    }
+
+    @Override
+    public boolean cellHasInheritedOverride() {
+        return hasInheritedTraceOverride();
+    }
+
+    @Override
+    public boolean cellHasOverridenFail() {
+        return hasOverridenTraceFail();
+    }
+
+    @Override
+    public boolean cellHasWarning() {
+        return hasWarningForTrace();
+    }
+
+    
+    /**
+     * For user override
+     */
+    @Override
+    public void setOverride(boolean b) {
+        setOverridenTraceFail(b);
     }
 }

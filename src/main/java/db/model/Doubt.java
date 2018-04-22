@@ -84,19 +84,19 @@ public class Doubt implements Serializable {
     private Set<Doubt> inheritedDoubts=new HashSet<>();
     
     @Column(name="reason")
-    private String reason;
+    private String reason=new String();
     
     @Column(name="status")
-    private String status;
+    private String status=new String();
     
     @Column(name="timestamp")
     private String timeStamp;
     
     @Column(name="comments",columnDefinition = "text" )
-    private String comments;
+    private String comments=new String();
     
     @Column(name="state")
-    private String state;
+    private String state=new String();
 
     public String getReason() {
         return reason;

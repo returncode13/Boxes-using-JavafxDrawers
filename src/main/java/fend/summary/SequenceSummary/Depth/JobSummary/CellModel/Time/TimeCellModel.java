@@ -24,13 +24,13 @@ public class TimeCellModel implements CellModel{
     private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     
     
-    private final BooleanProperty timeProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
-    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt). 
-                                                                                                                    //status = WARNING (no doubt).
-                                                                                                                    //status = DOUBT (doubt)  
+    /* private final BooleanProperty timeProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? timeProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
+    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt).
+    //status = WARNING (no doubt).
+    //status = DOUBT (doubt)
     private final BooleanProperty inheritance = new SimpleBooleanProperty(false);                                   //inheritance=true  => inherited DOUBT  . inheritance=false ==> inherited OVERRIDE
-    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?
-
+    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?*/
+    
     private DoubtType cellDoubtType;
     
     private JobSummaryModel jobSummaryModel;
@@ -44,23 +44,92 @@ public class TimeCellModel implements CellModel{
         this.jobSummaryModel = jobSummaryModel;
     }
     
+    
+    private BooleanProperty failedTimeDependency=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedTimeFail=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedTimeOverride=new SimpleBooleanProperty(false);
+    private BooleanProperty overridenTimeFail=new SimpleBooleanProperty(false);
+    private BooleanProperty warningForTime=new SimpleBooleanProperty(false);
 
+    public Boolean hasFailedTimeDependency() {
+        return failedTimeDependency.get();
+    }
+
+    public BooleanProperty failedTimeDependency(){
+        return failedTimeDependency;
+    }
+    
+    public void setFailedTimeDependency(Boolean b) {
+        this.failedTimeDependency.set(b);
+    }
+
+    public BooleanProperty inheritedTimeFail() {
+        return inheritedTimeFail;
+    }
+    
+    public Boolean hasInheritedTimeFail(){
+        return inheritedTimeFail.get();
+    }
+    
+    public void setInheritedTimeFail(Boolean n) {
+        this.inheritedTimeFail.set(n);
+    }
+
+    public BooleanProperty inheritedTimeOverride() {
+        return inheritedTimeOverride;
+    }
+    
+    public Boolean hasInheritedTimeOverride(){
+        return inheritedTimeOverride.get();
+    }
+    
+    public void setInheritedTimeOverride(Boolean i) {
+        this.inheritedTimeOverride.set(i);
+    }
+
+    public BooleanProperty overridenTimeFail() {
+        return overridenTimeFail;
+    }
+    
+    public Boolean hasOverridenTimeFail(){
+        return overridenTimeFail.get();
+    }
+    
+    public void setOverridenTimeFail(Boolean o) {
+        this.overridenTimeFail.set(o);
+    }
+
+    public BooleanProperty warningForTime() {
+        return warningForTime;
+    }
+
+    public Boolean hasWarningForTime(){
+        return warningForTime.get();
+    }
+    
+    public void setWarningForTime(Boolean w) {
+        this.warningForTime.set(w);
+    }
+    
    
     
     
     
     
+    
+    /*
+    
     public boolean isInheritance() {
-        return inheritance.get();
+    return inheritance.get();
     }
-
+    
     public void setInheritance(boolean value) {
-        inheritance.set(value);
+    inheritance.set(value);
     }
-
+    
     public BooleanProperty inheritanceProperty() {
-        return inheritance;
-    }   
+    return inheritance;
+    }
     
     
     
@@ -68,15 +137,15 @@ public class TimeCellModel implements CellModel{
     
     
     public boolean isOverride() {
-        return override.get();
+    return override.get();
     }
-
+    
     public void setOverride(boolean value) {
-        override.set(value);
+    override.set(value);
     }
-
+    
     public BooleanProperty overrideProperty() {
-        return override;
+    return override;
     }
     
     
@@ -84,35 +153,54 @@ public class TimeCellModel implements CellModel{
     
     
     
-
+    
     public String getState() {
-        return stateProperty.get();
+    return stateProperty.get();
     }
-
+    
     public void setState(String value) {
-        stateProperty.set(value);
+    stateProperty.set(value);
     }
-
+    
     public StringProperty statePropertyProperty() {
-        return stateProperty;
+    return stateProperty;
     }
     
+    */
     
     
-    
-    
-
-    public boolean cellHasDoubt() {
-        return timeProperty.get();
+    @Override
+    public boolean cellHasFailedDependency(){
+        return hasFailedTimeDependency();
     }
-
+    
+    public boolean cellHasInheritedFail(){
+        return hasInheritedTimeFail();
+    }
+    
+    public boolean cellHasInheritedOverride(){
+        return hasInheritedTimeOverride();
+    }
+    
+    public boolean cellHasOverridenFail(){
+        return hasOverridenTimeFail();
+    }
+    
+    public boolean cellHasWarning(){
+        return hasWarningForTime();
+    }
+    
+    /* public boolean cellHasDoubt() {
+    return timeProperty.get();
+    }
+    
     public void setCellProperty(boolean value) {
-        timeProperty.set(value);
+    timeProperty.set(value);
     }
-
+    
     public BooleanProperty cellProperty() {
-        return timeProperty;
-    }
+    return timeProperty;
+    }*/
    
     
     public boolean isActive() {
@@ -163,5 +251,10 @@ public class TimeCellModel implements CellModel{
     @Override
     public void setCellDoubtType(DoubtType type) {
         cellDoubtType=type;
+    }
+
+    @Override
+    public void setOverride(boolean b) {
+        setOverridenTimeFail(b);
     }
 }

@@ -23,14 +23,13 @@ public class QcCellModel implements CellModel{
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
     private final BooleanProperty query = new SimpleBooleanProperty();      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     
-    
+    /*
     private final BooleanProperty qcProperty = new SimpleBooleanProperty(false);                                  //is there a doubt on this node? qcProperty=TRUE if doubtExistsFor(model.sub,model.job.timedoubtType)
-    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt). 
-                                                                                                                    //status = WARNING (no doubt).
-                                                                                                                    //status = DOUBT (doubt)  
+    private final StringProperty stateProperty = new SimpleStringProperty(DoubtStatusModel.GOOD);                  //status = GOOD. (no doubt).
+    //status = WARNING (no doubt).
+    //status = DOUBT (doubt)
     private final BooleanProperty inheritance = new SimpleBooleanProperty(false);                                   //inheritance=true  => inherited DOUBT  . inheritance=false ==> inherited OVERRIDE
-    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?
-
+    private final BooleanProperty override = new SimpleBooleanProperty(false);                                      //is this cell overriden?*/
     
     private JobSummaryModel jobSummaryModel;
     private final BooleanProperty showOverride = new SimpleBooleanProperty();                                       //used to show the override dialog in the TimeCellController
@@ -48,21 +47,21 @@ public class QcCellModel implements CellModel{
     
 
    
-    
+    /*
     
     
     
     public boolean isInheritance() {
-        return inheritance.get();
+    return inheritance.get();
     }
-
+    
     public void setInheritance(boolean value) {
-        inheritance.set(value);
+    inheritance.set(value);
     }
-
+    
     public BooleanProperty inheritanceProperty() {
-        return inheritance;
-    }   
+    return inheritance;
+    }
     
     
     
@@ -70,15 +69,15 @@ public class QcCellModel implements CellModel{
     
     
     public boolean isOverride() {
-        return override.get();
+    return override.get();
     }
-
+    
     public void setOverride(boolean value) {
-        override.set(value);
+    override.set(value);
     }
-
+    
     public BooleanProperty overrideProperty() {
-        return override;
+    return override;
     }
     
     
@@ -86,36 +85,36 @@ public class QcCellModel implements CellModel{
     
     
     
-
+    
     public String getState() {
-        return stateProperty.get();
+    return stateProperty.get();
     }
-
+    
     public void setState(String value) {
-        stateProperty.set(value);
+    stateProperty.set(value);
     }
-
+    
     public StringProperty statePropertyProperty() {
-        return stateProperty;
+    return stateProperty;
     }
     
     
     
     
     
-
+    
     public boolean cellHasDoubt() {
-        return qcProperty.get();
+    return qcProperty.get();
     }
-
+    
     public void setCellProperty(boolean value) {
-        qcProperty.set(value);
+    qcProperty.set(value);
     }
-
+    
     public BooleanProperty cellProperty() {
-        return qcProperty;
+    return qcProperty;
     }
-   
+    */
     
     public boolean isActive() {
         return active.get();
@@ -165,6 +164,108 @@ public class QcCellModel implements CellModel{
     @Override
     public void setCellDoubtType(DoubtType type) {
         cellDoubtType=type;
+    }
+
+    
+    
+    private BooleanProperty failedQcDependency=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedQcFail=new SimpleBooleanProperty(false);
+    private BooleanProperty inheritedQcOverride=new SimpleBooleanProperty(false);
+    private BooleanProperty overridenQcFail=new SimpleBooleanProperty(false);
+    private BooleanProperty warningForQc=new SimpleBooleanProperty(false);
+
+    public Boolean hasFailedQcDependency() {
+        return failedQcDependency.get();
+    }
+
+    public BooleanProperty failedQcDependency(){
+        return failedQcDependency;
+    }
+    
+    public void setFailedQcDependency(Boolean b) {
+        this.failedQcDependency.set(b);
+    }
+
+    public BooleanProperty inheritedQcFail() {
+        return inheritedQcFail;
+    }
+    
+    public Boolean hasInheritedQcFail(){
+        return inheritedQcFail.get();
+    }
+    
+    public void setInheritedQcFail(Boolean n) {
+        this.inheritedQcFail.set(n);
+    }
+
+    public BooleanProperty inheritedQcOverride() {
+        return inheritedQcOverride;
+    }
+    
+    public Boolean hasInheritedQcOverride(){
+        return inheritedQcOverride.get();
+    }
+    
+    public void setInheritedQcOverride(Boolean i) {
+        this.inheritedQcOverride.set(i);
+    }
+
+    public BooleanProperty overridenQcFail() {
+        return overridenQcFail;
+    }
+    
+    public Boolean hasOverridenQcFail(){
+        return overridenQcFail.get();
+    }
+    
+    public void setOverridenQcFail(Boolean o) {
+        this.overridenQcFail.set(o);
+    }
+
+    public BooleanProperty warningForQc() {
+        return warningForQc;
+    }
+
+    public Boolean hasWarningForQc(){
+        return warningForQc.get();
+    }
+    
+    public void setWarningForQc(Boolean w) {
+        this.warningForQc.set(w);
+    }
+    
+    
+    
+    
+    
+    @Override
+    public boolean cellHasFailedDependency() {
+        return hasFailedQcDependency();
+    }
+
+    @Override
+    public boolean cellHasInheritedFail() {
+        return hasInheritedQcFail();
+    }
+
+    @Override
+    public boolean cellHasInheritedOverride() {
+        return hasInheritedQcOverride();
+    }
+
+    @Override
+    public boolean cellHasOverridenFail() {
+        return hasOverridenQcFail();
+    }
+
+    @Override
+    public boolean cellHasWarning() {
+        return hasWarningForQc();
+    }
+
+    @Override
+    public void setOverride(boolean b) {
+        setOverridenQcFail(b);
     }
     
 }

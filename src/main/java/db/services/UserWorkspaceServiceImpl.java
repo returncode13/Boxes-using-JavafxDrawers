@@ -10,6 +10,7 @@ import db.dao.UserWorkspaceDAOImpl;
 import db.model.User;
 import db.model.UserWorkspace;
 import db.model.Workspace;
+import java.util.List;
 
 /**
  *
@@ -47,6 +48,11 @@ public class UserWorkspaceServiceImpl implements UserWorkspaceService{
     @Override
     public void remove(User u, Workspace w) {
         uwDao.remove(u,w);
+    }
+
+    @Override
+    public List<User> getUsersInWorkspace(Workspace currentWorkspace) {
+        return uwDao.getUsersInWorkspace(currentWorkspace);
     }
     
 }

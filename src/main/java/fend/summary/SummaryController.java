@@ -224,17 +224,26 @@ public class SummaryController extends Stage{
                                     newValue.setActive(value.isActive());
                                     newValue.setJob(value.getJob());
                                     newValue.setSubsurface(sub);
-                                    newValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
+                                    
+                                    newValue.getTimeCellModel().setFailedTimeDependency(value.getTimeCellModel().cellHasFailedDependency());
+                                    newValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());
+                                    newValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());
+                                    
+                                    /*newValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
                                     newValue.getTraceCellModel().setCellProperty(value.getTraceCellModel().cellHasDoubt());
-                                    newValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt());
+                                    newValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt()); */
                                     
                                     JobSummaryModel newSeqValue=new JobSummaryModel(model);
                                     newSeqValue.setActive(value.isActive());
                                     newSeqValue.setJob(value.getJob());
                                    
-                                    newSeqValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
+                                    newSeqValue.getTimeCellModel().setFailedTimeDependency(value.getTimeCellModel().cellHasFailedDependency());
+                                    newSeqValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());
+                                    newSeqValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());
+                                    
+                                    /*newSeqValue.getTimeCellModel().setCellProperty(value.getTimeCellModel().cellHasDoubt());
                                     newSeqValue.getTraceCellModel().setCellProperty(value.getTraceCellModel().cellHasDoubt());
-                                    newSeqValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt());
+                                    newSeqValue.getQcCellModel().setCellProperty(value.getQcCellModel().cellHasDoubt()); */
                                     
                                     d1.addToJobSummaryMap(newValue);
                                     d2ForSeq.addToJobSummaryMap(newSeqValue);
@@ -286,13 +295,18 @@ public class SummaryController extends Stage{
                         
                         JobSummaryModel seqJsm=seqSummaryMap.get(seq).getDepth(depth).getJobSummaryModel(job);
                         seqJsm.setActive(true);
-                        seqJsm.getTimeCellModel().setActive(true);
                         seqJsm.setSubsurface(null);
-                       
-                        seqJsm.getTimeCellModel().setCellProperty(seqJsm.getTimeCellModel().cellHasDoubt()||x.hasFailedTimeDependency());
-                        seqJsm.getTraceCellModel().setActive(true);
-                        seqJsm.getTraceCellModel().setCellProperty(seqJsm.getTraceCellModel().cellHasDoubt()||x.hasFailedTraceDependency());
                         
+                        seqJsm.getTimeCellModel().setActive(true);
+                        seqJsm.getTimeCellModel().setFailedTimeDependency(seqJsm.getTimeCellModel().cellHasFailedDependency()||x.hasFailedTimeDependency());
+                       
+                        
+                        
+                        seqJsm.getTraceCellModel().setActive(true);
+                        seqJsm.getTraceCellModel().setFailedTraceDependency(seqJsm.getTraceCellModel().cellHasFailedDependency()||x.hasFailedTraceDependency());
+                        
+                        seqJsm.getQcCellModel().setActive(true);
+                        seqJsm.getQcCellModel().setFailedQcDependency(seqJsm.getQcCellModel().cellHasFailedDependency() || x.hasFailedQcSummary());
                         
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
@@ -302,59 +316,40 @@ public class SummaryController extends Stage{
                         jsm.setActive(true);
                         jsm.setSubsurface(sub);
                         jsm.getTimeCellModel().setActive(true);
-                        jsm.getTimeCellModel().setCellProperty(x.hasFailedTimeDependency());
-                        if(x.hasFailedTimeDependency()){
-                           // Doubt d=doubtService.getDoubtFor(sub, job, timeDoubtType);
-                           // DoubtStatus ds=new ArrayList<>(d.getDoubtStatuses()).get(0);
-                           TimeJobSubKey timeKey=generateTimeJobSubKey(job, sub);
-                           Doubt d=timeDoubtMap.get(timeKey);
-                           
-                          // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(d).get(0);
-//                          DoubtStatus ds=doubtStatusMap.get(d);
-                            String state=d.getState();
-                             jsm.getTimeCellModel().setState(state);
-                            String status=d.getStatus();
-                            if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                jsm.getTimeCellModel().setOverride(true);
-                            }else{
-                                jsm.getTimeCellModel().setOverride(false);
-                            }
-                        }
+                        jsm.getTimeCellModel().setFailedTimeDependency(x.hasFailedTimeDependency());
+                        jsm.getTimeCellModel().setInheritedTimeFail(x.hasInheritedTimeFail());
+                        jsm.getTimeCellModel().setInheritedTimeOverride(x.hasInheritedTimeOverride());
+                        jsm.getTimeCellModel().setOverridenTimeFail(x.hasOverridenTimeFail());
+                        jsm.getTimeCellModel().setWarningForTime(x.hasWarningForTime());
+                       
                         jsm.getTraceCellModel().setActive(true);
-                        jsm.getTraceCellModel().setCellProperty(x.hasFailedTraceDependency());
-                        if(x.hasFailedTraceDependency()){
-                          //  Doubt d=doubtService.getDoubtFor(sub, job, traceDoubtType);
-                          TraceJobSubKey traceKey=generateTraceJobSubKey(job, sub);
-                          Doubt d=traceDoubtMap.get(traceKey);
-                          
-                            String state=d.getState();
-                            jsm.getTraceCellModel().setState(state);
-                            String status=d.getStatus();
-                            if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                jsm.getTraceCellModel().setOverride(true);
-                            }else{
-                                jsm.getTraceCellModel().setOverride(false);
-                            }
-                        }else{                  //is there is  no doubt (summary is false) then check for inherited
-                           // Doubt cause=doubtService.getCauseOfInheritedDoubtForType(sub, job, traceDoubtType);
-                        }
+                        jsm.getTraceCellModel().setFailedTraceDependency(x.hasFailedTraceDependency());
+                        jsm.getTraceCellModel().setInheritedTraceFail(x.hasInheritedTraceFail());
+                        jsm.getTraceCellModel().setInheritedTraceOverride(x.hasInheritedTraceOverride());
+                        jsm.getTraceCellModel().setOverridenTraceFail(x.hasOverridenTraceFail());
+                        jsm.getTraceCellModel().setWarningForTrace(x.hasWarningForTrace());
+                       
                         jsm.getQcCellModel().setActive(true);
-                        jsm.getQcCellModel().setCellProperty(x.hasFailedQcSummary());
-                        if(x.hasFailedQcSummary()){
-                           // Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
-                           QcJobSubKey qcKey=generateQcJobSubKey(job, sub);
-                           Doubt d=qcDoubtMap.get(qcKey);
-                            
-                            String state=d.getState();
-                            jsm.getQcCellModel().setState(state);
-                            String status=d.getStatus();
-                            if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                jsm.getTraceCellModel().setOverride(true);
-                            }else{
-                                jsm.getTraceCellModel().setOverride(false);
-                            }
-                        }
+                        jsm.getQcCellModel().setFailedQcDependency(x.hasFailedQcSummary());
+                        jsm.getQcCellModel().setInheritedQcFail(x.hasInheritedQcFail());
+                        jsm.getQcCellModel().setInheritedQcOverride(x.hasInheritedQcOverride());
+                        jsm.getQcCellModel().setOverridenQcFail(x.hasOverridenQcFail());
+                        jsm.getQcCellModel().setWarningForQc(x.hasWarningForQc());
+                        /*if(x.hasFailedQcSummary()){
+                        // Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
+                        QcJobSubKey qcKey=generateQcJobSubKey(job, sub);
+                        Doubt d=qcDoubtMap.get(qcKey);
                         
+                        String state=d.getState();
+                        jsm.getQcCellModel().setState(state);
+                        String status=d.getStatus();
+                        if(status.equals(DoubtStatusModel.OVERRIDE)){
+                        jsm.getTraceCellModel().setOverride(true);
+                        }else{
+                        jsm.getTraceCellModel().setOverride(false);
+                        }
+                        }
+                        */
                         
                         }
                     
@@ -514,7 +509,7 @@ public class SummaryController extends Stage{
         
         
         this.setScene(new Scene(this.view));
-        showAndWait();
+        show();
     }
     
     

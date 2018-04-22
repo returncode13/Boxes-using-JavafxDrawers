@@ -26,14 +26,15 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
     QcCellModel  model;
     int depthId;
     Job job;
-    String type=DoubtTypeModel.QC;
-
+    //String type=DoubtTypeModel.QC;
+    DoubtType type;
     public QcCell(int depthId, Job jobkey,DoubtType qcType) {
         
        this.depthId=depthId;
        this.job=jobkey;
        model=new QcCellModel();
        model.setCellDoubtType(qcType);
+       type=qcType;
        view=new QcCellView(model);
         
     }
@@ -45,9 +46,10 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             QcCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getQcCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            //model.setJobSummaryModel(jsm);
+            model.setJobSummaryModel(jsm);
             //model=new QcCellModel();
             model=tcm;
+            model.setCellDoubtType(type);
             view.getController().setModel(model);
             /*if(jsm.getSubsurface()==null){
             
@@ -84,7 +86,7 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             
             
             final ContextMenu contextMenu=new ContextMenu();
-            if(model.cellHasDoubt()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+            if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
             overrideMenuItem.setOnAction(e->{
             System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");

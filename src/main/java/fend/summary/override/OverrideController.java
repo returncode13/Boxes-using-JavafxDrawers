@@ -126,20 +126,22 @@ public class OverrideController extends Stage{
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
                 Boolean statusChanged=false;
-                System.out.println("fend.summary.override.OverrideController.setModel(): Override Confirmed...updating database for doubtstatus id: "+model.getDoubtStatus().getId());
-                DoubtStatus ds=model.getDoubtStatus();
+                System.out.println("fend.summary.override.OverrideController.setModel(): Override Confirmed...updating database for doubt id: "+model.getDoubt().getId());
+               // DoubtStatus ds=model.getDoubtStatus();
+               
+               Doubt d=model.getDoubt();
                 String status=model.getStatus();
                 String userComment=model.getUserCommentStack();
-                if(!ds.getStatus().equals(status)){
+                if(!d.getStatus().equals(status)){
                     statusChanged=true;
                 }
-                ds.setStatus(status);
+                d.setStatus(status); //change the status
                 
                 
                 
-                ds.setUser(AppProperties.getCurrentUser());
-                ds.setComments(userComment);
-                doubtStatusService.updateDoubtStatus(ds.getId(), ds);
+                d.setUser(AppProperties.getCurrentUser());
+                d.setComments(userComment);
+                doubtService.updateDoubt(d.getId(), d);
                 
                 if(statusChanged){
                         if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
@@ -150,7 +152,7 @@ public class OverrideController extends Stage{
                 }
                 
                 
-                Doubt doubt=ds.getDoubt();
+                Doubt doubt=d;
                 //Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
                 List<Doubt> inheritedDoubts=doubtService.getInheritedDoubtsForCause(doubt);
                 for (Iterator<Doubt> iterator = inheritedDoubts.iterator(); iterator.hasNext();) {

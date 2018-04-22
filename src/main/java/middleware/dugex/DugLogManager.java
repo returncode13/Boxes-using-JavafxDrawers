@@ -266,6 +266,7 @@ public class DugLogManager {
                             li.timestamp=hackTimeStamp(fw.fwrap);
                            // logInformation.add(li);
                             allSubs.add(li.linename.getSubsurface());
+                            System.out.println("middleware.dugex.DugLogManager.extractInformation():: looking for "+li.linename.getSubsurface()+" insight: "+li.insightVersion);
                              if(!mapOfLogs.containsKey(li.linename.getSubsurface())){
                                                 mapOfLogs.put(li.linename.getSubsurface(), new ArrayList<>());
                                                 mapOfLogs.get(li.linename.getSubsurface()).add(li);

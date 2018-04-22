@@ -28,7 +28,7 @@ public class AppProperties {
     
     public static  String MODE=DEVELOPER_MODE;
     public static final String TIMESTAMP_FORMAT="yyyyMMddHHmmss";
-    public static final Boolean INSTALL=false;
+    //public static final Boolean INSTALL=false;
     private static String project=new String("no project selected");
     
     private String workspaceName=new String("unknown session");

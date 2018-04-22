@@ -25,7 +25,7 @@ public class OverrideModel {
     //private JobSummaryModel jobSummaryModel;
     private CellModel cellModel;
     private Doubt doubt;
-    private DoubtStatus doubtStatus;
+   // private DoubtStatus doubtStatus;
     
     private String typeText;
     private String subsurfaceName;
@@ -82,14 +82,13 @@ public class OverrideModel {
         this.doubt = doubt;
     }
 
-    public DoubtStatus getDoubtStatus() {
-        return doubtStatus;
+    /*   public DoubtStatus getDoubtStatus() {
+    return doubtStatus;
     }
-
+    
     public void setDoubtStatus(DoubtStatus doubtStatus) {
-        this.doubtStatus = doubtStatus;
-    }
-
+    this.doubtStatus = doubtStatus;
+    }*/
     public String getTypeText() {
         return typeText;
     }

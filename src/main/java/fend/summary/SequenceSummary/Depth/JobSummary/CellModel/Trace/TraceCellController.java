@@ -51,12 +51,7 @@ public class TraceCellController {
             
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
-            System.out.println("doubt   : "+model.cellHasDoubt());
-            System.out.println("state   : "+model.getState());
-            System.out.println("inherit : "+model.isInheritance());
-            System.out.println("override: "+model.isOverride());
-            System.out.println("query   : "+model.isQuery());
-            System.out.println("showOver: "+model.isShowOverride());
+         
             
             
             
@@ -83,13 +78,13 @@ public class TraceCellController {
         model.activeProperty().addListener(ACTIVE_LISTENER);
         //traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         traceDoubtType=model.getCellDoubtType();
-        
+        /*
         model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
         
         model.inheritanceProperty().addListener(TRACE_INHERITANCE_LISTENER);
         
         model.overrideProperty().addListener(TRACE_OVERRIDE_LISTENER);
-        
+        */
         
         
         model.queryProperty().addListener(QUERY_LISTENER);
@@ -223,27 +218,27 @@ public class TraceCellController {
                              getJob().
                              getNameJobStep());
            
-             
+             /*
              model.cellProperty().removeListener(TRACE_DOUBT_LISTENER);
              model.inheritanceProperty().removeListener(TRACE_INHERITANCE_LISTENER);
              model.overrideProperty().removeListener(TRACE_OVERRIDE_LISTENER);
-             
+             */
              //does a doubt exist for the current model params (job,sub,doubttype) ?
-             Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
+             /* Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
              if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-                 model.setCellProperty(true);
-                                //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-                 //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                 DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-                 if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                     model.setOverride(true);
-                     
-                 }else{
-                     model.setOverride(false);
-                 }
-             }else{           //else isTime()=false
-                 model.setCellProperty(false);
+             model.setCellProperty(true);
+             //if there is a doubt, then fetch the status .i.e is the doubt overriden?
+             //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+             DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+             if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+             model.setOverride(true);
+             
+             }else{
+             model.setOverride(false);
              }
+             }else{           //else isTime()=false
+             model.setCellProperty(false);
+             }*/
             //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
             //is not null then there;s an inherited doubt. set model.inheritance = true
             //if null then there is no inherited doubt. set model.inheritance = false;
@@ -258,10 +253,10 @@ public class TraceCellController {
            //  applyColor();
            labelColor();
             
-             
-             model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
-             model.inheritanceProperty().addListener(TRACE_INHERITANCE_LISTENER);
-             model.overrideProperty().addListener(TRACE_OVERRIDE_LISTENER);
+           /*
+           model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
+           model.inheritanceProperty().addListener(TRACE_INHERITANCE_LISTENER);
+           model.overrideProperty().addListener(TRACE_OVERRIDE_LISTENER);*/
          
              
             
@@ -274,52 +269,45 @@ public class TraceCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
                 if(model.getJobSummaryModel().getSubsurface()!=null){
-                    System.out.println(".changed(): show overrride dialog for "+model.
-                        getJobSummaryModel().
-                        getSubsurface().
-                        getSubsurface()+
-                        " job: "+
-                        model.
-                                getJobSummaryModel().
-                                getJob().
-                                getNameJobStep());
+                    System.out.println(".changed(): show overrride dialog for " + model.
+                            getJobSummaryModel().
+                            getSubsurface().
+                            getSubsurface()
+                            + " job: "
+                            + model.
+                                    getJobSummaryModel().
+                                    getJob().
+                                    getNameJobStep());
+
+                    // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
+                    Doubt doubt = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), traceDoubtType);
+                    //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                    // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                    OverrideModel ovrModel = new OverrideModel(model);
+
+                    Link l = doubt.getLink();
+                    String linkDesc = l.getParent().getNameJobStep() + " <---> " + l.getChild().getNameJobStep();
+                    String parentJobName = l.getParent().getNameJobStep();
+                    String doubtStatusReason = doubt.getReason();
+                    String stat = doubt.getStatus();
+                    String userComment = doubt.getComments();
+                    String earlierStat = doubt.getStatus();
+
+                    ovrModel.setDoubt(doubt);
+                    //   ovrModel.setDoubtStatus(ds);
+
+                    ovrModel.setTypeText(traceDoubtType.getName());
+                    ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
+                    ovrModel.setLinkDescription(linkDesc);
+                    ovrModel.setParentJobName(parentJobName);
+                    ovrModel.setDoubtStatusComment(doubt.getReason());
+                    ovrModel.setStatus(stat);
+                    ovrModel.setUserCommentStack(userComment);
+                    ovrModel.setEarlierStatus(earlierStat);
+
+                    OverrideView ovrView = new OverrideView(ovrModel);
+                    model.setShowOverride(false);
                 }
-                
-              // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
-                Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
-                if(doubt!=null){
-                    
-               
-                    /* DoubtStatus ds=(new ArrayList<>(doubt.
-                    getDoubtStatuses()))
-                    .get(0);*/
-                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-                        OverrideModel ovrModel=new OverrideModel(model);
-
-                        Link l=doubt.getLink();
-                        String linkDesc=l.getParent().getNameJobStep()+" <---> "+l.getChild().getNameJobStep();
-                        String parentJobName=l.getParent().getNameJobStep();
-                        String doubtStatusReason=ds.getReason();
-                        String stat=ds.getStatus();
-                        String userComment=ds.getComments();
-                        String earlierStat=ds.getStatus();
-
-
-                            ovrModel.setDoubt(doubt);
-                            ovrModel.setDoubtStatus(ds);
-
-                            ovrModel.setTypeText(traceDoubtType.getName());
-                            ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
-                            ovrModel.setLinkDescription(linkDesc);
-                            ovrModel.setParentJobName(parentJobName);                   
-                            ovrModel.setDoubtStatusComment(ds.getReason());
-                            ovrModel.setStatus(stat);
-                            ovrModel.setUserCommentStack(userComment);
-                            ovrModel.setEarlierStatus(earlierStat);
-
-                        OverrideView ovrView=new OverrideView(ovrModel);
-                        model.setShowOverride(false);
-            } 
             }
         }
     };
@@ -328,192 +316,36 @@ public class TraceCellController {
      /**
       * figure out color
       **/
-     private void applyColor(){
-         if(model.isActive()){
-             
-             if(model.cellHasDoubt()){
-                 if(model.isOverride()){
-                 //    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting OVERRIDE");
-                     traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_OVERRRIDE);
-                 }else{
-                     if(model.getState().equals(DoubtStatusModel.ERROR)){
-                   //      System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting ERROR");
-                         traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_DOUBT);
-                     }
-                     if(model.getState().equals(DoubtStatusModel.WARNING)){
-                   //      System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting WARNING");
-                         traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_WARNING);
-                     }
-                     
-                     
-                 }
-                 
-             }else{
-                 Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), traceDoubtType);
-                 if(cause!=null){
-                     /*if(model.getJobSummaryModel().getSubsurface()!=null){
-                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): setting inheritance in "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                     
-                     model.
-                     getJobSummaryModel().
-                     getJob().
-                     getNameJobStep());
-                     
-                     //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor() cause found is "+cause.getId());
-                     }*/
-                     model.setInheritance(true);
-                 }else{
-                     /*if(model.getJobSummaryModel().getSubsurface()!=null){
-                     System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.applyColor(): No cause for inherited doubt found in  "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                     
-                     model.
-                     getJobSummaryModel().
-                     getJob().
-                     getNameJobStep());
-                     }*/
-                     model.setInheritance(false);
-                 }
-                         
-                 
-                 if(model.isInheritance()){
-                     
-                  // DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                  DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                   if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                      /// System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting INHERITED_OVERRIDE");
-                       traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_INHERITED_OVERRRIDE);
-                   }else{
-                      // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting INHERITED_DOUBT");
-                       traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_INHERITED_DOUBT);
-                   }
-                     
-                     
-                 }else{
-                     //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting GOOD");
-                     traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_GOOD);
-                             
-                 }
-             }
-             
-             
-         }else{
-            // System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.applyColor(): Setting NO_SEQ_PRESENT");
-             traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
-         }
-     }
+     
+     
      
      
        private void labelColor(){
+           
          String color=new String();
-        
-         
-         
-            if(model.isActive()){
-                //red1
-                if(model.cellHasDoubt()){
-                    //red2
-                        if(model.isOverride()){
-                            //red3
-                            //calculate if the model has an inherited doubts.
-                                    
-                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                                if(model.isInheritance()){
-                                    //red4
-                                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                                        String status=ds.getStatus();
-                                            if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                                //red5
-                                                color=JobSummaryColors.TRACES_OVERRRIDE;
-                                            }else{
-                                                //green5
-                                                color=JobSummaryColors.TRACES_INHERITED_DOUBT;
-                                            }
-                                }else{
-                                    //green4
-                                    color=JobSummaryColors.TRACES_OVERRRIDE;
-                                }
-                        }else{
-                            //green3
-                            //find the state (ERROR/WARNING) of the cells doubt
-                            String state=model.getState();
-                            if(state.equals(DoubtStatusModel.ERROR)){
-                                //red6
-                                color=JobSummaryColors.TRACES_DOUBT;
-                            }else{
-                                //green6
-                                //state=WARNING
-                                Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                                if(model.isInheritance()){
-                                    //red7
-                                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                                        String status=ds.getStatus();
-                                        if(status.equals(DoubtStatusModel.OVERRIDE)){
-                                            //red8
-                                            color=JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-                                        }else{
-                                            //green8
-                                            color=JobSummaryColors.TRACES_INHERITED_DOUBT;
-                                        }
-                                }else{
-                                    //green7
-                                    color=JobSummaryColors.TRACES_WARNING;
-                                }
-                            }
-                        }
-                }else{
-                    //green2
-                    Doubt cause=calculateIfTheModelHasAnyInheritedDoubt();
-                    if(model.isInheritance()){
-                        //red9
-                        //DoubtStatus ds=new ArrayList<>(cause.getDoubtStatuses()).get(0);
-                        DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(cause).get(0);
-                        String status=ds.getStatus();
-                        if(status.equals(DoubtStatusModel.OVERRIDE)){
-                            //red10
-                            color=JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-                        }else{
-                            //green10
-                            color=JobSummaryColors.TRACES_INHERITED_DOUBT;
-                        }
-                    }else{
-                        //green9
-                        color=JobSummaryColors.TRACES_GOOD;
-                    }
-                    
-                    
-                }
-            }else{
-                //green1
-                color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
-            }
-     
-     
-     traceLabel.setStyle("-fx-background-color: "+color);
-     
-     }
+           if (model.isActive()) {
 
-    private Doubt calculateIfTheModelHasAnyInheritedDoubt() {
-         /**
-          * calculate if the model has any inherited doubts
-          */
-                                    Doubt cause=doubtService.getCauseOfInheritedDoubtForType(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), traceDoubtType);
-                                    if(cause!=null){
-                                        model.setInheritance(true);
-                                        
-                                    }else{
-                                        model.setInheritance(false);
-                                        
-                                    }
-            return cause;
-    }
-    
+               if (model.hasFailedTraceDependency()) {
+                   color = JobSummaryColors.TRACES_DOUBT;
+               } else if (model.hasInheritedTraceFail()) {
+                   color = JobSummaryColors.TRACES_INHERITED_DOUBT;
+               } else if (model.hasOverridenTraceFail()) {
+                   color = JobSummaryColors.TRACES_OVERRRIDE;
+               } else if (model.hasInheritedTraceOverride()) {
+                   color = JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+               } else if (model.hasWarningForTrace()) {
+                   color = JobSummaryColors.TRACES_WARNING;
+               } else {
+                   color = JobSummaryColors.TRACES_GOOD;
+               }
+
+           }else{
+               color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           }
+         traceLabel.setStyle("-fx-background-color: "+color);
+     
+        }
+
+   
     
 }

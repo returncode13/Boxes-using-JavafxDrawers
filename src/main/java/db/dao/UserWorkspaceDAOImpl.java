@@ -129,6 +129,7 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
             query.setParameter("w", w);
             
             int result=query.executeUpdate();
+            transaction.commit();
         }catch(Exception e){
             
         }finally{
@@ -136,6 +137,28 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
         }
         
                 
+    }
+
+    @Override
+    public List<User> getUsersInWorkspace(Workspace currentWorkspace) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="Select uw.pk.user from UserWorkspace uw where uw.pk.workspace = :w";
+        List<User> result=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+           
+            query.setParameter("w", currentWorkspace);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            
+        }finally{
+            session.close();
+        }
+        return result;
     }
     
     

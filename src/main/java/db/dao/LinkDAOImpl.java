@@ -244,5 +244,28 @@ public class LinkDAOImpl implements LinkDAO{
         return result;
     }
 
+    @Override
+    public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace) {
+        System.out.println("db.dao.LinkDAOImpl.getLinksForDot()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Link> result=null;
+        String hql="SELECT l from Link l INNER JOIN l.child j where j.workspace =:w ";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", dbWorkspace);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
    
 }

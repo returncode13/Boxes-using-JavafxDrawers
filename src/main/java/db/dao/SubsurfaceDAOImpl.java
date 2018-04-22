@@ -139,7 +139,9 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
         if(result.size()!=0){
              return result.get(0);
         }else
+        {System.out.println("db.dao.SubsurfaceDAOImpl.getSubsurfaceObjBysubsurfacename(): No entry found for "+dugSubsurface);
             return null;
+        }
     }
 
     @Override

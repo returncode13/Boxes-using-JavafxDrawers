@@ -26,7 +26,8 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
     TraceCellModel  model;
     int depthId;
     Job job;
-    String type=DoubtTypeModel.TIME;
+   // String type=DoubtTypeModel.TRACES;
+    DoubtType type;
 
     public TraceCell(int depthId, Job jobkey,DoubtType traceType) {
         
@@ -34,6 +35,7 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
        this.job=jobkey;
        model=new TraceCellModel();
        model.setCellDoubtType(traceType);
+       type=traceType;
        view=new TraceCellView(model);
         
     }
@@ -45,8 +47,10 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             TraceCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            //model.setJobSummaryModel(jsm);
+            
             model=tcm;
+            model.setJobSummaryModel(jsm);
+            model.setCellDoubtType(type);
              view.getController().setModel(model);
              /*if(jsm.getSubsurface()==null){
              
@@ -81,10 +85,10 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
            // jsm.setFeModelTraceCellModel(model);*/
             
             final ContextMenu contextMenu=new ContextMenu();
-            if(model.cellHasDoubt()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+            if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
             overrideMenuItem.setOnAction(e->{
-            System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.updateItem(): Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
             
             
             

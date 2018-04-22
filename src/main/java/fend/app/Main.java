@@ -15,6 +15,8 @@ import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
 import fend.app.AppModel;
 import fend.app.AppView;
+import fend.app.mode.ModeModel;
+import fend.app.mode.ModeView;
 import fend.project.ProjectModel;
 import fend.project.ProjectView;
 import java.io.File;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -53,10 +56,10 @@ public class Main extends Application{
     private String password;
     private static int dbPortOnRemote=AppProperties.APPLICATION_PORT_ON_REMOTE;
     
-    //final private String URL_TEMPLATE="jdbc:postgresql://localhost:5433/template1";
+    
     final private String URL_TEMPLATE=AppProperties.URLTEMPLATE_FOR_DATABASE_LISTING;
     private Stage primaryStage;
-    
+    private ModeView modeView;
     
     private String dbUser=AppProperties.DATABASE_USER;
     private String dbPassword="";
@@ -71,30 +74,17 @@ public class Main extends Application{
         launch(args);
     }
     
+    
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         
         this.primaryStage=primaryStage;
         
-        int connectStatus=connectToServer();
-        if(connectStatus==0){ //no shh connection established
-            openSshSettingsView();      //open ssh setting panel
-            
-        }else{  //successful ssh tunnel
-            listDatabasesAndConnect();    //list databases
-        }
-        /*AppModel appmodel=new AppModel();
-        AppView appview=new AppView(appmodel);
-        Scene scene=appview.getController().getAppScene();
-        String title=appview.getController().getTitle();
-        primaryStage.setTitle(title);
-        primaryStage.setScene(scene);
-        primaryStage.show();*/
-        
-        
-        /*  WorkspaceModel model=new WorkspaceModel();
-        WorkspaceView node=new WorkspaceView(model);*/
+        ModeModel modeModel=new ModeModel();
+        modeModel.chooseModeProperty().addListener(MODE_LISTENER);
+        modeView=new ModeView(modeModel);
+       
        
     }
 
@@ -263,6 +253,10 @@ public class Main extends Application{
         
     }
     
+    @Override
+    public void stop(){
+        System.out.println("fend.app.Main.stop(): stage is closing");
+    }
     
     private ChangeListener<Boolean> DATABASE_SELECTION_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -275,6 +269,30 @@ public class Main extends Application{
                 primaryStage.setTitle(title);
                 primaryStage.setScene(scene);
                 primaryStage.show();
+                primaryStage.setOnCloseRequest(e->{
+                    appview.getController().onClose();
+                    System.out.println(".changed(): closing primaryStage");
+                    primaryStage.close();
+                    System.out.println(".changed(): calling exit on Platform");
+                    Platform.exit();
+                });
+        }
+    };
+    
+    private ChangeListener<Boolean> MODE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if (newValue) {
+                //Main.this.modeView.close();
+                int connectStatus = connectToServer();
+                if (connectStatus == 0) {            //no shh connection established
+                    openSshSettingsView();      //open ssh setting panel
+
+                } else {                          //successful ssh tunnel
+                    listDatabasesAndConnect();    //list databases
+                }
+
+            }
         }
     };
 }

@@ -405,19 +405,7 @@ public class AppController extends Stage implements Initializable{
         login();
         
         
-        
-        
-        /* if(currentWorkspace!=null){
-        currentWorkspace.addToUsers(currentUser);
-        currentUser.addToWorkspaces(currentWorkspace);
-        if(currentWorkspace.getOwner()==null){
-        currentWorkspace.setOwner(currentUser);
-        currentUser.addToOwnedWorkspaces(currentWorkspace);
-        }
-        
-        workspaceService.updateWorkspace(currentWorkspace.getId(), currentWorkspace);
-        //            userService.updateUser(currentUser.getUser_id(), currentUser);
-        }*/
+       
     }
     
     
@@ -445,54 +433,13 @@ public class AppController extends Stage implements Initializable{
         currentWorkspaceController=frontEndWorkspaceView.getController();
         frontEndWorkspaceView.getController().setLoading(true);
        
-        /*
-        if(currentWorkspace!=null){  //take care of the exiting workspace
-        System.out .println("fend.app.AppController.loadSession(): about to exit "+currentWorkspace.getName()+ ""
-        + " with current user :"+currentUser.getInitials()+" and owner: "+currentWorkspace.getOwner().getInitials());
-        // changeInWorkspaceOrUser();
-        }
         
-        currentWorkspace=workspaceToBeLoaded;
-        System.out.println("fend.app.AppController.loadSession(): about to load "+currentWorkspace.getName());
-        // if(currentWorkspace!=null){
-        if(currentWorkspace.getOwner()==null){
-        System.out.println("fend.app.AppController.loadSession(): workspace "+currentWorkspace.getName()+" has no owner");
-        currentWorkspace.setOwner(currentUser);
-        currentWorkspace.addToUsers(currentUser);
-        currentUser.addToOwnedWorkspaces(currentWorkspace);
-        currentUser.addToWorkspaces(currentWorkspace);
-        
-        workspaceService.updateWorkspace(currentWorkspace.getId(), currentWorkspace);
-        userService.updateUser(currentUser.getUser_id(), currentUser);
-        }else{
-        System.out.println("fend.app.AppController.loadSession(): workspace "+currentWorkspace.getName()+" has owner "+currentWorkspace.getOwner().getInitials());
-        
-        if(currentUser==currentWorkspace.getOwner()){
-        System.out.println("fend.app.AppController.loadSession(): User : "+currentUser.getInitials()+" is already logged into as owner to workspace: "+currentWorkspace.getName());
-        return;
-        }
-        else{
-        System.out.println("fend.app.AppController.loadSession(): Adding currentUser "+currentUser.getInitials()+""
-        + " to the set of users for "+currentWorkspace.getName()+" number of users Before: "+currentWorkspace.getUsers().size()+" number of Workspaces assigned to user "+currentUser.getInitials()
-        +" is Before: "+currentUser.getWorkspaces().size());
-        currentWorkspace.addToUsers(currentUser);
-        System.out.println("fend.app.AppController.loadSession(): Adding currentUser "+currentUser.getInitials()+""
-        + " to the set of users for "+currentWorkspace.getName()+" number of users After: "+currentWorkspace.getUsers().size()+" number of Workspaces assigned to user "+currentUser.getInitials()
-        +" is After: "+currentUser.getWorkspaces().size());
-        // currentUser.addToWorkspaces(currentWorkspace);
-        workspaceService.updateWorkspace(currentWorkspace.getId(), currentWorkspace);
-        // userService.updateUser(currentUser.getUser_id(), currentUser);
-        
-        
-        //Restrictions pending
-        }
-        }*/
-       // }
         
         basePane.getChildren().add(frontEndWorkspaceView);
         previousUser=currentUser;
         logout();
         currentWorkspace=workspaceToBeLoaded;
+        enableButtons.set(true);
         login();
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         
@@ -653,16 +600,7 @@ public class AppController extends Stage implements Initializable{
                 createPath("M61.793,353.103h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
 "	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,349.151,66.668,353.103,61.793,353.103z", "#C3E678", "#C3E678")
                 
-                /*
-                createPath("M61.793,308.966h-35.31c-4.875,0-8.828-3.953-8.828-8.828v-8.828c0-4.875,3.953-8.828,8.828-8.828\n" +
-"	h35.31c4.875,0,8.828,3.953,8.828,8.828v8.828C70.621,305.013,66.668,308.966,61.793,308.966z", "#C3E678", "#C3E678")/*,
-                createPath("", "yellow", "orange"),
-                createPath("", "red", "darkred"),
-                createPath("", "green", "darkgreen"),
-                createPath("", "green", "darkgreen"),
-                createPath("", "blue", "blue")*/
-                
-               // createPath("M20,20h60v60h-60z", "red", "darkred")
+               
         );
         Bounds bounds=svg.getBoundsInParent();
         double scale=Math.min(25/bounds.getWidth(),25/bounds.getHeight());
@@ -675,10 +613,11 @@ public class AppController extends Stage implements Initializable{
         summaryButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
     }
     
+    private BooleanProperty enableButtons=new SimpleBooleanProperty(false);
     
     @FXML
     void startNewWorkspace(ActionEvent event) {
-        if(!AppProperties.INSTALL){
+      //  if(!AppProperties.INSTALL){
             
        
          if(currentUser==null){
@@ -693,7 +632,7 @@ public class AppController extends Stage implements Initializable{
         
         
         }
-        }
+      //  }
         
         Workspace dbWorkspace= new Workspace();
         final BooleanProperty nameEntered=new SimpleBooleanProperty(false);
@@ -707,7 +646,7 @@ public class AppController extends Stage implements Initializable{
              
              sm.getName().addListener((obs,old,newname)->{
                  System.out.println("fend.app.AppController.startNewWorkspace(): nameEntered: "+newname);
- if(!AppProperties.INSTALL) System.out.println("fend.app.AppController.startNewWorkspace(): owner: "+currentUser.getInitials());
+ System.out.println("fend.app.AppController.startNewWorkspace(): owner: "+currentUser.getInitials());
                  if(newname.length()>0){
                      
                  
@@ -721,15 +660,15 @@ public class AppController extends Stage implements Initializable{
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(newValue){
                     User u=null;
-                   if(!AppProperties.INSTALL) {
+               //    if(!AppProperties.INSTALL) {
                       // u=userService.getUser(currentUser.getId());
                       u=currentUser;
                        System.out.println("fend.app.AppController.startNewWorkspace(): creating a new Workspace for user "+u.getInitials());
-                   }
+               //    }
                     
                    
                     
-                     if(!AppProperties.INSTALL){
+                    // if(!AppProperties.INSTALL){
                             dbWorkspace.setOwner(u);
                             //Set<User> us=dbWorkspace.getUsers();
                             Set<User> us=new HashSet<>();
@@ -747,7 +686,7 @@ public class AppController extends Stage implements Initializable{
                             userWorkspaceService.createUserWorkspace(userWorkspace);
                             //workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);
                     
-                     }
+                  //   }
                     
                     WorkspaceModel model=new WorkspaceModel();
                     model.setId(dbWorkspace.getId());
@@ -763,13 +702,13 @@ public class AppController extends Stage implements Initializable{
                     currentUser.addToWorkspaces(dbWorkspace);
                     userService.updateUser(currentUser.getUser_id(), currentUser);*/
                     
-                    if(!AppProperties.INSTALL){
+                   // if(!AppProperties.INSTALL){
                        // currentWorkspace=workspaceService.getWorkspace(dbWorkspace.getId());
                        currentWorkspace=dbWorkspace;
-                   
+                      enableButtons.set(true);
 //                    System.out.println("fend.app.AppController.startNewWorkspace(): "+currentWorkspace.getName()+" has "+currentWorkspace.getUsers().size()+" users");
                     AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
-                    }
+                   // }
                     
                     
                     
@@ -786,6 +725,7 @@ public class AppController extends Stage implements Initializable{
                     
                     
                 }else{
+                    enableButtons.set(false);
                     return;
                 }
             }
@@ -793,7 +733,7 @@ public class AppController extends Stage implements Initializable{
             
             /**
              * Check if the job types and properties (x,y) for each job type exists in the database.
-             * If they dont exist then create
+             * If they don't exist then create
              **/
             private void checkForJobPropertiesForJobType(Long type) {
               //  if(type.equals(JobType0Model.TEXT)){
@@ -872,8 +812,17 @@ public class AppController extends Stage implements Initializable{
     
     void setModel(AppModel model) {
         this.model=model;
+        enableButtons.addListener(ENABLE_BUTTONS_LISTENER);
         createGraphAndChartsButton();
         createSummaryButton();
+        
+        
+                acqButton.setDisable(true);
+                segdButton.setDisable(true);
+                button2D.setDisable(true);
+                textButton.setDisable(true);
+                summaryButton.setDisable(true);
+                chartButton.setDisable(true);
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
         //createUserButton();
@@ -933,7 +882,8 @@ public class AppController extends Stage implements Initializable{
            w=currentWorkspace;
         }
         
-        List<User> usersInWorkspace=userService.getUsersInWorkspace(currentWorkspace);
+      //  List<User> usersInWorkspace=userService.getUsersInWorkspace(currentWorkspace);
+      List<User> usersInWorkspace=userWorkspaceService.getUsersInWorkspace(currentWorkspace);
         if(usersInWorkspace.isEmpty()) {
             System.out.println("fend.app.AppController.elevation(): no more users to elevate");
             return 0;
@@ -967,7 +917,8 @@ public class AppController extends Stage implements Initializable{
         if(w==null) return;
         System.out.println("fend.app.AppController.login(): Users present in the workspace currently: ");
          //List<User> usersInWorkspace=new ArrayList<>(w.getUsers());
-         List<User> usersInWorkspace=userService.getUsersInWorkspace(currentWorkspace);
+         //List<User> usersInWorkspace=userService.getUsersInWorkspace(currentWorkspace);
+          List<User> usersInWorkspace=userWorkspaceService.getUsersInWorkspace(currentWorkspace);
         //for(int i=0;i<w.getUsers().size();i++){
          for(int i=0;i<usersInWorkspace.size();i++){
             //usersInWorkspace.get(i)
@@ -988,7 +939,7 @@ public class AppController extends Stage implements Initializable{
                 + " sizeOfWorkspaceList: "+workspacesForUser.size());
        // u.addToWorkspaces(w);
       //  System.out.println("fend.app.AppController.login(): after addition sizeOfWorkspaceList "+u.getWorkspaces().size());
-     //   workspaceService.updateWorkspace(w.getId(), w);
+        workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         AppProperties.setCurrentUser(u);
@@ -1006,25 +957,20 @@ public class AppController extends Stage implements Initializable{
            w=currentWorkspace;
         }
         if(w==null) return;
-               
-     
-      //  w.removeUser(u);
-       // u.removeFromWorkspaces(w);
+      
         
        System.out.println("fend.app.AppController.logout(): removing user: "+u.getInitials()+" from workspace: "+w.getName());
           //remove all entries in the user-workspace table where u=previousUser and workspace=W;
         userWorkspaceService.remove(u,w);
         
-        
-        /* workspaceService.updateWorkspace(w.getId(), w);
-        userService.updateUser(u.getId(), u);*/
+       
         currentWorkspace=w;
         if(u.equals(w.getOwner())){
             
             System.out.println("fend.app.AppController.logout(): elevating a guest to an owner");
-          //  workspaceService.updateWorkspace(w.getId(), w);
+          
             int i=elevation();
-         //   w=workspaceService.getWorkspace(w.getId());
+        
             if(i==0){
                 w.setOwner(null);
                 workspaceService.updateWorkspace(w.getId(), w);
@@ -1102,5 +1048,34 @@ public class AppController extends Stage implements Initializable{
                 + "-fx-border-width: 1;");
         //newWorkspace.getStylesheets().add("")
         newWorkspace.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    }
+    
+    private ChangeListener<Boolean> ENABLE_BUTTONS_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                acqButton.setDisable(false);
+                segdButton.setDisable(false);
+                button2D.setDisable(false);
+                textButton.setDisable(false);
+                summaryButton.setDisable(false);
+                chartButton.setDisable(false);
+            }else{
+                acqButton.setDisable(true);
+                segdButton.setDisable(true);
+                button2D.setDisable(true);
+                textButton.setDisable(true);
+                summaryButton.setDisable(true);
+                chartButton.setDisable(true);
+            }
+        }
+    };
+
+    void onClose() {
+        if(currentUser!=null) previousUser=currentUser;
+        logout();
+        currentWorkspace=null;
+        close();
+        
     }
 }
