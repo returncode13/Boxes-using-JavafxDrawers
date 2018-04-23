@@ -8,11 +8,12 @@ and open the template in the editor.
     Author     : sharath nair <sharath.nair@polarcus.com>
 */
 
-.list-view.list-cell:even{
-    -fx-text-fill : white;
-    -fx-background-color : transparent;
+.list-view .list-cell:even{
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    
 }
-.list-view.list-cell:odd{
-    -fx-text-fill : white;
+.list-view .list-cell:odd{
+    -fx-text-fill: white;
     -fx-background-color : transparent;
 }

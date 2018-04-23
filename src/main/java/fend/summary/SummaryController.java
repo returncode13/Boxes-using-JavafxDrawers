@@ -307,7 +307,7 @@ public class SummaryController extends Stage{
                         seqJsm.getTraceCellModel().setFailedTraceDependency(seqJsm.getTraceCellModel().cellHasFailedDependency()||x.hasFailedTraceDependency());
                         
                         seqJsm.getQcCellModel().setActive(true);
-                        seqJsm.getQcCellModel().setFailedQcDependency(seqJsm.getQcCellModel().cellHasFailedDependency() || x.hasFailedQcSummary());
+                        seqJsm.getQcCellModel().setFailedQcDependency(seqJsm.getQcCellModel().cellHasFailedDependency() || x.hasFailedQcDependency());
                         
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
@@ -331,12 +331,12 @@ public class SummaryController extends Stage{
                         jsm.getTraceCellModel().setWarningForTrace(x.hasWarningForTrace());
                        
                         jsm.getQcCellModel().setActive(true);
-                        jsm.getQcCellModel().setFailedQcDependency(x.hasFailedQcSummary());
+                        jsm.getQcCellModel().setFailedQcDependency(x.hasFailedQcDependency());
                         jsm.getQcCellModel().setInheritedQcFail(x.hasInheritedQcFail());
                         jsm.getQcCellModel().setInheritedQcOverride(x.hasInheritedQcOverride());
                         jsm.getQcCellModel().setOverridenQcFail(x.hasOverridenQcFail());
                         jsm.getQcCellModel().setWarningForQc(x.hasWarningForQc());
-                        /*if(x.hasFailedQcSummary()){
+                        /*if(x.hasFailedQcDependency()){
                         // Doubt d=doubtService.getDoubtFor(sub, job, qcDoubtType);
                         QcJobSubKey qcKey=generateQcJobSubKey(job, sub);
                         Doubt d=qcDoubtMap.get(qcKey);

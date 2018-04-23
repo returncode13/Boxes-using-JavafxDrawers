@@ -2783,7 +2783,7 @@ public class WorkspaceController {
                 newCausesToBeAdded.add(doubt);
                 causeDoubtMap.put(key, doubt);
 
-                summary.setFailedQcSummary(true);
+                summary.setFailedQcDependency(true);
                 //    summariesToBeUpdated.add(sum);
                 DoubtStatus doubtStatus = new DoubtStatus();
                 doubtStatus.setReason(DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(), subb.getSubsurface(), doubtTypeQc.getName()));
@@ -2814,7 +2814,7 @@ public class WorkspaceController {
                 if (causeDoubtStatusMap.containsKey(key)) {
                     doubtStatuses = new HashSet<>(causeDoubtStatusMap.get(key));
                 }
-                summary.setFailedQcSummary(true);
+                summary.setFailedQcDependency(true);
                 for (DoubtStatus d : doubtStatuses) {
                     System.out.println("fend.workspace.WorkspaceController.getSummary(): doubstatuses associated with Doubt: " + doubt.getId() + " " + d.getStatus() + " comment: " + d.getReason() + " time: " + d.getTimeStamp());
                 }
@@ -2910,7 +2910,7 @@ public class WorkspaceController {
 
             }
             System.out.println("fend.workspace.WorkspaceController.checkForQcDoubts(): Setting summary to false for job: " + jchild.getNameJobStep() + " sub: " + subb.getSubsurface());
-            summary.setFailedQcSummary(false);
+            summary.setFailedQcDependency(false);
             //  summariesToBeUpdated.add(sum);
 
         }
@@ -3702,6 +3702,39 @@ public class WorkspaceController {
         
     }
     
+    private ResultHolder checkQcDependency(Link link,Subsurface sub){
+        
+        Job lparent = link.getParent();
+        Job jchild = link.getChild();
+        List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);
+        Boolean passQc = true;
+        for (QcMatrixRow qcmr : parentQcMatrix) {
+            try {
+                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);
+                Boolean qcresult = qctableentries.getResult();
+                if (qcresult == null) {
+                    qcresult = false;
+                }
+                passQc = passQc && qcresult;
+            } catch (Exception ex) {
+                Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+        
+        ResultHolder resultHolder=new ResultHolder();
+        if (!passQc) {
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason=DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(),sub.getSubsurface(), doubtTypeQc.getName());
+        }else{
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(lparent.getNameJobStep(), jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+        }
+        
+        return resultHolder;
+    }
+    
     private void setDoubt_OBSOLETE(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link) {
         if(result.result == DEPENDENCY_FAIL_ERROR){
             /**
@@ -3761,18 +3794,18 @@ public class WorkspaceController {
                                         summary.setOverridenTimeFail(isOverride);
                                         
                                             
-                                            if(isOverride) sh.overridenTimeCause=cause;
-                                            else sh.directTimeCause=cause;
+                                        //    if(isOverride) sh.overridenTimeCause=cause;
+                                        //    else sh.directTimeCause=cause;
                                     }
                                     if(doubtType.equals(doubtTypeTraces)){
                                         summary.setFailedTraceDependency(true);
                                         summary.setOverridenTraceFail(isOverride);
                                         
-                                            if(isOverride) sh.overridenTraceCause=cause;
-                                            else sh.directTraceCause=cause;
+                                      // /     if(isOverride) sh.overridenTraceCause=cause;
+                                      //      else sh.directTraceCause=cause;
                                     }
                                     if(doubtType.equals(doubtTypeQc)){
-                                        summary.setFailedQcSummary(true);
+                                        summary.setFailedQcDependency(true);
                                         summary.setOverridenQcFail(isOverride);
                                     }
                                     if(doubtType.equals(doubtTypeInsight)){
@@ -3867,17 +3900,17 @@ public class WorkspaceController {
                                         summary.setOverridenTimeFail(isOverride);
                                         summary.setWarningForTime(true);
                                             
-                                            sh.timeWarningCause=doubt;
+//                                            sh.timeWarningCause=doubt;
                                     }
                                     if(doubtType.equals(doubtTypeTraces)){
                                         summary.setFailedTraceDependency(false);
                                         summary.setOverridenTraceFail(isOverride);
                                         summary.setWarningForTrace(true);
                                             
-                                            sh.traceWarningCause=doubt;
+                               //             sh.traceWarningCause=doubt;
                                     }
                                     if(doubtType.equals(doubtTypeQc)){
-                                        summary.setFailedQcSummary(false);
+                                        summary.setFailedQcDependency(false);
                                         summary.setOverridenQcFail(isOverride);
                                         summary.setWarningForQc(true);
                                     }
@@ -3941,21 +3974,21 @@ public class WorkspaceController {
                 summary.setWarningForTime(false);
                 summary.setOverridenTimeFail(false);
                 
-                    sh.directTimeCause=null;
-                    sh.overridenTimeCause=null;
-                    sh.timeWarningCause=null;
+                    //sh.directTimeCause=null;
+                    //sh.overridenTimeCause=null;
+                   // sh.timeWarningCause=null;
             }
             if(doubtType.equals(doubtTypeTraces)){
                 summary.setFailedTraceDependency(false);
                 summary.setWarningForTrace(false);
                 summary.setOverridenTraceFail(false);
                 
-                    sh.directTraceCause=null;
-                    sh.overridenTraceCause=null;
-                    sh.traceWarningCause=null;
+                   // sh.directTraceCause=null;
+                    //sh.overridenTraceCause=null;
+                    //sh.traceWarningCause=null;
             }
             if(doubtType.equals(doubtTypeQc)){
-                summary.setFailedQcSummary(false);
+                summary.setFailedQcDependency(false);
                 summary.setWarningForQc(false);
                 summary.setOverridenQcFail(false);
             }
@@ -4597,7 +4630,8 @@ public class WorkspaceController {
                                 tracestatus.result=1;                                                    // not applicable (or is it?? no of shots acquired per line to the next steps?)
                                 setDoubt(doubtTypeTraces, tracestatus, dot, subb, link);
                                 
-                                
+                                ResultHolder qcstatus=checkQcDependency(link, subb);
+                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
                         }
                         
                         
@@ -4608,7 +4642,9 @@ public class WorkspaceController {
 
                                 ResultHolder tracestatus=checkTraceDependency(link,subb);
                                 setDoubt(doubtTypeTraces,tracestatus,dot,subb,link);
-
+                                
+                                ResultHolder qcstatus=checkQcDependency(link, subb);
+                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
                                 
                         }
                         
@@ -5093,7 +5129,7 @@ public class WorkspaceController {
             for(Dot dot:dots){
                     DoubtKey timeKey=generateDoubtKey(sub, job, dot, doubtTypeTime);
                     DoubtKey traceKey=generateDoubtKey(sub, job, dot, doubtTypeTraces);
-                    
+                    DoubtKey qcKey=generateDoubtKey(sub, job, dot, doubtTypeQc);
                         //time Start
                         if(dMap.containsKey(timeKey)){
                             DoubtHolder dh=dMap.get(timeKey);
@@ -5157,6 +5193,35 @@ public class WorkspaceController {
                         
                         //qc start
                         
+                        if(dMap.containsKey(qcKey)){
+                            DoubtHolder dh=dMap.get(qcKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    
+                                    summary.setFailedQcDependency(true);
+                                    summary.setWarningForQc(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenQcFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenQcFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedQcDependency(false);
+                                    summary.setWarningForQc(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedQcDependency(false);
+                            summary.setWarningForQc(false);
+                            summary.setOverridenQcFail(false);
+                            
+                        }
+                        
                         //qc end
                         
                         //are there any inherited doubts on this job,sub?
@@ -5183,6 +5248,13 @@ public class WorkspaceController {
                                         sh.inheritedTraceCause.add(cause);
                                     }
                                 }
+                                if(causeType.equals(doubtTypeQc)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedQcOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedQcCause.add(cause);
+                                    }
+                                }
                                 
                             }
                             
@@ -5192,32 +5264,47 @@ public class WorkspaceController {
                            boolean inheritedTrace = !sh.inheritedTraceCause.isEmpty();
                            boolean inheritedOverridenTrace = !sh.inheritedTraceOverridenCause.isEmpty();
                            
+                           boolean inheritedQc = !sh.inheritedQcCause.isEmpty();
+                           boolean inheritedOverridenQc = !sh.inheritedQcOverridenCause.isEmpty();
+                           
                            summary.setInheritedTimeFail(inheritedTime);
                            summary.setInheritedTimeOverride(inheritedOverridenTime);
                            
                            summary.setInheritedTraceFail(inheritedTrace);
                            summary.setInheritedTraceOverride(inheritedOverridenTrace);
+                           
+                           summary.setInheritedQcFail(inheritedQc);
+                           summary.setInheritedQcOverride(inheritedOverridenQc);
                         }else{                                                      // no inheritance on this key
                             summary.setInheritedTraceFail(false);
                             summary.setInheritedTimeOverride(false);
                             
                             summary.setInheritedTraceFail(false);
                             summary.setInheritedTraceOverride(false);
+                            
+                            summary.setInheritedQcFail(false);
+                            summary.setInheritedQcOverride(false);
                         }
             }
             
             System.out.println("fend.workspace.WorkspaceController.populateSummaries(): for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
             System.out.println("failedTimeDependency:     "+summary.hasFailedTimeDependency());
-            System.out.println("hasInTimeheritedFail:     "+summary.hasInheritedTimeFail());
+            System.out.println("hasInheritedTimeFail:     "+summary.hasInheritedTimeFail());
             System.out.println("hasInheritedTimeOVerride: "+summary.hasInheritedTimeOverride());
             System.out.println("hasOverridenTimeFail:     "+summary.hasOverridenTimeFail());
             System.out.println("hasTimeWarning:           "+summary.hasWarningForTime());
             System.out.println("");
             System.out.println("failedTraceDependency:     "+summary.hasFailedTraceDependency());
-            System.out.println("hasInTraceheritedFail:     "+summary.hasInheritedTraceFail());
+            System.out.println("hasInheritedTraceFail:     "+summary.hasInheritedTraceFail());
             System.out.println("hasInheritedTraceOVerride: "+summary.hasInheritedTraceOverride());
             System.out.println("hasOverridenTraceFail:     "+summary.hasOverridenTraceFail());
             System.out.println("hasTraceWarning:           "+summary.hasWarningForTrace());
+            System.out.println("");
+            System.out.println("failedQcDependency:     "+summary.hasFailedQcDependency());
+            System.out.println("hasInheritedQcFail:     "+summary.hasInheritedQcFail());
+            System.out.println("hasInheritedQcOVerride: "+summary.hasInheritedQcOverride());
+            System.out.println("hasOverridenQcFail:     "+summary.hasOverridenQcFail());
+            System.out.println("hasQcWarning:           "+summary.hasWarningForQc());
         }
     }
     
@@ -5274,17 +5361,24 @@ public class WorkspaceController {
        
         
         
-        Doubt directTimeCause=null;                                             //time_fail = false if directTimeCause=null
-        Doubt overridenTimeCause=null;                                          //time_fail_override=false if overridenTimeCause=null
+        //Doubt directTimeCause=null;                                             //time_fail = false if directTimeCause=null
+        //Doubt overridenTimeCause=null;                                          //time_fail_override=false if overridenTimeCause=null
         List<Doubt> inheritedTimeCause=new ArrayList<>();                       //time_fail_inherited=false if inheritedTimeCause.isEmpty()                  since no more cause for inheritance for this sum
         List<Doubt> inheritedTimeOverridenCause=new ArrayList<>();              //time_override_inherited=false if inheritedTimeOverridenCause.isEmpty()     since no more overriden cause for inheritance for this sum
-        Doubt timeWarningCause=null;                                            //time_warning=false if timeWarningCause=null
+        //Doubt timeWarningCause=null;                                            //time_warning=false if timeWarningCause=null
         
-        Doubt directTraceCause=null;
-        Doubt overridenTraceCause=null;
+       // Doubt directTraceCause=null;
+       // Doubt overridenTraceCause=null;
         List<Doubt> inheritedTraceCause=new ArrayList<>();
         List<Doubt> inheritedTraceOverridenCause=new ArrayList<>();
-        Doubt traceWarningCause=null;
+       // Doubt traceWarningCause=null;
+        
+        
+       // Doubt directQcCause=null;
+       // Doubt overridenQcCause=null;
+        List<Doubt> inheritedQcCause=new ArrayList<>();
+        List<Doubt> inheritedQcOverridenCause=new ArrayList<>();
+       // Doubt qcWarningCause=null;
     }
     
     private class ResultHolder{

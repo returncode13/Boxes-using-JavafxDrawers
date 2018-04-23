@@ -48,7 +48,7 @@ public class AppProperties {
     public static final String URLTEMPLATE_FOR_DATABASE_LISTING="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/template1";   //for listing the databases
     final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";  //for appending to the chosen database
     public final static String DATABASE_USER="fgeo";
-    public final static double TIME_FOR_GUEST_QUERY=10;                   //10 secs
+    public final static double TIME_FOR_GUEST_QUERY=60;                   //10 secs
    
     
     public static String getProject() {

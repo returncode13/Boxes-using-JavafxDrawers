@@ -876,7 +876,7 @@ public class AppController extends Stage implements Initializable{
                 
          projectLabel.setText(AppProperties.getProject());
          ownerLabel.setText("");
-         guestChangedProperty.addListener(GUEST_LIST_CHANGED);
+         
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
         //createUserButton();
@@ -1161,55 +1161,11 @@ public class AppController extends Stage implements Initializable{
         
     }
     
-    private GuestTimerTask guestTimerTask=null;
-    private Timer guestTimer=null;
-    private BooleanProperty guestChangedProperty=new SimpleBooleanProperty(false);
-    ExecutorService exec;
-    public Boolean getGuestChanged() {
-        return guestChangedProperty.get();
-    }
 
-    public void setGuestChangedProperty(Boolean guestChanged) {
-        this.guestChangedProperty.set(guestChanged);
-    }
     
     
     
-    private class GuestTimerTask extends TimerTask{
-
-        @Override
-        public void run() {
-            getGuestList();
-        }
-        
-        private void getGuestList() {
-            
-                  List<User> usersInWorkspace=userWorkspaceService.getUsersInWorkspace(currentWorkspace);
-                  AppController.this.observableGuestList.clear();
-                  User owner=null;
-                  if(currentWorkspace!=null){
-                      owner=currentWorkspace.getOwner();
-                  }
-                for (int i = 0; i < usersInWorkspace.size(); i++) {
-                    User usr=usersInWorkspace.get(i);
-                    if(!usr.equals(owner))
-                    AppController.this.observableGuestList.add(usersInWorkspace.get(i).getInitials());
-                    //System.out.println(usersInWorkspace.get(i).getInitials());
-                }
-                
-                if(observableGuestList.isEmpty()){
-                    observableGuestList.add("None");
-                }
-               // 
-                
-              //  Thread.sleep(AppProperties.TIME_FOR_GUEST_QUERY);
-              AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
-           
-        }
-        
-    }
-    
-    private Timeline timeline=null;
+   
     private ScheduledService<Void> guestService= new ScheduledService<Void>() {
                 @Override
                 protected Task<Void> createTask() {

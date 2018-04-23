@@ -176,11 +176,11 @@ public class Summary implements Serializable {
         this.failedTraceDependency = this.failedTraceDependency || failedTraceDependency;
     }
 
-    public Boolean hasFailedQcSummary() {
+    public Boolean hasFailedQcDependency() {
         return failedQcSummary;
     }
 
-    public void setFailedQcSummary(Boolean failedQcSummary) {
+    public void setFailedQcDependency(Boolean failedQcSummary) {
         this.failedQcSummary = this.failedQcSummary || failedQcSummary;
     }
 

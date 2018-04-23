@@ -54,6 +54,15 @@ public class DoubtStatusModel {
         return message;
     }
     
+     public static String getQcDependencyPassedMessage(String parentJob,String childJob ,String sub,String doubttype){
+        String message=new String();
+        if(doubttype.equals(DoubtTypeModel.QC)){
+            message=doubttype+": Passed Qc Dependency for line "+sub+"the jobs "+parentJob+" ->  childjob: "+childJob+" ";
+        }
+        return message;
+    }
+    
+    
     
     public static String getNewDoubtTimeMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
         String message=new String();
