@@ -25,7 +25,7 @@ public class AppView extends AnchorPane {
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_11.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/app/app_13.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

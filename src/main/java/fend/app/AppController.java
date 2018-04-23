@@ -81,17 +81,29 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -176,7 +188,41 @@ public class AppController extends Stage implements Initializable{
      @FXML
     private JFXTextArea smallerLog;
 
+    @FXML
+    private Label projectLabel;
+
+    @FXML
+    private Label workspaceLabel;
+
+    @FXML
+    private Label ownerLabel;
+
+    @FXML
+    private ListView<String> guestList;
     
+    
+    
+    
+    
+    
+
+    private   List<String> glist=new ArrayList<>();
+    private   ObservableList<String> observableGuestList=FXCollections.observableArrayList(glist);
+
+    
+    public  ObservableList<String> getObservableGuestList() {
+        return observableGuestList;
+    }
+
+    public  void setObservableGuestList(ObservableList<String> observableGuestList) {
+        observableGuestList = observableGuestList;
+    }
+    
+    
+    
+    public  void addToGuestList(User u){
+        observableGuestList.add(u.getInitials());
+    }
      
     private String titleHeader = "PQMan: "+AppProperties.VERSION;
 
@@ -442,6 +488,8 @@ public class AppController extends Stage implements Initializable{
         enableButtons.set(true);
         login();
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        
+        refreshGuestList();
         
     }
 
@@ -710,7 +758,9 @@ public class AppController extends Stage implements Initializable{
                     AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
                    // }
                     
-                    
+                    refreshGuestList();
+                    ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+                    workspaceLabel.setText(currentWorkspace.getName());
                     
                     checkForJobPropertiesForJobType(JobType0Model.PROCESS_2D);
                     checkForJobPropertiesForJobType(JobType0Model.SEGD_LOAD);
@@ -823,9 +873,32 @@ public class AppController extends Stage implements Initializable{
                 textButton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
+                
+         projectLabel.setText(AppProperties.getProject());
+         ownerLabel.setText("");
+         guestChangedProperty.addListener(GUEST_LIST_CHANGED);
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
         //createUserButton();
+        
+        
+            guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
+            
+            guestService.setOnSucceeded(e->{
+                System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
+                //AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
+                guestList.getItems().clear();
+                guestList.getItems().addAll(AppController.this.observableGuestList);
+            });
+            guestService.setOnRunning(e->{
+                System.out.println("fend.app.AppController.startGuestService(): service is up and running");
+            });
+            guestService.setOnCancelled(e->{
+                System.out.println("fend.app.AppController.startGuestService(): cancelled");
+            });
+            guestService.setOnFailed(e->{
+                System.out.println("fend.app.AppController.startGuestService(): failed");
+            });
     }
 
     void setView(AppView view) {
@@ -943,6 +1016,9 @@ public class AppController extends Stage implements Initializable{
         currentWorkspace=w;
         this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         AppProperties.setCurrentUser(u);
+        ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+        workspaceLabel.setText(currentWorkspace.getName());
+        refreshGuestList();
     }
 
     private void logout() {
@@ -976,9 +1052,14 @@ public class AppController extends Stage implements Initializable{
                 workspaceService.updateWorkspace(w.getId(), w);
                 currentWorkspace=w;
                 this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" No more owners");
+                ownerLabel.setText("");
             }else{
                 currentWorkspace=w;
                 this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+                ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+                //ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+                workspaceLabel.setText(currentWorkspace.getName());
+                refreshGuestList();
             }
                 
         }
@@ -989,7 +1070,8 @@ public class AppController extends Stage implements Initializable{
         System.out.println("fend.app.AppController.logout(): user: "+
                 u.getInitials()+" is logged into "
                 +workspacesForUser.size()+" workspaces");
-        
+       
+        refreshGuestList();
     }
 
     @Override
@@ -1077,5 +1159,164 @@ public class AppController extends Stage implements Initializable{
         currentWorkspace=null;
         close();
         
+    }
+    
+    private GuestTimerTask guestTimerTask=null;
+    private Timer guestTimer=null;
+    private BooleanProperty guestChangedProperty=new SimpleBooleanProperty(false);
+    ExecutorService exec;
+    public Boolean getGuestChanged() {
+        return guestChangedProperty.get();
+    }
+
+    public void setGuestChangedProperty(Boolean guestChanged) {
+        this.guestChangedProperty.set(guestChanged);
+    }
+    
+    
+    
+    private class GuestTimerTask extends TimerTask{
+
+        @Override
+        public void run() {
+            getGuestList();
+        }
+        
+        private void getGuestList() {
+            
+                  List<User> usersInWorkspace=userWorkspaceService.getUsersInWorkspace(currentWorkspace);
+                  AppController.this.observableGuestList.clear();
+                  User owner=null;
+                  if(currentWorkspace!=null){
+                      owner=currentWorkspace.getOwner();
+                  }
+                for (int i = 0; i < usersInWorkspace.size(); i++) {
+                    User usr=usersInWorkspace.get(i);
+                    if(!usr.equals(owner))
+                    AppController.this.observableGuestList.add(usersInWorkspace.get(i).getInitials());
+                    //System.out.println(usersInWorkspace.get(i).getInitials());
+                }
+                
+                if(observableGuestList.isEmpty()){
+                    observableGuestList.add("None");
+                }
+               // 
+                
+              //  Thread.sleep(AppProperties.TIME_FOR_GUEST_QUERY);
+              AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
+           
+        }
+        
+    }
+    
+    private Timeline timeline=null;
+    private ScheduledService<Void> guestService= new ScheduledService<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    System.out.println("fend.app.AppController.startGuestService().createTask()..starting a task");
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            List<User> usersInWorkspace = userWorkspaceService.getUsersInWorkspace(currentWorkspace);
+                            AppController.this.observableGuestList.clear();
+                            User owner = null;
+                            if (currentWorkspace != null) {
+                                owner = currentWorkspace.getOwner();
+                            }
+                            for (int i = 0; i < usersInWorkspace.size(); i++) {
+                                User usr = usersInWorkspace.get(i);
+                                if (!usr.equals(owner)) {
+                                    AppController.this.observableGuestList.add(usersInWorkspace.get(i).getInitials());
+                                }
+                                //System.out.println(usersInWorkspace.get(i).getInitials());
+                            }
+
+                            if (observableGuestList.isEmpty()) {
+                                observableGuestList.add("None");
+                            }
+                            // 
+                            return null;
+                        }
+                    };
+                }
+            };
+    
+    private Task<Void> guestTask=new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+             List<User> usersInWorkspace=userWorkspaceService.getUsersInWorkspace(currentWorkspace);
+                  AppController.this.observableGuestList.clear();
+                  User owner=null;
+                  if(currentWorkspace!=null){
+                      owner=currentWorkspace.getOwner();
+                  }
+                for (int i = 0; i < usersInWorkspace.size(); i++) {
+                    User usr=usersInWorkspace.get(i);
+                    if(!usr.equals(owner))
+                    AppController.this.observableGuestList.add(usersInWorkspace.get(i).getInitials());
+                    //System.out.println(usersInWorkspace.get(i).getInitials());
+                }
+                
+                if(observableGuestList.isEmpty()){
+                    observableGuestList.add("None");
+                }
+               // 
+               return null;
+        }
+    };
+    
+    private void refreshGuestList(){
+      
+        if(!guestService.isRunning()){
+            System.out.println("fend.app.AppController.refreshGuestList(): starting");
+            guestService.start();
+            //startGuestService();
+        }else{
+            //System.out.println("fend.app.AppController.refreshGuestList(): restarting");
+           // guestService.restart();
+            
+           // startGuestService();
+        }
+        
+        
+        
+    }
+    
+    private ChangeListener<Boolean> GUEST_LIST_CHANGED=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                System.out.println("fend.app.AppController.guestChangeListener: invoked");
+                guestList.getItems().clear();
+                
+        }
+    };
+    
+    private void startGuestService(){
+        /* guestService  = new ScheduledService<Void>() {
+        @Override
+        protected Task<Void> createTask() {
+        System.out.println("fend.app.AppController.startGuestService().createTask()..starting a task");
+        return guestTask;
+        }
+        };*/
+        /* guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
+        
+        guestService.setOnSucceeded(e->{
+        System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
+        //AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
+        guestList.getItems().clear();
+        guestList.getItems().addAll(AppController.this.observableGuestList);
+        });
+        guestService.setOnRunning(e->{
+        System.out.println("fend.app.AppController.startGuestService(): service is up and running");
+        });
+        guestService.setOnCancelled(e->{
+        System.out.println("fend.app.AppController.startGuestService(): cancelled");
+        });
+        guestService.setOnFailed(e->{
+        System.out.println("fend.app.AppController.startGuestService(): failed");
+        });*/
+            
+            
     }
 }

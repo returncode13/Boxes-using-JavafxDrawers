@@ -6,6 +6,10 @@
 package app.properties;
 
 import db.model.User;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  *
@@ -15,7 +19,7 @@ public class AppProperties {
     public static String DEVELOPER_MODE="DEVELOPER";
     public static String OFFICE_MODE="OFFICE";
     public static String PRODUCTION_MODE="PRODUCTION";
-    public static final String VERSION="Internal-18.0.1";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="Internal-19.0.1";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
@@ -44,9 +48,10 @@ public class AppProperties {
     public static final String URLTEMPLATE_FOR_DATABASE_LISTING="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/template1";   //for listing the databases
     final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";  //for appending to the chosen database
     public final static String DATABASE_USER="fgeo";
+    public final static double TIME_FOR_GUEST_QUERY=10;                   //10 secs
+   
     
-    
-    public String getProject() {
+    public static String getProject() {
         return project;
     }
 

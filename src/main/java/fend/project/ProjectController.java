@@ -83,7 +83,10 @@ public class ProjectController extends Stage{
             HibernateUtil.setEntityManagerFactory(emfactory);
         System.out.println("fend.project.ProjectController.ok(): model.getDBProperty "+model.getDatabaseSelected());
         
+        AppProperties.setProject(chosenDatabase);
+        
         model.setDatabaseSelected(!model.getDatabaseSelected());
+        
             /* AppModel appmodel=new AppModel();
             AppView appview=new AppView(appmodel);*/
         close();
