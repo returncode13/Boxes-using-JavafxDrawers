@@ -147,12 +147,40 @@ public class Subsurface implements Serializable {
     
     
     
+    /*
+    @Override
+    public int hashCode() {
+    int hash = 7;
+    hash = 71 * hash + Objects.hashCode(this.id);
+    hash = 71 * hash + Objects.hashCode(this.subsurface);
+    return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final Subsurface other = (Subsurface) obj;
+    if (!Objects.equals(this.subsurface, other.subsurface)) {
+    return false;
+    }
+    if (!Objects.equals(this.id, other.id)) {
+    return false;
+    }
+    return true;
+    }*/
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + Objects.hashCode(this.id);
-        hash = 71 * hash + Objects.hashCode(this.subsurface);
+        int hash = 5;
+        hash = 13 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -168,14 +196,13 @@ public class Subsurface implements Serializable {
             return false;
         }
         final Subsurface other = (Subsurface) obj;
-        if (!Objects.equals(this.subsurface, other.subsurface)) {
-            return false;
-        }
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
+    
+    
     
     
    

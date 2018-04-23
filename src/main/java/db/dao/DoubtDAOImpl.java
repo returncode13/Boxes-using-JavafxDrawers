@@ -16,6 +16,8 @@ import db.model.Dot;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.Workspace;
+import db.services.DoubtTypeService;
+import db.services.DoubtTypeServiceImpl;
 import java.util.List;
 import java.util.Set;
 import middleware.doubt.DoubtStatusModel;
@@ -536,7 +538,7 @@ public class DoubtDAOImpl implements DoubtDAO{
     }
 
     @Override
-    public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
         System.out.println("db.dao.DoubtDAOImpl.getDoubtFor()");
           Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
@@ -571,12 +573,13 @@ public class DoubtDAOImpl implements DoubtDAO{
         }finally{
             session.close();
         }
-        if(result.size()==1){
-            return result.get(0);
+        /*if(result.size()==1){
+        return result.get(0);
         }else {
-            return null;
+        return null;
         
-        }
+        }*/
+        return result;
     }
 
     @Override
@@ -685,6 +688,42 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
         
         return result;
+    }
+
+    @Override
+    public void deleteAllInheritedDoubts(Workspace dbWorkspace) {
+         System.out.println("db.dao.DoubtDAOImpl.getInheritedDoubtsForCause()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        DoubtTypeService doubtTypeService= new DoubtTypeServiceImpl();
+        DoubtType dt=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+        
+        Transaction transaction=null;
+        String hqlSelectIds="Select d.id from Doubt d INNER JOIN d.childJob J where J.workspace =:w and d.doubtType =:d";              //get all ids for inherited types for the workspace
+        String hqlDelete="DELETE FROM Doubt d where d.id in (:ids)";
+        try{
+            transaction = session.beginTransaction();
+            Query query1=session.createQuery(hqlSelectIds);
+            query1.setParameter("w", dbWorkspace);
+            query1.setParameter("d",dt);
+            List<Long> ids=query1.list();
+            System.out.println("db.dao.DoubtDAOImpl.deleteAllInheritedDoubts(): Number of ids returned: "+ids.size());
+            if(ids.isEmpty()) {
+                transaction.commit();
+                
+            }else{
+                Query query2=session.createQuery(hqlDelete);
+                query2.setParameterList("ids", ids);
+                int result2=query2.executeUpdate();
+                transaction.commit();
+            }
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
     }
 
     

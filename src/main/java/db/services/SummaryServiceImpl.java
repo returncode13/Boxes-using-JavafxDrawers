@@ -87,5 +87,10 @@ public class SummaryServiceImpl implements SummaryService{
     public void updateBulkSummaries(List<Summary> summariesToBeUpdated) {
         summaryDao.udpateBulkSummaries(summariesToBeUpdated);
     }
+
+    @Override
+    public void deleteAllSummaries(Workspace dbWorkspace) {
+        summaryDao.deleteAllSummaries(dbWorkspace);
+    }
     
 }

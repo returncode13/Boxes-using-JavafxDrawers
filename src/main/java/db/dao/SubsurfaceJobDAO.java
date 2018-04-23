@@ -9,6 +9,7 @@ import db.model.SubsurfaceJob;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.SubsurfaceJobId;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -31,5 +32,7 @@ public interface SubsurfaceJobDAO {
     public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated);
 
     public List<Subsurface> getSubsurfacesForJob(Job j);
+
+    public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
           
 }

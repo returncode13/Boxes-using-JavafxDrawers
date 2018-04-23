@@ -33,4 +33,6 @@ public interface SummaryDAO {
     public void createBulkSummaries(List<Summary> summaries);
 
     public void udpateBulkSummaries(List<Summary> summariesToBeUpdated);
+
+    public void deleteAllSummaries(Workspace dbWorkspace);
 }

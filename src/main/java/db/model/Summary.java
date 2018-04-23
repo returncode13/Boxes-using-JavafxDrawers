@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -39,6 +40,7 @@ public class Summary implements Serializable {
     @JoinColumn(name = "subsurface_fk",nullable=false)
     private Subsurface subsurface;
     
+    @Formula("(select j.depth from obpmanager.job j where j.job_id=job_fk) ")
     @Column(name="depth")
     private Long depth;
     
@@ -141,7 +143,7 @@ public class Summary implements Serializable {
 
     public void setJob(Job job) {
         this.job = job;
-        this.depth=job.getDepth();
+       //this.depth=job.getDepth();
     }
 
     public Sequence getSequence() {
@@ -163,7 +165,7 @@ public class Summary implements Serializable {
     }
 
     public void setFailedTimeDependency(Boolean failedTimeDependency) {
-        this.failedTimeDependency = failedTimeDependency;
+        this.failedTimeDependency = this.failedTimeDependency || failedTimeDependency;
     }
 
     public Boolean hasFailedTraceDependency() {
@@ -171,7 +173,7 @@ public class Summary implements Serializable {
     }
 
     public void setFailedTraceDependency(Boolean failedTraceDependency) {
-        this.failedTraceDependency = failedTraceDependency;
+        this.failedTraceDependency = this.failedTraceDependency || failedTraceDependency;
     }
 
     public Boolean hasFailedQcSummary() {
@@ -179,7 +181,7 @@ public class Summary implements Serializable {
     }
 
     public void setFailedQcSummary(Boolean failedQcSummary) {
-        this.failedQcSummary = failedQcSummary;
+        this.failedQcSummary = this.failedQcSummary || failedQcSummary;
     }
 
     public Boolean hasFailedInsightSummary() {
@@ -187,7 +189,7 @@ public class Summary implements Serializable {
     }
 
     public void setFailedInsightSummary(Boolean failedInsightSummary) {
-        this.failedInsightSummary = failedInsightSummary;
+        this.failedInsightSummary = this.failedInsightSummary || failedInsightSummary;
     }
 
     public Boolean hasInheritedTimeFail() {
@@ -195,7 +197,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedTimeFail(Boolean inheritedTimeFail) {
-        this.inheritedTimeFail = inheritedTimeFail;
+        this.inheritedTimeFail = this.inheritedTimeFail || inheritedTimeFail;
     }
 
     public Boolean hasInheritedTraceFail() {
@@ -203,7 +205,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedTraceFail(Boolean inheritedTraceFail) {
-        this.inheritedTraceFail = inheritedTraceFail;
+        this.inheritedTraceFail = this.inheritedTraceFail || inheritedTraceFail;
     }
 
     public Boolean hasInheritedQcFail() {
@@ -211,7 +213,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedQcFail(Boolean inheritedQcFail) {
-        this.inheritedQcFail = inheritedQcFail;
+        this.inheritedQcFail = this.inheritedQcFail || inheritedQcFail;
     }
 
     public Boolean hasOverridenTimeFail() {
@@ -219,7 +221,7 @@ public class Summary implements Serializable {
     }
 
     public void setOverridenTimeFail(Boolean overridenTimeFail) {
-        this.overridenTimeFail = overridenTimeFail;
+        this.overridenTimeFail = this.overridenTimeFail || overridenTimeFail;
     }
 
     public Boolean hasOverridenTraceFail() {
@@ -227,7 +229,7 @@ public class Summary implements Serializable {
     }
 
     public void setOverridenTraceFail(Boolean overridenTraceFail) {
-        this.overridenTraceFail = overridenTraceFail;
+        this.overridenTraceFail = this.overridenTraceFail || overridenTraceFail;
     }
 
     public Boolean hasOverridenQcFail() {
@@ -235,7 +237,7 @@ public class Summary implements Serializable {
     }
 
     public void setOverridenQcFail(Boolean overridenQcFail) {
-        this.overridenQcFail = overridenQcFail;
+        this.overridenQcFail = this.overridenQcFail || overridenQcFail;
     }
 
     public Boolean hasOverridenInsightFail() {
@@ -243,7 +245,7 @@ public class Summary implements Serializable {
     }
 
     public void setOverridenInsightFail(Boolean overridenInsightFail) {
-        this.overridenInsightFail = overridenInsightFail;
+        this.overridenInsightFail = this.overridenInsightFail || overridenInsightFail;
     }
 
     public Boolean hasWarningForTime() {
@@ -251,7 +253,7 @@ public class Summary implements Serializable {
     }
 
     public void setWarningForTime(Boolean warningForTime) {
-        this.warningForTime = warningForTime;
+        this.warningForTime = this.warningForTime || warningForTime;
     }
 
     public Boolean hasWarningForTrace() {
@@ -259,7 +261,7 @@ public class Summary implements Serializable {
     }
 
     public void setWarningForTrace(Boolean warningForTrace) {
-        this.warningForTrace = warningForTrace;
+        this.warningForTrace = this.warningForTrace || warningForTrace;
     }
 
     public Boolean hasWarningForQc() {
@@ -267,7 +269,7 @@ public class Summary implements Serializable {
     }
 
     public void setWarningForQc(Boolean warningForQc) {
-        this.warningForQc = warningForQc;
+        this.warningForQc = this.warningForQc || warningForQc;
     }
 
     public Boolean hasWarningForInsight() {
@@ -275,7 +277,7 @@ public class Summary implements Serializable {
     }
 
     public void setWarningForInsight(Boolean warningForInsight) {
-        this.warningForInsight = warningForInsight;
+        this.warningForInsight = this.warningForInsight || warningForInsight;
     }
 
     public Boolean hasInheritedInsightFail() {
@@ -283,7 +285,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedInsightFail(Boolean inheritedInsightFail) {
-        this.inheritedInsightFail = inheritedInsightFail;
+        this.inheritedInsightFail = this.inheritedInsightFail || inheritedInsightFail;
     }
 
     public Boolean hasInheritedTimeOverride() {
@@ -291,7 +293,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedTimeOverride(Boolean inheritedTimeOverride) {
-        this.inheritedTimeOverride = inheritedTimeOverride;
+        this.inheritedTimeOverride = this.inheritedTimeOverride || inheritedTimeOverride;
     }
 
     public Boolean hasInheritedTraceOverride() {
@@ -299,7 +301,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedTraceOverride(Boolean inheritedTraceOverride) {
-        this.inheritedTraceOverride = inheritedTraceOverride;
+        this.inheritedTraceOverride = this.inheritedTraceOverride || inheritedTraceOverride;
     }
 
     public Boolean hasInheritedQcOverride() {
@@ -307,7 +309,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedQcOverride(Boolean inheritedQcOverride) {
-        this.inheritedQcOverride = inheritedQcOverride;
+        this.inheritedQcOverride = this.inheritedQcOverride || inheritedQcOverride;
     }
 
     public Boolean hasInheritedInsightOverride() {
@@ -315,7 +317,7 @@ public class Summary implements Serializable {
     }
 
     public void setInheritedInsightOverride(Boolean inheritedInsightOverride) {
-        this.inheritedInsightOverride = inheritedInsightOverride;
+        this.inheritedInsightOverride = this.inheritedInsightOverride || inheritedInsightOverride;
     }
     
     
@@ -362,6 +364,14 @@ public class Summary implements Serializable {
             return false;
         }
         return true;
+    }
+
+    public void setAll(boolean b) {
+        failedTimeDependency=failedTraceDependency=failedQcSummary=failedInsightSummary=b;
+        inheritedTimeFail=inheritedTraceFail=inheritedQcFail=inheritedInsightFail=b;
+        inheritedTimeOverride=inheritedTraceOverride=inheritedQcOverride=inheritedInsightOverride=b;
+        overridenTimeFail=overridenTraceFail=overridenQcFail=overridenInsightFail=b;
+        warningForTime=warningForTrace=warningForQc=warningForInsight=b;
     }
     
     

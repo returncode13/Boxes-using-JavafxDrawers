@@ -13,6 +13,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -244,10 +245,10 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
 
     @Override
     public List<Subsurface> getSubsurfacesForJob(Job job) {
-         Session session =HibernateUtil.getSessionFactory().openSession();
+        Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Subsurface> result=null;
-        String hql="Select s.id from SubsurfaceJob s where job_id =:j";
+        String hql="Select s.pk.subsurface from SubsurfaceJob s where s.pk.job =:j";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
@@ -255,6 +256,28 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
             
             result=query.list();
             System.out.println("db.dao.SubsurfaceJobDAOImpl.getSubsurfacesForJob(): size of results: "+result.size());
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace) {
+         Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<SubsurfaceJob> result=null;
+        String hql="SELECT sj from SubsurfaceJob sj INNER JOIN sj.pk.job jj WHERE jj.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", dbWorkspace);
+            
+            result=query.list();
+            
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

@@ -9,6 +9,7 @@ import db.model.Job;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
+import db.model.Workspace;
 import java.util.List;
 import java.util.Map;
 
@@ -32,4 +33,6 @@ public interface SubsurfaceJobService {
     public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated);
 
     public List<Subsurface> getSubsurfacesForJob(Job dbjob);
+
+    public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
 }

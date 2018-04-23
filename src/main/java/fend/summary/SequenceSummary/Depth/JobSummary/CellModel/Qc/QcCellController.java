@@ -20,6 +20,7 @@ import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -273,9 +274,11 @@ public class QcCellController {
                                       getNameJobStep());
 
                       // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
-                      Doubt doubt = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
-                      //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                      // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                      List<Doubt> doubts = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
+                    //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                    // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                    
+                    for(Doubt doubt:doubts){
                       OverrideModel ovrModel = new OverrideModel(model);
 
                       Link l = doubt.getLink();
@@ -299,7 +302,9 @@ public class QcCellController {
                       ovrModel.setEarlierStatus(earlierStat);
 
                       OverrideView ovrView = new OverrideView(ovrModel);
-                      model.setShowOverride(false);
+                      
+                    }
+                    model.setShowOverride(false);
                 }
             }
         }

@@ -118,7 +118,8 @@ public class SummaryController extends Stage{
          try {//if workspace.lastUpdateTime > workspace.lastSummaryTime. then execute Summary
            // this.model.getWorkspaceController().summarize();
            //this.model.getWorkspaceController().summarizeInMemory();
-           this.model.getWorkspaceController().summarizeZero();
+           //this.model.getWorkspaceController().summarizeZero();
+           this.model.getWorkspaceController().summarizeOne();
         } catch (Exception ex) {
             Logger.getLogger(SummaryController.class.getName()).log(Level.SEVERE, null, ex);
         }

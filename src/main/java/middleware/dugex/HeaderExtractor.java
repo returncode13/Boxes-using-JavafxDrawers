@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -260,9 +261,35 @@ public class HeaderExtractor {
             
             List<SubsurfaceJob> subjobsToBeCommited=new ArrayList<>();
             
-            List<Subsurface> totalSubsurfacesTillNow=subsurfaceService.getSubsurfaceList();
-            List<Subsurface> subsurfacesPresentInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
-            System.out.println("middleware.dugex.HeaderExtractor.<init>(): for job : "+dbjob.getNameJobStep()+" found "+subsurfacesPresentInJob.size()+" subsurfaces");
+            /* List<Subsurface> totalSubsurfacesTillNow=subsurfaceService.getSubsurfaceList();
+            List<Subsurface> subsurfacesPresentInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);*/
+            
+            
+            List<Subsurface> totalSubsurfacesTillNow=new ArrayList<>();
+            
+            List<Subsurface> l1=subsurfaceService.getSubsurfaceList();
+            Subsurface[] totalSubsArray=new Subsurface[l1.size()];
+            for(int i=0;i<l1.size();i++){
+                totalSubsArray[i]=l1.get(i);
+            }
+           
+            Collections.addAll(totalSubsurfacesTillNow,totalSubsArray);
+            
+            
+            List<Subsurface> subsurfacesPresentInJob=new ArrayList<>();
+            
+            List<Subsurface> l2=subsurfaceJobService.getSubsurfacesForJob(dbjob);
+            
+            Subsurface[] sjarray=new Subsurface[l2.size()];
+            for(int i=0;i<l2.size();i++){
+                sjarray[i]=l2.get(i);
+            }
+            System.out.println("middleware.dugex.HeaderExtractor.<init>(): size of l2: "+l2.size()+" size of sjarray: "+sjarray.length);
+            
+            Collections.addAll(subsurfacesPresentInJob, sjarray);
+            
+            
+            System.out.println("middleware.dugex.HeaderExtractor.<init>(): for job : "+dbjob.getNameJobStep()+" found "+subsurfacesPresentInJob.size()+" subsurfaces : total subsurfaces Acquired: "+totalSubsurfacesTillNow.size());
             //get all subsurfaces inside a job. S
             //if dbSub is not present in S then create dbjob,dbsub
             totalSubsurfacesTillNow.removeAll(subsurfacesPresentInJob);   //keep only the ones left to be added
@@ -407,10 +434,17 @@ public class HeaderExtractor {
                    /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for header "+
                    hdr.getHeaderId()+" Latest Log: "+
                    latestLog.getIdLogs());*/
-                    
+                    if(latestLog!=null){
                     hdr.setInsightVersion(latestLog.getInsightVersion());
                     hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
                     hdr.setNumberOfRuns(latestLog.getVersion()+1);
+                    }
+                    else{
+                       hdr.setInsightVersion("ERROR");
+                       hdr.setWorkflowVersion(-1L);
+                       hdr.setNumberOfRuns(-1L);
+                    }
+                    
                     
                     //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
                     

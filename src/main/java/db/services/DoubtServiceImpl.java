@@ -103,7 +103,7 @@ public class DoubtServiceImpl implements DoubtService{
     }
 
     @Override
-    public Doubt getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
         return dsDAO.getDoubtFor(sub, job, doubtType);
     }
 
@@ -152,6 +152,11 @@ public class DoubtServiceImpl implements DoubtService{
     @Override
     public List<Doubt> getInheritedDoubtsForCause(Doubt cause) {
         return dsDAO.getInheritedDoubtsForCause(cause);
+    }
+
+    @Override
+    public void deleteAllInheritedDoubts(Workspace dbWorkspace) {
+        dsDAO.deleteAllInheritedDoubts(dbWorkspace);
     }
 
     

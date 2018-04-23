@@ -322,12 +322,6 @@ public class SummaryDAOImpl implements  SummaryDAO{
          String hql="select s from Summary s INNER JOIN s.job sj WHERE sj.workspace =:w";
          try{
             transaction=session.beginTransaction();
-            /*Criteria criteria=session.createCriteria(Summary.class);
-            criteria.add(Restrictions.eq("workspace", W));
-            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            result=criteria.list();*/
-            
-            
             Query query=session.createQuery(hql);
             query.setParameter("w", W);
             result=query.list();
@@ -341,6 +335,33 @@ public class SummaryDAOImpl implements  SummaryDAO{
              session.close();
          }
          return result;
+    }
+
+    @Override
+    public void deleteAllSummaries(Workspace dbWorkspace) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        
+       //  String hqlSelect="select s.id from Summary s INNER JOIN s.job sj WHERE sj.workspace =:w";
+         String hqlDelete="delete from Summary s where s.workspace =:w";
+         try{
+            transaction=session.beginTransaction();
+           // Query query=session.createQuery(hqlSelect);
+            //query.setParameter("w", dbWorkspace);
+           // List<Long> ids=query.list();
+            
+            Query delQuery=session.createQuery(hqlDelete);
+            //delQuery.setParameter("ids", ids);
+            delQuery.setParameter("w", dbWorkspace);
+            int delete=delQuery.executeUpdate();
+            
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         
     }
 
     

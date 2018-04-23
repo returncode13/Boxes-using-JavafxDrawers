@@ -12,6 +12,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
+import db.model.Workspace;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +93,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
     @Override
     public List<Subsurface> getSubsurfacesForJob(Job j) {
         return subsurfaceJobDAO.getSubsurfacesForJob(j);
+    }
+
+    @Override
+    public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace) {
+        return subsurfaceJobDAO.getSubsurfaceJobFor(dbWorkspace);
     }
 
    

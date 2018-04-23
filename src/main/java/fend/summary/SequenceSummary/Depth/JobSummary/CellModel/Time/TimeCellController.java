@@ -20,6 +20,7 @@ import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -59,6 +60,11 @@ public class TimeCellController {
             System.out.println("override: "+model.isOverride());
             System.out.println("query   : "+model.isQuery());
             System.out.println("showOver: "+model.isShowOverride());*/
+            System.out.println("failedDependency:     "+model.cellHasFailedDependency());
+            System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
+            System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
+            System.out.println("hasOverridenFail:     "+model.cellHasOverridenFail());
+            System.out.println("hasWarning:           "+model.cellHasWarning());
             
             
             
@@ -290,9 +296,11 @@ public class TimeCellController {
                                       getNameJobStep());
 
                       // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
-                      Doubt doubt = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), timeDoubtType);
-                      //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-                      // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                     List<Doubt> doubts = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), timeDoubtType);
+                    //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
+                    // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
+                    
+                    for(Doubt doubt:doubts){
                       OverrideModel ovrModel = new OverrideModel(model);
 
                       Link l = doubt.getLink();
@@ -316,7 +324,9 @@ public class TimeCellController {
                       ovrModel.setEarlierStatus(earlierStat);
 
                       OverrideView ovrView = new OverrideView(ovrModel);
-                      model.setShowOverride(false);
+                      
+                    }
+                    model.setShowOverride(false);
                   }
             }
         }
