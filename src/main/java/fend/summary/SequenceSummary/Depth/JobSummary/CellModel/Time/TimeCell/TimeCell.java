@@ -46,9 +46,10 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             TimeCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTimeCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            model.setJobSummaryModel(jsm);
+            
             //model=new TimeCellModel();
             model=tcm;
+            model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
             view.getController().setModel(model);
             /*if(jsm.getSubsurface()==null){

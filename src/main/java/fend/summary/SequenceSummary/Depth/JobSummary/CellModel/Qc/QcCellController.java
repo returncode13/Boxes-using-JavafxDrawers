@@ -54,7 +54,11 @@ public class QcCellController {
         if(model.getJobSummaryModel().getSubsurface()!=null){
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.qcClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
-            
+            System.out.println("failedDependency:     "+model.cellHasFailedDependency());
+            System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
+            System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
+            System.out.println("hasOverridenFail:     "+model.cellHasOverridenFail());
+            System.out.println("hasWarning:           "+model.cellHasWarning());
             
             
             

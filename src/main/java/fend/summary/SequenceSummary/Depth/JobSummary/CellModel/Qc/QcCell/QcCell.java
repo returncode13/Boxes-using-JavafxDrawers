@@ -46,9 +46,10 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             int index=getIndex();
             QcCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getQcCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
-            model.setJobSummaryModel(jsm);
+            
             //model=new QcCellModel();
             model=tcm;
+            model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
             view.getController().setModel(model);
             /*if(jsm.getSubsurface()==null){
