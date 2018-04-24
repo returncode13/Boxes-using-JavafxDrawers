@@ -753,6 +753,17 @@ parent.addChild(model);*/
                         jobService.updateJob(parentsAncestor.getId(), parentsAncestor);*/
                     }
                     
+                     model.toggleUpdateProperty();
+                     parent.toggleUpdateProperty();
+                    
     }
+    
+    private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            dbjob=jobService.getJob(dbjob.getId());
+            model.setDatabaseJob(dbjob);
+        }
+    };
     
 }

@@ -220,6 +220,7 @@ public class DotController extends Stage{
                     model.createLink(parentConnectingToDot,childFromDot);
                     parentModel.setDotModel(model);                      //Share this circle. 
                     parentNode.setDropReceived(true);
+                    parentModel.setDropSuccessFul(true);
                     droppedAnchor.centerXProperty().bind(node.centerXProperty());
                     droppedAnchor.centerYProperty().bind(node.centerYProperty());
                 }
@@ -723,7 +724,8 @@ public class DotController extends Stage{
                         /*parentsAncestor.setDescendants(descendantsInParentsAncestor);
                         jobService.updateJob(parentsAncestor.getId(), parentsAncestor);*/
                     }
-                    
+                    parent.toggleUpdateProperty();
+                    child.toggleUpdateProperty();
     }
     
 }

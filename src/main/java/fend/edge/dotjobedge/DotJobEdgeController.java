@@ -5,10 +5,14 @@
  */
 package fend.edge.dotjobedge;
 
+import db.model.Job;
+import db.services.JobService;
+import db.services.JobServiceImpl;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorView;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.dot.LinkModel;
 import fend.edge.edge.EdgeController;
 import fend.edge.edge.arrow.Arrow;
 import fend.edge.parentchildedge.ParentChildEdgeController;
@@ -27,6 +31,8 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import java.util.List;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -43,6 +49,7 @@ public class DotJobEdgeController implements EdgeController {
     private AnchorModel anchorModel;
     private AnchorView anchor;
     private AnchorPane interactivePane;
+    private JobService jobService=new JobServiceImpl();
     
     final Delta dragDelta=new Delta(); 
      
@@ -72,7 +79,7 @@ public class DotJobEdgeController implements EdgeController {
         model=item;
         dotmodel=model.getDotModel();
         anchorModel=model.getAnchorModel();
-        
+        model.dropSuccessFulProperty().addListener(DROP_SUCCESSFUL_LISTENER);
         
     }
     
@@ -307,5 +314,21 @@ public class DotJobEdgeController implements EdgeController {
         DotJobEdgeController.this.arrowEnd.update();
         DotJobEdgeController.this.arrowStart.update();
         this.dotnode.toFront();
+    };
+        
+        private ChangeListener<Boolean> DROP_SUCCESSFUL_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                Set<LinkModel> links=model.getDotModel().getLinks();
+                for (LinkModel link : links) {
+                    JobType0Model parent = link.getParent();
+                    Job dbparent = jobService.getJob(parent.getId());
+                    parent.setDatabaseJob(dbparent);
+                }
+                model.setDropSuccessFul(false);
+            }
+            
+        }
     };
 }

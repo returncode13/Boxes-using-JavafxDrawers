@@ -110,6 +110,9 @@ public class JobType1Controller implements JobType0Controller{
     @FXML
     private JFXButton openDrawer;
 
+    
+    
+    
     void setModel(JobType1Model item) {
         model=item;
         //System.out.println("fend.job.job1.JobType1Controller.setModel(): calling job from db "+model.getId());
@@ -121,7 +124,7 @@ public class JobType1Controller implements JobType0Controller{
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
       model.finishedCheckingLogs().addListener(checkLogsListener);
-      
+      model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -181,6 +184,7 @@ public class JobType1Controller implements JobType0Controller{
         });
         
          node.setOnMouseDragged(event->{
+             System.out.println("fend.job.job1.JobType1Controller.setView(): "+dbjob.getNameJobStep()+" isLeaf? "+dbjob.isLeaf()+" isRoot? "+dbjob.isRoot());
             node.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
          });
          
@@ -188,6 +192,7 @@ public class JobType1Controller implements JobType0Controller{
              
              
              System.out.println("job.job1.JobType1Controller.setView(): MouseDrag Released");
+             
               AnchorView droppedAnchor=(AnchorView) e.getGestureSource();
              
               if(droppedAnchor.getParent() instanceof ParentChildEdgeView){
@@ -217,9 +222,7 @@ public class JobType1Controller implements JobType0Controller{
                         System.out.println("boxes.BoxController.setView(): cyclic");
                         return;
                     }
-//                    System.out.println("job.job1.JobType1Controller.setView(): adding: "+parent.getId());
-/*model.addParent(parent);
-parent.addChild(model);*/
+
                     
                     DotModel dotmodel=parentChildEdgeModel.getDotModel();
                     /*dotmodel.addToParents(parent);
@@ -245,6 +248,7 @@ parent.addChild(model);*/
                     
                     parentChildEdgeModel.setChildJob(model);
                     parentChildEdgeNode.setDropReceived(true);
+                    parentChildEdgeModel.setDropSuccessFul(true);
                     /* droppedAnchor.centerXProperty().bind(node.layoutXProperty());
                     droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
@@ -281,7 +285,9 @@ parent.addChild(model);*/
                         }
                         
                          setupAncestorsAndDescendants(parent);
-                         
+                         Job dbparent=parent.getDatabaseJob();
+                         dbparent=jobService.getJob(dbparent.getId());
+                         parent.setDatabaseJob(dbparent);
                          
                          Long parentDepth=parent.getDepth().get();
                          
@@ -298,7 +304,9 @@ parent.addChild(model);*/
                     }
                     
                     parentNode.setDropReceived(true);
+                    
                     parentModel.setChildJob(model);
+                    parentModel.setDropSuccessFul(true);
                     /*droppedAnchor.centerXProperty().bind(node.layoutXProperty());
                     droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
@@ -592,7 +600,8 @@ parent.addChild(model);*/
             @Override
             public void handle(ActionEvent event) {
             //    System.out.println(".handle(): Add a jobdotEdge here");
-           
+                dbjob=jobService.getJob(dbjob.getId());
+                model.setDatabaseJob(dbjob);
                 ParentChildEdgeModel pcdm=new ParentChildEdgeModel();
                 pcdm.setParentJob(model);
                 ParentChildEdgeView pcdn=new ParentChildEdgeView(pcdm, node, JobType1Controller.this.interactivePane);
@@ -790,8 +799,19 @@ parent.addChild(model);*/
                         /*parentsAncestor.setDescendants(descendantsInParentsAncestor);
                         jobService.updateJob(parentsAncestor.getId(), parentsAncestor);*/
                     }
+               
+                    
+                   model.toggleUpdateProperty();
+                   parent.toggleUpdateProperty();
+                    
                     
     }
 
-    
+    private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            dbjob=jobService.getJob(dbjob.getId());
+            model.setDatabaseJob(dbjob);
+        }
+    };
 }

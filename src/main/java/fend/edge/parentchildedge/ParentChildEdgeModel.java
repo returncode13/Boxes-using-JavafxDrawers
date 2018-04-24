@@ -12,6 +12,8 @@ import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 import java.util.Objects;
 import java.util.UUID;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -23,7 +25,19 @@ public class ParentChildEdgeModel implements EdgeModel {
     DotModel dotModel;
     AnchorModel childAnchorModel;               //Anchor dropped on the child box
     JobType0Model childJob;
+    BooleanProperty dropSuccessFul=new SimpleBooleanProperty(false);
 
+    public BooleanProperty dropSuccessFulProperty() {
+        return dropSuccessFul;
+    }
+
+    public void setDropSuccessFul(Boolean drop) {
+        this.dropSuccessFul.set(drop);
+        
+    }
+    
+    
+    
     public JobType0Model getParentJob() {
         return parentJob;
     }

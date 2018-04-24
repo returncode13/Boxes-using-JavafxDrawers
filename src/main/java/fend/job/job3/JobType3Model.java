@@ -89,7 +89,23 @@ public class JobType3Model implements JobType0Model {
     private BooleanProperty listenToDepthChange;
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
+    private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
     
+    
+    @Override
+    public Boolean getUpdate() {
+        return updateProperty.get();
+    }
+
+    @Override
+    public void toggleUpdateProperty() {
+        updateProperty.set(!getUpdate());
+    }
+     
+    @Override
+    public BooleanProperty updateProperty(){
+        return updateProperty;
+    }
     public Job getDatabaseJob() {
         return databaseJob;
     }

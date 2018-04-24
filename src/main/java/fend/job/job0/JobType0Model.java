@@ -86,4 +86,8 @@ public interface JobType0Model {
 
     public WorkspaceModel getWorkspaceModel();
     
+    public Boolean getUpdate();
+    public void toggleUpdateProperty();
+    public BooleanProperty updateProperty();
+    
 }

@@ -87,7 +87,23 @@ public class JobType2Model implements JobType0Model {
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
     private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
+     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
     
+    
+    @Override
+    public Boolean getUpdate() {
+        return updateProperty.get();
+    }
+
+    @Override
+    public void toggleUpdateProperty() {
+        updateProperty.set(!getUpdate());
+    }
+     
+    @Override
+    public BooleanProperty updateProperty(){
+        return updateProperty;
+    }
     
     public Job getDatabaseJob() {
         return databaseJob;

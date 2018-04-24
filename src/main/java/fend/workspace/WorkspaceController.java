@@ -4673,9 +4673,10 @@ public class WorkspaceController {
                                 ResultHolder qcstatus=checkQcDependency(link, subb);
                                 setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
                                 
-                                /* ResultHolder insightStatus=checkInsightDependency(link, subb);
+                                 //ResultHolder insightStatus=checkInsightDependency(link, subb);
+                                 ResultHolder insightStatus=new ResultHolder();
                                 insightStatus.result=DEPENDENCY_PASS;                                                  // force good
-                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);*/
+                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);
                         }
                         
                         
@@ -5030,8 +5031,8 @@ public class WorkspaceController {
                                         keys.add(key);
                                     }
                                 } else {     // root 
-                                   // DoubtKey key = new DoubtKey();
-                                  //  keys.add(key);
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
+                                    keys.add(key);
                                 }
 
                                 
@@ -5122,8 +5123,8 @@ public class WorkspaceController {
                                         keys.add(key);
                                     }
                                 } else {     // root 
-                                  //  DoubtKey key = new DoubtKey();
-                                  //  keys.add(key);
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
+                                    keys.add(key);
                                 }
 
                                 
@@ -5211,7 +5212,7 @@ public class WorkspaceController {
                                         keys.add(key);
                                     }
                                 } else {     // root 
-                                    DoubtKey key = new DoubtKey();
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
                                     keys.add(key);
                                 }
 

@@ -5,8 +5,12 @@
  */
 package fend.edge.parentchildedge;
 
+import db.model.Job;
+import db.services.JobService;
+import db.services.JobServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.dot.LinkModel;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorView;
 import fend.edge.edge.EdgeController;
@@ -32,6 +36,7 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import java.util.Set;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -83,6 +88,7 @@ public class ParentChildEdgeController implements EdgeController{
     void setModel(ParentChildEdgeModel item) {
         model=item;
         childAnchorModel=model.getChildAnchorModel();
+        //model.dropSuccessFulProperty().addListener(DROP_SUCCESSFUL_LISTENER);
         
     }
 
@@ -372,7 +378,33 @@ public class ParentChildEdgeController implements EdgeController{
             this.dotview.toFront();
         }
     };
-      
- 
+    
+    private JobService jobService=new JobServiceImpl();
+    
+  private ChangeListener<Boolean> DROP_SUCCESSFUL_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                /*Job dbparent=jobService.getJob(model.getParentJob().getId());
+                model.getParentJob().setDatabaseJob(dbparent);
+                Job dbchild=jobService.getJob(model.getChildJob().getId());
+                model.getChildJob().setDatabaseJob(dbchild);*/
+                /*DotModel dotmodel=model.getDotModel();
+                Set<LinkModel> links=dotmodel.getLinks();
+                for(LinkModel link:links){
+                JobType0Model parentj=link.getParent();
+                JobType0Model childj=link.getChild();
+                //Job dbChild=jobService.getJob(childj.getId());
+                Job dbChild=childj.getDatabaseJob();
+                //Job dbParent=jobService.getJob(parentj.getId());
+                Job dbParent=parentj.getDatabaseJob();
+                }*/
+                System.out.println(".changed(): updating the parent");
+                model.getParentJob().toggleUpdateProperty();
+                model.setDropSuccessFul(false);
+            }
+            
+        }
+    };
       
 }

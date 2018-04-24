@@ -86,9 +86,26 @@ public class JobType1Model implements JobType0Model {
     private BooleanProperty listenToDepthChange;
     private List<JobModelProperty> jobProperties;
     private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
+    private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
     
     
-    private Job databaseJob;
+    @Override
+    public Boolean getUpdate() {
+        return updateProperty.get();
+    }
+
+    @Override
+    public void toggleUpdateProperty() {
+        updateProperty.set(!getUpdate());
+    }
+     
+    @Override
+    public BooleanProperty updateProperty(){
+        return updateProperty;
+    }
+    
+    
+    private Job databaseJob; 
 
     public Job getDatabaseJob() {
         return databaseJob;
@@ -654,7 +671,8 @@ public class JobType1Model implements JobType0Model {
     public void setLatestLogForSubsurfaceMap(Map<Subsurface, Log> mapOfLatestLogForSubsurface) {
         this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
     }
-     
+
+    
     
     
     

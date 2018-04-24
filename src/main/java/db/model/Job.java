@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.hibernate.annotations.Formula;
 
 
 /**
@@ -55,6 +56,13 @@ public class Job implements Serializable{
     @Column(name="depth",nullable=false)
     private Long depth;
    
+    @Formula("(select count(*) from obpmanager.descendant d where d.job_fk=job_id)")
+   // @Column(name="is_Leaf")
+    private Integer isLeaf;
+    
+    @Formula("(select count(*) from obpmanager.ancestor a where a.job_fk=job_id)")
+   // @Column(name="is_Root")
+    private Integer isRoot;
     
     @ManyToOne
     @JoinColumn(name="nodetype_fk",nullable=false)
@@ -122,7 +130,13 @@ public class Job implements Serializable{
 
     
     
-
+    public boolean isLeaf(){
+        return isLeaf==null ? true : isLeaf == 0;
+    }
+    
+    public boolean isRoot(){
+        return isRoot==null ? true : isRoot == 0;
+    }
   
     
     
