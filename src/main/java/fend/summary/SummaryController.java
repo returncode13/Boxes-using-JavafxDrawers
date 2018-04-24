@@ -271,20 +271,20 @@ public class SummaryController extends Stage{
                             }
                     }
                     
-                    System.out.println("fend.summary.SummaryController.setModel(): Listing the map contents for Seq: sub relations ");
+                    /* System.out.println("fend.summary.SummaryController.setModel(): Listing the map contents for Seq: sub relations ");
                     for (Map.Entry<Sequence, SequenceSummary> entry : seqSummaryMap.entrySet()) {
-                        Sequence seq = entry.getKey();
-                        SequenceSummary seqSummary = entry.getValue();
-                        
-                            Map<Subsurface,SequenceSummary> subChildren=seqSummary.getChildren();
-                            for (Map.Entry<Subsurface, SequenceSummary> entry1 : subChildren.entrySet()) {
-                            Subsurface sub = entry1.getKey();
-                            SequenceSummary subSummary = entry1.getValue();
-                            
-                                
-                        }
-
+                    Sequence seq = entry.getKey();
+                    SequenceSummary seqSummary = entry.getValue();
+                    
+                    Map<Subsurface,SequenceSummary> subChildren=seqSummary.getChildren();
+                    for (Map.Entry<Subsurface, SequenceSummary> entry1 : subChildren.entrySet()) {
+                    Subsurface sub = entry1.getKey();
+                    SequenceSummary subSummary = entry1.getValue();
+                    
+                    
                     }
+                    
+                    }*/
                     
                     
                     List<Summary> summariesInWorkspace=summaryService.getSummariesFor(dbWorkspace);

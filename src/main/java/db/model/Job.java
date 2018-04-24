@@ -45,7 +45,7 @@ public class Job implements Serializable{
     private String nameJobStep;
     
     @Column(name = "insightVersionsUsed",nullable=true,length=2048)
-    private String insightVersions;
+    private String insightVersions=new String();
     
     
     @Column(name = "alert",nullable = true)

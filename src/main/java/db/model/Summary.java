@@ -184,11 +184,11 @@ public class Summary implements Serializable {
         this.failedQcSummary = this.failedQcSummary || failedQcSummary;
     }
 
-    public Boolean hasFailedInsightSummary() {
+    public Boolean hasFailedInsightDependency() {
         return failedInsightSummary;
     }
 
-    public void setFailedInsightSummary(Boolean failedInsightSummary) {
+    public void setFailedInsightDependency(Boolean failedInsightSummary) {
         this.failedInsightSummary = this.failedInsightSummary || failedInsightSummary;
     }
 

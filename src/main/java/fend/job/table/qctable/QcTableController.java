@@ -214,7 +214,7 @@ public class QcTableController extends Stage{
         
         this.setTitle("qcTable");
         this.setScene(new Scene(this.view));
-        this.showAndWait();
+        this.show();
         
 
         

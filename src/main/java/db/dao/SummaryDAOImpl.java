@@ -117,7 +117,7 @@ public class SummaryDAOImpl implements  SummaryDAO{
             summary.setInheritedTraceFail(newSummary.hasInheritedTraceFail());
             summary.setInheritedQcFail(newSummary.hasInheritedQcFail());
            // summary.setInsightInheritanceSummary(newSummary.getInsightInheritanceSummary());
-            summary.setFailedInsightSummary(newSummary.hasFailedInsightSummary());
+            summary.setFailedInsightDependency(newSummary.hasFailedInsightDependency());
             summary.setFailedQcDependency(newSummary.hasFailedQcDependency());
             summary.setFailedTimeDependency(newSummary.hasFailedTimeDependency());
             summary.setFailedTraceDependency(newSummary.hasFailedTraceDependency());

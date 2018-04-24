@@ -3080,6 +3080,7 @@ public class WorkspaceController {
     private Map<DoubtKey, DoubtHolder> dMap = new HashMap<>();
     private Map<Doubt,List<Long>> iMap=new HashMap<>();
     private Map<Job,List<Dot>> djMap=new HashMap<>();
+    
     //private Map<Doubt,DoubtStatus>
 
     /**
@@ -3706,11 +3707,11 @@ public class WorkspaceController {
         
         Job lparent = link.getParent();
         Job jchild = link.getChild();
-        List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);
+        List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
         Boolean passQc = true;
         for (QcMatrixRow qcmr : parentQcMatrix) {
             try {
-                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);
+                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
                 Boolean qcresult = qctableentries.getResult();
                 if (qcresult == null) {
                     qcresult = false;
@@ -3726,7 +3727,7 @@ public class WorkspaceController {
         ResultHolder resultHolder=new ResultHolder();
         if (!passQc) {
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
-            resultHolder.reason=DoubtStatusModel.getNewDoubtQCcessage(lparent.getNameJobStep(), jchild.getNameJobStep(),sub.getSubsurface(), doubtTypeQc.getName());
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }else{
             resultHolder.result=DEPENDENCY_PASS;
             resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(lparent.getNameJobStep(), jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
@@ -3734,6 +3735,45 @@ public class WorkspaceController {
         
         return resultHolder;
     }
+    
+    private ResultHolder checkInsightDependency(Link link,Subsurface sub){
+        Job parent=link.getParent();
+        Job child=link.getChild();
+        String insightsInParent=parent.getInsightVersions();                // ins1; ins2; ins3;
+            List<String> parentList=new ArrayList<>();
+            String[] parts=insightsInParent.split(";");
+            for (String s: parts){
+                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for job : "+parent.getNameJobStep()+" found: "+s);
+                parentList.add(s);
+            };
+        String insightVersionInHeader=" **NO ENTRY FOUND** ";
+        HeaderKey key=generateHeaderKey(parent, sub);
+        boolean insightFail=false;
+        ResultHolder resultHolder=new ResultHolder();
+        if(headerMap.containsKey(key)){
+            Header hp=headerMap.get(key);     //get headers of the parent
+            insightVersionInHeader=hp.getInsightVersion();
+            System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+            if(!parentList.contains(insightVersionInHeader)) {
+                insightFail=true;
+            }
+            
+        }else{
+            //do nothing. no header present for this key.
+        }
+        
+        if(insightFail){
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason=DoubtStatusModel.getNewDoubtInsightMessage(parent.getNameJobStep(), sub.getSubsurface(), insightsInParent, insightVersionInHeader, doubtTypeInsight.getName());
+        }else{
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason=DoubtStatusModel.getInsightDependencyPassedMessage(parent.getNameJobStep(), sub.getSubsurface(), doubtTypeInsight.getName());
+        }
+        
+        return resultHolder;
+               
+    }
+    
     
     private void setDoubt_OBSOLETE(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link) {
         if(result.result == DEPENDENCY_FAIL_ERROR){
@@ -3809,7 +3849,7 @@ public class WorkspaceController {
                                         summary.setOverridenQcFail(isOverride);
                                     }
                                     if(doubtType.equals(doubtTypeInsight)){
-                                        summary.setFailedInsightSummary(isOverride);
+                                        summary.setFailedInsightDependency(isOverride);
                                         summary.setOverridenInsightFail(isOverride);
                                     }
             
@@ -3915,7 +3955,7 @@ public class WorkspaceController {
                                         summary.setWarningForQc(true);
                                     }
                                     if(doubtType.equals(doubtTypeInsight)){
-                                        summary.setFailedInsightSummary(false);
+                                        summary.setFailedInsightDependency(false);
                                         summary.setOverridenInsightFail(isOverride);
                                         summary.setWarningForInsight(true);
                                     }
@@ -3993,7 +4033,7 @@ public class WorkspaceController {
                 summary.setOverridenQcFail(false);
             }
             if(doubtType.equals(doubtTypeInsight)){
-                summary.setFailedInsightSummary(false);
+                summary.setFailedInsightDependency(false);
                 summary.setWarningForInsight(false);
                 summary.setOverridenInsightFail(false);
             }
@@ -4623,15 +4663,19 @@ public class WorkspaceController {
                         
                         if(acquisitionType){
                                 ResultHolder timestatus=new ResultHolder();
-                                timestatus.result=1;                                                    // all processing done after acquisition. 
+                                timestatus.result=DEPENDENCY_PASS;                                                    // force good .all processing done after acquisition. 
                                 setDoubt(doubtTypeTime, timestatus, dot, subb, link);
                                 
                                 ResultHolder tracestatus=new ResultHolder();
-                                tracestatus.result=1;                                                    // not applicable (or is it?? no of shots acquired per line to the next steps?)
+                                tracestatus.result=DEPENDENCY_PASS;                                                    // force good . not applicable (or is it?? no of shots acquired per line to the next steps?)
                                 setDoubt(doubtTypeTraces, tracestatus, dot, subb, link);
                                 
                                 ResultHolder qcstatus=checkQcDependency(link, subb);
                                 setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
+                                
+                                /* ResultHolder insightStatus=checkInsightDependency(link, subb);
+                                insightStatus.result=DEPENDENCY_PASS;                                                  // force good
+                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);*/
                         }
                         
                         
@@ -4645,6 +4689,9 @@ public class WorkspaceController {
                                 
                                 ResultHolder qcstatus=checkQcDependency(link, subb);
                                 setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
+                                /*
+                                ResultHolder insightStatus=checkInsightDependency(link, subb);
+                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);*/
                                 
                         }
                         
@@ -4960,33 +5007,76 @@ public class WorkspaceController {
              * set status to YES
              * set state to ERROR
              */
-            Job jobWithDoubt=link.getChild();
-            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
-            DoubtHolder dh;
-            if(dMap.containsKey(key)){
-                dh=dMap.get(key);
-                dh.cause.setReason(result.reason);
-                dh.cause.setStatus(DoubtStatusModel.YES);
-                dh.cause.setState(DoubtStatusModel.ERROR);
-                dh.update=true;
-                dh.delete=false;
-            }else{
-                dh=new DoubtHolder();
-                dh.cause=new Doubt();
-                dh.cause.setChildJob(jobWithDoubt);
-                dh.cause.setLink(link);
-                dh.cause.setDot(dot);
-                dh.cause.setSubsurface(sub);
-                dh.cause.setSequence(sub.getSequence());
-                dh.cause.setReason(result.reason);
-                dh.cause.setStatus(DoubtStatusModel.YES);
-                dh.cause.setState(DoubtStatusModel.ERROR);
-                dh.cause.setTimeStamp(timeNow());
-                dh.cause.setDoubtType(doubtType);
-                dh.create=true;
-                dh.delete=false;
-                dMap.put(key,dh);
+            Job jobWithDoubt;
+            List<DoubtKey> keys=new ArrayList<>();
+            
+            if (doubtType.equals(doubtTypeTime)) {                               //time on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeTraces)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
+                
+                
+                                jobWithDoubt = link.getParent();
+
+                                if (djMap.containsKey(jobWithDoubt)) {
+                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                    for (Dot dp : dotsParent) {
+                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                        keys.add(key);
+                                    }
+                                } else {     // root 
+                                   // DoubtKey key = new DoubtKey();
+                                  //  keys.add(key);
+                                }
+
+                                
+                                
+            } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
+                jobWithDoubt = link.getParent();
+                
+                
+            } else {
+                jobWithDoubt = link.getChild();                                  //default on child   
             }
+            //DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //cycle through each key
+            for(DoubtKey key:keys){
+                
+                DoubtHolder dh;
+                if (dMap.containsKey(key)) {
+                    dh = dMap.get(key);
+                    dh.cause.setReason(result.reason);
+                    dh.cause.setStatus(DoubtStatusModel.YES);
+                    dh.cause.setState(DoubtStatusModel.ERROR);
+                    dh.update = true;
+                    dh.delete = false;
+                } else {
+                    dh = new DoubtHolder();
+                    dh.cause = new Doubt();
+                    //dh.cause.setChildJob(jobWithDoubt);
+                    dh.cause.setChildJob(key.job);
+                    dh.cause.setLink(link);
+                    dh.cause.setDot(key.dot);
+                    //dh.cause.setSubsurface(sub);
+                    dh.cause.setSubsurface(key.subsurface);
+                    //dh.cause.setSequence(sub.getSequence());
+                    dh.cause.setSequence(key.subsurface.getSequence());
+                    dh.cause.setReason(result.reason);
+                    dh.cause.setStatus(DoubtStatusModel.YES);
+                    dh.cause.setState(DoubtStatusModel.ERROR);
+                    dh.cause.setTimeStamp(timeNow());
+                    dh.cause.setDoubtType(doubtType);
+                    dh.create = true;
+                    dh.delete = false;
+                    dMap.put(key, dh);
+                }
+                
+            }
+           
             
                           
         }else if(result.result == DEPENDENCY_FAIL_WARNING){     // if it's a warning
@@ -4996,48 +5086,155 @@ public class WorkspaceController {
              * update its reason 
              * set state to YES
              */
-            Job jobWithDoubt=link.getChild();
-            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
-            DoubtHolder dh;
-            if(dMap.containsKey(key)){
-                dh=dMap.get(key);
-                dh.cause.setReason(result.reason);
-                dh.cause.setStatus(DoubtStatusModel.YES);
-                dh.cause.setState(DoubtStatusModel.WARNING);
-                dh.update=true;
-                dh.delete=false;
-            }else{
-                dh=new DoubtHolder();
-                dh.cause=new Doubt();
-                dh.cause.setChildJob(jobWithDoubt);
-                dh.cause.setLink(link);
-                dh.cause.setDot(dot);
-                dh.cause.setSubsurface(sub);
-                dh.cause.setSequence(sub.getSequence());
-                dh.cause.setReason(result.reason);
-                dh.cause.setStatus(DoubtStatusModel.YES);
-                dh.cause.setState(DoubtStatusModel.WARNING);
-                dh.cause.setTimeStamp(timeNow());
-                dh.cause.setDoubtType(doubtType);
-                dh.create=true;
-                dh.delete=false;
-                dMap.put(key,dh);
+             /*Job jobWithDoubt;
+             if (doubtType.equals(doubtTypeTime)) {                               //time on child
+             jobWithDoubt = link.getChild();
+             } else if (doubtType.equals(doubtTypeTraces)) {                      //trace on child
+             jobWithDoubt = link.getChild();
+             } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
+             jobWithDoubt = link.getParent();
+             } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
+             jobWithDoubt = link.getParent();
+             } else {
+             jobWithDoubt = link.getChild();                                  //default on child
+             }*/
+             
+            Job jobWithDoubt;
+            List<DoubtKey> keys=new ArrayList<>();
+            
+            if (doubtType.equals(doubtTypeTime)) {                               //time on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeTraces)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
+                
+                
+                                jobWithDoubt = link.getParent();
+
+                                if (djMap.containsKey(jobWithDoubt)) {
+                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                    for (Dot dp : dotsParent) {
+                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                        keys.add(key);
+                                    }
+                                } else {     // root 
+                                  //  DoubtKey key = new DoubtKey();
+                                  //  keys.add(key);
+                                }
+
+                                
+                                
+            } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
+                jobWithDoubt = link.getParent();
+                
+                
+            } else {
+                jobWithDoubt = link.getChild();                                  //default on child   
             }
+             
+             
+             
+            //DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+             for(DoubtKey key:keys){
+                 
+                                DoubtHolder dh;
+                                if (dMap.containsKey(key)) {
+                                    dh = dMap.get(key);
+                                    dh.cause.setReason(result.reason);
+                                    dh.cause.setStatus(DoubtStatusModel.YES);
+                                    dh.cause.setState(DoubtStatusModel.WARNING);
+                                    dh.update = true;
+                                    dh.delete = false;
+                                } else {
+                                    dh = new DoubtHolder();
+                                    dh.cause = new Doubt();
+                                    dh.cause.setChildJob(jobWithDoubt);
+                                    dh.cause.setLink(link);
+                                    //dh.cause.setDot(dot);
+                                    dh.cause.setDot(key.dot);
+                                    dh.cause.setSubsurface(sub);
+                                    dh.cause.setSequence(sub.getSequence());
+                                    dh.cause.setReason(result.reason);
+                                    dh.cause.setStatus(DoubtStatusModel.YES);
+                                    dh.cause.setState(DoubtStatusModel.WARNING);
+                                    dh.cause.setTimeStamp(timeNow());
+                                    dh.cause.setDoubtType(doubtType);
+                                    dh.create = true;
+                                    dh.delete = false;
+                                    dMap.put(key, dh);
+                                }
+                                
+             }
             
         }else{  //all good 
             /**
              * Delete any existing doubts
              * 
              */
-            Job jobWithDoubt=link.getChild();
-            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
-            DoubtHolder dh;
-            if(dMap.containsKey(key)){
-                dh=dMap.get(key);
-                dh.delete= true; 
-            }else{
-               
+            /* Job jobWithDoubt;
+            if (doubtType.equals(doubtTypeTime)) {                               //time on child
+            jobWithDoubt = link.getChild();
+            } else if (doubtType.equals(doubtTypeTraces)) {                      //trace on child
+            jobWithDoubt = link.getChild();
+            } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
+            jobWithDoubt = link.getParent();
+            } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
+            jobWithDoubt = link.getParent();
+            } else {
+            jobWithDoubt = link.getChild();                                  //default on child
+            }*/
+              
+            Job jobWithDoubt;
+            List<DoubtKey> keys=new ArrayList<>();
+            
+            if (doubtType.equals(doubtTypeTime)) {                               //time on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeTraces)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
+                
+                
+                                jobWithDoubt = link.getParent();
+
+                                if (djMap.containsKey(jobWithDoubt)) {
+                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                    for (Dot dp : dotsParent) {
+                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                        keys.add(key);
+                                    }
+                                } else {     // root 
+                                    DoubtKey key = new DoubtKey();
+                                    keys.add(key);
+                                }
+
+                                
+                                
+            } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
+                jobWithDoubt = link.getParent();
+                
+                
+            } else {
+                jobWithDoubt = link.getChild();                                  //default on child   
             }
+             
+             for(DoubtKey key:keys){
+                 //DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                 DoubtHolder dh;
+                 if (dMap.containsKey(key)) {
+                     dh = dMap.get(key);
+                     dh.delete = true;
+                 } else {
+
+                 }
+             }
             
             
         }
@@ -5130,6 +5327,8 @@ public class WorkspaceController {
                     DoubtKey timeKey=generateDoubtKey(sub, job, dot, doubtTypeTime);
                     DoubtKey traceKey=generateDoubtKey(sub, job, dot, doubtTypeTraces);
                     DoubtKey qcKey=generateDoubtKey(sub, job, dot, doubtTypeQc);
+                    DoubtKey insightKey=generateDoubtKey(sub, job, dot, doubtTypeInsight);
+                    
                         //time Start
                         if(dMap.containsKey(timeKey)){
                             DoubtHolder dh=dMap.get(timeKey);
@@ -5195,11 +5394,13 @@ public class WorkspaceController {
                         
                         if(dMap.containsKey(qcKey)){
                             DoubtHolder dh=dMap.get(qcKey);
+                            System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map contains key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
                             if(!dh.delete){
+                                System.out.println(": to update or create");
                                 Doubt cause=dh.cause;
                                 boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
                                 if(error){
-                                    
+                                    System.out.println(": errored.");
                                     summary.setFailedQcDependency(true);
                                     summary.setWarningForQc(false);
                                     boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
@@ -5211,11 +5412,16 @@ public class WorkspaceController {
                                         }
                                                 
                                 }else{
+                                    System.out.println(": warning");
                                     summary.setFailedQcDependency(false);
                                     summary.setWarningForQc(true);
                                 }
+                            }else{
+                                System.out.println(": to delete");
                             }
                         }else{
+                            
+                            System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map DOES NOT contain key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
                             summary.setFailedQcDependency(false);
                             summary.setWarningForQc(false);
                             summary.setOverridenQcFail(false);
@@ -5223,6 +5429,38 @@ public class WorkspaceController {
                         }
                         
                         //qc end
+                        
+                        //insight start
+                         if(dMap.containsKey(insightKey)){
+                            DoubtHolder dh=dMap.get(insightKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    
+                                    summary.setFailedInsightDependency(true);
+                                    summary.setWarningForInsight(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenInsightFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenInsightFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedInsightDependency(false);
+                                    summary.setWarningForInsight(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedInsightDependency(false);
+                            summary.setWarningForInsight(false);
+                            summary.setOverridenInsightFail(false);
+                            
+                        }
+                        //insight end
+                        
                         
                         //are there any inherited doubts on this job,sub?
                         SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(job, sub);
@@ -5255,7 +5493,13 @@ public class WorkspaceController {
                                         sh.inheritedQcCause.add(cause);
                                     }
                                 }
-                                
+                                if(causeType.equals(doubtTypeInsight)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedInsightOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedInsightCause.add(cause);
+                                    }
+                                }
                             }
                             
                            boolean inheritedTime = !sh.inheritedTimeCause.isEmpty();
@@ -5267,6 +5511,9 @@ public class WorkspaceController {
                            boolean inheritedQc = !sh.inheritedQcCause.isEmpty();
                            boolean inheritedOverridenQc = !sh.inheritedQcOverridenCause.isEmpty();
                            
+                           boolean inheritedInsight = !sh.inheritedInsightCause.isEmpty();
+                           boolean inheritedOverridenInsight = !sh.inheritedInsightOverridenCause.isEmpty();
+                           
                            summary.setInheritedTimeFail(inheritedTime);
                            summary.setInheritedTimeOverride(inheritedOverridenTime);
                            
@@ -5275,6 +5522,10 @@ public class WorkspaceController {
                            
                            summary.setInheritedQcFail(inheritedQc);
                            summary.setInheritedQcOverride(inheritedOverridenQc);
+                           
+                           summary.setInheritedInsightFail(inheritedInsight);
+                           summary.setInheritedInsightOverride(inheritedOverridenInsight);
+                           
                         }else{                                                      // no inheritance on this key
                             summary.setInheritedTraceFail(false);
                             summary.setInheritedTimeOverride(false);
@@ -5284,6 +5535,9 @@ public class WorkspaceController {
                             
                             summary.setInheritedQcFail(false);
                             summary.setInheritedQcOverride(false);
+                            
+                            summary.setInheritedInsightFail(false);
+                           summary.setInheritedInsightOverride(false);
                         }
             }
             
@@ -5305,6 +5559,13 @@ public class WorkspaceController {
             System.out.println("hasInheritedQcOVerride: "+summary.hasInheritedQcOverride());
             System.out.println("hasOverridenQcFail:     "+summary.hasOverridenQcFail());
             System.out.println("hasQcWarning:           "+summary.hasWarningForQc());
+            
+            System.out.println("");
+            System.out.println("failedInsightDependency:     "+summary.hasFailedInsightDependency());
+            System.out.println("hasInheritedInsightFail:     "+summary.hasInheritedInsightFail());
+            System.out.println("hasInheritedInsightOVerride: "+summary.hasInheritedInsightOverride());
+            System.out.println("hasOverridenInsightFail:     "+summary.hasOverridenInsightFail());
+            System.out.println("hasInsightWarning:           "+summary.hasWarningForInsight());
         }
     }
     
@@ -5379,6 +5640,9 @@ public class WorkspaceController {
         List<Doubt> inheritedQcCause=new ArrayList<>();
         List<Doubt> inheritedQcOverridenCause=new ArrayList<>();
        // Doubt qcWarningCause=null;
+        
+        List<Doubt> inheritedInsightCause=new ArrayList<>();
+        List<Doubt> inheritedInsightOverridenCause=new ArrayList<>();
     }
     
     private class ResultHolder{

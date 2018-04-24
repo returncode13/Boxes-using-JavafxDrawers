@@ -49,7 +49,7 @@ public class DoubtStatusModel {
     public static String getTimeDependencyPassedMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
         String message=new String();
         if(doubttype.equals(DoubtTypeModel.TIME)){
-            message=doubttype+": Passed Time Dependency for line "+sub+"the jobs "+parentJob+" ->  childjob: "+childJob+" times ["+parentTime+","+childTime+"]";
+            message=doubttype+": Passed Time Dependency for line "+sub+" the jobs "+parentJob+" ->  childjob: "+childJob+" times ["+parentTime+","+childTime+"]";
         }
         return message;
     }
@@ -57,7 +57,15 @@ public class DoubtStatusModel {
      public static String getQcDependencyPassedMessage(String parentJob,String childJob ,String sub,String doubttype){
         String message=new String();
         if(doubttype.equals(DoubtTypeModel.QC)){
-            message=doubttype+": Passed Qc Dependency for line "+sub+"the jobs "+parentJob+" ->  childjob: "+childJob+" ";
+            message=doubttype+": Passed Qc Dependency for line "+sub+" the jobs "+parentJob+" ->  childjob: "+childJob+" ";
+        }
+        return message;
+    }
+     
+      public static String getInsightDependencyPassedMessage(String parentJob,String sub,String doubttype){
+        String message=new String();
+        if(doubttype.equals(DoubtTypeModel.INSIGHT)){
+            message=doubttype+": Passed Insight Dependency for line "+sub+" the jobs "+parentJob+" ";
         }
         return message;
     }
@@ -82,8 +90,18 @@ public class DoubtStatusModel {
         
         return message;
     } 
+     
+     public static String getNew2DoubtQCmessage(String parentJob,String sub,String doubttype){
+        String message=new String();
+        
+        if(doubttype.equals(DoubtTypeModel.QC)){
+            message=doubttype+": line "+sub+" in the job: "+parentJob+" has failed one or more QC";
+        }
+        
+        return message;
+    } 
 
-    public static String getNewDoubtInsightMessage(String parentnameJobStep, String sub,String insightVersionsInParentJob, String insightVersionInParentHeader, String childnameJobStep0,String doubttype) {
+    public static String getNewDoubtInsightMessage(String parentnameJobStep, String sub,String insightVersionsInParentJob, String insightVersionInParentHeader,String doubttype) {
         String message=new String();
          if(doubttype.equals(DoubtTypeModel.INSIGHT)){
             message=doubttype+": line: "+sub+" was run with Insight Version "+insightVersionInParentHeader+" which was not amongst the list of Insight versions declared for the job: "+parentnameJobStep+" \ninsight Versions: "+insightVersionsInParentJob;
