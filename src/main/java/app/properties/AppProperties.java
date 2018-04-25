@@ -51,6 +51,8 @@ public class AppProperties {
     public final static double TIME_FOR_GUEST_QUERY=60;                   //10 secs
    
     
+    public final static Integer LOG_RECURSION_COUNTER=10;                   //the number of times to recursively check for logs . A hack for the race condition until a better solution is found
+    
     public static String getProject() {
         return project;
     }

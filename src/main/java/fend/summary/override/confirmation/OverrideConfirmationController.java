@@ -86,7 +86,7 @@ public class OverrideConfirmationController extends Stage{
         this.view=vw;
         this.setTitle("Commit");
         this.setScene(new Scene(this.view));
-       // this.initModality(Modality.APPLICATION_MODAL);
+        this.initModality(Modality.APPLICATION_MODAL);
         this.show();
     }
     

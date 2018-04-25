@@ -156,7 +156,7 @@ public class HeaderExtractor {
                                     dbSubjob.setSummaryTime(summaryTime);
                                 
                                 HeaderHolder headerHolder = new HeaderHolder();
-                                headerHolder.subjob=dbSubjob;
+                                //headerHolder.subjob=dbSubjob;
                                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
                                // subsurfaceJobs.add(dbSubjob);
                                 System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
@@ -173,6 +173,7 @@ public class HeaderExtractor {
                               
                               //headers.add(header);
                               headerHolder.header=header;
+                              headerHolder.subjob=header.getSubsurfaceJob();
                               headerHolderList.add(headerHolder);
 //                                    System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
                               

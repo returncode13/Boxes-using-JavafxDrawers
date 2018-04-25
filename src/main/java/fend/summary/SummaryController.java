@@ -496,7 +496,7 @@ public class SummaryController extends Stage{
     void setView(SummaryView vw) {
         this.view=vw;
         this.setScene(new Scene(this.view));
-        showAndWait();
+        show();
     }
     
     

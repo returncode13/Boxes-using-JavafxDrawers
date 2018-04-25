@@ -5,6 +5,7 @@
  */
 package middleware.dugex;
 
+import app.properties.AppProperties;
 import db.model.Job;
 import db.model.Log;
 import db.model.Subsurface;
@@ -133,7 +134,9 @@ public class DugLogManager {
              * For the files to commit, extract subsurface,insight and timestamp
              */
             List<Subsurface> subsurfacesInCurrentFolder=new ArrayList<>();
-            Set<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType());
+            Map<String,List<LogInformation>> mapofLogs=null;
+            int recursionCounter=AppProperties.LOG_RECURSION_COUNTER;
+            Set<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType(),mapofLogs,recursionCounter);
             
             System.out.println("middleware.dugex.DugLogManager.<init>(): Creating workflows");
             
@@ -176,7 +179,7 @@ public class DugLogManager {
                  Callable<String> task= new Callable<String>(){
                      @Override
                      public String call() throws Exception {
-                         Log log=new Log();
+                        Log log=new Log();
                         log.setJob(dbJob);
                         log.setVolume(dbVol);
                         log.setSubsurface(li.linename);
@@ -220,7 +223,7 @@ public class DugLogManager {
         }
     }
 
-    private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType) {
+    private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType,Map<String,List<LogInformation>> mapofLogs,int recursionCounter){
         List<FileWrapper> listOfPendingFiles=new ArrayList<>();
         final Set<LogInformation> logInformation=new HashSet<>();
         List<Callable<String>> tasks=new ArrayList<>();
@@ -230,7 +233,12 @@ public class DugLogManager {
         
          if(volumeType.equals(JobType0Model.PROCESS_2D)){
              
-             Map<String,List<LogInformation>> mapOfLogs=new HashMap<>();     //map of subsurfaces and their logs
+             Map<String,List<LogInformation>> mapOfSubsurfaceLogs;
+             if(mapofLogs==null) {
+                 mapOfSubsurfaceLogs=new HashMap<>();     //map of subsurfaces and their logs
+             }else{
+                 mapOfSubsurfaceLogs=mapofLogs;
+             }
              Set<String> allSubs=new HashSet<>();                //list of all logs 
             
              
@@ -252,10 +260,14 @@ public class DugLogManager {
                     BufferedReader br=new BufferedReader(isr);
                     
                     String value;
+                    int lengthOfCharacterLinename="lineName=".length();
+                    int lengthOfCharacterInsight="Insight=".length();
                     while((value=br.readLine())!=null){
                             System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
                             String linename=value.substring(9,value.indexOf(" "));
-                            String insight=value.substring(value.indexOf(" ")+9);
+                            int insightSearchBegin = lengthOfCharacterLinename+linename.length()+1+lengthOfCharacterInsight;
+                            String insight=value.substring(insightSearchBegin);
+                            insight=insight.trim();
                             //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
 
                             LogInformation li=new LogInformation();
@@ -267,11 +279,11 @@ public class DugLogManager {
                            // logInformation.add(li);
                             allSubs.add(li.linename.getSubsurface());
                             System.out.println("middleware.dugex.DugLogManager.extractInformation():: looking for "+li.linename.getSubsurface()+" insight: "+li.insightVersion);
-                             if(!mapOfLogs.containsKey(li.linename.getSubsurface())){
-                                                mapOfLogs.put(li.linename.getSubsurface(), new ArrayList<>());
-                                                mapOfLogs.get(li.linename.getSubsurface()).add(li);
+                             if(!mapOfSubsurfaceLogs.containsKey(li.linename.getSubsurface())){
+                                                mapOfSubsurfaceLogs.put(li.linename.getSubsurface(), new ArrayList<>());
+                                                mapOfSubsurfaceLogs.get(li.linename.getSubsurface()).add(li);
                                              }else{
-                                                mapOfLogs.get(li.linename.getSubsurface()).add(li);
+                                                mapOfSubsurfaceLogs.get(li.linename.getSubsurface()).add(li);
                                             }
                         }
                         return "Finished for "+fw.fwrap.getName();
@@ -300,7 +312,7 @@ public class DugLogManager {
             }
                 
                 for(String subname:allSubs){
-                                    List<LogInformation> listOfLogsForSub=mapOfLogs.get(subname);
+                                    List<LogInformation> listOfLogsForSub=mapOfSubsurfaceLogs.get(subname);
                                     Collections.sort(listOfLogsForSub);
                                     
                                         for(int ver=0;ver<listOfLogsForSub.size();ver++){
@@ -322,11 +334,26 @@ public class DugLogManager {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
             }
          
+             if(logInformation.size()!=filesToCommit.size()){
+                 
+                 recursionCounter=--recursionCounter;
+                 if(recursionCounter>0){
+                     int attemptNo=AppProperties.LOG_RECURSION_COUNTER-recursionCounter;
+                     System.out.println("middleware.dugex.DugLogManager.extractInformation(): Mismatch of log count. logInformationList.size(" +logInformation.size()+")  "
+                             + "while filesToCommit.size("+filesToCommit.size()+"). attempt # "+attemptNo+" Recursion will halt at the "+AppProperties.LOG_RECURSION_COUNTER+"th attempt");
+                     Set<LogInformation> logI=extractInformation(dbVol, filesToCommit, volumeType, mapOfSubsurfaceLogs,recursionCounter);
+                     logInformation.clear();
+                     logInformation.addAll(logI);
+                 }
+                 
+             }
+            
          }
          
          
          
          
+       
          
          
          
@@ -378,7 +405,6 @@ public class DugLogManager {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
         
         
         
