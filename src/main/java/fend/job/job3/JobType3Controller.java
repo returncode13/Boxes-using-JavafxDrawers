@@ -111,7 +111,7 @@ public class JobType3Controller implements JobType0Controller{
         model.getHeadersCommited().addListener(headerExtractionListener);
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
-      
+      model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -682,6 +682,16 @@ parent.addChild(model);*/
                         /*parentsAncestor.setDescendants(descendantsInParentsAncestor);
                         jobService.updateJob(parentsAncestor.getId(), parentsAncestor);*/
                     }
+                     model.toggleUpdateProperty();
+                     parent.toggleUpdateProperty();
                     
     }
+     private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            dbjob=jobService.getJob(dbjob.getId());
+            model.setDatabaseJob(dbjob);
+        }
+    };
+    
 }

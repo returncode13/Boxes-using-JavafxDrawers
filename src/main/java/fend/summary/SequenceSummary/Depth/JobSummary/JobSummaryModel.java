@@ -7,6 +7,7 @@ package fend.summary.SequenceSummary.Depth.JobSummary;
 
 import db.model.Job;
 import db.model.Subsurface;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel;
@@ -25,6 +26,7 @@ public class JobSummaryModel {
     private TimeCellModel timeCellModel;
     private TraceCellModel traceCellModel;
     private QcCellModel qcCellModel;
+    private InsightCellModel insightCellModel;
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
     private final BooleanProperty query = new SimpleBooleanProperty(false);      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
@@ -49,6 +51,9 @@ public class JobSummaryModel {
         
         qcCellModel=new QcCellModel();
         qcCellModel.setJobSummaryModel(this);
+        
+        insightCellModel=new InsightCellModel();
+        insightCellModel.setJobSummaryModel(this);
     }
     
     public SummaryModel getSummaryModel() {
@@ -101,6 +106,14 @@ public class JobSummaryModel {
 
     public void setQcCellModel(QcCellModel qcCellModel) {
         this.qcCellModel = qcCellModel;
+    }
+
+    public InsightCellModel getInsightCellModel() {
+        return insightCellModel;
+    }
+
+    public void setInsightCellModel(InsightCellModel insightCellModel) {
+        this.insightCellModel = insightCellModel;
     }
 
     

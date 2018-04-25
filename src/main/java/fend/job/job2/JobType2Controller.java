@@ -121,7 +121,7 @@ public class JobType2Controller implements JobType0Controller{
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
          model.finishedCheckingLogs().addListener(checkLogsListener);
-      
+      model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
