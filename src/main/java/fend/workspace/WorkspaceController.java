@@ -739,9 +739,9 @@ public class WorkspaceController {
                 DoubtType doubtTypeQc = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
                 Job lparent = link.getParent();
                 Job jchild = link.getChild();
-                List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);
+                List<QcMatrixRow> childQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);
                 Boolean passQc = true;
-                for (QcMatrixRow qcmr : parentQcMatrix) {
+                for (QcMatrixRow qcmr : childQcMatrix) {
                     QcTable qctableentries = qcTableService.getQcTableFor(qcmr, subb);
                     Boolean qcresult = qctableentries.getResult();
                     if (qcresult == null) {
@@ -956,6 +956,7 @@ public class WorkspaceController {
         doubtTypeQc = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
         doubtTypeTraces = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         doubtTypeTime = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
+        doubtTypeInsight=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
         doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
 
         File insightLocation = new File(AppProperties.getINSIGHT_LOCATION());
@@ -3712,7 +3713,13 @@ public class WorkspaceController {
         for (QcMatrixRow qcmr : parentQcMatrix) {
             try {
                 QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
-                Boolean qcresult = qctableentries.getResult();
+                Boolean qcresult;
+                if(qctableentries==null){
+                    qcresult=false;
+                }else{
+                    qcresult=qctableentries.getResult();
+                }
+                
                 if (qcresult == null) {
                     qcresult = false;
                 }
@@ -3731,6 +3738,45 @@ public class WorkspaceController {
         }else{
             resultHolder.result=DEPENDENCY_PASS;
             resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(lparent.getNameJobStep(), jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+        }
+        
+        return resultHolder;
+    }
+    
+    private ResultHolder checkQcDependencyOnLeaf(Link link,Subsurface sub){
+        
+        Job lparent = link.getParent();
+        Job jchild = link.getChild();
+        List<QcMatrixRow> childQcMatrix = qcMatrixRowService.getQcMatrixForJob(jchild, true);    //put this in a map
+        Boolean passQc = true;
+        for (QcMatrixRow qcmr : childQcMatrix) {
+            try {
+                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
+                Boolean qcresult;
+                if(qctableentries==null){
+                    qcresult=false;
+                }else{
+                    qcresult=qctableentries.getResult();
+                }
+                
+                if (qcresult == null) {
+                    qcresult = false;
+                }
+                passQc = passQc && qcresult;
+            } catch (Exception ex) {
+                Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+        
+        ResultHolder resultHolder=new ResultHolder();
+        if (!passQc) {
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+        }else{
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(jchild.getNameJobStep(), lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }
         
         return resultHolder;
@@ -4662,34 +4708,46 @@ public class WorkspaceController {
                         boolean segdOr2D= !acquisitionType && !textType;
                         
                         if(acquisitionType){
+                                boolean forLeaf=true;
                                 ResultHolder timestatus=new ResultHolder();
                                 timestatus.result=DEPENDENCY_PASS;                                                    // force good .all processing done after acquisition. 
-                                setDoubt(doubtTypeTime, timestatus, dot, subb, link);
+                                setDoubt(doubtTypeTime, timestatus, dot, subb, link,!forLeaf);
                                 
                                 ResultHolder tracestatus=new ResultHolder();
                                 tracestatus.result=DEPENDENCY_PASS;                                                    // force good . not applicable (or is it?? no of shots acquired per line to the next steps?)
-                                setDoubt(doubtTypeTraces, tracestatus, dot, subb, link);
+                                setDoubt(doubtTypeTraces, tracestatus, dot, subb, link,!forLeaf);
                                 
                                 ResultHolder qcstatus=checkQcDependency(link, subb);
-                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
+                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+                                
+                                if(link.getChild().isLeaf()){
+                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                }
                                 
                                  //ResultHolder insightStatus=checkInsightDependency(link, subb);
                                  ResultHolder insightStatus=new ResultHolder();
                                 insightStatus.result=DEPENDENCY_PASS;                                                  // force good
-                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);
+                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
                         }
                         
                         
                         if(segdOr2D){
+                                boolean forLeaf=true;
                                 ResultHolder timestatus=checkTimeDependency(link, subb);
-                                setDoubt(doubtTypeTime,timestatus,dot,subb,link);
+                                setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf);
 
 
                                 ResultHolder tracestatus=checkTraceDependency(link,subb);
-                                setDoubt(doubtTypeTraces,tracestatus,dot,subb,link);
+                                setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
                                 
                                 ResultHolder qcstatus=checkQcDependency(link, subb);
-                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link);
+                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+                                
+                                if(link.getChild().isLeaf()){
+                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                }
                                 /*
                                 ResultHolder insightStatus=checkInsightDependency(link, subb);
                                 setDoubt(doubtTypeInsight,insightStatus,dot,subb,link);*/
@@ -4967,13 +5025,27 @@ public class WorkspaceController {
         for(Link lk:dotAncestorList){
             Dot d=lk.getDot();
             Job j=lk.getChild();
+            boolean parentIsRoot=lk.getParent().isRoot();
             
             
             if(!djMap.containsKey(j)){
                 djMap.put(j, new ArrayList<>());
                 djMap.get(j).add(d);
+                
+                
             }else{
                 djMap.get(j).add(d);
+            }
+            
+            if(parentIsRoot){
+                Job parent=lk.getParent();
+                if(!djMap.containsKey(parent)){
+                    djMap.put(parent, new ArrayList<>());
+                    djMap.get(parent).add(d);
+                }else{
+                    
+                }
+                       
             }
         }
         
@@ -4999,7 +5071,7 @@ public class WorkspaceController {
         
     }
     
-    private void setDoubt(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link) {
+    private void setDoubt(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link,Boolean forLeaf) {
         if(result.result == DEPENDENCY_FAIL_ERROR){
             /**
              * if doubt exists for the key (doubtType,dot,sub,job) then update its reason 
@@ -5022,19 +5094,42 @@ public class WorkspaceController {
             } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
                 
                 
-                                jobWithDoubt = link.getParent();
-
-                                if (djMap.containsKey(jobWithDoubt)) {
+                                if(forLeaf){
+                                    jobWithDoubt = link.getChild();
+                                }else{
+                                    jobWithDoubt = link.getParent();
+                                }
+                                
+                                
+                              
+                                if(jobWithDoubt.isRoot()){
+                                    /* DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                    keys.add(key);*/
+                                    if(!djMap.containsKey(jobWithDoubt)){
+                                        djMap.put(jobWithDoubt, new ArrayList<>());
+                                        djMap.get(jobWithDoubt).add(dot);
+                                    }
+                                }
+                                
+                                
+                                
+                                if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
                                     List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
                                     for (Dot dp : dotsParent) {
                                         DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
                                         keys.add(key);
                                     }
-                                } else {     // root 
-                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
-                                    keys.add(key);
+                                } 
+                                    
+                                /* if(jobWithDoubt.isRoot()){
+                                DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                keys.add(key);
+                                if(!djMap.containsKey(jobWithDoubt)){
+                                djMap.put(jobWithDoubt, new ArrayList<>());
+                                djMap.get(jobWithDoubt).add(dot);
                                 }
-
+                                
+                                }*/
                                 
                                 
             } else if (doubtType.equals(doubtTypeInsight)) {                     //insight on parent
@@ -5114,7 +5209,22 @@ public class WorkspaceController {
             } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
                 
                 
-                                jobWithDoubt = link.getParent();
+                                 if(forLeaf){
+                                    jobWithDoubt = link.getChild();
+                                }else{
+                                    jobWithDoubt = link.getParent();
+                                }
+                                
+                                
+                                if(jobWithDoubt.isRoot()){
+                                    /* DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                    keys.add(key);*/
+                                    if(!djMap.containsKey(jobWithDoubt)){
+                                        djMap.put(jobWithDoubt, new ArrayList<>());
+                                        djMap.get(jobWithDoubt).add(dot);
+                                    }
+                                }
+                                
 
                                 if (djMap.containsKey(jobWithDoubt)) {
                                     List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
@@ -5122,10 +5232,7 @@ public class WorkspaceController {
                                         DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
                                         keys.add(key);
                                     }
-                                } else {     // root 
-                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
-                                    keys.add(key);
-                                }
+                                } 
 
                                 
                                 
@@ -5203,7 +5310,25 @@ public class WorkspaceController {
             } else if (doubtType.equals(doubtTypeQc)) {                          //qc on parent
                 
                 
-                                jobWithDoubt = link.getParent();
+                                if(forLeaf){
+                                    jobWithDoubt = link.getChild();
+                                }else{
+                                    jobWithDoubt = link.getParent();
+                                }
+                                
+                                if(jobWithDoubt.isRoot()){
+                                    /* DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                    keys.add(key);*/
+                                    if(!djMap.containsKey(jobWithDoubt)){
+                                        djMap.put(jobWithDoubt, new ArrayList<>());
+                                        djMap.get(jobWithDoubt).add(dot);
+                                    }
+                                }
+                                /*if(jobWithDoubt.isRoot()){
+                                DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                keys.add(key);
+                                }*/
+                                
 
                                 if (djMap.containsKey(jobWithDoubt)) {
                                     List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
@@ -5211,10 +5336,7 @@ public class WorkspaceController {
                                         DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
                                         keys.add(key);
                                     }
-                                } else {     // root 
-                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);   // this key will be unique as there is the parent will never appear associated with this dot for this doubttype
-                                    keys.add(key);
-                                }
+                                } 
 
                                 
                                 
