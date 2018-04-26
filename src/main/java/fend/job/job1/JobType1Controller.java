@@ -15,13 +15,20 @@ import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
+import db.model.Dot;
 import db.model.Job;
 import db.services.AncestorService;
 import db.services.AncestorServiceImpl;
 import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
+import db.services.DotService;
+import db.services.DotServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.LinkService;
+import db.services.LinkServiceImpl;
+import db.services.VariableArgumentService;
+import db.services.VariableArgumentServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -52,8 +59,10 @@ import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
@@ -125,6 +134,7 @@ public class JobType1Controller implements JobType0Controller{
       //  model.getDepth().addListener(depthChangeListener);
       model.finishedCheckingLogs().addListener(checkLogsListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
+      model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -611,7 +621,12 @@ public class JobType1Controller implements JobType0Controller{
                 
             }
         });
-      //  deleteThisJob.setOnAction();
+        
+        
+        deleteThisJob.setOnAction(e->{
+            model.toggleDeleteProperty();
+        });
+      
         menu.getItems().addAll(addAChildJob,deleteThisJob);
     }
 
@@ -807,6 +822,64 @@ public class JobType1Controller implements JobType0Controller{
                     
     }
 
+    private LinkService linkService=new LinkServiceImpl();
+    private VariableArgumentService variableArgumentService=new VariableArgumentServiceImpl();
+    private DotService dotService=new DotServiceImpl();
+    
+      private void deleteLinksBelongingtoCurrentJob() {
+          /* List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
+          System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting the variable arguments ");
+          for(Dot dot:dotsForJob){
+          variableArgumentService.deleteVariableArgumentFor(dot);
+          }
+          */
+            
+            linkService.deleteLinksForJob(dbjob);
+            /*  for(Dot dot:dotsForJob){
+            dot=dotService.getDot(dot.getId());
+            if(dot.canBeDeleted()){ //if dot no longer has any links then its candidate for delete
+            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting dot "+dot.getId());
+            dotService.deleteDot(dot.getId());
+            }else{
+            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): NO DELETION for dot "+dot.getId()+" which has links existing. Rebuilding variableArguments ");
+            rebuildVariableArguments(dot);
+            }
+            }*/
+            
+        }
+
+       private void rebuildVariableArguments(Dot dot) {
+           //figure out the mode of the dot(SPLIT,JOIN,NJS)
+           
+           
+           
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    
+      private void removeJobFromAncestorsAndDescendants() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    
+     
+       private void deleteAllVolumesInCurrentJob() {
+            //toggleDelete On each volume
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+     
+       private void deleteAllDoubtsRelatedToJob() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+     
+       private void deleteAllSummariesRelatedToJob() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+       
+        private void reloadWorkspace() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        
+
     private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -814,4 +887,24 @@ public class JobType1Controller implements JobType0Controller{
             model.setDatabaseJob(dbjob);
         }
     };
+    
+    
+    private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            deleteLinksBelongingtoCurrentJob();
+            /*removeJobFromAncestorsAndDescendants();
+            deleteAllVolumesInCurrentJob();
+            deleteAllDoubtsRelatedToJob();
+            deleteAllSummariesRelatedToJob();
+            reloadWorkspace();*/
+        }
+
+       
+      
+       
+ 
+    };
+
+   
 }

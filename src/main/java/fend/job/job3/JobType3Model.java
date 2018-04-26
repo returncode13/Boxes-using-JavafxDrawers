@@ -90,7 +90,20 @@ public class JobType3Model implements JobType0Model {
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
     
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void toggleDeleteProperty() {
+        boolean val=deleteProperty.get();
+        deleteProperty.set(!val);
+    }
     
     @Override
     public Boolean getUpdate() {

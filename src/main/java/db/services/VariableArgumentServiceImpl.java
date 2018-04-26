@@ -49,5 +49,10 @@ public class VariableArgumentServiceImpl implements VariableArgumentService{
     public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w) {
         return vaDao.getVariableArgumentsForWorkspace(w);
     }
+
+    @Override
+    public void deleteVariableArgumentFor(Dot dot) {
+         vaDao.deleteVariableArgumentFor(dot);
+    }
     
 }

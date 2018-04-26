@@ -88,7 +88,20 @@ public class JobType2Model implements JobType0Model {
     private Job databaseJob;
     private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
      private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
     
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void toggleDeleteProperty() {
+        boolean val=deleteProperty.get();
+        deleteProperty.set(!val);
+    }
     
     @Override
     public Boolean getUpdate() {

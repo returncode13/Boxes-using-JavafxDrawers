@@ -90,4 +90,7 @@ public interface JobType0Model {
     public void toggleUpdateProperty();
     public BooleanProperty updateProperty();
     
+    public BooleanProperty deleteProperty();
+    public void toggleDeleteProperty();
+    
 }

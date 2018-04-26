@@ -17,10 +17,16 @@ import java.util.Set;
  */
 public interface VariableArgumentService {
     public void createVariableArgument(VariableArgument va);
+
     public VariableArgument getVariableArgument(Long vaid);
-    public void updateVariableArgument(Long vaid,VariableArgument newVa);
+
+    public void updateVariableArgument(Long vaid, VariableArgument newVa);
+
     public void deleteVariableArgument(Long vaid);
 
     public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot);
-     public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w);
+
+    public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w);
+
+    public void deleteVariableArgumentFor(Dot dot);
 }

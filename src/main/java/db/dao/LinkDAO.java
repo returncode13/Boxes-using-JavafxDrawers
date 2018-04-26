@@ -31,4 +31,8 @@ public interface LinkDAO {
     public List<Link> getLinksForDot(Dot dbDot);
 
     public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace);
+
+    public void deleteLinksForJob(Job job);
+
+    public List<Dot> getDotsForJob(Job job);
 }

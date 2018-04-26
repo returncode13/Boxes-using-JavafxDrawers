@@ -20,7 +20,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author adira0150
+ * @author sharath nair
  */
 @Entity
 @Table(name="Workflow",schema="obpmanager")

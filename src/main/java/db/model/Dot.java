@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -58,6 +59,14 @@ public class Dot implements Serializable {
     @Column(name="creation_time")
     private String creationTime;
     
+    @OneToMany(mappedBy = "dot")
+    private Set<Link> links=new HashSet<>();
+    
+    @Formula("(select count(*) from obpmanager.link l where l.dot_fk=id )")
+    Integer dotCanBeDeleted;
+    
+    
+    
     
     public Dot() {
     }
@@ -71,8 +80,7 @@ public class Dot implements Serializable {
         return id;
     }
     
-    @OneToMany(mappedBy = "dot")
-    private Set<Link> links=new HashSet<>();
+  
 
     public Set<Link> getLinks() {
         return links;
@@ -171,7 +179,9 @@ public class Dot implements Serializable {
         this.creationTime = creationTime;
     }
 
-    
+    public boolean canBeDeleted(){
+        return dotCanBeDeleted==null ? true : (dotCanBeDeleted == 0);
+    }
     
     
     

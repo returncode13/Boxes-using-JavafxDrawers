@@ -32,4 +32,8 @@ public interface LinkService {
     public List<Link> getLinksForDot(Dot dbDot);
 
     public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace);
+
+    public void deleteLinksForJob(Job dbjob);
+
+    public List<Dot> getDotsForJob(Job dbjob);
 }

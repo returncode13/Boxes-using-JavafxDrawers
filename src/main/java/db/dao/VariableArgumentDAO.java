@@ -22,5 +22,7 @@ public interface VariableArgumentDAO {
 
     public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot);
     public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w);
+
+    public void deleteVariableArgumentFor(Dot dot);
        
 }

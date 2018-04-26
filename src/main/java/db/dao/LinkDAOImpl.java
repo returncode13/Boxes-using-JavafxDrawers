@@ -267,5 +267,53 @@ public class LinkDAOImpl implements LinkDAO{
         return result;
     }
 
+    @Override
+    public void deleteLinksForJob(Job job) {
+        System.out.println("db.dao.LinkDAOImpl.deleteLinksForJob()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        
+        
+        String hql="DELETE FROM Link l WHERE l.parent =:j OR l.child =:j";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            //query.setParameter("subq", sub);
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
+
+    @Override
+    public List<Dot> getDotsForJob(Job job) {
+         System.out.println("db.dao.LinkDAOImpl.getLinksForDot()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Dot> result=null;
+        String hql="SELECT distinct l.dot from Link l  WHERE l.parent =:j OR l.child =:j";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            
+            query.setParameter("j", job);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
    
 }

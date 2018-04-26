@@ -113,6 +113,16 @@ public class LinkServiceImpl implements LinkService {
         return linkDAO.getDotJobListForWorkspace(dbWorkspace);
     }
 
+    @Override
+    public void deleteLinksForJob(Job job) {
+       linkDAO.deleteLinksForJob(job);
+    }
+
+    @Override
+    public List<Dot> getDotsForJob(Job job) {
+       return linkDAO.getDotsForJob(job);
+    }
+
     
 
    

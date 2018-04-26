@@ -134,5 +134,28 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
         }
         return results;
     }
+
+    @Override
+    public void deleteVariableArgumentFor(Dot dot) {
+         System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgumentFor()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="Delete from VariableArgument v where v.dot =:d";
+       
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("d", dot);
+            int result=query.executeUpdate();
+            
+            transaction.commit();
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
     
 }
