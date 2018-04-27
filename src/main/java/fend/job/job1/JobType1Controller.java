@@ -824,6 +824,17 @@ public class JobType1Controller implements JobType0Controller{
                     
     }
 
+    
+    private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            dbjob=jobService.getJob(dbjob.getId());
+            model.setDatabaseJob(dbjob);
+        }
+    };
+    
+    
+    
     private LinkService linkService=new LinkServiceImpl();
     private VariableArgumentService variableArgumentService=new VariableArgumentServiceImpl();
     private DotService dotService=new DotServiceImpl();
@@ -876,19 +887,11 @@ public class JobType1Controller implements JobType0Controller{
         }
        
         private void reloadWorkspace() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            model.getWorkspaceModel().reload();
         }
 
         
 
-    private ChangeListener<Boolean> DATABASE_JOB_UPDATE_LISTENER=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            dbjob=jobService.getJob(dbjob.getId());
-            model.setDatabaseJob(dbjob);
-        }
-    };
-    
     private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
@@ -906,7 +909,7 @@ public class JobType1Controller implements JobType0Controller{
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
             jobService.deleteJob(dbjob.getId());  //replace by soft delete
             rebuildAncestorDescendants();
-            /*reloadWorkspace();*/
+            reloadWorkspace();
         }
 
        

@@ -510,6 +510,37 @@ public class LogDAOImpl implements LogDAO{
         return result.get(0);
     }
 
+    @Override
+    public void deleteLogsFor(Volume vol) {
+        System.out.println("db.dao.LogDAOImpl.deleteLogsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select l.id from Log l where l.volume =:v";
+        String hqlDelete="Delete from Log l where l.idLogs in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("v", vol);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.LogDAOImpl.deleteLogsFor(): deleting "+idsToDelete.size()+" logs belonging to volume: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
    
     
 

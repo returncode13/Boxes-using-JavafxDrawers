@@ -40,7 +40,20 @@ public class WorkspaceModel {
     private BooleanProperty rebuildGraphOrderProperty=new SimpleBooleanProperty(false);
     private BooleanProperty prepareToRebuildProperty = new SimpleBooleanProperty(false);
     private BooleanProperty clearDescendantsProperty = new SimpleBooleanProperty(false);
+    private BooleanProperty reloadProperty=new SimpleBooleanProperty(false);
 
+    public BooleanProperty reloadProperty() {
+        return reloadProperty;
+    }
+
+    public void reload() {
+        Boolean val=reloadProperty.get();
+        this.reloadProperty.set(!val);
+    }
+    
+    
+    
+    
     public BooleanProperty clearDescendantsProperty() {
         return clearDescendantsProperty;
     }

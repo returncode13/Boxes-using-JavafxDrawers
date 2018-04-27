@@ -583,6 +583,7 @@ public class WorkspaceController {
         model.setInsightVersions(insightVersionStrings);
         model.rebuildGraphOrderProperty().addListener(REBUILD_GRAPH_LISTENER);
         model.prepareToRebuildProperty().addListener(CLEAR_ANCESTOR_LISTENER);
+        model.reloadProperty().addListener(RELOAD_LISTENER);
        // model.clearDescendantsProperty().addListener(CLEAR_DESCENDANT_LISTENER);
         exec = Executors.newCachedThreadPool((r) -> {
             Thread t = new Thread(r);
@@ -3216,4 +3217,11 @@ public class WorkspaceController {
    }
    
    private Map<Job,AncestorDescendantHolder> adLum=new HashMap<>();
+   
+   private ChangeListener<Boolean> RELOAD_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                System.out.println(".changed(): Auto-RELOAD of workspace implementation pending. Manually reload the workspace "+dbWorkspace.getName());
+        }
+    };
 }

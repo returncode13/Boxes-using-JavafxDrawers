@@ -59,31 +59,6 @@ public class VolumeListModel {
         
     }
 
-    /* public VolumeListModel() {    //Remove this constructor.
-    volumes=new ArrayList<>();
-    observableListOfVolumes=FXCollections.observableArrayList(volumes);
-    
-    observableListOfVolumes.addListener(new ListChangeListener<Volume0>(){
-    @Override
-    public void onChanged(ListChangeListener.Change<? extends Volume0> c) {
-    while(c.next()){
-    for(Volume0 vol:c.getAddedSubList()){
-    if(WorkspaceModel.DEBUG) System.out.println("box.definitions.volume.VolumeListModel.added(): "+vol.getName());
-    addVolumeToParentJob();
-    }
-    
-    for(Volume0 vol:c.getRemoved()){
-    if(WorkspaceModel.DEBUG) System.out.println("box.definitions.volume.VolumeListModel.removed(): "+vol.getName());
-    addVolumeToParentJob();
-    }
-    }
-    }
-    
-    
-    });
-    }*/
-    
-    
 
     public ObservableList<Volume0> getObservableListOfVolumes() {
         return observableListOfVolumes;
@@ -113,7 +88,8 @@ public class VolumeListModel {
 
      
      private void removeVolumeFromParentJob(Volume0 vol) {
-         parentJob.removeVolume(vol);
+         vol.delete(true);
+        
      }
 
            

@@ -1247,32 +1247,5 @@ public class AppController extends Stage implements Initializable{
         }
     };
     
-    private void startGuestService(){
-        /* guestService  = new ScheduledService<Void>() {
-        @Override
-        protected Task<Void> createTask() {
-        System.out.println("fend.app.AppController.startGuestService().createTask()..starting a task");
-        return guestTask;
-        }
-        };*/
-        /* guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
-        
-        guestService.setOnSucceeded(e->{
-        System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
-        //AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
-        guestList.getItems().clear();
-        guestList.getItems().addAll(AppController.this.observableGuestList);
-        });
-        guestService.setOnRunning(e->{
-        System.out.println("fend.app.AppController.startGuestService(): service is up and running");
-        });
-        guestService.setOnCancelled(e->{
-        System.out.println("fend.app.AppController.startGuestService(): cancelled");
-        });
-        guestService.setOnFailed(e->{
-        System.out.println("fend.app.AppController.startGuestService(): failed");
-        });*/
-            
-            
-    }
+    
 }

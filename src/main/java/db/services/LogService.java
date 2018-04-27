@@ -46,4 +46,6 @@ public interface LogService {
     public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub);
 
     public String getLatestLogTimeFor(Volume dbVol);
+
+    public void deleteLogsFor(Volume dbVol);
 }

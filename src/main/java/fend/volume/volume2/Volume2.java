@@ -5,6 +5,7 @@
  */
 package fend.volume.volume2;
 
+import db.model.Volume;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
@@ -33,20 +34,48 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
- * Type 1 Volumes. logs under ../200../logs
+ * Type 2 Volumes. logs under /logs/
  */
 public class Volume2 implements Volume0{
     private final String LOGPATH="/logs/";                      //location of logs relative to dugio
-    private final Long type=JobType0Model.SEGD_LOAD;
+    private final Long type=Volume0.SEGD_LOAD;
     private Long id;
     private StringProperty name;
     private File volume;
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+     private Volume dbVolume;
+    
+    
+    @Override
+    public void setDbVolume(Volume v) {
+        dbVolume=v;
+    }
+
+    @Override
+    public Volume getDbVolume() {
+        return dbVolume;
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void delete(boolean b) {
+        //boolean val=deleteProperty.get();
+        deleteProperty.set(b);
+    }
+    
     
     public Volume2(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();

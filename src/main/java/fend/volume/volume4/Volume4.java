@@ -5,6 +5,7 @@
  */
 package fend.volume.volume4;
 
+import db.model.Volume;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import javafx.beans.property.StringProperty;
 import fend.job.job0.JobType0Model;
 
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -23,12 +26,38 @@ import fend.volume.volume0.Volume0;
  */
 public class Volume4 implements Volume0{
     //private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
-    private final Long type=4L;
+    private final Long type=Volume0.TEXT;
     private Long id;
     private StringProperty name;
     private File volume;
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+     private Volume dbVolume;
+    
+    
+    @Override
+    public void setDbVolume(Volume v) {
+        dbVolume=v;
+    }
+
+    @Override
+    public Volume getDbVolume() {
+        return dbVolume;
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void delete(boolean b) {
+        
+        deleteProperty.set(b);
+    }
+    
     
     public Volume4(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();

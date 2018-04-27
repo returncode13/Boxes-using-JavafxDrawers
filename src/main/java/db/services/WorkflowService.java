@@ -24,4 +24,6 @@ public interface WorkflowService {
     public Workflow getWorkFlowVersionFor(Volume v);            //highest workflow version for the given volume
     public Workflow getWorkflowRunBeforeTime(String time,Volume vol);    //Used for type 2 Volumes. The latest workflow before time=time is the workflow that needs to be assigned to the subsurface
     public Long getHighestWorkFlowVersionFor(Volume v);            //highest workflow version for the given volume
+
+    public void deleteWorkFlowsFor(Volume vol);
 }

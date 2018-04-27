@@ -6,6 +6,7 @@
 package fend.volume.volume3;
 
 import db.model.Acquisition;
+import db.model.Volume;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
@@ -34,6 +35,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -49,6 +52,32 @@ public class Volume3 implements Volume0{
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
     private List<Acquisition> acquisitions;
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+     private Volume dbVolume;
+    
+    
+    @Override
+    public void setDbVolume(Volume v) {
+        dbVolume=v;
+    }
+
+    @Override
+    public Volume getDbVolume() {
+        return dbVolume;
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void delete(boolean b) {
+       
+        deleteProperty.set(b);
+    }
+    
     
     public Volume3(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();

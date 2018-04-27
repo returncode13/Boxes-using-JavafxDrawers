@@ -35,7 +35,13 @@ public class VolumeListCell extends JFXListCell<Volume0>{
         //button.getStyleClass().add("button-raised");
        
         
-        button.setOnAction(e->{getListView().getItems().remove(getItem());});
+        button.setOnAction(e->{
+               getItem().delete(true);
+               getListView().
+                       getItems().
+                       remove(getItem());
+               
+        });
         //this.getStyleClass().add("-fx-background-color: #5264AE ");
     }
 

@@ -174,5 +174,36 @@ public class WorkflowDAOImpl implements WorkflowDAO {
         }
         return result.get(0);
     }
+
+    @Override
+    public void deleteWorkFlowsFor(Volume vol) {
+        System.out.println("db.dao.WorkflowDAOImpl.deleteWorkFlowsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select w.id from Workflow w where w.volume =:v";
+        String hqlDelete="Delete from Workflow w where w.id in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("v", vol);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.WorkflowDAOImpl.deleteWorkFlowsFor(): deleting "+idsToDelete.size()+" workflows belonging to volume: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
     
 }

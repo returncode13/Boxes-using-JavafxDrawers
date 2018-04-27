@@ -127,6 +127,11 @@ public class LogServiceImpl implements LogService{
        return ldao.getLatestLogTimeFor(dbVol);
     }
 
+    @Override
+    public void deleteLogsFor(Volume vol) {
+        ldao.deleteLogsFor(vol);
+    }
+
    
     
 }

@@ -113,7 +113,7 @@ public class VolumeListModel {
 
      
      private void removeVolumeFromParentJob(Volume0 vol) {
-         parentJob.removeVolume(vol);
+         vol.delete(true);
      }
 
            

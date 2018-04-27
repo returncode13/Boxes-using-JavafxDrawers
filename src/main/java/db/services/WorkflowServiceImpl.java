@@ -63,5 +63,10 @@ public class WorkflowServiceImpl implements WorkflowService{
     public Long getHighestWorkFlowVersionFor(Volume v) {
         return wdao.getHighestWorkFlowVersionFor(v);
     }
+
+    @Override
+    public void deleteWorkFlowsFor(Volume vol) {
+        wdao.deleteWorkFlowsFor(vol) ;
+    }
     
 }

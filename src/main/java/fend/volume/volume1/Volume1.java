@@ -5,6 +5,7 @@
  */
 package fend.volume.volume1;
 
+import db.model.Volume;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
@@ -33,21 +34,46 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  * Type 1 Volumes. logs under ../200../logs
+ * 2DProcess
  */
 public class Volume1 implements Volume0{
     private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
-    private final Long type=1L;
+    private final Long type=Volume0.PROCESS_2D;
     private Long id;
     private StringProperty name;
     private File volume;
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+    private Volume dbVolume;
     
+    
+    @Override
+    public void setDbVolume(Volume v) {
+        dbVolume=v;
+    }
+
+    @Override
+    public Volume getDbVolume() {
+        return dbVolume;
+    }
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void delete(boolean b) {
+       deleteProperty.set(b);
+    }
     public Volume1(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();
         id=null;
@@ -220,4 +246,6 @@ public class Volume1 implements Volume0{
         System.out.println("fend.volume.volume1.Volume1.getLogFolder(): returning file pointing to : "+volume.getAbsolutePath()+LOGPATH);
         return new File(volume.getAbsolutePath()+LOGPATH);
     }
+
+    
 }
