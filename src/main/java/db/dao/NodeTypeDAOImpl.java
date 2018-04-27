@@ -104,16 +104,18 @@ public class NodeTypeDAOImpl implements NodeTypeDAO{
         
             result=criteria.list();
             transaction.commit();
-           if(result.size()==1){
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            sess.close();
+        }
+        
+        if(result.size()==1){
                return result.get(0);
            }else{
                return null;
            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        
-        return null;
     }
     
     

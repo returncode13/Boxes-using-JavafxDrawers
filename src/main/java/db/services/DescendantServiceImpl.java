@@ -98,6 +98,11 @@ public class DescendantServiceImpl implements DescendantService{
     public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W) {
         return descDao.getDescendantsSubsurfaceJobsForSummary(W);
     }
+
+    @Override
+    public void removeAllDescendantEntriesFor(Workspace workspace) {
+        descDao.removeAllDescendantEntriesFor(workspace);
+    }
     
 
    

@@ -28,4 +28,6 @@ public interface DescendantDAO  {
 
     public List<Descendant> getDescendantsForJobContainingSubsurface(Job job, Subsurface sub);
     public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W);// Return all descendants that contain the same subsurface as the job
+
+    public void removeAllDescendantEntriesFor(Workspace workspace);
 }

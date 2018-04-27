@@ -317,6 +317,35 @@ public class JobDAOImpl implements JobDAO{
         return results;
     }
 
+    @Override
+    public List<Job> getRootsInWorkspace(Workspace w) {
+        System.out.println("db.dao.JobDAOImpl.getRootsInWorkspace()");
+       
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" SELECT J from Job J where J.id not in (Select A.job from Ancestor A INNER JOIN A.job aj where aj.workspace =:wksp )"
+                + "                             AND"
+                + "                            J.workspace =:wksp";
+        List<Job> results=null;
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("wksp", w);
+            
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.JobDAOImpl.getRootsInWorkspace(): returing "+results.size());
+            for(Job j:results){
+                System.out.println("db.dao.JobDAOImpl.getRootsInWorkspace(): root --> "+j.getNameJobStep());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
 
 
 

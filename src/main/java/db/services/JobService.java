@@ -36,5 +36,6 @@ public interface JobService {
     public void updateInsightVersionInJob(Job job);
     
     public List<Job> getJobsInWorkspace(Workspace W);
+    public List<Job> getRootsInWorkspace(Workspace w);
    
 }

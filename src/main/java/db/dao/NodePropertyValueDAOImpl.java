@@ -16,6 +16,7 @@ import app.connections.hibernate.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -153,6 +154,25 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
         
         
         return null;
+    }
+
+    @Override
+    public void removeAllNodePropertyValuesFor(Job job) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.removeAllNodePropertyValuesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        String hql="delete  from NodePropertyValue npv where npv.job =:j ";
+        try{
+            transaction =session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            int result=query.executeUpdate();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
    

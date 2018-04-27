@@ -26,4 +26,6 @@ public interface DescendantService {
     public List<Descendant> getDescendantsForJobContainingSub(Job job,Subsurface sub);
     public Descendant getDescendantFor(Job job, Job descendant);
     public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W);// Return all descendants that contain the same subsurface as the job
+
+    public void removeAllDescendantEntriesFor(Workspace dbWorkspace);
 }

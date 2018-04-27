@@ -11,6 +11,7 @@ import db.model.Job;
 import db.model.Link;
 import db.model.Subsurface;
 import db.model.Workspace;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -298,6 +299,31 @@ public class LinkDAOImpl implements LinkDAO{
         Transaction transaction = null;
         List<Dot> result=null;
         String hql="SELECT distinct l.dot from Link l  WHERE l.parent =:j OR l.child =:j";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            
+            query.setParameter("j", job);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Link> getParentLinksFor(Job job) {
+        System.out.println("db.dao.LinkDAOImpl.getParentLinksFor()");
+      
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Link> result=new ArrayList<>();
+        String hql="SELECT l from Link l  WHERE l.parent =:j";
          try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);

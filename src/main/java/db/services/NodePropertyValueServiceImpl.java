@@ -53,6 +53,11 @@ public class NodePropertyValueServiceImpl implements NodePropertyValueService{
     public NodePropertyValue getNodePropertyValueFor(Job jobStep, NodeProperty nodeProperty) {
         return npvdao.getNodePropertyValuesFor(jobStep,nodeProperty);
     }
+
+    @Override
+    public void removeAllNodePropertyValuesFor(Job job) {
+        npvdao.removeAllNodePropertyValuesFor(job);
+    }
     
     
    

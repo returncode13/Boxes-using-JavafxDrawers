@@ -27,6 +27,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import fend.dot.DotModel;
@@ -827,38 +829,37 @@ public class JobType1Controller implements JobType0Controller{
     private DotService dotService=new DotServiceImpl();
     
       private void deleteLinksBelongingtoCurrentJob() {
-          /* List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
+           List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
           System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting the variable arguments ");
           for(Dot dot:dotsForJob){
           variableArgumentService.deleteVariableArgumentFor(dot);
           }
-          */
+          
             
             linkService.deleteLinksForJob(dbjob);
-            /*  for(Dot dot:dotsForJob){
+              for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());
             if(dot.canBeDeleted()){ //if dot no longer has any links then its candidate for delete
             System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting dot "+dot.getId());
             dotService.deleteDot(dot.getId());
             }else{
-            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): NO DELETION for dot "+dot.getId()+" which has links existing. Rebuilding variableArguments ");
-            rebuildVariableArguments(dot);
+            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): NO DELETION for dot "+dot.getId()+" which has links existing. ");
+            dot.setFunction("");
+            dotService.updateFunction(dot);
+            //rebuildVariableArguments(dot);     // This is done during the reload of the session
             }
-            }*/
+            }
             
         }
 
        private void rebuildVariableArguments(Dot dot) {
-           //figure out the mode of the dot(SPLIT,JOIN,NJS)
-           
-           
-           
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+           //figure out the mode of the dot(SPLIT,JOIN,NJS)    . Done during workspace loading
+           throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     
-      private void removeJobFromAncestorsAndDescendants() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+      private void rebuildAncestorDescendants() {
+           model.getWorkspaceModel().rebuildGraph();              //workspace controller rebuilds the graph
+      }
     
      
        private void deleteAllVolumesInCurrentJob() {
@@ -888,16 +889,24 @@ public class JobType1Controller implements JobType0Controller{
         }
     };
     
+    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             deleteLinksBelongingtoCurrentJob();
-            /*removeJobFromAncestorsAndDescendants();
-            deleteAllVolumesInCurrentJob();
+            
+            
+            /*deleteAllVolumesInCurrentJob();
             deleteAllDoubtsRelatedToJob();
-            deleteAllSummariesRelatedToJob();
-            reloadWorkspace();*/
+            deleteAllSummariesRelatedToJob();*/
+            nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
+            model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
+            
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
+            jobService.deleteJob(dbjob.getId());  //replace by soft delete
+            rebuildAncestorDescendants();
+            /*reloadWorkspace();*/
         }
 
        

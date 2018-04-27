@@ -92,6 +92,11 @@ public class JobServiceImpl implements JobService {
         return jobStepDAO.getJobsInWorkspace(W);
     }
 
+    @Override
+    public List<Job> getRootsInWorkspace(Workspace w) {
+        return jobStepDAO.getRootsInWorkspace(w);
+    }
+
     
     
 }

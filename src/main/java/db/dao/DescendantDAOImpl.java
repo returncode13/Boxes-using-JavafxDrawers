@@ -10,6 +10,7 @@ import db.model.Descendant;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Workspace;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.List;
@@ -197,6 +198,8 @@ public class DescendantDAOImpl implements DescendantDAO {
             
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            sess.close();
         }
         if(result.size()>1){
            try {
@@ -229,6 +232,8 @@ public class DescendantDAOImpl implements DescendantDAO {
             System.out.println("db.dao.DescendantDAOImpl.getDescendantsForJobContainingSubsurface(): returning result of size "+result.size());
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
         }
         return result;
     } 
@@ -257,9 +262,46 @@ public class DescendantDAOImpl implements DescendantDAO {
             System.out.println("db.dao.DescendantDAOImpl.getDescendantsSubsurfaceJobsForSummary(): returning "+result.size());
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
         }
         return result;
         
+    }
+
+    @Override
+    public void removeAllDescendantEntriesFor(Workspace workspace) {
+          Session session = HibernateUtil.getSessionFactory().openSession();
+        
+        Transaction transaction=null;
+        System.out.println("db.dao.DescendantDAOImpl.removeAllDescendantEntriesFor()");
+       
+        String hqlSelectIds="Select D.id from Descendant D INNER JOIN D.job dj WHERE dj.workspace =:w";
+        String hqlDelete="DELETE From Descendant D where D.id in (:ids)";
+        List<Long> idsToDelete=new ArrayList<>();
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelectIds);
+            query.setParameter("w", workspace);
+            idsToDelete=query.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                int del=delQuery.executeUpdate();
+                System.out.println("db.dao.DescendantDAOImpl.removeAllDescendantEntriesFor(): deleted "+idsToDelete.size()+" descendants");
+                for(Long id:idsToDelete){
+                    System.out.println("db.dao.DescendantDAOImpl.removeAllDescendantEntriesFor(): deleted: "+id);
+                }
+            }
+            
+            transaction.commit();
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
     
 }

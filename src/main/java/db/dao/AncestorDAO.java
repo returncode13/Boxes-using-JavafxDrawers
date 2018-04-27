@@ -27,5 +27,7 @@ public interface AncestorDAO {
     public Ancestor getAncestorFor(Job job,Job ancestor); 
    public List<Ancestor> getAncestorsForJobContainingSubsurface(Job job, Subsurface sub);
     public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W); // Return all ancestors that contain the same subsurface as the job
+
+    public void removeAllAncestorEntriesFor(Workspace workspace);
     
 }

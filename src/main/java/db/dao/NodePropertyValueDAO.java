@@ -23,4 +23,6 @@ public interface NodePropertyValueDAO {
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job);
 
     public NodePropertyValue getNodePropertyValuesFor(Job jobStep, NodeProperty nodeProperty);
+
+    public void removeAllNodePropertyValuesFor(Job job);
 }

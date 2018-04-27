@@ -581,7 +581,9 @@ public class WorkspaceController {
             insightVersionStrings.add(insight.getName());
         }
         model.setInsightVersions(insightVersionStrings);
-
+        model.rebuildGraphOrderProperty().addListener(REBUILD_GRAPH_LISTENER);
+        model.prepareToRebuildProperty().addListener(CLEAR_ANCESTOR_LISTENER);
+       // model.clearDescendantsProperty().addListener(CLEAR_DESCENDANT_LISTENER);
         exec = Executors.newCachedThreadPool((r) -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
@@ -2955,6 +2957,263 @@ public class WorkspaceController {
         path.setStyle("-fill:" + fill + ";-hover-fill:" + hoverFill + ";");
         return path;
     }
+    
+    List<Job> roots=new ArrayList<>();
+   private ChangeListener<Boolean> CLEAR_ANCESTOR_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("Removing all ancestors in workspace as part of rebuild "+dbWorkspace.getName());
+            roots=jobService.getRootsInWorkspace(dbWorkspace);
+            
+            ancestorService.removeAllAncestorEntriesFor(dbWorkspace);
+            descendantService.removeAllDescendantEntriesFor(dbWorkspace);
+            
+        }
+    };
+   
+   private ChangeListener<Boolean> CLEAR_DESCENDANT_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("Removing all ancestors in workspace as part of rebuild "+dbWorkspace.getName());
+            descendantService.removeAllDescendantEntriesFor(dbWorkspace);
+        }
+    };
 
- 
+   private Map<Job,Set<Ancestor>> ancestorLUM=new HashMap<>();
+   private Map<Job,Set<Descendant>> descendantLUM=new HashMap<>();
+   
+   private ChangeListener<Boolean> REBUILD_GRAPH_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+           
+            List<Job> jobsinWorkspace=jobService.listJobs(dbWorkspace);
+            ancestorLUM.clear();
+            descendantLUM.clear();
+            adLum.clear();
+            for(Job j:jobsinWorkspace){
+                AncestorDescendantHolder adh=new AncestorDescendantHolder();
+                adh.job=j;
+                adLum.put(j, adh);
+            }
+            for(Job root:roots){
+                if(!jobsinWorkspace.contains(root)){     //if the root was the one marked to be deleted
+                   continue;
+                }
+                List<Link> links=linkService.getParentLinksFor(root); 
+                for(Link l:links){
+                    System.out.println("checking link "+l.getId()+" "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
+                    rebuildGraph(l);
+                }
+                
+                
+                
+            }
+            
+           
+            
+            for (Map.Entry<Job, AncestorDescendantHolder> entry : adLum.entrySet()) {
+                Job job = entry.getKey();
+                AncestorDescendantHolder value = entry.getValue();
+                Set<Job> ac=value.ancestors;
+                System.out.print(""+job.getNameJobStep()+" anc = {");
+                for(Job a:ac){
+                    Ancestor anc=new Ancestor();
+                    anc.setJob(job);
+                    anc.setAncestor(a);
+                    //ancestorsToBeCommited.add(anc);
+                    ancestorService.addAncestor(anc);
+                    System.out.print(""+a.getNameJobStep()+",");
+                }
+                System.out.println("}");
+                
+                Set<Job> dc=value.descendants;
+                System.out.print(""+job.getNameJobStep()+" des = {");
+                for(Job d:dc){
+                    Descendant desc=new Descendant();
+                    desc.setJob(job);
+                    desc.setDescendant(d);
+                    //descendantsToBeCommited.add(desc);
+                    descendantService.addDescendant(desc);
+                    System.out.print(""+d.getNameJobStep()+",");
+                }
+                System.out.println("}");
+                
+                
+            }
+           
+            
+        }
+    };
+   
+   
+   
+   private void rebuildGraph(Link l){
+       
+       System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): checking "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
+       
+       Job parent=l.getParent();
+       Job child=l.getChild();
+       
+       
+       
+       Set<Job> pa=adLum.get(parent).ancestors;
+       
+       for(Job a: pa){
+           adLum.get(child).ancestors.add(a);
+       }
+      
+       
+       adLum.get(child).ancestors.add(parent);
+       
+       
+       System.out.println(" "+child.getNameJobStep()+" anc = { ");
+       for(Job j:adLum.get(child).ancestors){
+           System.out.println(""+j.getNameJobStep()+",");
+       }
+       System.out.println("}");
+       
+       List<Link> listOfLinksWhereChildIsParent=linkService.getParentLinksFor(child);
+       if(listOfLinksWhereChildIsParent.isEmpty()){
+          // adLum.get(parent).descendants.add(child);
+           System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): "+child.getNameJobStep()+" has no more children..");
+       }
+       for(Link link:listOfLinksWhereChildIsParent){
+           System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): going into Link "+link.getParent().getNameJobStep()+" --> "+link.getChild().getNameJobStep());
+           rebuildGraph(link);
+       }
+       
+       System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): back in Link checking "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
+       
+       Set<Job> cd=adLum.get(child).descendants;
+       
+       for(Job d:cd){
+           adLum.get(parent).descendants.add(d);
+       }
+       
+       adLum.get(parent).descendants.add(child);
+       
+       System.out.println(" "+parent.getNameJobStep()+" desc = { ");
+       for(Job j:adLum.get(parent).descendants){
+           System.out.println(""+j.getNameJobStep()+",");
+       }
+       System.out.println("}");
+       
+       System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): Exiting link "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
+       
+   }
+   
+   private void rebuild(Link l){
+      System.out.println("checking link "+l.getId()+" "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
+      Set<Ancestor> ancestorsInParent;  
+      if(!ancestorLUM.containsKey(l.getParent())){
+          ancestorLUM.put(l.getParent(), new HashSet<>());
+          ancestorsInParent=ancestorLUM.get(l.getParent());
+      }else{
+          ancestorsInParent=ancestorLUM.get(l.getParent());
+      }
+              
+      // Add all the parents ancestors to the child
+      for(Ancestor a: ancestorsInParent){
+          Ancestor childAncestor=new Ancestor();
+          childAncestor.setJob(l.getChild());
+          childAncestor.setAncestor(a.getAncestor());
+          //ancestorService.addAncestor(childAncestor);
+          if(!ancestorLUM.containsKey(l.getChild())){
+              ancestorLUM.put(l.getChild(),new HashSet<>());
+              ancestorLUM.get(l.getChild()).add(childAncestor);
+          }else{
+              ancestorLUM.get(l.getChild()).add(childAncestor);
+          }
+      }
+      //Add the parent as an ancestor
+        Ancestor childAncestor=new Ancestor();
+        childAncestor.setJob(l.getChild());
+        childAncestor.setAncestor(l.getParent());
+        if(!ancestorLUM.containsKey(l.getChild())){
+              ancestorLUM.put(l.getChild(),new HashSet<>());
+              ancestorLUM.get(l.getChild()).add(childAncestor);
+          }else{
+              ancestorLUM.get(l.getChild()).add(childAncestor);
+          }
+      
+        /*  if(l.getChild().isLeaf()){
+        Descendant parentDescendant=new Descendant();
+        parentDescendant.setJob(l.getParent());
+        parentDescendant.setDescendant(l.getChild());
+        if(!descendantLUM.containsKey(l.getParent())){
+        descendantLUM.put(l.getParent(), new HashSet<>());
+        descendantLUM.get(l.getParent()).add(parentDescendant);
+        }else{
+        descendantLUM.get(l.getParent()).add(parentDescendant);
+        }
+        
+        return;
+        
+        }*/
+      
+      List<Link> linksWhereChildIsParent=linkService.getParentLinksFor(l.getChild());
+      if(linksWhereChildIsParent.isEmpty()){
+            Descendant parentDescendant=new Descendant();
+                parentDescendant.setJob(l.getParent());
+                parentDescendant.setDescendant(l.getChild());
+          if(!descendantLUM.containsKey(l.getParent())){
+              descendantLUM.put(l.getParent(), new HashSet<>());
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }else{
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }
+          System.out.println(" "+l.getChild().getNameJobStep()+" has no more children. ");
+          System.out.println("fend.workspace.WorkspaceController.rebuild(): returning");
+         // return;
+      }
+      for(Link link:linksWhereChildIsParent){
+          System.out.println(" rebuild:  checking link "+link.getId()+" "+link.getParent().getNameJobStep()+" --> "+link.getChild().getNameJobStep());
+          rebuild(link);
+      }
+      
+      //Add all child descendants to the parent
+      Set<Descendant> descendantsInChild;
+      if(!descendantLUM.containsKey(l.getChild())){
+          descendantLUM.put(l.getChild(),new HashSet<>());
+          descendantsInChild=descendantLUM.get(l.getChild());
+      }else{
+          descendantsInChild=descendantLUM.get(l.getChild());
+      }
+      
+      for(Descendant d:descendantsInChild){
+          Descendant parentDescendant=new Descendant();
+          parentDescendant.setJob(l.getParent());
+          parentDescendant.setDescendant(d.getDescendant());
+          
+          if(!descendantLUM.containsKey(l.getParent())){
+              descendantLUM.put(l.getParent(), new HashSet<>());
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }else{
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }
+          
+      }
+      //Add the child as the descendant of the parent
+        
+          Descendant parentDescendant=new Descendant();
+          parentDescendant.setJob(l.getParent());
+          parentDescendant.setDescendant(l.getChild());
+          
+          if(!descendantLUM.containsKey(l.getParent())){
+              descendantLUM.put(l.getParent(), new HashSet<>());
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }else{
+              descendantLUM.get(l.getParent()).add(parentDescendant);
+          }
+      
+   }
+   
+   
+   private class AncestorDescendantHolder{
+       Job job;
+       Set<Job> ancestors=new HashSet<>();
+       Set<Job> descendants=new HashSet<>();
+   }
+   
+   private Map<Job,AncestorDescendantHolder> adLum=new HashMap<>();
 }

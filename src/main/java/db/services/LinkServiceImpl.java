@@ -123,6 +123,11 @@ public class LinkServiceImpl implements LinkService {
        return linkDAO.getDotsForJob(job);
     }
 
+    @Override
+    public List<Link> getParentLinksFor(Job job) {
+        return linkDAO.getParentLinksFor(job);
+    }
+
     
 
    

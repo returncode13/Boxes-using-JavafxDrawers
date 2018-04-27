@@ -34,4 +34,8 @@ public interface AncestorService {
     public List<Ancestor> getAncestorFor(Job job);
     public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub);
     public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W);// Return all ancestors that contain the same subsurface as the job
+
+    public void removeAllAncestorEntriesFor(Workspace dbWorkspace);
+
+    
 }

@@ -259,7 +259,7 @@ public class DotController extends Stage{
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                System.out.println("dot.DotController.addListener.modelstatus: Link was created in the model.. changed from "+oldValue+" to "+newValue);
                updateColor();
-               updateDatabaseAndFormulaFieldinModel(); //Commented for troubleshooting. Positively to be uncommented.
+               updateDatabaseAndFormulaFieldinModel(); 
             }
 
            

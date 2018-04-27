@@ -36,4 +36,6 @@ public interface LinkService {
     public void deleteLinksForJob(Job dbjob);
 
     public List<Dot> getDotsForJob(Job dbjob);
+
+    public List<Link> getParentLinksFor(Job root);
 }

@@ -23,4 +23,6 @@ public interface NodePropertyValueService {
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job);
 
     public NodePropertyValue getNodePropertyValueFor(Job jobStep, NodeProperty nodeProperty);
+
+    public void removeAllNodePropertyValuesFor(Job dbjob);
 }

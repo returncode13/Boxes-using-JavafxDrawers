@@ -13,6 +13,7 @@ import db.model.Ancestor;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Workspace;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -209,6 +210,8 @@ public class AncestorDAOImpl implements AncestorDAO{
             System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface(): returning "+result.size()+" ancestors for job "+job.getId()+" containing sub : "+sub.getId());
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
         }
         return result;
     } 
@@ -239,8 +242,46 @@ public class AncestorDAOImpl implements AncestorDAO{
             System.out.println("db.dao.AncestorDAOImpl.getAncestorsForJobContainingSubsurface(): returning "+result.size());
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
         }
         return result;
     } 
+
+    @Override
+    public void removeAllAncestorEntriesFor(Workspace workspace) {
+         Session session = HibernateUtil.getSessionFactory().openSession();
+        
+        Transaction transaction=null;
+        System.out.println("db.dao.AncestorDAOImpl.removeAllAncestorEntriesFor()");
+        //String hql="from Descendant as d INNER JOIN Job as j INNER JOIN SubsurfaceJob as sj WHERE  sj.job_id =:jobAsked AND sj.id =:subsurfaceAsked";
+        String hqlSelectIds="Select A.id from Ancestor A INNER JOIN A.job aj WHERE aj.workspace =:w";
+        String hqlDelete="DELETE From Ancestor A where A.id in (:ids)";
+        List<Long> idsToDelete=new ArrayList<>();
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelectIds);
+            query.setParameter("w", workspace);
+            idsToDelete=query.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                int del=delQuery.executeUpdate();
+                System.out.println("db.dao.AncestorDAOImpl.removeAllAncestorEntriesFor(): deleted "+idsToDelete.size()+" ancestors");
+                for(Long id:idsToDelete){
+                    System.out.println("db.dao.AncestorDAOImpl.removeAllAncestorEntriesFor(): deleted: "+id);
+                }
+            }
+            
+            transaction.commit();
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
 
 }

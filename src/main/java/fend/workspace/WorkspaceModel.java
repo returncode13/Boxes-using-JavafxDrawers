@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -35,6 +37,40 @@ public class WorkspaceModel {
     private ObservableSet<EdgeModel> observableEdges=FXCollections.observableSet(edges);
     private List<String> insightVersions=new ArrayList<>();
     private Workspace workspace;
+    private BooleanProperty rebuildGraphOrderProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty prepareToRebuildProperty = new SimpleBooleanProperty(false);
+    private BooleanProperty clearDescendantsProperty = new SimpleBooleanProperty(false);
+
+    public BooleanProperty clearDescendantsProperty() {
+        return clearDescendantsProperty;
+    }
+
+    public void clearDescendants() {
+        boolean val=clearDescendantsProperty.get();
+        this.clearDescendantsProperty.set(!val);
+    }
+
+    
+    
+    
+    public BooleanProperty prepareToRebuildProperty() {
+        return prepareToRebuildProperty;
+    }
+
+    public void prepareToRebuild() {
+        boolean val=prepareToRebuildProperty.get();
+        this.prepareToRebuildProperty.set(!val);
+    }
+    
+    
+    public BooleanProperty rebuildGraphOrderProperty() {
+        return rebuildGraphOrderProperty;
+    }
+    
+    public void rebuildGraph(){
+        boolean val=rebuildGraphOrderProperty.get();
+        rebuildGraphOrderProperty.set(!val);
+    }
     
     
     

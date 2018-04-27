@@ -35,4 +35,6 @@ public interface LinkDAO {
     public void deleteLinksForJob(Job job);
 
     public List<Dot> getDotsForJob(Job job);
+
+    public List<Link> getParentLinksFor(Job job);
 }
