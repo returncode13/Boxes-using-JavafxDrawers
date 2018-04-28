@@ -364,6 +364,32 @@ public class SummaryDAOImpl implements  SummaryDAO{
          
     }
 
+    @Override
+    public void deleteAllSummariesForJob(Job job) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        
+       //  String hqlSelect="select s.id from Summary s INNER JOIN s.job sj WHERE sj.workspace =:w";
+         String hqlDelete="delete from Summary s where s.job =:j";
+         try{
+            transaction=session.beginTransaction();
+           // Query query=session.createQuery(hqlSelect);
+            //query.setParameter("w", dbWorkspace);
+           // List<Long> ids=query.list();
+            
+            Query delQuery=session.createQuery(hqlDelete);
+            //delQuery.setParameter("ids", ids);
+            delQuery.setParameter("j", job);
+            int delete=delQuery.executeUpdate();
+            
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+    }
+
     
 
    

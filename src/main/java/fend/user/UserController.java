@@ -17,6 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import db.services.UserService;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -38,6 +40,9 @@ public class UserController extends Stage{
 
     @FXML
     private Button addAUserBtn;
+    
+      @FXML
+    private Button viewUsersButton;
 
     @FXML
     void addANewUser(ActionEvent event) {
@@ -68,8 +73,15 @@ public class UserController extends Stage{
         close();
     }
 
+    @FXML
+    void viewUsers(ActionEvent event) {
+        System.out.println("fend.user.UserController.viewUsers(): Pending implementation");
+    }
+    
     void setModel(UserModel userModel) {
         model=userModel;
+        Image viewUserImage=new Image(getClass().getResourceAsStream("/icons/login.png"));
+        viewUsersButton.setGraphic(new ImageView(viewUserImage));
     }
 
     void setView(UserView vw) {

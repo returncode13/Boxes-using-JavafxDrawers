@@ -319,14 +319,16 @@ public class DugLogManager {
                                             listOfLogsForSub.get(ver).version=Long.valueOf(ver);
                                         }
                                         int highest=listOfLogsForSub.size()-1;
-                                      
+                                        if(listOfLogsForSub.size()>=highest){
                                         System.out.println("middleware.dugex.DugLogManager.extractInformation(): Adding highest "+highest+" ==> "+listOfLogsForSub.get(highest).log.getName()+" as latest version "+listOfLogsForSub.get(highest).version+" for "+listOfLogsForSub.get(highest).linename.getSubsurface()+" : ");
+                                        }
                                         latestLogSet.add(listOfLogsForSub.get(listOfLogsForSub.size()-1));         // the highest version in the sorted equals value (size-1) of the list
                                        
                                         logInformation.addAll(listOfLogsForSub);
                 }
           
             try {
+                System.out.println("middleware.dugex.DugLogManager.extractInformation(): getWorkFlowInformationFor2D..for logInformation.size() : "+logInformation.size()+" dbVol.name = "+dbVol.getNameVolume());
                 workflowsToBeCreated=getWorkFlowInformationFor2D(logInformation,dbVol);
             } catch (IOException ex) {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -725,6 +727,7 @@ public class DugLogManager {
     * return the set of workflows that need to be committed to the database
     **/
     private Set<Workflow> getWorkFlowInformationFor2D(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException {
+        System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): logInformation.size "+logInformation.size()+" dbVol.name: "+volume.getNameVolume());
          Map<String,List<LogInformation>> md5MapForWorkflow=new HashMap<>();   //map of md5 of workflows and their logs.
         Set<Workflow> workflows=new HashSet<>();
          
@@ -738,7 +741,7 @@ public class DugLogManager {
                 String value;
                 String content=new String();
                 while((value=br.readLine())!=null){
-                   // System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): "+value);
+               //     System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): "+value);
                     content+=value;
                     content+="\n";
                 };

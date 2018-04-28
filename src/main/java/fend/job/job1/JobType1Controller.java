@@ -23,12 +23,16 @@ import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
 import db.services.DotService;
 import db.services.DotServiceImpl;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
 import db.services.NodePropertyValueService;
 import db.services.NodePropertyValueServiceImpl;
+import db.services.SummaryService;
+import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import fend.dot.DotModel;
@@ -61,6 +65,7 @@ import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
+import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -838,6 +843,9 @@ public class JobType1Controller implements JobType0Controller{
     private LinkService linkService=new LinkServiceImpl();
     private VariableArgumentService variableArgumentService=new VariableArgumentServiceImpl();
     private DotService dotService=new DotServiceImpl();
+    private DoubtService doubtService=new DoubtServiceImpl();
+    private SummaryService summaryService=new SummaryServiceImpl();
+    
     
       private void deleteLinksBelongingtoCurrentJob() {
            List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
@@ -845,8 +853,7 @@ public class JobType1Controller implements JobType0Controller{
           for(Dot dot:dotsForJob){
           variableArgumentService.deleteVariableArgumentFor(dot);
           }
-          
-            
+           
             linkService.deleteLinksForJob(dbjob);
               for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());
@@ -879,11 +886,11 @@ public class JobType1Controller implements JobType0Controller{
         }
      
        private void deleteAllDoubtsRelatedToJob() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            doubtService.deleteAllDoubtsRelatedTo(dbjob);
         }
      
        private void deleteAllSummariesRelatedToJob() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            summaryService.deleteAllSummariesForJob(dbjob);
         }
        
         private void reloadWorkspace() {
@@ -897,6 +904,8 @@ public class JobType1Controller implements JobType0Controller{
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
+            deleteAllDoubtsRelatedToJob();
             deleteLinksBelongingtoCurrentJob();
             
             
@@ -906,10 +915,44 @@ public class JobType1Controller implements JobType0Controller{
             nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
             model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
             
-            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
-            jobService.deleteJob(dbjob.getId());  //replace by soft delete
-            rebuildAncestorDescendants();
-            reloadWorkspace();
+            
+             Task<Void> jobDeletionTask=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                    List<Volume0> volsInJobDc=new ArrayList<>();
+                    for(Volume0 v:model.getVolumes()){
+                        volsInJobDc.add(v);
+                    }
+                    
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                    for(Volume0 vol:volsInJobDc){
+                        System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                        vol.delete(true);
+                        model.removeVolume(vol);
+                    }
+                   
+                    
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");
+                    deleteAllSummariesRelatedToJob();
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
+                    jobService.deleteJob(dbjob.getId());  //replace by soft delete
+                    
+                       return null;
+                    }
+                    };
+                     
+           jobDeletionTask.setOnRunning(e->{
+                System.out.println("deletion in process...");
+            });
+            
+            jobDeletionTask.setOnSucceeded(e->{
+                
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
+                     rebuildAncestorDescendants();
+                     reloadWorkspace();
+            });
+            exec.execute(jobDeletionTask);
+           
         }
 
        

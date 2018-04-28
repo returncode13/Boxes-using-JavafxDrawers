@@ -35,4 +35,6 @@ public interface SummaryService {
     public void updateBulkSummaries(List<Summary> summariesToBeUpdated);
 
     public void deleteAllSummaries(Workspace dbWorkspace);
+
+    public void deleteAllSummariesForJob(Job job);
 }

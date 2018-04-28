@@ -885,13 +885,13 @@ public class AppController extends Stage implements Initializable{
             guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
             
             guestService.setOnSucceeded(e->{
-                System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
+              //  System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
                 //AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
                 guestList.getItems().clear();
                 guestList.getItems().addAll(AppController.this.observableGuestList);
             });
             guestService.setOnRunning(e->{
-                System.out.println("fend.app.AppController.startGuestService(): service is up and running");
+               // System.out.println("fend.app.AppController.startGuestService(): service is up and running");
             });
             guestService.setOnCancelled(e->{
                 System.out.println("fend.app.AppController.startGuestService(): cancelled");
@@ -1169,7 +1169,7 @@ public class AppController extends Stage implements Initializable{
     private ScheduledService<Void> guestService= new ScheduledService<Void>() {
                 @Override
                 protected Task<Void> createTask() {
-                    System.out.println("fend.app.AppController.startGuestService().createTask()..starting a task");
+                   // System.out.println("fend.app.AppController.startGuestService().createTask()..starting a task");
                     return new Task<Void>() {
                         @Override
                         protected Void call() throws Exception {
@@ -1224,7 +1224,7 @@ public class AppController extends Stage implements Initializable{
     private void refreshGuestList(){
       
         if(!guestService.isRunning()){
-            System.out.println("fend.app.AppController.refreshGuestList(): starting");
+            //System.out.println("fend.app.AppController.refreshGuestList(): starting");
             guestService.start();
             //startGuestService();
         }else{

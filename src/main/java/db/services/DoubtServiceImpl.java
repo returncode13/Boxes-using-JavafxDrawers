@@ -159,6 +159,11 @@ public class DoubtServiceImpl implements DoubtService{
         dsDAO.deleteAllInheritedDoubts(dbWorkspace);
     }
 
+    @Override
+    public void deleteAllDoubtsRelatedTo(Job job) {
+        dsDAO.deleteAllDoubtsRelatedTo(job);
+    }
+
     
     
 }

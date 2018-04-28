@@ -726,6 +726,92 @@ public class DoubtDAOImpl implements DoubtDAO{
         
     }
 
+    @Override
+    public void deleteAllDoubtsRelatedTo(Job job) {
+        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        DoubtTypeService doubtTypeService= new DoubtTypeServiceImpl();
+        DoubtType dt=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+        
+        
+        String causeDoubtIdsSelect="Select d.id from Doubt d INNER JOIN d.link l"
+                + "                                          WHERE l.parent =:j OR "
+                + "                                                l.child  =:j"
+             //   + "                                               (l.child =:j AND d.childJob =:j)"
+                + "                 ";
+        String inheritedDoubtIdSelect="Select i.id from Doubt i where i.doubtCause.id in (:inds)";
+        
+        String inheritanceOnJobSelect="Select d.id from Doubt d where childJob =:j and doubtType =:dt";   
+        String deleteQ="Delete from Doubt d where d.id in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query causeSelectQ=session.createQuery(causeDoubtIdsSelect);
+            causeSelectQ.setParameter("j",job);
+            System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): returning queries for the cause");
+            List<Long> causeIdsToDelete=causeSelectQ.list();
+            
+            System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): returning a list of ids of size: "+causeIdsToDelete.size());
+            
+                if(!causeIdsToDelete.isEmpty()){
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): Makign an query for deleting the inheritance : causeids of size: "+causeIdsToDelete.size());
+                    Query inheritSelectQ = session.createQuery(inheritedDoubtIdSelect);
+                    inheritSelectQ.setParameterList("inds", causeIdsToDelete);
+                    List<Long> inhidsToDelete = inheritSelectQ.list();
+                    //transaction.commit();
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): returning inherited doubts of size: " + inhidsToDelete.size());
+
+                    if (!inhidsToDelete.isEmpty()) {
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting " + inhidsToDelete.size() + " inherited doubts related to job: " + job.getNameJobStep());
+                        Query inhDeleteQ = session.createQuery(deleteQ);
+                        inhDeleteQ.setParameterList("ids", inhidsToDelete);
+                        int inhde = inhDeleteQ.executeUpdate();
+                        transaction.commit();
+                    } else {
+                        transaction.commit();
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): " + job.getNameJobStep() + " caused no inheritance doubts in its descendants");
+                    }
+
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting " + causeIdsToDelete.size() + " causes related to job: " + job.getNameJobStep());
+
+                    transaction = session.beginTransaction();
+                    Query causeDeleteQ = session.createQuery(deleteQ);
+                    causeDeleteQ.setParameterList("ids", causeIdsToDelete);
+                    int causeDel = causeDeleteQ.executeUpdate();
+                    transaction.commit();
+                    
+                }else{
+                    transaction.commit();
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): No causes to delete for job: "+job.getNameJobStep());
+                }
+                
+               transaction=session.beginTransaction();
+           Query inheritOnSelfQ=session.createQuery(inheritanceOnJobSelect);
+           inheritOnSelfQ.setParameter("dt", dt);
+           inheritOnSelfQ.setParameter("j", job);
+           List<Long> inselfIds=inheritOnSelfQ.list();
+           
+           
+            if(!inselfIds.isEmpty()){
+                System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting "+inselfIds.size()+" inherited doubts on job "+job.getNameJobStep());
+                Query d=session.createQuery(deleteQ);
+                d.setParameterList("ids", inselfIds);
+                int ind=d.executeUpdate();
+                transaction.commit();
+            }else{
+                transaction.commit();
+                System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): No inherited doubts on job : "+job.getNameJobStep());
+                
+            }
+            
+            
+        }catch (Exception e){
+            
+        }finally{
+            session.close();
+        }
+    }
+
     
     
 

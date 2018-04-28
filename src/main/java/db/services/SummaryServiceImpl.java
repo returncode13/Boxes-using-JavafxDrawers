@@ -92,5 +92,10 @@ public class SummaryServiceImpl implements SummaryService{
     public void deleteAllSummaries(Workspace dbWorkspace) {
         summaryDao.deleteAllSummaries(dbWorkspace);
     }
+
+    @Override
+    public void deleteAllSummariesForJob(Job job) {
+        summaryDao.deleteAllSummariesForJob(job);
+    }
     
 }

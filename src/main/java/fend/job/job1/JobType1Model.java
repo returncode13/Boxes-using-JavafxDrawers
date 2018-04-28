@@ -155,7 +155,7 @@ public class JobType1Model implements JobType0Model {
         volumes=new ArrayList<>();
         
         observableVolumes=FXCollections.observableArrayList(volumes);
-        observableVolumes.addListener(volumeListChangeListener);
+      //  observableVolumes.addListener(volumeListChangeListener);
         
         
         qcmatrix =new ArrayList<>();

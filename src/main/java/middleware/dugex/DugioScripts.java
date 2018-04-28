@@ -76,9 +76,22 @@ public class DugioScripts implements Serializable{
      /* private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
      "sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{print $7\" Insight=\"$12}'";                //one log at a time*/
      
-     private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
-"sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{$1=$2=$3=$4=$5=$6=$8=$9=$10=$11=\"\";printf $7;$7=\"\";printf\" Insight=\"$0}'";                //one log at a time
-     
+     /*private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
+     "sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{$1=$2=$3=$4=$5=$6=$8=$9=$10=$11=\"\";printf $7;$7=\"\";printf\" Insight=\"$0}'";                //one log at a time . Currently using ths for 2D
+     */
+       private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
+"sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' |awk '{for(i=1;i<=NF;i++){\n" +
+"										if($i ~ /lineName/){\n" +
+"											printf $i\" Insight=\"\n" +
+"										}\n" +
+"										if($i ~ /VERSION/) {\n" +                                  // if the column contains VERSION, then print from there on till the end 
+"											for(j=i+1;j<=NF;j++){\n" +
+"												printf $j\n" +
+"											}\n" +
+"											exit\n" +
+"										}\n" +
+"									   }\n" +
+"									}'";                //one log at a time . Currently using ths for 2D
      
       private String subsurfaceLogContent="#!/bin/bash\n" +
 "for i in $1/*; do sed '100q;2,100p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";

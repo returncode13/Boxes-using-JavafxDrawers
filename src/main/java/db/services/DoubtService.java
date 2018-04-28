@@ -57,6 +57,8 @@ public interface DoubtService {
 
     public void deleteAllInheritedDoubts(Workspace dbWorkspace);
 
+    public void deleteAllDoubtsRelatedTo(Job job);                    //delete all causes (l.child=job or l.parent=job) and all inherited doubts from these causes
+
     
 
     

@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -74,7 +76,8 @@ public class HeaderExtractor {
     List<SubsurfaceJob> subsurfaceJobs=new ArrayList<>();
     List<Header> headers=new ArrayList<>();
     List<HeaderHolder> headerHolderList=new ArrayList<>();        
-            
+    List<SubsurfaceJobKey> existingSubsurfaceJobs=new ArrayList<>();
+    
     public HeaderExtractor(JobType0Model j) throws Exception{
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
@@ -87,7 +90,7 @@ public class HeaderExtractor {
         List<Callable<String>> callableTasks=new ArrayList<>();
         int processors=Runtime.getRuntime().availableProcessors();
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Number of available processors : "+processors);
-      
+       
     
         if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
          //  subsurfaceJobs=new ArrayList<>();
@@ -95,7 +98,17 @@ public class HeaderExtractor {
            
            
           for(Volume0 vol:volumes){
-              
+              subsurfaceJobs.clear();
+              headers.clear();
+              headerHolderList.clear();
+               List<Subsurface> subsExistingInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
+        
+                for(Subsurface s:subsExistingInJob){
+                    SubsurfaceJobKey skey=generateSubsurfaceJobKey(s, dbjob);
+                    existingSubsurfaceJobs.add(skey);
+                }
+                
+                
               Volume dbvol=volumeService.getVolume(vol.getId());
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get()+" id: "+dbvol.getId());
               //Job dbjob=dbvol.getJob();
@@ -227,7 +240,11 @@ public class HeaderExtractor {
                    }*/
                    
                    for(HeaderHolder hh:headerHolderList){
-                       subsurfaceJobs.add(hh.subjob);
+                       SubsurfaceJobKey skey=generateSubsurfaceJobKey(hh.subjob.getSubsurface(), hh.subjob.getJob());
+                       if(!existingSubsurfaceJobs.contains(skey)){
+                                    subsurfaceJobs.add(hh.subjob);
+                                    existingSubsurfaceJobs.add(skey);
+                        }
                        headers.add(hh.header);
                    }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
@@ -525,6 +542,50 @@ public class HeaderExtractor {
     private class HeaderHolder{
         SubsurfaceJob subjob;
         Header header;
+    }
+    
+    private class SubsurfaceJobKey {
+        Subsurface subsurface;
+        Job job;
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 59 * hash + Objects.hashCode(this.subsurface);
+            hash = 59 * hash + Objects.hashCode(this.job);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final SubsurfaceJobKey other = (SubsurfaceJobKey) obj;
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            return true;
+        }
+        
+                
+    }
+    
+    private SubsurfaceJobKey generateSubsurfaceJobKey(Subsurface sub,Job job){
+        SubsurfaceJobKey key=new SubsurfaceJobKey();
+        key.subsurface=sub;
+        key.job=job;
+        
+        return key;
     }
 }
 
