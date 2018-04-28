@@ -149,37 +149,48 @@ public class VolumeListController {
     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue){
             
-            for(Volume0 vols:model.observableListOfVolumes){
-                boolean volIsToBeDeleted=vols.deleteProperty().get();
-                if(volIsToBeDeleted){
-                    System.out.println(" "+vols.getId()+" : "+vols.getName()+" will be deleted from the irdb database");
-                    
-                    /**
-                     * delete headers
-                     * delete logs
-                     * delete workflows
-                     **/
-                    Volume dbVol=vols.getDbVolume();
-                    
-                    
-                    System.out.println("deleting associated logs");
-                    logService.deleteLogsFor(dbVol);
-                    
-                    System.out.println("deleting associated headers");
-                    headerService.deleteHeadersFor(dbVol);
-                    
-                    
-                    System.out.println("deleting associated workflows");
-                    workflowService.deleteWorkFlowsFor(dbVol);
-                    
-                    System.out.println("deleting volume  from the irdb database");
-                    volumeService.deleteVolume(dbVol.getId());
-                    
-                    
-                    parentjob.removeVolume(vols); 
+                List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
+                for(Volume0 vols:parentjob.getVolumes()){
+                    volTobeParentDeepCopy.add(vols);
                 }
-            }
+                
+                for(Volume0 vols:volTobeParentDeepCopy){
+                    boolean volIsToBeDeleted=vols.deleteProperty().get();
+                    if(volIsToBeDeleted){
+                        System.out.println(" "+vols.getId()+" : "+vols.getName()+" will be deleted  from the irdb database");
+                        
+                        /**
+                         * 
+                         * delete logs
+                         * delete headers
+                         * delete workflows
+                         **/
+                         Volume dbVol=vols.getDbVolume();
+
+                         /*System.out.println("deleting associated logs");
+                         logService.deleteLogsFor(dbVol);*/
+
+                        System.out.println("deleting associated headers");
+                        headerService.deleteHeadersFor(dbVol);
+
+
+                        /*System.out.println("deleting associated workflows");
+                        workflowService.deleteWorkFlowsFor(dbVol);*/
+                        
+                        System.out.println("deleting volume  from the irdb database");
+                        volumeService.deleteVolume(dbVol.getId());
+
+                        
+                        
+
+                       
+                        
+                    }
+                }
+        }
+            
         }
     };
 }

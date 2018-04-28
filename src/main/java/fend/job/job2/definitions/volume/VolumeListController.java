@@ -27,7 +27,9 @@ import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,47 +81,17 @@ public class VolumeListController {
         
         volumeService.createVolume(vol);
         
-        //type=1L;  <--for demo
-        /*if(type.equals(JobType0Model.PROCESS_2D)){
-        Volume4 volume1=new Volume4(parentjob);
-        volume1.setId(vol.getId());
-        volume1.setName(f.getName());
-        volume1.setVolume(f);
         
-        model.addToVolumeList(volume1);
-        }*/
          if(type.equals(JobType0Model.SEGD_LOAD)){
         Volume2 volume2=new Volume2(parentjob);
         volume2.setId(vol.getId());
         volume2.setName(f.getName());
         volume2.setVolume(f);
         volume2.setDbVolume(vol);
-            volume2.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
+        volume2.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
         model.addToVolumeList(volume2);
         }
-         /*
-        if(type.equals(JobType0Model.ACQUISITION)){
-        //TO DO.
         
-        
-        /*Volume2 volume2=new Volume2(parentjob);
-        volume2.setId(vol.getId());
-        volume2.setName(f.getName());
-        volume2.setVolume(f);
-        
-        model.addToVolumeList(volume2);*/
-   // }
-    /*if(type.equals(JobType0Model.TEXT)){
-        //TO DO.
-        
-        
-        /*Volume2 volume2=new Volume2(parentjob);
-        volume2.setId(vol.getId());
-        volume2.setName(f.getName());
-        volume2.setVolume(f);
-        
-        model.addToVolumeList(volume2);*/
-   /* }*/
     }
     
      
@@ -137,14 +109,7 @@ public class VolumeListController {
         Set<Volume> dbVolumesInJob= new HashSet<>(volumeService.getVolumesForJob(dbjob));
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
-            /*if(type.equals(JobType0Model.PROCESS_2D)){
-            fevol=new Volume4(parentjob);
-            fevol.setId(dbVol.getId());
-            fevol.setName(dbVol.getNameVolume());
-            File volumeOnDisk=new File(dbVol.getPathOfVolume());
-            fevol.setVolume(volumeOnDisk);
-            model.addToVolumeList(fevol);
-            }*/
+            
              if(type.equals(JobType0Model.SEGD_LOAD)){
             fevol=new Volume2(parentjob);
             fevol.setId(dbVol.getId());
@@ -155,27 +120,7 @@ public class VolumeListController {
             fevol.setVolume(volumeOnDisk);
             model.addToVolumeList(fevol);
             }
-             /*
-            if(type.equals(JobType0Model.ACQUISITION)){
-            //TO DO
-            
-            /*fevol=new Volume2(parentjob);
-            fevol.setId(dbVol.getId());
-            fevol.setName(dbVol.getNameVolume());
-            File volumeOnDisk=new File(dbVol.getPathOfVolume());
-            fevol.setVolume(volumeOnDisk);
-            model.addToVolumeList(fevol);*/
-       // }
-      //  if(type.equals(JobType0Model.TEXT)){
-            //TO DO
-            
-            /*fevol=new Volume2(parentjob);
-            fevol.setId(dbVol.getId());
-            fevol.setName(dbVol.getNameVolume());
-            File volumeOnDisk=new File(dbVol.getPathOfVolume());
-            fevol.setVolume(volumeOnDisk);
-            model.addToVolumeList(fevol);*/
-     //   }*/
+           
         }
         
     }
@@ -187,38 +132,51 @@ public class VolumeListController {
         volumeListView.setItems(model.getObservableListOfVolumes());
     }
     
-    private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
+     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue){
             
-            for(Volume0 vols:model.observableListOfVolumes){
-                boolean volIsToBeDeleted=vols.deleteProperty().get();
-                if(volIsToBeDeleted){
-                    System.out.println(" "+vols.getId()+" : "+vols.getName()+" will be deleted  from the irdb database");
-                    
-                    /**
-                     * delete headers
-                     * delete logs
-                     * delete workflows
-                     **/
-                    Volume dbVol=vols.getDbVolume();
-                     System.out.println("deleting associated logs");
-                    logService.deleteLogsFor(dbVol);
-                    
-                    System.out.println("deleting associated headers");
-                    headerService.deleteHeadersFor(dbVol);
-                    
-                    
-                    System.out.println("deleting associated workflows");
-                    workflowService.deleteWorkFlowsFor(dbVol);
-                    
-                     System.out.println("deleting volume  from the irdb database");
-                    volumeService.deleteVolume(dbVol.getId());
-                    
-                    
-                    parentjob.removeVolume(vols); 
+                List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
+                for(Volume0 vols:parentjob.getVolumes()){
+                    volTobeParentDeepCopy.add(vols);
                 }
-            }
+                
+                for(Volume0 vols:volTobeParentDeepCopy){
+                    boolean volIsToBeDeleted=vols.deleteProperty().get();
+                    if(volIsToBeDeleted){
+                        System.out.println(" "+vols.getId()+" : "+vols.getName()+" will be deleted  from the irdb database");
+                        
+                        /**
+                         * 
+                         * delete logs
+                         * delete headers
+                         * delete workflows
+                         **/
+                         Volume dbVol=vols.getDbVolume();
+
+                        System.out.println("deleting associated logs");
+                        logService.deleteLogsFor(dbVol);
+
+                        System.out.println("deleting associated headers");
+                        headerService.deleteHeadersFor(dbVol);
+
+
+                        System.out.println("deleting associated workflows");
+                        workflowService.deleteWorkFlowsFor(dbVol);
+
+                        System.out.println("deleting volume  from the irdb database");
+                        volumeService.deleteVolume(dbVol.getId());
+
+                        
+                        
+
+                       
+                        
+                    }
+                }
+        }
+            
         }
     };
 }

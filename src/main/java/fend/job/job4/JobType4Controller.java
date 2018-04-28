@@ -14,13 +14,26 @@ import com.jfoenix.controls.JFXDrawersStack;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
+import db.model.Dot;
 import db.model.Job;
 import db.services.AncestorService;
 import db.services.AncestorServiceImpl;
 import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
+import db.services.DotService;
+import db.services.DotServiceImpl;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.LinkService;
+import db.services.LinkServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
+import db.services.SummaryService;
+import db.services.SummaryServiceImpl;
+import db.services.VariableArgumentService;
+import db.services.VariableArgumentServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -51,8 +64,13 @@ import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
+import fend.volume.volume0.Volume0;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -99,6 +117,8 @@ public class JobType4Controller implements JobType0Controller{
     @FXML
     private JFXButton openDrawer;
 
+    private Executor exec;
+    
     void setModel(JobType4Model item) {
         model=item;
         //dbjob=jobService.getJob(model.getId());
@@ -109,6 +129,12 @@ public class JobType4Controller implements JobType0Controller{
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
         model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
+        exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
+        
     }
 
     void setView(JobType4View vw,AnchorPane interactivePane) {
@@ -647,5 +673,125 @@ parent.addChild(model);*/
         }
     };
     
+      
+    private LinkService linkService=new LinkServiceImpl();
+    private VariableArgumentService variableArgumentService=new VariableArgumentServiceImpl();
+    private DotService dotService=new DotServiceImpl();
+    private DoubtService doubtService=new DoubtServiceImpl();
+    private SummaryService summaryService=new SummaryServiceImpl();
     
+    
+      private void deleteLinksBelongingtoCurrentJob() {
+           List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
+          System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting the variable arguments ");
+          for(Dot dot:dotsForJob){
+          variableArgumentService.deleteVariableArgumentFor(dot);
+          }
+           
+            linkService.deleteLinksForJob(dbjob);
+              for(Dot dot:dotsForJob){
+            dot=dotService.getDot(dot.getId());
+            if(dot.canBeDeleted()){ //if dot no longer has any links then its candidate for delete
+            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting dot "+dot.getId());
+            dotService.deleteDot(dot.getId());
+            }else{
+            System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): NO DELETION for dot "+dot.getId()+" which has links existing. ");
+            dot.setFunction("");
+            dotService.updateFunction(dot);
+            //rebuildVariableArguments(dot);     // This is done during the reload of the session
+            }
+            }
+            
+        }
+
+       private void rebuildVariableArguments(Dot dot) {
+           //figure out the mode of the dot(SPLIT,JOIN,NJS)    . Done during workspace loading
+           throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    
+      private void rebuildAncestorDescendants() {
+           model.getWorkspaceModel().rebuildGraph();              //workspace controller rebuilds the graph
+      }
+    
+     
+       private void deleteAllVolumesInCurrentJob() {
+            //toggleDelete On each volume
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+     
+       private void deleteAllDoubtsRelatedToJob() {
+            doubtService.deleteAllDoubtsRelatedTo(dbjob);
+        }
+     
+       private void deleteAllSummariesRelatedToJob() {
+            summaryService.deleteAllSummariesForJob(dbjob);
+        }
+       
+        private void reloadWorkspace() {
+            model.getWorkspaceModel().reload();
+        }
+
+        
+
+    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
+    
+    private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
+            deleteAllDoubtsRelatedToJob();
+            deleteLinksBelongingtoCurrentJob();
+            
+            
+            /*deleteAllVolumesInCurrentJob();
+            deleteAllDoubtsRelatedToJob();
+            deleteAllSummariesRelatedToJob();*/
+            nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
+            model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
+            
+            
+             Task<Void> jobDeletionTask=new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                    List<Volume0> volsInJobDc=new ArrayList<>();
+                    for(Volume0 v:model.getVolumes()){
+                        volsInJobDc.add(v);
+                    }
+                    
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                    for(Volume0 vol:volsInJobDc){
+                        System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                        vol.delete(true);
+                        model.removeVolume(vol);
+                    }
+                   
+                    
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");
+                    deleteAllSummariesRelatedToJob();
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
+                    jobService.deleteJob(dbjob.getId());  //replace by soft delete
+                    
+                       return null;
+                    }
+                    };
+                     
+           jobDeletionTask.setOnRunning(e->{
+                System.out.println("deletion in process...");
+            });
+            
+            jobDeletionTask.setOnSucceeded(e->{
+                
+                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
+                     rebuildAncestorDescendants();
+                     reloadWorkspace();
+            });
+            exec.execute(jobDeletionTask);
+           
+        }
+
+       
+      
+       
+ 
+    };
 }
