@@ -64,7 +64,7 @@ public class QcTableController extends Stage{
         
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
         
-        
+        System.out.println("fend.job.table.qctable.QcTableController.setModel(): starting to build the qc table");
          List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
         for(QcTableSequence qcseq:sequences){
             TreeItem<QcTableSequence> qseqroot=new TreeItem<>(qcseq);
@@ -75,7 +75,7 @@ public class QcTableController extends Stage{
             treeSeq.add(qseqroot);
         }
         
-        
+        System.out.println("fend.job.table.qctable.QcTableController.setModel(): finished building the qc table");
         
         
         

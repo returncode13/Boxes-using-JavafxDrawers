@@ -97,6 +97,7 @@ public class JobType3Controller implements JobType0Controller{
     private BooleanProperty checkForHeaders;
     private HeaderExtractor headerExtractor=null;
     private Executor exec;
+    private QcTableModel  qcTableModel;
     
     @FXML
     private JFXTextField name;
@@ -128,6 +129,9 @@ public class JobType3Controller implements JobType0Controller{
         model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
       //  model.getDepth().addListener(depthChangeListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
+      model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
+      //qcTableModel.qcSelectionChangedProperty().addListener(QC_CHANGED_LISTENER);
+      
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -391,10 +395,40 @@ parent.addChild(model);*/
     
      @FXML
     void showQctable(ActionEvent event) {
-            QcTableModel qcTableModel=new QcTableModel(model);
-            QcTableView qcTableView=new QcTableView(qcTableModel);
+        
+                Task<Void> qctableTask=new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                //  qctable.setDisable(true);
+                if(qcTableModel==null){
+                     qcTableModel=new QcTableModel(model);
+                     
+                }
+
+
+                    return null;
+                    }
+                };
+
+                qctableTask.setOnFailed(e->{
+                qctableTask.getException().printStackTrace();
+                qctable.setDisable(false);
+                });
+                qctableTask.setOnSucceeded(e->{
+                QcTableView qcTableView=new QcTableView(qcTableModel);
+                qctable.setDisable(false);
+
+                });
+                qctableTask.setOnRunning(e->{
+                System.out.println("fend.job.job1.JobType3Controller.showQctable()...loading the qctable");
+                qctable.setDisable(true);
+                });
+
+                exec.execute(qctableTask);
+        
+            
+            
     }
-    
     
     @Override
     public JobType0Model getModel() {
@@ -775,7 +809,7 @@ parent.addChild(model);*/
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
+            System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
             deleteAllDoubtsRelatedToJob();
             deleteLinksBelongingtoCurrentJob();
             
@@ -795,17 +829,17 @@ parent.addChild(model);*/
                         volsInJobDc.add(v);
                     }
                     
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                    System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
                     for(Volume0 vol:volsInJobDc){
-                        System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                        System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
                         vol.delete(true);
                         model.removeVolume(vol);
                     }
                    
                     
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");
+                    System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");
                     deleteAllSummariesRelatedToJob();
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
+                    System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
                     jobService.deleteJob(dbjob.getId());  //replace by soft delete
                     
                        return null;
@@ -818,7 +852,7 @@ parent.addChild(model);*/
             
             jobDeletionTask.setOnSucceeded(e->{
                 
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
+                    System.out.println("fend.job.job3.JobType3Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
                      rebuildAncestorDescendants();
                      reloadWorkspace();
             });
@@ -826,9 +860,15 @@ parent.addChild(model);*/
            
         }
 
-       
-      
-       
- 
+    };
+    
+     private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            
+            qcTableModel=null;
+            
+        }
     };
 }

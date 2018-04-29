@@ -9,6 +9,7 @@ import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import fend.job.job0.JobType0Model;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
@@ -36,7 +37,7 @@ public class QcMatrixRowModel extends QcMatrixRowModelParent{
     BooleanProperty checkUncheckProperty=new SimpleBooleanProperty();
     BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
     
-    
+    JobType0Model parentJob;
     public QcMatrixRowModel() {
         
         checkedByUser.addListener(new ChangeListener<Boolean>(){
@@ -46,11 +47,19 @@ public class QcMatrixRowModel extends QcMatrixRowModelParent{
                 dbqcmatrixrow.setPresent(newValue);
                 qcMatrixRowService.updateQcMatrixRow(dbqcmatrixrow.getId(), dbqcmatrixrow);*/
                 qcMatrixRowService.updatePresent(id,newValue);
+                 parentJob.toggleQcChangedProperty();
             }
             
         });
     }
     
+     public JobType0Model getParentJob() {
+        return parentJob;
+    }
+
+    public void setParentJob(JobType0Model parentJob) {
+        this.parentJob = parentJob;
+    }
     
     
     

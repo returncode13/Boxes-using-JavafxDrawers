@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -46,7 +48,18 @@ public class QcTableModel {
     private JobService jobService=new JobServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
-
+    private BooleanProperty qcSelectionChanged=new SimpleBooleanProperty(false);
+    
+    /*public BooleanProperty qcSelectionChangedProperty(){
+    return qcSelectionChanged;
+    }
+    
+    public void userHasChangedQcSelection(){
+    
+    Boolean val=qcSelectionChanged.get();
+    qcSelectionChanged.set(!val);
+    }*/
+    
     public QcTableModel(JobType0Model fejob) {
         this.fejob = fejob;
         parentJob=jobService.getJob(this.fejob.getId());
@@ -70,6 +83,7 @@ public class QcTableModel {
         
         //Set<Subsurface> subsinJob=parentJob.getSubsurfaces();
         Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(parentJob));
+        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): starting to build the lookup map");
      //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+parentJob.getId()+" size: "+subsinJob.size());
         for(Subsurface s:subsinJob){
             Sequence seq=s.getSequence();
@@ -95,6 +109,7 @@ public class QcTableModel {
             }
         }
         
+        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): finished building the lookup map");
         for (Map.Entry<Sequence, List<QcTableSequence>> entry : lookupmap.entrySet()) {
             Sequence seq = entry.getKey();
             List<QcTableSequence> subs = entry.getValue();
@@ -104,15 +119,16 @@ public class QcTableModel {
             seqtreeroot.setChildren(obssubs);
             seqtreeroot.setQcmatrix(feqcmr);
             seqtreeroot.setSequence(seq);
-            
+            //System.out.println("fend.job.table.qctable.QcTableModel.<init>(): starting to build for seq: "+seq.getSequenceno());
            // seqtreeroot.setIsParent(true);
             for(QcTableSequence sub:obssubs){
                 sub.setParent(seqtreeroot);
             }
+           // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): finished building for seq: "+seq.getSequenceno());
             
             qctableSequences.add(seqtreeroot);      //each entry can now be rendered as seq.Long   sub.string   qcmatrix[1].check/Uncheck/Indeterminate  qcmatrix[2].check/Uncheck/Indeterminate... qcmatrix[n].check/uncheck/indeteminate
         }
-        
+        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): added the seqs to the qctableSequences List");
       //  System.out.println("fend.job.table.qctable.QcTableModel.<init>() qctableSequences is of size(): "+qctableSequences.size());
     }
     

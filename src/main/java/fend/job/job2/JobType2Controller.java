@@ -101,6 +101,7 @@ public class JobType2Controller implements JobType0Controller{
     private DugLogManager dugLogManager=null;
     private HeaderExtractor headerExtractor=null;
     private Executor exec;
+    private QcTableModel  qcTableModel;
     
     private BooleanProperty checkForHeaders;
     
@@ -138,6 +139,7 @@ public class JobType2Controller implements JobType0Controller{
       //  model.getDepth().addListener(depthChangeListener);
          model.finishedCheckingLogs().addListener(checkLogsListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
+      model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -416,11 +418,40 @@ parent.addChild(model);*/
            
     }
     
-     @FXML
+        @FXML
     void showQctable(ActionEvent event) {
-            QcTableModel qcTableModel=new QcTableModel(model);
-            QcTableView qcTableView=new QcTableView(qcTableModel);
+        Task<Void> qctableTask=new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+                  //  qctable.setDisable(true);
+                  if(qcTableModel==null){
+                      qcTableModel=new QcTableModel(model);
+                  }
+                    
+                    
+                     return null;
+                    }
+                    };
+            
+             qctableTask.setOnFailed(e->{
+            qctableTask.getException().printStackTrace();
+                qctable.setDisable(false);
+            });
+            qctableTask.setOnSucceeded(e->{
+                QcTableView qcTableView=new QcTableView(qcTableModel);
+                qctable.setDisable(false);
+            
+            });
+            qctableTask.setOnRunning(e->{
+                System.out.println("fend.job.job1.JobType1Controller.showQctable()...loading the qctable");
+                qctable.setDisable(true);
+            });
+            
+            exec.execute(qctableTask);
+            
     }
+    
+    
     
     
     @Override
@@ -905,5 +936,13 @@ parent.addChild(model);*/
  
     };
     
+    
+     private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            qcTableModel=null;
+        }
+    };
     
 }

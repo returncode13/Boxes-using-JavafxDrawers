@@ -69,6 +69,7 @@ public class QcMatrixController {
             qcMatrixRow.setId(dbnewQcMatrixRow.getId());
             qcMatrixRow.setName(name);
             qcMatrixRow.setQctype(qctype);
+            qcMatrixRow.setParentJob(qcMatrixModel.getParentjob());
             qcMatrixModel.addQcMatrixRow(qcMatrixRow);
             
         }
@@ -92,7 +93,8 @@ public class QcMatrixController {
                 QcMatrixRowModel qcrw=new QcMatrixRowModel();
                 qcrw.setId(qcmatrixRow.getId());
                 qcrw.setName(qcmatrixRow.getQctype().getName());
-                System.out.println("fend.job.job2.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
+                qcrw.setParentJob(qcMatrixModel.getParentjob());
+                System.out.println("fend.job.job4.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
                 qcrw.setCheckedByUser(qcmatrixRow.getPresent());
                 
                 qcMatrixModel.addQcMatrixRow(qcrw);

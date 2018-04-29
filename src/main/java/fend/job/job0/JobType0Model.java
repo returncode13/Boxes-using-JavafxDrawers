@@ -93,4 +93,8 @@ public interface JobType0Model {
     public BooleanProperty deleteProperty();
     public void toggleDeleteProperty();
     
+    public BooleanProperty qcChangedProperty();
+    public void toggleQcChangedProperty();
+    public void setQcChanged(boolean v);
+    
 }

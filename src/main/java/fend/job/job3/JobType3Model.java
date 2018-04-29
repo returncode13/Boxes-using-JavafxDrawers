@@ -91,7 +91,21 @@ public class JobType3Model implements JobType0Model {
     private Job databaseJob;
     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
     private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
     
+    public BooleanProperty qcChangedProperty(){
+        return qcChangedProperty;
+    }
+    
+    public void setQcChanged(boolean v){
+        qcChangedProperty.set(v);
+    }
+    
+    
+    public void toggleQcChangedProperty(){
+        boolean val=qcChangedProperty.get();
+        qcChangedProperty.set(!val);
+    }
     
    
     @Override
