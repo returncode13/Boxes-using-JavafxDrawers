@@ -73,6 +73,11 @@ public class QcTableServiceImpl implements QcTableService{
     public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s) throws Exception {
          return qcmDAO.getQcTableFor(qcmatrixRowId, s);
     }
+
+    @Override
+    public void deleteAllQcTablesForJob(Job job) {
+        qcmDAO.deleteAllQcTablesForJob(job);
+    }
     
     
 

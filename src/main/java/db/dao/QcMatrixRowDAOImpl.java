@@ -212,5 +212,38 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
             session.close();
         }
     }
+
+    @Override
+    public void deleteAllQcMatrixRowsForJob(Job job) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.deleteAllQcMatrixRowsForJob()");
+       Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select q.id from  QcMatrixRow q where q.job =:j";
+       String hqlDelete = "Delete from QcMatrixRow q where q.id in (:ids)";
+       
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", job);
+           List<Long> idsToDelete=selectQuery.list();
+           
+           
+           if(idsToDelete.isEmpty()){
+               transaction.commit();
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcMatrixRowsForJob(): no qc definitions found for job: "+job.getNameJobStep());
+           }else{
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcMatrixRowsForJob(): deleting "+idsToDelete.size()+" qc definitions for job: "+job.getNameJobStep());
+               Query deleteQuery=session.createQuery(hqlDelete);
+               deleteQuery.setParameterList("ids", idsToDelete);
+               int del=deleteQuery.executeUpdate();
+               transaction.commit();
+               
+           }
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+    }
     
 }

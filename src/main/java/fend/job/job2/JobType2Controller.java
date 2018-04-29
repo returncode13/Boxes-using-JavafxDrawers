@@ -30,6 +30,10 @@ import db.services.LinkService;
 import db.services.LinkServiceImpl;
 import db.services.NodePropertyValueService;
 import db.services.NodePropertyValueServiceImpl;
+import db.services.QcMatrixRowService;
+import db.services.QcMatrixRowServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
@@ -139,6 +143,7 @@ public class JobType2Controller implements JobType0Controller{
       //  model.getDepth().addListener(depthChangeListener);
          model.finishedCheckingLogs().addListener(checkLogsListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
+      model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
@@ -618,6 +623,9 @@ parent.addChild(model);*/
             }
         });
         
+        deleteThisJob.setOnAction(e->{
+            model.toggleDeleteProperty();
+        });
         menu.getItems().addAll(addAChildJob,deleteThisJob);
     }
     
@@ -815,12 +823,14 @@ parent.addChild(model);*/
     
     
       
+  
     private LinkService linkService=new LinkServiceImpl();
     private VariableArgumentService variableArgumentService=new VariableArgumentServiceImpl();
     private DotService dotService=new DotServiceImpl();
     private DoubtService doubtService=new DoubtServiceImpl();
     private SummaryService summaryService=new SummaryServiceImpl();
-    
+    private QcTableService qcTableService=new QcTableServiceImpl();
+    private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
     
       private void deleteLinksBelongingtoCurrentJob() {
            List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
@@ -872,13 +882,21 @@ parent.addChild(model);*/
             model.getWorkspaceModel().reload();
         }
 
-        
+         private void deleteAllQcsRelatedToJob() {
+             System.out.println("fend.job.job1.JobType1Controller.deleteAllQcsRelatedToJob(): deleting all qc table entries related to job "+dbjob.getNameJobStep());
+             qcTableService.deleteAllQcTablesForJob(dbjob);
+             System.out.println("fend.job.job1.JobType1Controller.deleteAllQcsRelatedToJob(): deleting all the qc definitions related to this job");
+             qcMatrixRowService.deleteAllQcMatrixRowsForJob(dbjob);
+        }
+
 
     private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting all qcs related to this job");
+            deleteAllQcsRelatedToJob();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
             deleteAllDoubtsRelatedToJob();
             deleteLinksBelongingtoCurrentJob();
@@ -907,8 +925,10 @@ parent.addChild(model);*/
                     }
                    
                     
+                    
                     System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");
                     deleteAllSummariesRelatedToJob();
+                    
                     System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting "+dbjob.getNameJobStep() );
                     jobService.deleteJob(dbjob.getId());  //replace by soft delete
                     
@@ -931,11 +951,12 @@ parent.addChild(model);*/
         }
 
        
+       
       
        
  
     };
-    
+
     
      private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
         @Override

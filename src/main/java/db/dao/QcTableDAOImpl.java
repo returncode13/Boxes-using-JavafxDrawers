@@ -12,11 +12,13 @@ import db.model.QcType;
 import db.model.Subsurface;
 import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -282,6 +284,39 @@ public class QcTableDAOImpl implements QcTableDAO{
         }else{
             return result.get(0);
         }
+    }
+
+    @Override
+    public void deleteAllQcTablesForJob(Job job) {
+        System.out.println("db.dao.QcTableDAOImpl.deleteAllQcTablesForJob()");
+       Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select q.id from  QcTable q INNER JOIN q.qcMatrixRow qmr where qmr.job =:j";
+       String hqlDelete = "Delete from QcTable q where q.id in (:ids)";
+       
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", job);
+           List<Long> idsToDelete=selectQuery.list();
+           
+           
+           if(idsToDelete.isEmpty()){
+               transaction.commit();
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcTablesForJob(): no qctable entries found for job: "+job.getNameJobStep());
+           }else{
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcTablesForJob(): deleting "+idsToDelete.size()+" qctable entries for job: "+job.getNameJobStep());
+               Query deleteQuery=session.createQuery(hqlDelete);
+               deleteQuery.setParameterList("ids", idsToDelete);
+               int del=deleteQuery.executeUpdate();
+               transaction.commit();
+               
+           }
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
     }
     
     

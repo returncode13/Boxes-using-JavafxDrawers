@@ -28,4 +28,6 @@ public interface QcMatrixRowService {
     public List<QcMatrixRow> getQcMatrixForJob(Job job, boolean b);
 
     public void updatePresent(Long id,Boolean val);
+
+    public void deleteAllQcMatrixRowsForJob(Job dbjob);
 }

@@ -66,5 +66,10 @@ public class QcMatrixRowServiceImpl implements QcMatrixRowService{
     public void updatePresent(Long id, Boolean val) {
         qcmDao.updatePresent(id,val);
     }
+
+    @Override
+    public void deleteAllQcMatrixRowsForJob(Job job) {
+        qcmDao.deleteAllQcMatrixRowsForJob(job);
+    }
     
 }

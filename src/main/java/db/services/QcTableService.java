@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.Header;
+import db.model.Job;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
@@ -29,4 +30,6 @@ public interface QcTableService {
     public List<QcTable> getQcTableFor(Subsurface s);
     public QcTable getQcTableFor(QcMatrixRow qmx,Subsurface s) throws Exception;
     public QcTable getQcTableFor(Long qcmatrixRowId,Subsurface s) throws Exception;
+
+    public void deleteAllQcTablesForJob(Job dbjob);
 }

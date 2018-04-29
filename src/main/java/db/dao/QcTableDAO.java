@@ -6,6 +6,7 @@
 package db.dao;
 
 import db.model.Header;
+import db.model.Job;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
@@ -32,4 +33,6 @@ public interface QcTableDAO {
     public QcTable getQcTableFor(QcMatrixRow qmx,Subsurface s) throws Exception;
 
     public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s)throws Exception;
+
+    public void deleteAllQcTablesForJob(Job job);
 }
