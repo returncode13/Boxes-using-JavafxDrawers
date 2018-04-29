@@ -128,6 +128,11 @@ public class LinkServiceImpl implements LinkService {
         return linkDAO.getParentLinksFor(job);
     }
 
+    @Override
+    public List<Link> getChildLinksForJob(Job job) {
+        return linkDAO.getChildLinksForJob(job);
+    }
+
     
 
    

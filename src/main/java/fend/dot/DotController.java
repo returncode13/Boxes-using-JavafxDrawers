@@ -223,6 +223,7 @@ public class DotController extends Stage{
                     parentModel.setDropSuccessFul(true);
                     droppedAnchor.centerXProperty().bind(node.centerXProperty());
                     droppedAnchor.centerYProperty().bind(node.centerYProperty());
+                    childFromDot.toggleDepthChange();
                 }
             }else{
                 System.out.println("dot.DotController.setView(): Join Operation disallowed");

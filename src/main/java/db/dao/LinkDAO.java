@@ -37,4 +37,6 @@ public interface LinkDAO {
     public List<Dot> getDotsForJob(Job job);
 
     public List<Link> getParentLinksFor(Job job);
+
+    public List<Link> getChildLinksForJob(Job job);
 }

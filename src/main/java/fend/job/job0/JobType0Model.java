@@ -54,6 +54,7 @@ public interface JobType0Model {
     
     public BooleanProperty  getListenToDepthChangeProperty();
     public void setListenToDepthChange(Boolean listenToDepthChange);
+    public void toggleDepthChange();
     public BooleanProperty getChangeProperty();
     public void setChangeProperty(Boolean change);
     public ObservableSet<JobType0Model> getParents();

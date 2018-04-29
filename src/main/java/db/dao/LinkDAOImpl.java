@@ -341,5 +341,30 @@ public class LinkDAOImpl implements LinkDAO{
         return result;
     }
 
+    @Override
+    public List<Link> getChildLinksForJob(Job job) {
+        System.out.println("db.dao.LinkDAOImpl.getChildLinksFor()");
+      
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Link> result=new ArrayList<>();
+        String hql="SELECT l from Link l  WHERE l.child =:j";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            
+            query.setParameter("j", job);
+            //query.setParameter("subq", sub);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
    
 }

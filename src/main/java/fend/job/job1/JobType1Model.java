@@ -83,7 +83,7 @@ public class JobType1Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
-    private BooleanProperty listenToDepthChange;
+    private BooleanProperty listenToDepthChange=new SimpleBooleanProperty(false);
     private List<JobModelProperty> jobProperties;
     private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
@@ -669,6 +669,14 @@ public class JobType1Model implements JobType0Model {
     public void setListenToDepthChange(Boolean listenToDepthChange) {
         this.listenToDepthChange.set(listenToDepthChange);
     }
+    
+    @Override
+    public void toggleDepthChange() {
+        boolean val=listenToDepthChange.get();
+        listenToDepthChange.set(!val);
+        
+    }
+
 
     @Override
     public List<JobModelProperty> getJobProperties() {
@@ -699,6 +707,7 @@ public class JobType1Model implements JobType0Model {
         this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
     }
 
+    
     
 
     

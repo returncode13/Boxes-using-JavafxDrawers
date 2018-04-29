@@ -38,4 +38,6 @@ public interface LinkService {
     public List<Dot> getDotsForJob(Job dbjob);
 
     public List<Link> getParentLinksFor(Job root);
+
+    public List<Link> getChildLinksForJob(Job job);
 }

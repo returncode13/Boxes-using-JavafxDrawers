@@ -16,6 +16,7 @@ import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
 import db.model.Job;
+import db.model.Link;
 import db.services.AncestorService;
 import db.services.AncestorServiceImpl;
 import db.services.DescendantService;
@@ -139,8 +140,8 @@ public class JobType2Controller implements JobType0Controller{
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
-        model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
-      //  model.getDepth().addListener(depthChangeListener);
+        model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
+      //  model.getDepth().addListener(DEPTH_CHANGE_LISTENER);
          model.finishedCheckingLogs().addListener(checkLogsListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
@@ -240,23 +241,15 @@ public class JobType2Controller implements JobType0Controller{
                         System.out.println("boxes.BoxController.setView(): cyclic");
                         return;
                     }
-//                    System.out.println("job.job1.JobType1Controller.setView(): adding: "+parent.getId());
-/*model.addParent(parent);
-parent.addChild(model);*/
+//                   
                     
                     DotModel dotmodel=parentChildEdgeModel.getDotModel();
-                    /*dotmodel.addToParents(parent);
-                    dotmodel.addToChildren(model);*/
+                   
                     DotView dotnode=new DotView(dotmodel, JobType2Controller.this.interactivePane);
                     dotmodel.createLink(parent, model); // create a link between parent and child .add child to parent's list of children and parent to child's list of parents
                     
                     setupAncestorsAndDescendants(parent);
-                    
-                    Long parentDepth=parent.getDepth().get();
-                    if(model.getDepth().get()<(parentDepth+1)){
-                        model.setListenToDepthChange(true);
-                        model.setDepth(parentDepth+1);
-                    }
+                   
                     parentChildEdgeNode.getChildren().add(0,dotnode);
                    
 
@@ -267,11 +260,11 @@ parent.addChild(model);*/
                     
                     parentChildEdgeModel.setChildJob(model);
                     parentChildEdgeNode.setDropReceived(true);
-                    /* droppedAnchor.centerXProperty().bind(node.layoutXProperty());
-                    droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
+                   
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
-                
+                    model.toggleDepthChange();
+                    
                 }
               
               
@@ -303,15 +296,7 @@ parent.addChild(model);*/
                         }
                         
                          setupAncestorsAndDescendants(parent);
-                         
-                         Long parentDepth=parent.getDepth().get();
-                    if(model.getDepth().get()<(parentDepth+1)){
-                        model.setDepth(parentDepth+1);
-                    } 
-                         
-                    /*model.addParent(parent);
-                    parent.addChild(model);*/
-                        /*parentModel.getDotModel().addToChildren(model);            //add to the shared Dots children*/
+                 
                         parentModel.getDotModel().createLink(parent, model);       //create a new link in the dot. add child to parent's list of children and parent to child's list of parents
                         
                     }
@@ -322,6 +307,7 @@ parent.addChild(model);*/
                     droppedAnchor.centerYProperty().bind(node.layoutYProperty());*/
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
+                    model.toggleDepthChange();
                 }
              
          });
@@ -503,48 +489,56 @@ parent.addChild(model);*/
     };
     
     
-    final private ChangeListener<Number> depthChangeListener=new ChangeListener<Number>() {
-        @Override
-        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-            System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
-            /* dbjob=jobService.getJob(model.getId());
-            dbjob.setDepth((Long) newValue);
-            jobService.updateJob(dbjob.getId(), dbjob);*/
-           jobService.updateDepth(dbjob,newValue.longValue());
-           /*Set<Descendant> descendants=dbjob.getDescendants();    //the descendants aren't truly reflected till the session is saved
-           for(Descendant d:descendants){
-           d.getDescendant().setDepth(d.getDescendant().getDepth()+1);
-           }*/
-           Set<JobType0Model> descendants=model.getDescendants();
-           for(JobType0Model desc:descendants){
-            System.out.println("depth will change for Descendants: "+desc.getNameproperty().get()+" from "+desc.getDepth().get()+" --> "+(desc.getDepth().get()+1));
-            Job d=jobService.getJob(desc.getId());
-            d.setDepth(desc.getDepth().get()+1);
-            jobService.updateJob(d.getId(), d);
-            desc.setListenToDepthChange(false);
-            desc.setDepth(desc.getDepth().get()+1);
-            desc.setListenToDepthChange(true);
-           }
-           /*Set<JobType0Model> children=model.getChildren();
-           for(JobType0Model child:children){
-           child.setDepth(child.getDepth().get()+1);
-           }*/
-        }
-    };
     
-    
-    final private ChangeListener<Boolean> listenToDepthChange=new ChangeListener<Boolean>() {
+    final private ChangeListener<Boolean> DEPTH_CHANGE_LISTENER=new ChangeListener<Boolean>() {
+       
+
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(newValue){
-                model.getDepth().addListener(depthChangeListener);
-            }else{
-                model.getDepth().removeListener(depthChangeListener);
-            }
-                    
+             System.out.println("JobType1Controller.depth.changed(): "+model.getNameproperty().get()+" from "+oldValue+" -> "+newValue);
+           
+            
+          
+            model.toggleUpdateProperty();
+           long depth=depth(dbjob);
+            System.out.println("JobType1Controller.depth.changed(): "+dbjob.getNameJobStep()+" is now at depth : "+depth);
+           
+           jobService.updateDepth(dbjob, depth);
+           model.setDepth(depth);
+           
+           
+           Set<JobType0Model> descendants=model.getDescendants();
+           for(JobType0Model desc:descendants){
+            //System.out.println("depth will change for Descendants: "+desc.getNameproperty().get()+" from "+desc.getDepth().get()+" --> "+(desc.getDepth().get()+1));
+                 desc.toggleDepthChange();
+           }
+          
         }
     };
     
+     private long depth(Job job) {
+           if(job.isRoot()){
+               return 0;
+           }
+           
+           else{
+               List<Link> linksWithJobAsChild=linkService.getChildLinksForJob(job);
+               long currentJobDepth=0;
+               for(Link l:linksWithJobAsChild){
+                   Job parent=l.getParent();
+                   long val=1+depth(parent);
+                   if(currentJobDepth < val) {
+                        currentJobDepth=val;
+                   }
+                   
+               }
+               
+               return currentJobDepth;
+           }
+    }
+    
+    
+  
     
     
     

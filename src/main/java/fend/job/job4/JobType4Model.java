@@ -84,7 +84,7 @@ public class JobType4Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
-    private BooleanProperty listenToDepthChange;
+    private BooleanProperty listenToDepthChange=new SimpleBooleanProperty(false);
     private List<JobModelProperty> jobProperties;
     private Job databaseJob;
     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
@@ -661,6 +661,12 @@ public class JobType4Model implements JobType0Model {
         this.listenToDepthChange.set(listenToDepthChange);
     }
      
+     @Override
+    public void toggleDepthChange() {
+        boolean val=listenToDepthChange.get();
+        listenToDepthChange.set(!val);
+        
+    }
     
      @Override
     public List<JobModelProperty> getJobProperties() {
