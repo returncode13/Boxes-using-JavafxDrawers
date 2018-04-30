@@ -139,7 +139,7 @@ public class DotController extends Stage{
             
          //   workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.            
            
-       
+       model.dotClickedProperty().addListener(DOT_CLICKED_LISTENER);
         
         model.getDelete().addListener(new ChangeListener<Boolean>(){
             @Override
@@ -152,6 +152,10 @@ public class DotController extends Stage{
            
         });
         
+    }
+    
+    public DotModel getModel(){
+        return model;
     }
 
     void setView(DotView nd,AnchorPane interactivePane) {
@@ -169,9 +173,11 @@ public class DotController extends Stage{
         node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
             @Override
             public void handle(ContextMenuEvent event) {
-                 menu.show(node, event.getScreenX(), event.getScreenY());
+            menu.show(node, event.getScreenX(), event.getScreenY());
             }
         });
+        
+        
         addAChildJob.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -236,18 +242,18 @@ public class DotController extends Stage{
         
         
         node.setOnMouseClicked(e->{
-        if(e.getButton().equals(MouseButton.PRIMARY)){
-            if(e.getClickCount()==2){
-               if(model.enableFurtherLinks()){
-                   
-                   FormulaFieldModel formulaModel=new FormulaFieldModel(model);
-                   FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
-               }else{
-                   System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
-               }
-                
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                if (e.getClickCount() == 2) {
+                    if (model.enableFurtherLinks()) {
+
+                        FormulaFieldModel formulaModel = new FormulaFieldModel(model);
+                        FormulaFieldView formulaFieldNode = new FormulaFieldView(formulaModel);
+                    } else {
+                        System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
+                    }
+
+                }
             }
-        }
         });
         
         
@@ -273,6 +279,29 @@ public class DotController extends Stage{
          model.getError().addListener(errorChangeListener);
     }
 
+     @FXML
+    void dotClicked(MouseEvent e) {
+        if(e.getButton().equals(MouseButton.PRIMARY)){
+            if(e.getClickCount()==2){
+               if(model.enableFurtherLinks()){
+                   
+                   FormulaFieldModel formulaModel=new FormulaFieldModel(model);
+                   FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
+               }else{
+                   System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
+               }
+                
+            }
+        }
+    }
+
+    @FXML
+    void onContextMenuRequested(ContextMenuEvent event) {
+            menu.show(node, event.getScreenX(), event.getScreenY());
+    }
+
+    
+    
     
     private void updateColor() {
         System.out.println("fend.dot.DotController.updateColor(): model status is : "+model.getStatus().get());
@@ -728,5 +757,20 @@ public class DotController extends Stage{
                     parent.toggleUpdateProperty();
                     child.toggleUpdateProperty();
     }
+    
+    private ChangeListener<Boolean> DOT_CLICKED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(model.enableFurtherLinks()){
+                   
+                   FormulaFieldModel formulaModel=new FormulaFieldModel(model);
+                   FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
+               }else{
+                   System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
+               }
+        }
+    };
+    
+    
     
 }

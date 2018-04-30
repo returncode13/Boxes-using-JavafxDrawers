@@ -32,9 +32,13 @@ import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 /**
  *
@@ -123,6 +127,7 @@ public class DotJobEdgeController implements EdgeController {
         node.getChildren().add(0,curve);
         node.getChildren().add(0,anchor);
         //node.getChildren().add(dotnode);
+        node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
        
         
@@ -130,6 +135,12 @@ public class DotJobEdgeController implements EdgeController {
     
     private CubicCurve createStartingCurve() {
         //CubicCurve curve = new CubicCurve();
+        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=0;
+        int maxX=50;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         curve.setStartX(50);
         curve.setStartY(200);
         curve.setControlX1(150);
@@ -142,6 +153,7 @@ public class DotJobEdgeController implements EdgeController {
         curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
        // curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        
         return curve;
     }
     
@@ -255,8 +267,29 @@ public class DotJobEdgeController implements EdgeController {
         
     }
     
+    /*
+    @FXML
+    void onCurveClicked(MouseEvent e) {
+    if (e.getButton().equals(MouseButton.PRIMARY)) {
+    if (e.getClickCount() == 2) {
+    dotmodel.clickDot();
+    }
+    }
+    }
+    
+    @FXML
+    void onContextMenuRequested(ContextMenuEvent event) {
+    System.out.println("fend.edge.dotjobedge.DotJobEdgeController.onContextMenuRequested(): ");
+    }*/
+
+    
+    
      public void setChildJobView(JobType0View childJobView){
-        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
          JobType0Model job=childJobView.getController().getModel();
         Long type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {

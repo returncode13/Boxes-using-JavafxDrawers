@@ -75,6 +75,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
@@ -267,6 +268,9 @@ public class JobType1Controller implements JobType0Controller{
                     parentChildEdgeNode.setDropReceived(true);
                     parentChildEdgeModel.setDropSuccessFul(true);
                    
+                  
+                    
+                    
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
@@ -315,6 +319,8 @@ public class JobType1Controller implements JobType0Controller{
                     parentModel.setChildJob(model);
                     parentModel.setDropSuccessFul(true);
                   
+                    
+                    
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();

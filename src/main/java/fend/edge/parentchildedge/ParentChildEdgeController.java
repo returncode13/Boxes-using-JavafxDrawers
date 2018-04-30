@@ -36,11 +36,15 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import java.util.Random;
 import java.util.Set;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -102,6 +106,11 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.centerYProperty().addListener(UPDATE_ARROW_LISTENER);
         curve=createStartingCurve();
         
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         JobType0Model job=this.jobView.getController().getModel();
         type=job.getType();
         if(type.equals(JobType0Model.PROCESS_2D)) {
@@ -125,7 +134,7 @@ public class ParentChildEdgeController implements EdgeController{
         
         curve.endXProperty().bind(childAnchor.centerXProperty());
         curve.endYProperty().bind(childAnchor.centerYProperty());
-        curve.setMouseTransparent(true);
+        //curve.setMouseTransparent(true);
         constraintCurve();
         overrideAnchorBehaviour();
         
@@ -143,6 +152,7 @@ public class ParentChildEdgeController implements EdgeController{
         node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,childAnchor);
+        node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
         
     }
@@ -150,6 +160,12 @@ public class ParentChildEdgeController implements EdgeController{
     
     private CubicCurve createStartingCurve() {
         //CubicCurve curve = new CubicCurve();
+        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=0;
+        int maxX=50;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         curve.setStartX(50);
         curve.setStartY(200);
         curve.setControlX1(150);
@@ -162,6 +178,8 @@ public class ParentChildEdgeController implements EdgeController{
         curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
         //curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        
+      
         return curve;
     }
 
@@ -169,8 +187,27 @@ public class ParentChildEdgeController implements EdgeController{
         return this.model;
     }
     
+    /*
+    @FXML
+    void onCurveClicked(MouseEvent e) {
+    if(e.getButton().equals(MouseButton.PRIMARY)){
+    if(e.getClickCount()==2){
+    dotview.getController().getModel().clickDot();
+    }
+    }
+    }
+    
+    @FXML
+    void onContextMenuRequested(ContextMenuEvent event) {
+    System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.onContextMenuRequested():");
+    }*/
+    
     
     public DotView setChildJobView(JobType0View childJobView,DotView dotnode){
+        Random randx=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
        
         if(dotnode==null){              //i.e. create a new dot in the center of the parent and the child
             
@@ -218,7 +255,7 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.setRadius(5);
         }
          if(type.equals(JobType0Model.TEXT)) {
-             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType4View)childJobView).getHeight()+" , Width: "+((JobType4View)childJobView).getWidth());
        // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
        // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
        childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height

@@ -124,36 +124,7 @@ public class SummaryController extends Stage{
          
          
          Workspace workspace=this.model.getWorkspaceController().getModel().getWorkspace();
-        // System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Time doubts for workspace : "+workspace.getId());
-       //  List<Doubt> timeDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, timeDoubtType);
-//         System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+timeDoubtsInWorkspace.size()+"time related doubts");
-        // System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Trace doubts for workspace : "+workspace.getId());
-       //  List<Doubt> traceDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, traceDoubtType);
-      //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+traceDoubtsInWorkspace.size()+"trace related doubts");
-      //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" getting all Qc doubts for workspace : "+workspace.getId());
-      //   List<Doubt> qcDoubtsInWorkspace=doubtService.getAllDoubtsJobsAndSubsurfacesFor(workspace, qcDoubtType);
-     //    System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" got "+qcDoubtsInWorkspace.size()+"qc related doubts");
-      //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the time Map");
-         /*   for(Doubt timeDoubt:timeDoubtsInWorkspace){
-         TimeJobSubKey timeKey=generateTimeJobSubKey(timeDoubt.getChildJob(), timeDoubt.getSubsurface());
-         timeDoubtMap.put(timeKey, timeDoubt);
-         }*/
-      //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the time Map with "+timeDoubtMap.size());
-         
-      //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the trace Map");
-         /* for(Doubt traceDoubt:traceDoubtsInWorkspace){
-         TraceJobSubKey traceKey=generateTraceJobSubKey(traceDoubt.getChildJob(), traceDoubt.getSubsurface());
-         traceDoubtMap.put(traceKey, traceDoubt);
-         }*/
-     //    System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the trace Map with "+traceDoubtMap.size());
-         
-         
-       //  System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the qc Map");
-         /*for(Doubt qcDoubt:qcDoubtsInWorkspace){
-         QcJobSubKey qcKey=generateQcJobSubKey(qcDoubt.getChildJob(), qcDoubt.getSubsurface());
-         qcDoubtMap.put(qcKey, qcDoubt);
-         }*/
-       //  System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" built the qc Map with "+qcDoubtMap.size());
+        
                     System.out.println("fend.summary.SummaryController.setModel(): building summary table");
 
                     
@@ -280,21 +251,37 @@ public class SummaryController extends Stage{
                         //<--Start Time
                         seqJsm.getTimeCellModel().setActive(true);                                                                                      
                         seqJsm.getTimeCellModel().setFailedTimeDependency(seqJsm.getTimeCellModel().cellHasFailedDependency()||x.hasFailedTimeDependency());
+                        seqJsm.getTimeCellModel().setInheritedTimeFail(seqJsm.getTimeCellModel().cellHasInheritedFail()||x.hasInheritedTimeFail());
+                        seqJsm.getTimeCellModel().setInheritedTimeOverride(seqJsm.getTimeCellModel().cellHasInheritedOverride()||x.hasInheritedTimeOverride());
+                        seqJsm.getTimeCellModel().setOverridenTimeFail(seqJsm.getTimeCellModel().cellHasOverridenFail()||x.hasOverridenTimeFail());
+                        seqJsm.getTimeCellModel().setWarningForTime(seqJsm.getTimeCellModel().cellHasWarning()||x.hasWarningForTime());
                         //<-- End Time
                         
                         //<--Start Trace
                         seqJsm.getTraceCellModel().setActive(true);
                         seqJsm.getTraceCellModel().setFailedTraceDependency(seqJsm.getTraceCellModel().cellHasFailedDependency()||x.hasFailedTraceDependency());
+                        seqJsm.getTraceCellModel().setInheritedTraceFail(seqJsm.getTraceCellModel().cellHasInheritedFail()||x.hasInheritedTraceFail());
+                        seqJsm.getTraceCellModel().setInheritedTraceOverride(seqJsm.getTraceCellModel().cellHasInheritedOverride()||x.hasInheritedTraceOverride());
+                        seqJsm.getTraceCellModel().setOverridenTraceFail(seqJsm.getTraceCellModel().cellHasOverridenFail()||x.hasOverridenTraceFail());
+                        seqJsm.getTraceCellModel().setWarningForTrace(seqJsm.getTraceCellModel().cellHasWarning()||x.hasWarningForTrace());
                         //<--End Trace
                         
                         //<--Start Qc
                         seqJsm.getQcCellModel().setActive(true);
                         seqJsm.getQcCellModel().setFailedQcDependency(seqJsm.getQcCellModel().cellHasFailedDependency() || x.hasFailedQcDependency());
+                        seqJsm.getQcCellModel().setInheritedQcFail(seqJsm.getQcCellModel().cellHasInheritedFail()||x.hasInheritedQcFail());
+                        seqJsm.getQcCellModel().setInheritedQcOverride(seqJsm.getQcCellModel().cellHasInheritedOverride()||x.hasInheritedQcOverride());
+                        seqJsm.getQcCellModel().setOverridenQcFail(seqJsm.getQcCellModel().cellHasOverridenFail()||x.hasOverridenQcFail());
+                        seqJsm.getQcCellModel().setWarningForQc(seqJsm.getQcCellModel().cellHasWarning()||x.hasWarningForQc());
                         //<--End Qc
                         
                         //<--Start Insight
                         seqJsm.getInsightCellModel().setActive(true);
                         seqJsm.getInsightCellModel().setFailedInsightDependency(seqJsm.getInsightCellModel().cellHasFailedDependency() || x.hasFailedInsightDependency());
+                        seqJsm.getInsightCellModel().setInheritedInsightFail(seqJsm.getInsightCellModel().cellHasInheritedFail()||x.hasInheritedInsightFail());
+                        seqJsm.getInsightCellModel().setInheritedInsightOverride(seqJsm.getInsightCellModel().cellHasInheritedOverride()||x.hasInheritedInsightOverride());
+                        seqJsm.getInsightCellModel().setOverridenInsightFail(seqJsm.getInsightCellModel().cellHasOverridenFail()||x.hasOverridenInsightFail());
+                        seqJsm.getInsightCellModel().setWarningForInsight(seqJsm.getInsightCellModel().cellHasWarning()||x.hasWarningForInsight());
                         //<--End Insight
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).

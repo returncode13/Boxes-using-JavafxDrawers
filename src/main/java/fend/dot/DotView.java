@@ -74,6 +74,10 @@ public class DotView extends Circle{
     
     }*/
 
+    public DotController getController() {
+        return controller;
+    }
+
    
 
     

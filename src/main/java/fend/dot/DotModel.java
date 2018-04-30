@@ -64,7 +64,17 @@ public class DotModel {
     private DoubleProperty tolerance=new SimpleDoubleProperty(0.0);
     private VariableArgumentModel variableArgumentModel=new VariableArgumentModel();
     private Dot databaseDot;
+    private BooleanProperty dotclickedProperty=new SimpleBooleanProperty(false);
     
+    public BooleanProperty dotClickedProperty(){
+        return dotclickedProperty;
+    }
+    
+    
+    public void clickDot(){
+        boolean val =dotclickedProperty.get();
+        dotclickedProperty.set(!val);
+    }
     
     
     public DotModel(WorkspaceModel workspaceM){

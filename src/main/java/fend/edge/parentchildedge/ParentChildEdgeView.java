@@ -31,7 +31,7 @@ public class ParentChildEdgeView extends AnchorPane implements EdgeView{
     
     
     public ParentChildEdgeView(ParentChildEdgeModel item,JobType0View parentJob, AnchorPane interactivePane){
-        this.location=getClass().getClassLoader().getResource("fxml/parentchildedge.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/parentchildedge_1.fxml"); 
        this.parentJob=parentJob;
        this.interactivePane=interactivePane;
           
