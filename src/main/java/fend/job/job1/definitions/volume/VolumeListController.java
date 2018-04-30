@@ -170,7 +170,7 @@ public class VolumeListController {
                         volumeService.deleteVolume(dbVol.getId());
 
                         
-                        
+                        parentjob.removeVolume(vols);
 
                        
                         

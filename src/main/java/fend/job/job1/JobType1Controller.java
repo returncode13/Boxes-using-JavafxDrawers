@@ -944,7 +944,7 @@ public class JobType1Controller implements JobType0Controller{
                     for(Volume0 vol:volsInJobDc){
                         System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
                         vol.delete(true);
-                        model.removeVolume(vol);
+                       // model.removeVolume(vol);
                     }
                    
                     
