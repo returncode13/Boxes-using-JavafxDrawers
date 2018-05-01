@@ -112,6 +112,11 @@
                                                       <Button fx:id="textButton" mnemonicParsing="false" onAction="#addTextNode" style="-fx-background-color: #62c462 #62c462; -fx-text-fill: black; -fx-font-size: 12;" text="TEXT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                    </children>
                                                 </AnchorPane>
+                                                <AnchorPane layoutX="10.0" layoutY="104.0" GridPane.rowIndex="3">
+                                                   <children>
+                                                      <Button fx:id="segybutton" mnemonicParsing="false" onAction="#addSegyNode" style="-fx-background-color: #fff426#fff426#fff426; -fx-text-fill: black; -fx-font-size: 12;" text="SEGY" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                   </children>
+                                                </AnchorPane>
                                              </children>
                                           </GridPane>
                                        </children>

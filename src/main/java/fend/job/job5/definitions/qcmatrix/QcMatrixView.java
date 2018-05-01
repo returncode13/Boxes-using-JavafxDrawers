@@ -3,30 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.app;
+package fend.job.job5.definitions.qcmatrix;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AppView extends AnchorPane {
+public class QcMatrixView extends StackPane{
+    private  QcMatrixModel model;
+    private QcMatrixController  controller;
+    
      private FXMLLoader fXMLLoader;
     private final URL location;
-    private AppController controller;
     
-    public AppView(AppModel model)
-    {
+    
+    public QcMatrixView(QcMatrixModel item){
+       model=item;
+        this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/qcmatrix/qcmatrix.fxml"); 
        
-        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_14.fxml"); 
-          System.out.println(location.toString());
+          
            fXMLLoader=new FXMLLoader();
               
             fXMLLoader.setLocation(location);
@@ -37,13 +38,8 @@ public class AppView extends AnchorPane {
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(AppController)fXMLLoader.getController();
-             
-               // setId(UUID.randomUUID().toString());
-                //setId((new UID()).toString());
-                //setId(UUID.randomUUID().getMostSignificantBits()+"");
-                //controller.setId(Long.valueOf(getId()));
-                controller.setModel(model);
+                controller=(QcMatrixController)fXMLLoader.getController();
+                controller.setModel(this.model);
                 controller.setView(this) ;
                
                 
@@ -51,12 +47,4 @@ public class AppView extends AnchorPane {
                 throw new RuntimeException(e);
             }
     }
-
-    public AppController getController() {
-        return controller;
-    }
-    
-    
-    
-    
 }

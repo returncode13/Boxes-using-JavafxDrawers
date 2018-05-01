@@ -36,6 +36,7 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import fend.job.job5.JobType5View;
 import java.util.Random;
 import java.util.Set;
 import javafx.beans.InvalidationListener;
@@ -130,6 +131,11 @@ public class ParentChildEdgeController implements EdgeController{
            
                         curve.startXProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
                         curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),100));
+        }
+         if(type.equals(JobType0Model.SEGY)) {
+           
+                        curve.startXProperty().bind(Bindings.add(((JobType5View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType5View)this.jobView).layoutYProperty(),100));
         }
         
         curve.endXProperty().bind(childAnchor.centerXProperty());
@@ -260,6 +266,14 @@ public class ParentChildEdgeController implements EdgeController{
        // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
        childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.SEGY)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType5View)childJobView).getHeight()+" , Width: "+((JobType5View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
         }
           

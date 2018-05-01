@@ -92,7 +92,7 @@ public class HeaderExtractor {
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Number of available processors : "+processors);
        
     
-        if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
+        if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD) || job.getType().equals(JobType0Model.SEGY)){
          //  subsurfaceJobs=new ArrayList<>();
          //  headers=new ArrayList<>();
            
@@ -372,7 +372,7 @@ public class HeaderExtractor {
                     
                     
                     
-                    if(hdr.getVolume().getVolumeType().equals(Volume0.PROCESS_2D) || hdr.getVolume().getVolumeType().equals(Volume0.SEGD_LOAD) ){
+                    if(hdr.getVolume().getVolumeType().equals(Volume0.PROCESS_2D) || hdr.getVolume().getVolumeType().equals(Volume0.SEGD_LOAD) || hdr.getVolume().getVolumeType().equals(Volume0.SEGY) ){
                         try{
                             traceCount=Long.valueOf(forTraces(hdr));
                             cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));

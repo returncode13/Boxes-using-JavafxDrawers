@@ -31,6 +31,7 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import fend.job.job5.JobType5View;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -326,6 +327,15 @@ public class DotJobEdgeController implements EdgeController {
              anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
               anchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
+        }
+         if(type.equals(JobType0Model.SEGY)) {
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
         }
          this.node.toBack();

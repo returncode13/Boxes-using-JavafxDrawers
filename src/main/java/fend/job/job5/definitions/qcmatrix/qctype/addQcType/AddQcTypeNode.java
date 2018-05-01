@@ -3,29 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.app;
+package fend.job.job5.definitions.qcmatrix.qctype.addQcType;
+
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.layout.AnchorPane;
 
 /**
  *
- * @author sharath nair <sharath.nair@polarcus.com>
+ * @author adira0150
  */
-public class AppView extends AnchorPane {
+public class AddQcTypeNode extends AnchorPane{
      private FXMLLoader fXMLLoader;
     private final URL location;
-    private AppController controller;
+    private AddQcTypeController isc;
     
-    public AppView(AppModel model)
-    {
-       
-        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_14.fxml"); 
+    public AddQcTypeNode(AddQcTypeModel ism){
+         this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/qcmatrix/addqctype/addQcType.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               
@@ -35,28 +32,26 @@ public class AppView extends AnchorPane {
             fXMLLoader.setBuilderFactory(new JavaFXBuilderFactory());
            
             try{
+                
                 fXMLLoader.load(location.openStream());
-           
-                controller=(AppController)fXMLLoader.getController();
+                
+                
+                isc=(AddQcTypeController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
-                //setId(UUID.randomUUID().getMostSignificantBits()+"");
-                //controller.setId(Long.valueOf(getId()));
-                controller.setModel(model);
-                controller.setView(this) ;
                
+               // sc.setId(Long.valueOf(getId()));
+                
+                isc.setModel(ism);
+                isc.setView(this) ;
+                
+                System.out.println("fend.job.job5.definitions.qcmatrix.qctype.addQcType.AddQcTypeNode.<init>()");
+               
+                //System.out.println("fend.session.node.volumes.qctable.qcCheckBox.qcCheckListNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);
             }
     }
-
-    public AppController getController() {
-        return controller;
-    }
-    
-    
-    
-    
 }

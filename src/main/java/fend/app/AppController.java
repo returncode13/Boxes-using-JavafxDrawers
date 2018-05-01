@@ -70,6 +70,7 @@ import fend.job.job3.JobType3Model;
 import fend.job.job3.JobType3View;
 import fend.job.job3.properties.JobType3Properties;
 import fend.job.job4.properties.JobType4Properties;
+import fend.job.job5.properties.JobType5Properties;
 import fend.workspace.WorkspaceController;
 import java.io.File;
 import java.io.FileInputStream;
@@ -252,6 +253,9 @@ public class AppController extends Stage implements Initializable{
     private Button textButton;
 
     @FXML
+    private Button segybutton;
+    
+    @FXML
     private Button summaryButton;
 
     @FXML
@@ -276,6 +280,12 @@ public class AppController extends Stage implements Initializable{
     void addTextNode(ActionEvent event) {
         currentWorkspaceController.addText(event);
     }
+    
+    @FXML
+    void addSegyNode(ActionEvent event) {   
+        currentWorkspaceController.addSegy(event);
+    }
+    
     
     
     @FXML
@@ -766,7 +776,7 @@ public class AppController extends Stage implements Initializable{
                     checkForJobPropertiesForJobType(JobType0Model.SEGD_LOAD);
                     checkForJobPropertiesForJobType(JobType0Model.ACQUISITION);
                     checkForJobPropertiesForJobType(JobType0Model.TEXT);
-                    
+                    checkForJobPropertiesForJobType(JobType0Model.SEGY);
                     
                     
                
@@ -799,6 +809,7 @@ public class AppController extends Stage implements Initializable{
                         else if(type.equals(JobType0Model.PROCESS_2D)) n.setName("2DProcess");
                         else if(type.equals(JobType0Model.SEGD_LOAD))n.setName("SEGD_LOAD");
                         else if(type.equals(JobType0Model.TEXT))n.setName("Text");
+                        else if(type.equals(JobType0Model.TEXT))n.setName("SEGY");
                         
                         nodeTypeService.createNodeType(n);
                     }
@@ -816,6 +827,9 @@ public class AppController extends Stage implements Initializable{
                         }
                         else if(type.equals(JobType0Model.TEXT)){
                            jstmp=new JobType4Properties();
+                        }
+                        else if(type.equals(JobType0Model.SEGY)){
+                           jstmp=new JobType5Properties();
                         }
                    
                     List<String> jobProperties=jstmp.getProperties();
@@ -871,6 +885,7 @@ public class AppController extends Stage implements Initializable{
                 segdButton.setDisable(true);
                 button2D.setDisable(true);
                 textButton.setDisable(true);
+                segybutton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
                 
@@ -1140,6 +1155,7 @@ public class AppController extends Stage implements Initializable{
                 segdButton.setDisable(false);
                 button2D.setDisable(false);
                 textButton.setDisable(false);
+                segybutton.setDisable(false);
                 summaryButton.setDisable(false);
                 chartButton.setDisable(false);
             }else{
@@ -1147,6 +1163,7 @@ public class AppController extends Stage implements Initializable{
                 segdButton.setDisable(true);
                 button2D.setDisable(true);
                 textButton.setDisable(true);
+                segybutton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
             }

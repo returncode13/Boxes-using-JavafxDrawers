@@ -95,11 +95,15 @@ import fend.job.job3.JobType3Model;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4Model;
 import fend.job.job4.JobType4View;
+import fend.job.job5.JobType5Model;
+import fend.job.job5.JobType5View;
 import fend.summary.SummaryModel;
 import fend.summary.SummaryView;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
+import fend.volume.volume4.Volume4;
+import fend.volume.volume5.Volume5;
 import fend.workspace.gLink.GLink;
 import java.io.File;
 import java.io.FileFilter;
@@ -512,6 +516,62 @@ public class WorkspaceController {
         exec.execute(task);
 
     }
+    
+    
+     public void addSegy(ActionEvent event) {
+        Job dbjob = new Job();
+        BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+        JobType5Model job = new JobType5Model(this.model);
+
+        Task<String> task = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+                Long typeOfJob = JobType0Model.SEGY;
+                NodeType nodetype = nodeTypeService.getNodeTypeObjForType(typeOfJob);
+                dbjob.setNodetype(nodetype);
+                dbjob.setWorkspace(dbWorkspace);
+
+                dbjob.setDepth(JobType0Model.INITIAL_DEPTH);
+                jobService.createJob(dbjob);
+                job.setId(dbjob.getId());
+                job.setDatabaseJob(dbjob);
+
+                List<JobModelProperty> jobProperties = job.getJobProperties();
+                for (Iterator<JobModelProperty> iterator = jobProperties.iterator(); iterator.hasNext();) {
+                    JobModelProperty jobProperty = iterator.next();
+                    NodePropertyValue npv = new NodePropertyValue();
+                    npv.setJob(dbjob);
+                    PropertyType propertyType = propertyTypeService.getPropertyTypeObjForName(jobProperty.getPropertyName());
+                    NodeProperty nodeProperty = nodePropertyService.getNodeProperty(nodetype, propertyType);
+                    npv.setNodeProperty(nodeProperty);
+                    npv.setValue(jobProperty.getPropertyValue());
+                    nodePropertyValueService.createNodePropertyValue(npv);
+                }
+
+                return "finished building a SEGY entry: " + dbjob.getId();
+            }
+        };
+
+        task.setOnFailed(e -> {
+            task.getException().printStackTrace();
+        });
+
+        task.setOnSucceeded(e -> {
+            changeProperty.bind(job.getChangeProperty());
+            changeProperty.addListener(workspaceChangedListener);
+            changePropertyList.add(changeProperty);
+            JobType5View jobview = new JobType5View(job, interactivePane); 
+            interactivePane.getChildren().add(jobview);
+            //        System.out.println("workspace.WorkspaceController.addBox(): "+g1Child.getId()%100);
+
+        });
+
+        task.setOnRunning(e -> {
+            System.out.println("fend.workspace.WorkspaceController.addText(): process is running");
+        });
+
+        exec.execute(task);
+    }
 
     //@FXML 
     public void getSummary(ActionEvent event) throws Exception {
@@ -671,6 +731,16 @@ public class WorkspaceController {
                 System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
 
             }
+            if (type.equals(JobType0Model.SEGY)) {
+                fejob = new JobType5Model(model);
+                fejob.setId(dbj.getId());
+                fejob.setDatabaseJob(dbj);
+                fejob.setNameproperty(dbj.getNameJobStep());
+                fejob.setDepth(dbj.getDepth());
+
+                System.out.println("fend.workspace.WorkspaceController.loadSession(): Added job: " + dbj.getNameJobStep());
+
+            }
 
             Set<Volume> dbvols = new HashSet<>(volumeService.getVolumesForJob(dbj));
 
@@ -690,6 +760,27 @@ public class WorkspaceController {
                 }
                 if (vtype.equals(Volume0.SEGD_LOAD)) {
                     fevol = new Volume2(fejob);                  //parent g1Child and id set in contructor
+
+                    fevol.setId(dbv.getId());
+                    fevol.setName(dbv.getNameVolume());
+                    File volumeOnDisk = new File(dbv.getPathOfVolume());
+                    fevol.setVolume(volumeOnDisk);
+                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
+                }
+                /**
+                 * Skip the process for the Acq node
+                 */
+                if (vtype.equals(Volume0.TEXT)) {
+                    fevol = new Volume4(fejob);                  //parent g1Child and id set in contructor
+
+                    fevol.setId(dbv.getId());
+                    fevol.setName(dbv.getNameVolume());
+                    File volumeOnDisk = new File(dbv.getPathOfVolume());
+                    fevol.setVolume(volumeOnDisk);
+                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
+                }
+                if (vtype.equals(Volume0.SEGY)) {
+                    fevol = new Volume5(fejob);                  //parent g1Child and id set in contructor
 
                     fevol.setId(dbv.getId());
                     fevol.setName(dbv.getNameVolume());
@@ -886,6 +977,20 @@ public class WorkspaceController {
             }
             if (job.getType().equals(JobType0Model.TEXT)) {
                 JobType4View jv = new JobType4View((JobType4Model) job, interactivePane);
+
+                /**
+                 * Attach Listeners to save workspace
+                 */
+                BooleanProperty changeProperty = new SimpleBooleanProperty(false);
+                changeProperty.bind(job.getChangeProperty());
+                changeProperty.addListener(workspaceChangedListener);
+                changePropertyList.add(changeProperty);
+                idFrontEndJobMap.put(job.getId(), jv);
+                interactivePane.getChildren().add(jv);
+                System.out.println("fend.workspace.WorkspaceController.inflateFrontEndViews(): name: " + job.getNameproperty().get() + " y,x: " + jv.getHeight() + "," + jv.getWidth() + jv.getBoundsInLocal().getHeight() + "," + jv.getBoundsInLocal().getMaxX() + "," + jv.getBoundsInParent().getMaxX() + "," + jv.getLayoutBounds().getMaxX());
+            }
+            if (job.getType().equals(JobType0Model.SEGY)) {
+                JobType5View jv = new JobType5View((JobType5Model) job, interactivePane);
 
                 /**
                  * Attach Listeners to save workspace
@@ -2425,6 +2530,8 @@ public class WorkspaceController {
         subsurfaceJobService.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
         
     }
+
+   
     private class DoubtHolder {
 
         Doubt cause;

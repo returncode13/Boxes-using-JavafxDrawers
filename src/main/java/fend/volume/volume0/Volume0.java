@@ -25,6 +25,7 @@ public interface Volume0 {
     public static Long SEGD_LOAD=2L;
     public static Long ACQUISITION=3L;
     public static Long TEXT=4L;
+    public static Long SEGY=5L;
     public Long getType();
     public Long getId();
     /**

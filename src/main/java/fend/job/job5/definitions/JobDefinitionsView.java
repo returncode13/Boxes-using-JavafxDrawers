@@ -3,30 +3,36 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.app;
+package fend.job.job5.definitions;
 
+import fend.job.job1.JobType1Model;
+import com.jfoenix.controls.JFXDrawersStack;
+import fend.job.job0.JobType0Model;
 import java.io.IOException;
 import java.net.URL;
-import java.util.UUID;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class AppView extends AnchorPane {
+public class JobDefinitionsView extends JFXDrawersStack {
+    private JobType0Model parentBox;
+    private  JobDefinitionsModel model;
+    private JobDefinitionsController  controller;
+   
      private FXMLLoader fXMLLoader;
     private final URL location;
-    private AppController controller;
     
-    public AppView(AppModel model)
-    {
+    
+    public JobDefinitionsView(JobDefinitionsModel item,JobType0Model parentBox){
+        this.model=item;
+        this.parentBox=parentBox;
+        this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/jobdefinitions.fxml"); 
        
-        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/app/app_14.fxml"); 
-          System.out.println(location.toString());
+          
            fXMLLoader=new FXMLLoader();
               
             fXMLLoader.setLocation(location);
@@ -37,13 +43,8 @@ public class AppView extends AnchorPane {
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(AppController)fXMLLoader.getController();
-             
-               // setId(UUID.randomUUID().toString());
-                //setId((new UID()).toString());
-                //setId(UUID.randomUUID().getMostSignificantBits()+"");
-                //controller.setId(Long.valueOf(getId()));
-                controller.setModel(model);
+                controller=(JobDefinitionsController)fXMLLoader.getController();
+                controller.setModel(item,this.parentBox);
                 controller.setView(this) ;
                
                 
@@ -51,12 +52,5 @@ public class AppView extends AnchorPane {
                 throw new RuntimeException(e);
             }
     }
-
-    public AppController getController() {
-        return controller;
-    }
-    
-    
-    
     
 }

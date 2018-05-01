@@ -35,6 +35,8 @@ public interface JobType0Model {
     public final static Long SEGD_LOAD=2L;
     public final static Long ACQUISITION=3L;
     public final static Long TEXT=4L;
+    public final static Long SEGY=5L;
+    
     public Long getId();
     public void setId(Long id);
     public void setDepth(Long depth);
