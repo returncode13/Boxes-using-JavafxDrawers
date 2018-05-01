@@ -40,6 +40,10 @@ public class Log implements Serializable{
     private Header header;
     
     @ManyToOne
+    @JoinColumn(name="public_headers_fk",nullable = true)
+    private Header pheader;
+    
+    @ManyToOne
     @JoinColumn(name="volume_headers_fk",nullable = false)
     private Volume volume;
     
@@ -251,6 +255,14 @@ public class Log implements Serializable{
 
     public void setJob(Job job) {
         this.job = job;
+    }
+
+    public Header getPheader() {
+        return pheader;
+    }
+
+    public void setPheader(Header pheader) {
+        this.pheader = pheader;
     }
     
     

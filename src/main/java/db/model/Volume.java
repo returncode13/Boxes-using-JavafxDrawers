@@ -58,6 +58,8 @@ public class Volume implements Serializable {
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Header> headers;
    
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Pheader> pheaders;
    
     @ManyToOne
     @JoinColumn(name= "job_fk",nullable = false)
@@ -261,6 +263,14 @@ public class Volume implements Serializable {
 
     public void setHeaders(Set<Header> headers) {
         this.headers = headers;
+    }
+
+    public Set<Pheader> getPheaders() {
+        return pheaders;
+    }
+
+    public void setPheaders(Set<Pheader> pheaders) {
+        this.pheaders = pheaders;
     }
 
     

@@ -100,6 +100,9 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "job")
     private Set<Header> headers=new HashSet<>();
     
+    @OneToMany(mappedBy = "job")
+    private Set<Pheader> pheaders=new HashSet<>();
+    
     @OneToMany(mappedBy = "parent")
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links
     
