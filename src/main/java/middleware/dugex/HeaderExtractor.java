@@ -269,9 +269,14 @@ public class HeaderExtractor {
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
                  //   jobService.updateJob(dbjob.getId(), dbjob);
                     job.setDatabaseJob(dbjob);
-              
+                    
+                   
+                    
           }
-         
+                     if(!headers.isEmpty()){
+                        System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any subsurfaces that might have been repeated in the job");
+                        headerService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
+                    }
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 
@@ -517,7 +522,10 @@ public class HeaderExtractor {
                     job.setDatabaseJob(dbjob);
               
           }
-         
+                    if(pheaders.isEmpty()){
+                        System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any repeated subs in job: "+dbjob.getNameJobStep());
+                        pheaderService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
+                    }
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 

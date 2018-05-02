@@ -41,4 +41,5 @@ public interface PheaderDAO {
     public String getLatestTimeStampFor(Volume volume);
 
     public List<Pheader> getChosenHeadersForWorkspace(Workspace W);
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job);
 }

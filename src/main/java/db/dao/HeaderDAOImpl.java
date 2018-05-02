@@ -461,6 +461,62 @@ selectQuery.setParameter("subid", sub);
         return result;
     }
 
+    @Override
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
+        System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+       
+        String hqlDetermineCommonSubs="Select h.subsurface.id from Header h    where h.job =:j "
+                + "                                                         group by h.subsurface.id "
+                + "                                                         having count(*) > 1";
+        String hqlSelectIds="Select h.headerId from Header h where h.subsurface.id in (:subs) and h.job =:j";
+        String hqlUpdateChoose="update Header h Set h.chosen = false where h.headerId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query subsurfaceQuery= session.createQuery(hqlDetermineCommonSubs);
+            subsurfaceQuery.setParameter("j", job );
+            List<Long> subIds=subsurfaceQuery.list();
+                
+            if(subIds.isEmpty()){
+                System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): no subs repeated for job: "+job.getNameJobStep());
+                transaction.commit();
+            }else{
+                System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): Found "+subIds.size()+" repeated subs for job: "+job.getNameJobStep());
+                    Query selectHeaderIds=session.createQuery(hqlSelectIds);
+                    selectHeaderIds.setParameterList("subs", subIds);
+                    selectHeaderIds.setParameter("j",job);
+                    List<Long> repeatedHeaderIds=selectHeaderIds.list();
+                    
+                        if(repeatedHeaderIds.isEmpty()){
+                            System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): no headers found for job: "+job.getNameJobStep());
+                            transaction.commit();
+                        }else{
+                            
+                            System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): updating the chosen headers for "+repeatedHeaderIds.size()+" headers for job: "+job.getNameJobStep()+"\n"
+                                    + "You will need to select the correct subsurface.\n"
+                                    + "See the header table for this job ");
+                            Query updateQuery=session.createQuery(hqlUpdateChoose);
+                            updateQuery.setParameterList("ids",repeatedHeaderIds);
+                            int result=updateQuery.executeUpdate();
+                            transaction.commit();
+                        }
+                    
+                
+            }
+            
+            
+           
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
     
 
     

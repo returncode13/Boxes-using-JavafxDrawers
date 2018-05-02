@@ -136,6 +136,11 @@ public class HeaderServiceImpl implements HeaderService{
         return hDao.getChosenHeadersForWorkspace(W);
     }
 
+    @Override
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
+        hDao.checkForMultipleSubsurfacesInHeadersForJob(job);
+    }
+
     
     
     

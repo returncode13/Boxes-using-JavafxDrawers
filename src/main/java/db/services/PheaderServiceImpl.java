@@ -98,4 +98,9 @@ public class PheaderServiceImpl implements PheaderService {
     public List<Pheader> getChosenHeadersForWorkspace(Workspace W) {
         return phDao.getChosenHeadersForWorkspace(W);
     }
+
+    @Override
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
+        phDao.checkForMultipleSubsurfacesInHeadersForJob(job);
+    }
 }

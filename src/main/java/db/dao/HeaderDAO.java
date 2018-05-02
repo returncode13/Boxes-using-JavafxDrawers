@@ -48,6 +48,8 @@ public interface HeaderDAO {
     public String getLatestTimeStampFor(Volume volume);
 
     public List<Header> getChosenHeadersForWorkspace(Workspace W);
+
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job);
     
     
 }

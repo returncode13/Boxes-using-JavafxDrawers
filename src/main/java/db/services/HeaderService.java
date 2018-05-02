@@ -43,6 +43,8 @@ public interface HeaderService {
 
     public String getLatestTimeStampFor(Volume dbvol);
     public List<Header> getChosenHeadersForWorkspace(Workspace W);
+
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job dbjob);
     
     
     
