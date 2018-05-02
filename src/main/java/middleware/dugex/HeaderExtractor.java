@@ -273,10 +273,10 @@ public class HeaderExtractor {
                    
                     
           }
-                     if(!headers.isEmpty()){
+                   //  if(!headers.isEmpty()){
                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any subsurfaces that might have been repeated in the job");
                         headerService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
-                    }
+                   // }
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 
@@ -315,7 +315,7 @@ public class HeaderExtractor {
             for(int i=0;i<l2.size();i++){
                 sjarray[i]=l2.get(i);
             }
-            System.out.println("middleware.dugex.HeaderExtractor.<init>(): size of l2: "+l2.size()+" size of sjarray: "+sjarray.length);
+            
             
             Collections.addAll(subsurfacesPresentInJob, sjarray);
             
@@ -522,10 +522,10 @@ public class HeaderExtractor {
                     job.setDatabaseJob(dbjob);
               
           }
-                    if(pheaders.isEmpty()){
+                   // if(pheaders.isEmpty()){
                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any repeated subs in job: "+dbjob.getNameJobStep());
                         pheaderService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
-                    }
+                   // }
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 

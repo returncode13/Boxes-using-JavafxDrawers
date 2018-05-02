@@ -124,7 +124,8 @@ public class LineTableController extends Stage{
          //ContextMenu contextMenuOverride = new ContextMenu();
          MenuItem showLogsMenuItem=new MenuItem("Logs");
          MenuItem showWorkFlowVersion=new MenuItem("Workflow Versions");
-         MenuItem chooseThisHeader=new MenuItem("Choose This Subsurface");
+         MenuItem chooseThisHeader=new MenuItem("Choose this subsurface");
+         MenuItem deselectThisHeader=new MenuItem("Deselect this subsurface");
          MenuItem showOverride=new MenuItem("Override Doubt");
          contextMenu.getItems().add(showLogsMenuItem);
          contextMenu.getItems().add(showWorkFlowVersion); 
@@ -143,7 +144,14 @@ public class LineTableController extends Stage{
                     cm.getItems().add(showWorkFlowVersion);
                     cm.getItems().add(chooseThisHeader);
                     setContextMenu(cm);
-                }else if(item!=null && item.getChosen()){
+                }if(item!=null&& item.getChosen() && item.getMultiple()){
+                    ContextMenu cm=new ContextMenu();
+                    cm.getItems().add(showLogsMenuItem);
+                    cm.getItems().add(showWorkFlowVersion);
+                    cm.getItems().add(deselectThisHeader);
+                    setContextMenu(cm);
+                }
+                else if(item!=null && item.getChosen()){
                     /*if(contextMenu.getItems().contains(chooseThisHeader)){
                     contextMenu.getItems().remove(chooseThisHeader);
                     }*/
@@ -158,7 +166,11 @@ public class LineTableController extends Stage{
              Header h=headerService.getHeader(id);
              h.setChosen(true);
              headerService.updateHeader(h.getHeaderId(), h);
+             Subsurface conflictedSub=h.getSubsurface();
+             Job currentJob=h.getJob();
+             Volume volumeSelected=h.getVolume();
              
+             headerService.setChosenToFalseForConflictingSubs(conflictedSub,currentJob,volumeSelected);             //all conflicted except the one selected will have chosen=false and multiple=true;
              //run the headerloader once more. model.reloadSequenceHeaders();
              //set multipleSubsurfacesPresent=false;
              //rebuild table
@@ -166,6 +178,20 @@ public class LineTableController extends Stage{
              multipleSubsPresent=false;
              
          });
+         
+         deselectThisHeader.setOnAction(evt->{
+              Long id=row.getItem().getId();
+             Header h=headerService.getHeader(id);
+             h.setChosen(false);
+             headerService.updateHeader(h.getHeaderId(), h);
+             
+             //run the headerloader once more. model.reloadSequenceHeaders();
+             //set multipleSubsurfacesPresent=false;
+             //rebuild table
+             model.getJob().reLoadSequenceHeaders();
+             multipleSubsPresent=false;
+         });
+         
          
          showLogsMenuItem.setOnAction(e->{
                 Long id=row.getItem().getId();

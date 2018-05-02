@@ -103,4 +103,9 @@ public class PheaderServiceImpl implements PheaderService {
     public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
         phDao.checkForMultipleSubsurfacesInHeadersForJob(job);
     }
+
+    @Override
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
+        phDao.setChosenToFalseForConflictingSubs(conflictedSub, job, volumeToBeExcluded);;
+    }
 }

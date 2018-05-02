@@ -282,14 +282,16 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public void addVolume(Volume0 vol){
+        System.out.println("fend.job.job1.JobType1Model.addVolume(): adding volume : "+vol.getName().get()+" to job : "+nameproperty.getName());
         observableVolumes.add(vol);
+        System.out.println("fend.job.job1.JobType1Model.addVolume(): no of volumes for job: "+nameproperty.get()+" : "+observableVolumes.size() );
     }
     
     @Override
     public void removeVolume(Volume0 vol){
-        System.out.println("fend.job.job5.JobType5Model.removeVolume(): removing volume "+vol.getId()+"from job: "+this.databaseJob.getId());
+        System.out.println("fend.job.job1.JobType1Model.removeVolume(): removing volume "+vol.getId()+"from job: "+this.databaseJob.getId());
         observableVolumes.remove(vol);
-        System.out.println("fend.job.job5.JobType5Model.removeVolume(): Number of volumes: "+observableVolumes.size());
+        System.out.println("fend.job.job1.JobType1Model.removeVolume(): Number of volumes: "+observableVolumes.size());
     }
    
 

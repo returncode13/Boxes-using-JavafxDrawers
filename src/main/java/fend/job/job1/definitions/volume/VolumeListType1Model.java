@@ -104,9 +104,6 @@ public class VolumeListType1Model {
         return parentJob;
     }
 
-    private void extractSubsurfacesInVolume() {
-          
-    }
-
+    
      
 }

@@ -141,6 +141,11 @@ public class HeaderServiceImpl implements HeaderService{
         hDao.checkForMultipleSubsurfacesInHeadersForJob(job);
     }
 
+    @Override
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
+        hDao.setChosenToFalseForConflictingSubs(conflictedSub,job,volumeToBeExcluded);
+    }
+
     
     
     

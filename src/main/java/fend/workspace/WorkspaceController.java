@@ -763,8 +763,8 @@ public class WorkspaceController {
 
             }
 
-            Set<Volume> dbvols = new HashSet<>(volumeService.getVolumesForJob(dbj));
-
+            /*Set<Volume> dbvols = new HashSet<>(volumeService.getVolumesForJob(dbj));
+            
             List<Volume0> frontEndVolumeModels = new ArrayList<>();
             for (Volume dbv : dbvols) {
                 Volume0 fevol = null;
@@ -788,9 +788,9 @@ public class WorkspaceController {
                     fevol.setVolume(volumeOnDisk);
                     System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
                 }
-                /**
-                 * Skip the process for the Acq node
-                 */
+                
+                 // Skip the process for the Acq node
+                 
                 if (vtype.equals(Volume0.TEXT)) {
                     fevol = new Volume4(fejob);                  //parent g1Child and id set in contructor
 
@@ -813,6 +813,7 @@ public class WorkspaceController {
 
             }
             fejob.setVolumes(frontEndVolumeModels);
+            */
 
             idFrontEndJobMap.put(fejob.getId(), fejob);
 

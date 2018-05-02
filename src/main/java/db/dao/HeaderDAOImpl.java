@@ -128,7 +128,7 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setUpdateTime(newH.getUpdateTime());
             h.setSummaryTime(newH.getSummaryTime());
             h.setTextfilepath(newH.getTextfilepath());
-            h.setMultipleInstances(newH.getModified());
+            h.setMultipleInstances(newH.getMultipleInstances());
             h.setChosen(newH.getChosen());
             //h.setLogs(newH.getLogs());
             /*if(newH.getModified()){
@@ -472,7 +472,8 @@ selectQuery.setParameter("subid", sub);
                 + "                                                         group by h.subsurface.id "
                 + "                                                         having count(*) > 1";
         String hqlSelectIds="Select h.headerId from Header h where h.subsurface.id in (:subs) and h.job =:j";
-        String hqlUpdateChoose="update Header h Set h.chosen = false where h.headerId in (:ids)";
+        String hqlUpdateChooseFalse="update Header h Set h.chosen = false,h.multipleInstances = true where h.headerId in (:ids)";
+        String hqlUpdateChooseTrue="update Header h Set h.chosen = true,h.multipleInstances = false where h.job =:j";
         try{
             transaction=session.beginTransaction();
             Query subsurfaceQuery= session.createQuery(hqlDetermineCommonSubs);
@@ -481,6 +482,9 @@ selectQuery.setParameter("subid", sub);
                 
             if(subIds.isEmpty()){
                 System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): no subs repeated for job: "+job.getNameJobStep());
+                Query chooseTrueQuery=session.createQuery(hqlUpdateChooseTrue);
+                chooseTrueQuery.setParameter("j", job);
+                int qes=chooseTrueQuery.executeUpdate();
                 transaction.commit();
             }else{
                 System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): Found "+subIds.size()+" repeated subs for job: "+job.getNameJobStep());
@@ -497,7 +501,7 @@ selectQuery.setParameter("subid", sub);
                             System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): updating the chosen headers for "+repeatedHeaderIds.size()+" headers for job: "+job.getNameJobStep()+"\n"
                                     + "You will need to select the correct subsurface.\n"
                                     + "See the header table for this job ");
-                            Query updateQuery=session.createQuery(hqlUpdateChoose);
+                            Query updateQuery=session.createQuery(hqlUpdateChooseFalse);
                             updateQuery.setParameterList("ids",repeatedHeaderIds);
                             int result=updateQuery.executeUpdate();
                             transaction.commit();
@@ -509,6 +513,43 @@ selectQuery.setParameter("subid", sub);
             
            
             
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.headerId from Header h where  h.subsurface =:s and h.job =:j and h.volume !=:v ";
+        String hqlUpdate="update Header h set h.chosen=false,h.multipleInstances=true where h.headerId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", job);
+            query.setParameter("s", conflictedSub);
+            query.setParameter("v", volumeToBeExcluded);
+            List<Long> idsToUpdate=query.list();
+            
+                if(idsToUpdate.isEmpty()){
+                    System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): no headers found to update. ");
+                    transaction.commit();
+                }else{
+                    System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): updating "+idsToUpdate.size()+" conflicting headers");
+                    for(Long l: idsToUpdate){
+                        System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): id to update: "+l);
+                    }
+                    Query updateQ=session.createQuery(hqlUpdate);
+                    updateQ.setParameterList("ids", idsToUpdate);
+                    int res=updateQ.executeUpdate();
+                    transaction.commit();
+                            
+                }
             
         }catch(Exception e){
             e.printStackTrace();
