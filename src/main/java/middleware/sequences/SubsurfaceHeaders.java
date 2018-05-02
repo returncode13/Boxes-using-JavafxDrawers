@@ -110,10 +110,12 @@ public class SubsurfaceHeaders extends SequenceHeaders{
         this.timeStamp.set(timeStamp);
     }
 
+    @Override
     public Volume0 getVolume() {
         return volume;
     }
 
+    @Override
     public void setVolume(Volume0 volume) {
         this.volume = volume;
     }

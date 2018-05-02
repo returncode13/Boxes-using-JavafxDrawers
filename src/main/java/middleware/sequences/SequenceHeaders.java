@@ -8,14 +8,11 @@ package middleware.sequences;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.Sequence;
 import db.model.Subsurface;
+import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -81,12 +78,22 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private Long numberOfRuns=0L;
     private Boolean chosen=true;
     private Boolean multiple=false;
-    
+    private Volume0 volume;
     
     
     private Sequence sequence;
     private Subsurface subsurface;
 
+    public Volume0 getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Volume0 volume) {
+        this.volume = volume;
+    }
+
+    
+    
     public Long getId() {
         return id;
     }

@@ -28,6 +28,7 @@ import fend.job.table.log.HeaderLogView;
 import fend.job.table.log.VersionLogsModel;
 import fend.job.table.workflow.WorkFlowDifferenceModel;
 import fend.job.table.workflow.WorkFlowDifferenceView;
+import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -67,14 +69,46 @@ public class LineTableController extends Stage{
     private Executor exec;  
     private WorkflowService workflowService=new WorkflowServiceImpl();
     private LogService logservice=new LogServiceImpl();
-    
+    private boolean multipleSubsPresent=false;
      @FXML
     private JFXTreeTableView<SequenceHeaders> treetableView;
 
+    
+        TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
+        TreeTableColumn<SequenceHeaders,String> subsurfaceName= new TreeTableColumn<>("SAILLINE");
+        TreeTableColumn<SequenceHeaders,String>  timeStamp=new TreeTableColumn<>("TIMESTAMP");
+        TreeTableColumn<SequenceHeaders,Long>  tracecount=new TreeTableColumn<>("Traces");
+        TreeTableColumn<SequenceHeaders,Long>  inlineMax=new TreeTableColumn<>("inlineMax");
+        TreeTableColumn<SequenceHeaders,Long>  inlineMin=new TreeTableColumn<>("inlineMin");
+        TreeTableColumn<SequenceHeaders,Long>  inlineInc=new TreeTableColumn<>("inlineInc");
+        TreeTableColumn<SequenceHeaders,Long>  xlineMax=new TreeTableColumn<>("xlineMax");
+        TreeTableColumn<SequenceHeaders,Long>  xlineMin =new TreeTableColumn<>("xlineMin");
+        TreeTableColumn<SequenceHeaders,Long>  xlineInc =new TreeTableColumn<>("xlineInc");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotMax=new TreeTableColumn<>("dugShotMax");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotMin=new TreeTableColumn<>("dugShotMin");
+        TreeTableColumn<SequenceHeaders,Long>  dugShotInc=new TreeTableColumn<>("dugShotInc");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelMax=new TreeTableColumn<>("dugChannelMax");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelMin=new TreeTableColumn<>("dugChannelMin");
+        TreeTableColumn<SequenceHeaders,Long>  dugChannelInc=new TreeTableColumn<>("dugChannelInc");
+        TreeTableColumn<SequenceHeaders,Long>  offsetMax=new TreeTableColumn<>("offsetMax");
+        TreeTableColumn<SequenceHeaders,Long>  offsetMin=new TreeTableColumn<>("offsetMin");
+        TreeTableColumn<SequenceHeaders,Long>  offsetInc=new TreeTableColumn<>("offsetInc");
+        TreeTableColumn<SequenceHeaders,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
+        TreeTableColumn<SequenceHeaders,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
+        TreeTableColumn<SequenceHeaders,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
+        TreeTableColumn<SequenceHeaders,String>  insightVersion=new TreeTableColumn<>("insightVersion");
+        TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
+        TreeTableColumn<SequenceHeaders,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
+        TreeTableColumn<SequenceHeaders,Boolean>  multiple=new TreeTableColumn<>("multiple");
+        TreeTableColumn<SequenceHeaders,Boolean>  chosen=new TreeTableColumn<>("chosen");
+        TreeTableColumn<SequenceHeaders,String> volume=new TreeTableColumn<>("volume");
+     
+     
      
     void setModel(LineTableModel item) {
         
         model=item;
+        model.reloadTableProperty().addListener(RELOAD_TABLE_LISTENER);
         exec=Executors.newCachedThreadPool(r->{
             Thread t=new Thread(r);
             t.setDaemon(true);
@@ -121,22 +155,21 @@ public class LineTableController extends Stage{
          
          chooseThisHeader.setOnAction(evt->{
              Long id=row.getItem().getId();
-             /*Subsurface s=row.getItem().getSubsurface();
-             Long jobId=model.getJob().getId();
-             Job job=jobService.getJob(jobId);
-             Subsurface sub=subsurfaceService.getSubsurface(id);*/
              Header h=headerService.getHeader(id);
              h.setChosen(true);
              headerService.updateHeader(h.getHeaderId(), h);
+             
+             //run the headerloader once more. model.reloadSequenceHeaders();
+             //set multipleSubsurfacesPresent=false;
+             //rebuild table
+             model.getJob().reLoadSequenceHeaders();
+             multipleSubsPresent=false;
              
          });
          
          showLogsMenuItem.setOnAction(e->{
                 Long id=row.getItem().getId();
-             /*Subsurface s=row.getItem().getSubsurface();
-             Long jobId=model.getJob().getId();
-             Job job=jobService.getJob(jobId);
-             Subsurface sub=subsurfaceService.getSubsurface(id);*/
+          
               Set<VersionLogsModel> versionModels=new HashSet<>();
              Task<String> loghTask=new Task<String>(){
                     @Override
@@ -229,34 +262,6 @@ public class LineTableController extends Stage{
         
         
         
-        TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
-        TreeTableColumn<SequenceHeaders,String> subsurfaceName= new TreeTableColumn<>("SAILLINE");
-        TreeTableColumn<SequenceHeaders,String>  timeStamp=new TreeTableColumn<>("TIMESTAMP");
-        TreeTableColumn<SequenceHeaders,Long>  tracecount=new TreeTableColumn<>("Traces");
-        TreeTableColumn<SequenceHeaders,Long>  inlineMax=new TreeTableColumn<>("inlineMax");
-        TreeTableColumn<SequenceHeaders,Long>  inlineMin=new TreeTableColumn<>("inlineMin");
-        TreeTableColumn<SequenceHeaders,Long>  inlineInc=new TreeTableColumn<>("inlineInc");
-        TreeTableColumn<SequenceHeaders,Long>  xlineMax=new TreeTableColumn<>("xlineMax");
-        TreeTableColumn<SequenceHeaders,Long>  xlineMin =new TreeTableColumn<>("xlineMin");
-        TreeTableColumn<SequenceHeaders,Long>  xlineInc =new TreeTableColumn<>("xlineInc");
-        TreeTableColumn<SequenceHeaders,Long>  dugShotMax=new TreeTableColumn<>("dugShotMax");
-        TreeTableColumn<SequenceHeaders,Long>  dugShotMin=new TreeTableColumn<>("dugShotMin");
-        TreeTableColumn<SequenceHeaders,Long>  dugShotInc=new TreeTableColumn<>("dugShotInc");
-        TreeTableColumn<SequenceHeaders,Long>  dugChannelMax=new TreeTableColumn<>("dugChannelMax");
-        TreeTableColumn<SequenceHeaders,Long>  dugChannelMin=new TreeTableColumn<>("dugChannelMin");
-        TreeTableColumn<SequenceHeaders,Long>  dugChannelInc=new TreeTableColumn<>("dugChannelInc");
-        TreeTableColumn<SequenceHeaders,Long>  offsetMax=new TreeTableColumn<>("offsetMax");
-        TreeTableColumn<SequenceHeaders,Long>  offsetMin=new TreeTableColumn<>("offsetMin");
-        TreeTableColumn<SequenceHeaders,Long>  offsetInc=new TreeTableColumn<>("offsetInc");
-        TreeTableColumn<SequenceHeaders,Long>  cmpMax=new TreeTableColumn<>("cmpMax");
-        TreeTableColumn<SequenceHeaders,Long>  cmpMin=new TreeTableColumn<>("cmpMin");
-        TreeTableColumn<SequenceHeaders,Long>  cmpInc=new TreeTableColumn<>("cmpInc");
-        TreeTableColumn<SequenceHeaders,String>  insightVersion=new TreeTableColumn<>("insightVersion");
-        TreeTableColumn<SequenceHeaders,Long>  numberOfRuns=new TreeTableColumn<>("numberOfRuns");
-        TreeTableColumn<SequenceHeaders,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
-        TreeTableColumn<SequenceHeaders,Boolean>  multiple=new TreeTableColumn<>("multiple");
-        TreeTableColumn<SequenceHeaders,Boolean>  chosen=new TreeTableColumn<>("chosen");
-        
         
         //sequenceNumber.setCellValueFactory(new TreeItemPropertyValueFactory<>("sequenceNumber"));
         sequenceNumber.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, Long>, ObservableValue<Long>>() {
@@ -305,30 +310,35 @@ public class LineTableController extends Stage{
                 @Override
                 protected void updateItem(Boolean item, boolean empty){
                 super.updateItem(item, empty);
-                TreeTableRow<SequenceHeaders> seqTreeRow=getTreeTableRow();
-                if(item==null || empty ){
-                setText(null);
-                seqTreeRow.setStyle("");
-                setStyle("");
-                }else{
-                seqTreeRow.setStyle(item ? "-fx-background-color:orange":"");
-                setText(item.toString());
-                setStyle(item? "-fx-background-color:red":"");
+                    TreeTableRow<SequenceHeaders> seqTreeRow = getTreeTableRow();
+                    if (item == null || empty) {
+                        setText(null);
+                        seqTreeRow.setStyle("");
+                        setStyle("");
+                    } else {
+                        seqTreeRow.setStyle(item ? "-fx-background-color:orange" : "");
+                        setText(item.toString());
+                        setStyle(item ? "-fx-background-color:red" : "");
+                    }
                 }
-                }
-                };
+            };
         return cell;
+        });
+        
+        volume.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, String> param) {
+                SequenceHeaders seq=param.getValue().getValue();
+                Volume0 v=seq.getVolume();
+                if(v==null) return new SimpleStringProperty("Multiple volumes");
+                return v.getName();
+            }
         });
         
         
         
         
         
-        
-        treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
-                numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
-                xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
-                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
         
         
         
@@ -348,12 +358,26 @@ public class LineTableController extends Stage{
             TreeItem<SequenceHeaders> seqroot=new TreeItem<>(seq);
             for(SubsurfaceHeaders sub:seq.getSubsurfaceHeaders()){
                 TreeItem<SequenceHeaders> subitem=new TreeItem<>(sub);
+                    if(!sub.getChosen()) {
+                        multipleSubsPresent=true;
+                    }
                 seqroot.getChildren().add(subitem);
             }
             treeSeq.add(seqroot);
         }
         
-     
+        if(!multipleSubsPresent){
+                treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
+                numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
+                xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+        }
+        else{
+            treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
+                numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
+                xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume);
+        }
         
         
         
@@ -372,8 +396,72 @@ public class LineTableController extends Stage{
      treetableView.requestFocus();
         
      
+     this.setOnCloseRequest(e->{
+         
+         
+         model.getJob().exitedLineTable();
+     }
+     );
+     
      this.setTitle("Headers for "+model.getJob().getNameproperty().get());
         this.setScene(new Scene(this.view));
-        this.showAndWait();
+        this.show();
     }
+    
+    
+    private void rebuild(){
+          
+        List<TreeItem<SequenceHeaders>> treeSeq=new ArrayList<>();
+        for(SequenceHeaders seq:model.getSequenceHeaders()){
+            TreeItem<SequenceHeaders> seqroot=new TreeItem<>(seq);
+            for(SubsurfaceHeaders sub:seq.getSubsurfaceHeaders()){
+                TreeItem<SequenceHeaders> subitem=new TreeItem<>(sub);
+                    if(!sub.getChosen()) {
+                        multipleSubsPresent=true;
+                    }
+                seqroot.getChildren().add(subitem);
+            }
+            treeSeq.add(seqroot);
+        }
+        treetableView.getColumns().clear();
+        if(!multipleSubsPresent){
+                treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
+                numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
+                xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+        }
+        else{
+            treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
+                numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
+                xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+     TreeItem<SequenceHeaders> rootOfAllseq=new TreeItem<>();
+     
+     rootOfAllseq.getChildren().addAll(treeSeq);
+     
+     treetableView.setRoot(rootOfAllseq);
+     treetableView.setShowRoot(false);
+     treetableView.requestFocus();
+     
+    }
+    
+    private ChangeListener<Boolean> RELOAD_TABLE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            rebuild();
+        }
+    };
+    
+    
+    
 }

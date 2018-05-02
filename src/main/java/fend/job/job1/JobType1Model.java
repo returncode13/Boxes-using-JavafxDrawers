@@ -89,7 +89,34 @@ public class JobType1Model implements JobType0Model {
     private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
     private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
     private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
+    private BooleanProperty finishedReloading=new SimpleBooleanProperty(false);
+    private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
     
+    @Override
+    public BooleanProperty exitLineTableProperty(){
+        return exitedLineTableProperty;
+    };
+    
+    @Override
+    public void exitedLineTable(){
+        boolean val=exitedLineTableProperty.get();
+        exitedLineTableProperty.set(!val);
+    };
+   
+    
+    @Override
+    public BooleanProperty reloadSequenceHeadersProperty(){
+        return reloadSequenceHeaders;
+    };
+    
+    @Override
+    public void reLoadSequenceHeaders(){
+        boolean val=reloadSequenceHeaders.get();
+        reloadSequenceHeaders.set(!val);
+    };
+    
+    @Override
     public BooleanProperty qcChangedProperty(){
         return qcChangedProperty;
     }

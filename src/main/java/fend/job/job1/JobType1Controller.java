@@ -108,6 +108,9 @@ public class JobType1Controller implements JobType0Controller{
     private Executor exec;
     private QcTableModel  qcTableModel;
     
+    private LineTableModel lineTableModel;
+    private LineTableView lineTableView;
+    
     private BooleanProperty checkForHeaders;
     
     
@@ -150,6 +153,8 @@ public class JobType1Controller implements JobType0Controller{
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
+      model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
+      model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -417,8 +422,15 @@ public class JobType1Controller implements JobType0Controller{
             };
             headerLoaderTask.setOnSucceeded(e->{
                     model.setSequenceHeaders(headerloader.getSequenceHeaders());
-                    LineTableModel lineTableModel=new LineTableModel(model);
-                    LineTableView lineTableView=new LineTableView(lineTableModel);
+                    
+                    
+                    if(lineTableModel==null){
+                        lineTableModel=new LineTableModel(model);
+                        lineTableView=new LineTableView(lineTableModel);
+                    }
+                    else{
+                        lineTableModel.reloadTable();
+                    }
             });
          
         
@@ -985,6 +997,47 @@ public class JobType1Controller implements JobType0Controller{
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
             qcTableModel=null;
+        }
+    };
+   
+   
+   /**
+    * Used by the LineTableController to reflect changes back to it when someone changes the chosen status on a subline
+    **/
+   private ChangeListener<Boolean> RELOAD_SEQUENCE_HEADERS_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final HeaderLoader headerloader=new HeaderLoader(model);
+            Task<String> headerLoaderTask=new Task<String>(){
+                @Override
+                protected String call() throws Exception {
+                    headerloader.retrieveHeaders();
+                    
+                    return "Finished loading of headers for "+model.getNameproperty().get();
+                }
+                
+            };
+            headerLoaderTask.setOnSucceeded(e->{
+                    model.setSequenceHeaders(headerloader.getSequenceHeaders());
+                    lineTableModel.setSequenceHeaders(model.getSequenceHeaders());
+                    lineTableModel.reloadTable();
+            });
+         
+        
+            headerLoaderTask.setOnRunning(e->{});
+            headerLoaderTask.setOnFailed(e->{
+                headerLoaderTask.getException().printStackTrace();
+            });
+        
+            exec.execute(headerLoaderTask);
+        }
+    };
+   
+   private ChangeListener<Boolean> LINE_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            lineTableView=null;
+            lineTableModel=null;
         }
     };
 }

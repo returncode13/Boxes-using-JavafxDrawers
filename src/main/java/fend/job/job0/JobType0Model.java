@@ -100,4 +100,12 @@ public interface JobType0Model {
     public void toggleQcChangedProperty();
     public void setQcChanged(boolean v);
     
+    public BooleanProperty reloadSequenceHeadersProperty();
+    public void reLoadSequenceHeaders();
+    
+    public BooleanProperty exitLineTableProperty();
+    public void exitedLineTable();
+
+   
+    
 }
