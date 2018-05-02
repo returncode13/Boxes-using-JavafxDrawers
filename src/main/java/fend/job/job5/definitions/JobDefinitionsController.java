@@ -15,8 +15,8 @@ import fend.job.job5.definitions.insight.InsightListModel;
 import fend.job.job5.definitions.insight.InsightListView;
 import fend.job.job5.definitions.qcmatrix.QcMatrixModel;
 import fend.job.job5.definitions.qcmatrix.QcMatrixView;
-import fend.job.job5.definitions.volume.VolumeListModel;
-import fend.job.job5.definitions.volume.VolumeListView;
+import fend.job.job5.definitions.volume.VolumeListType5Model;
+import fend.job.job5.definitions.volume.VolumeListType5View;
 
 
 
@@ -77,8 +77,8 @@ public class JobDefinitionsController {
 
     private void setupVolumeDrawer(JFXDrawer drawer,JFXButton button) {
         drawer.setId("Volume");
-        VolumeListModel vol=new VolumeListModel(parentBox);
-        VolumeListView vollistview=new VolumeListView(vol);
+        VolumeListType5Model vol=new VolumeListType5Model(parentBox);
+        VolumeListType5View vollistview=new VolumeListType5View(vol);
         drawer.setSidePane(vollistview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
@@ -122,8 +122,8 @@ public class JobDefinitionsController {
         
         
          drawer.setId("QMatrix");
-         /*VolumeListModel insmodel=new VolumeListModel(parentBox);
-         VolumeListView insList=new VolumeListView(insmodel);*/
+         /*VolumeListType5Model insmodel=new VolumeListType5Model(parentBox);
+         VolumeListType5View insList=new VolumeListType5View(insmodel);*/
          
          QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
          QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);

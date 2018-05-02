@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job5.definitions.volume;
+package fend.job.job2.definitions.volume;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
@@ -26,7 +26,7 @@ import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import fend.volume.volume1.Volume1;
-import fend.volume.volume5.Volume5;
+import fend.volume.volume2.Volume2;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,10 +39,10 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class VolumeListController {
+public class VolumeListType2Controller {
 
-    private VolumeListModel model;
-    private VolumeListView view;
+    private VolumeListType2Model model;
+    private VolumeListType2View view;
     private Long type;              //the type of job and volume
     private JobType0Model parentjob;
     private Job dbjob;
@@ -68,7 +68,7 @@ public class VolumeListController {
             return;
         }
         if(!f.getName().endsWith(".dugio")){
-            System.out.println("fend.job.job5.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
+            System.out.println("fend.job.job2.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
             return;
         }
         
@@ -78,63 +78,61 @@ public class VolumeListController {
         vol.setPathOfVolume(f.getAbsolutePath());
         vol.setVolumeType(type);
         vol.setJob(dbjob);
+        
         volumeService.createVolume(vol);
         
         
-        if(type.equals(JobType0Model.SEGY)){
-            Volume5 volume5=new Volume5(parentjob);
-            volume5.setId(vol.getId());
-            volume5.setName(f.getName());
-            volume5.setVolume(f);
-            volume5.setDbVolume(vol);
-            volume5.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
-            model.addToVolumeList(volume5);
-            //parentjob.addVolume(volume5);
+         if(type.equals(JobType0Model.SEGD_LOAD)){
+        Volume2 volume2=new Volume2(parentjob);
+        volume2.setId(vol.getId());
+        volume2.setName(f.getName());
+        volume2.setVolume(f);
+        volume2.setDbVolume(vol);
+        volume2.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
+        model.addToVolumeList(volume2);
         }
-       
+        
     }
     
      
      
      
      
-    void setModel(VolumeListModel item) {
+    void setModel(VolumeListType2Model item) {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
-      ///  dbjob=jobService.getJob(parentjob.getId());
-      dbjob=parentjob.getDatabaseJob();
-        
+        //dbjob=jobService.getJob(parentjob.getId());
+        dbjob=parentjob.getDatabaseJob();
         
          //Set<Volume> dbVolumesInJob=dbjob.getVolumes();
         Set<Volume> dbVolumesInJob= new HashSet<>(volumeService.getVolumesForJob(dbjob));
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
-            if(type.equals(JobType0Model.SEGY)){
-                fevol=new Volume5(parentjob);
-                fevol.setId(dbVol.getId());
-                fevol.setName(dbVol.getNameVolume());
-                fevol.setDbVolume(dbVol);
-                File volumeOnDisk=new File(dbVol.getPathOfVolume());
-                fevol.setVolume(volumeOnDisk);
-                fevol.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
-                model.addToVolumeList(fevol);
-                //parentjob.addVolume(fevol);
+            
+             if(type.equals(JobType0Model.SEGD_LOAD)){
+            fevol=new Volume2(parentjob);
+            fevol.setId(dbVol.getId());
+            fevol.setName(dbVol.getNameVolume());
+            fevol.setDbVolume(dbVol);
+            fevol.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
+            File volumeOnDisk=new File(dbVol.getPathOfVolume());
+            fevol.setVolume(volumeOnDisk);
+            model.addToVolumeList(fevol);
             }
-          
+           
         }
         
     }
 
-    void setView(VolumeListView view) {
+    void setView(VolumeListType2View view) {
         this.view=view;
        
         volumeListView.setCellFactory(e->new VolumeListCell());
         volumeListView.setItems(model.getObservableListOfVolumes());
     }
     
-    
-    private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
+     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if(newValue){
@@ -155,7 +153,7 @@ public class VolumeListController {
                          * delete headers
                          * delete workflows
                          **/
-                         Volume dbVol=vols.getDbVolume();
+                        Volume dbVol=vols.getDbVolume();
 
                         System.out.println("deleting associated logs");
                         logService.deleteLogsFor(dbVol);
@@ -167,7 +165,7 @@ public class VolumeListController {
                         System.out.println("deleting associated workflows");
                         workflowService.deleteWorkFlowsFor(dbVol);
 
-                        System.out.println("deleting volume "+dbVol.getNameVolume()+" from the irdb database");
+                        System.out.println("deleting volume  from the irdb database");
                         volumeService.deleteVolume(dbVol.getId());
 
                         
@@ -181,5 +179,4 @@ public class VolumeListController {
             
         }
     };
-    
 }

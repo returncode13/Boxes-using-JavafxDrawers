@@ -38,10 +38,10 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class VolumeListController {
+public class VolumeListType1Controller {
 
-    private VolumeListModel model;
-    private VolumeListView view;
+    private VolumeListType1Model model;
+    private VolumeListType1View view;
     private Long type;              //the type of job and volume
     private JobType0Model parentjob;
     private Job dbjob;
@@ -97,7 +97,7 @@ public class VolumeListController {
      
      
      
-    void setModel(VolumeListModel item) {
+    void setModel(VolumeListType1Model item) {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
@@ -125,7 +125,7 @@ public class VolumeListController {
         
     }
 
-    void setView(VolumeListView view) {
+    void setView(VolumeListType1View view) {
         this.view=view;
        
         volumeListView.setCellFactory(e->new VolumeListCell());
@@ -154,7 +154,7 @@ public class VolumeListController {
                          * delete headers
                          * delete workflows
                          **/
-                         Volume dbVol=vols.getDbVolume();
+                        Volume dbVol=vols.getDbVolume();
 
                         System.out.println("deleting associated logs");
                         logService.deleteLogsFor(dbVol);
@@ -166,7 +166,7 @@ public class VolumeListController {
                         System.out.println("deleting associated workflows");
                         workflowService.deleteWorkFlowsFor(dbVol);
 
-                        System.out.println("deleting volume  from the irdb database");
+                        System.out.println("deleting volume "+dbVol.getId()+" from the irdb database");
                         volumeService.deleteVolume(dbVol.getId());
 
                         

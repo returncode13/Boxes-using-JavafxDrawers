@@ -3,39 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job4.definitions;
+package fend.job.job3.definitions;
 
-import fend.job.job1.JobType1Model;
-//import fend.job.definitions.volume.VolumeListModel;
-//import fend.job.definitions.volume.VolumeListView;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
-//import fend.job.definitions.insight.InsightListModel;
-//import fend.job.definitions.insight.InsightListView;
-//import fend.job.definitions.qcmatrix.QcMatrixModel;
-//import fend.job.definitions.qcmatrix.QcMatrixView;
 import fend.job.job0.JobType0Model;
-import fend.job.job4.definitions.qcmatrix.QcMatrixModel;
-import fend.job.job4.definitions.qcmatrix.QcMatrixView;
-import fend.job.job4.definitions.volume.VolumeListModel;
-import fend.job.job4.definitions.volume.VolumeListView;
-
-
-
-
+import fend.job.job3.JobType3Model;
+import fend.job.job3.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job3.definitions.qcmatrix.QcMatrixView;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobDefinitionsController {
+public class JobDefinitionsType3Controller {
     final String volumeExpand="Volumes >";
     final String volumeCollapse="Volumes <";
     final String qmatrixExpand="QMatrix >";
@@ -43,12 +29,12 @@ public class JobDefinitionsController {
     final String insightExpand="Insight >";
     final String insightCollapse="Insight <";
     
-    JobType0Model parentBox;
-    JobDefinitionsModel model;
-    JobDefinitionsView view;
+    JobType3Model parentBox;
+    JobDefinitionsType3Model model;
+    JobDefinitionsType3View view;
     JFXDrawer qmatrixDrawer=new JFXDrawer();
     JFXDrawer volumeDrawer=new JFXDrawer();
-   // JFXDrawer insightDrawer=new JFXDrawer();
+    JFXDrawer insightDrawer=new JFXDrawer();
     
     @FXML
     private JFXDrawersStack drawersStack;
@@ -56,29 +42,30 @@ public class JobDefinitionsController {
     @FXML
     private JFXButton openVolumeDrawer;
 
-    /* @FXML
-    private JFXButton openInsightDrawer;*/
+    @FXML
+    private JFXButton openInsightDrawer;
+
     @FXML
     private JFXButton openQMatrixDrawer;
 
 
 
-    void setModel(JobDefinitionsModel item,JobType0Model parentBox) {
+    void setModel(JobDefinitionsType3Model item,JobType3Model parentBox) {
         model=item;
         this.parentBox=parentBox;
     }
 
-    void setView(JobDefinitionsView vw) {
+    void setView(JobDefinitionsType3View vw) {
         view=vw;
         
-        setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
+      //  setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
         setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
-//        setupInsightDrawer(insightDrawer,openInsightDrawer);
+      //  setupInsightDrawer(insightDrawer,openInsightDrawer);
         
         
         
     }
-
+/*
     private void setupVolumeDrawer(JFXDrawer drawer,JFXButton button) {
         drawer.setId("Volume");
         VolumeListModel vol=new VolumeListModel(parentBox);
@@ -121,7 +108,7 @@ public class JobDefinitionsController {
              
         });
     }
-
+*/
     private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
         
         
@@ -169,7 +156,8 @@ public class JobDefinitionsController {
              
         });
      }
-/*
+
+    /*
     private void setupInsightDrawer(JFXDrawer drawer,JFXButton button) {
          
          drawer.setId("Insight");

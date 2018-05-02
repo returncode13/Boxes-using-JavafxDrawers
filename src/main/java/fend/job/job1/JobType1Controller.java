@@ -7,8 +7,8 @@ package fend.job.job1;
 
 
 import fend.dot.anchor.AnchorView;
-//import fend.job.definitions.JobDefinitionsModel;
-//import fend.job.definitions.JobDefinitionsView;
+//import fend.job.definitions.JobDefinitionsType1Model;
+//import fend.job.definitions.JobDefinitionsType1View;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
@@ -64,8 +64,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
-import fend.job.job1.definitions.JobDefinitionsModel;
-import fend.job.job1.definitions.JobDefinitionsView;
+import fend.job.job1.definitions.JobDefinitionsType1Model;
+import fend.job.job1.definitions.JobDefinitionsType1View;
 import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
@@ -162,8 +162,8 @@ public class JobType1Controller implements JobType0Controller{
         node=vw;
         this.interactivePane=interactivePane;
         drawer.setId("LEFT");
-        JobDefinitionsModel bdmodel=new JobDefinitionsModel();
-        JobDefinitionsView bdview=new JobDefinitionsView(bdmodel,this.model);
+        JobDefinitionsType1Model bdmodel=new JobDefinitionsType1Model();
+        JobDefinitionsType1View bdview=new JobDefinitionsType1View(bdmodel,this.model);
         drawer.setSidePane(bdview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         drawer.setDefaultDrawerSize(bdview.computeAreaInScreen());
@@ -944,7 +944,7 @@ public class JobType1Controller implements JobType0Controller{
                     for(Volume0 vol:volsInJobDc){
                         System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
                         vol.delete(true);
-                       // model.removeVolume(vol);
+                       
                     }
                    
                     

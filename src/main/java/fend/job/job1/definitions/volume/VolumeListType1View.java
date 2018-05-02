@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job5.definitions.volume;
+package fend.job.job1.definitions.volume;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,17 +15,17 @@ import javafx.scene.layout.StackPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class VolumeListView extends StackPane{
-    private  VolumeListModel model;
-    private VolumeListController  controller;
+public class VolumeListType1View extends StackPane{
+    private  VolumeListType1Model model;
+    private VolumeListType1Controller  controller;
     
      private FXMLLoader fXMLLoader;
     private final URL location;
     
     
-    public VolumeListView(VolumeListModel item){
+    public VolumeListType1View(VolumeListType1Model item){
        
-        this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/volume/volumeList.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job1/definitions/volume/volumeList.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
@@ -38,7 +38,7 @@ public class VolumeListView extends StackPane{
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(VolumeListController)fXMLLoader.getController();
+                controller=(VolumeListType1Controller)fXMLLoader.getController();
                 controller.setModel(item);
                 controller.setView(this) ;
                

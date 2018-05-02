@@ -1,5 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
+ * To change this license pheader, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -9,6 +9,7 @@ import app.properties.AppProperties;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Pheader;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
@@ -19,6 +20,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
 import db.services.LogServiceImpl;
+import db.services.PheaderService;
+import db.services.PheaderServiceImpl;
 import db.services.SubsurfaceJobService;
 import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
@@ -66,6 +69,7 @@ public class HeaderExtractor {
     SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     HeaderService headerService=new HeaderServiceImpl();
+    PheaderService pheaderService=new PheaderServiceImpl();
     VolumeService volumeService=new VolumeServiceImpl();
     LogService logService=new LogServiceImpl();
     JobService jobService=new JobServiceImpl();
@@ -76,6 +80,10 @@ public class HeaderExtractor {
     List<SubsurfaceJob> subsurfaceJobs=new ArrayList<>();
     List<Header> headers=new ArrayList<>();
     List<HeaderHolder> headerHolderList=new ArrayList<>();        
+    
+    List<Pheader> pheaders=new ArrayList<>();
+    List<PheaderHolder> pheaderHolderList=new ArrayList<>();
+    
     List<SubsurfaceJobKey> existingSubsurfaceJobs=new ArrayList<>();
     
     public HeaderExtractor(JobType0Model j) throws Exception{
@@ -92,7 +100,7 @@ public class HeaderExtractor {
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Number of available processors : "+processors);
        
     
-        if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD) || job.getType().equals(JobType0Model.SEGY)){
+        if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
          //  subsurfaceJobs=new ArrayList<>();
          //  headers=new ArrayList<>();
            
@@ -184,7 +192,7 @@ public class HeaderExtractor {
                               populate(header);
                               setOfHeadersInJob.add(header);
                               
-                              //headers.add(header);
+                              //headers.add(pheader);
                               headerHolder.header=header;
                               headerHolder.subjob=header.getSubsurfaceJob();
                               headerHolderList.add(headerHolder);
@@ -335,6 +343,190 @@ public class HeaderExtractor {
             subsurfaceJobService.createBulkSubsurfaceJob(subjobsToBeCommited);
             
         }
+        
+        
+        /**
+         * SEGY headers (Pheader) for other s/w like obpDeliverables to read
+         **/
+        
+        if(job.getType().equals(JobType0Model.SEGY)){
+            
+          for(Volume0 vol:volumes){
+              subsurfaceJobs.clear();
+              pheaders.clear();
+              pheaderHolderList.clear();
+               List<Subsurface> subsExistingInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
+        
+                for(Subsurface s:subsExistingInJob){
+                    SubsurfaceJobKey skey=generateSubsurfaceJobKey(s, dbjob);
+                    existingSubsurfaceJobs.add(skey);
+                }
+                
+                
+              Volume dbvol=volumeService.getVolume(vol.getId());
+              System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get()+" id: "+dbvol.getId());
+              //Job dbjob=dbvol.getJob();
+              String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+              List<SubsurfaceHeaders> subsInVol=vol.getSubsurfaces();     //these have the timestamp of the latest runs
+              String latestCommitToHeadersTable=pheaderService.getLatestTimeStampFor(dbvol);   //get the latest(max) timestamp for this volume
+              System.out.println("middleware.dugex.HeaderExtractor.<init>(): Latest time found "+latestCommitToHeadersTable);
+              
+              
+              
+              
+              
+              
+              BigInteger latestTimeStampForVol=new BigInteger(latestCommitToHeadersTable);
+              
+              
+               List<Callable<String>> tasks=new ArrayList<>();
+               /*int procsUsed=(int) (Runtime.getRuntime().availableProcessors()*percentageOfProcessorsUsed);
+               if(procsUsed <= 1){
+               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Not enough resources . PR-TCount: "+procsUsed);
+               return;
+               }*/
+                exec=Executors.newFixedThreadPool(processorsUsed());
+            
+              
+              
+              
+              for(SubsurfaceHeaders sub:subsInVol){
+                  
+                
+                            System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
+
+                            Callable<String> task= new Callable<String>(){
+                                @Override
+                                public String call() throws Exception {
+                                   
+                           
+                            String latestTimestamp=sub.getTimeStamp();
+                            BigInteger latestTimeStampForSub=new BigInteger(latestTimestamp);
+                            System.out.println(".call(): is latestTimeStampForVol ("+latestTimeStampForVol+") < latestTimeStampInFile ("+latestTimeStampForSub+"):  "+latestTimeStampForVol.compareTo(latestTimeStampForSub));
+                            //if latesttimestamp > maxTimeStamp for  vol in headers table.  Do this maxTime query once in the beginning
+                            
+                      
+                                if(latestTimeStampForVol.compareTo(latestTimeStampForSub)<0){  //i.e. this sub was created after the latesttime present for any sub in that volume
+                                    
+                                    
+                                    Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                                    String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+
+                                    Sequence dbseq=dbsub.getSequence();
+                                    setOfSubsurfacesInJob.add(dbsub);
+                                    SubsurfaceJob dbSubjob;
+                                    // if((dbSubjob=subsurfaceJobService.getSubsurfaceJobFor(dbjob, dbsub))==null){   //this will always return null. since this job-sub combination does not exist in the database. else the  latestTimeForSub < latestTime in the volume
+                                    dbSubjob=new SubsurfaceJob();
+                                    dbSubjob.setJob(dbjob);
+                                    dbSubjob.setSubsurface(dbsub);
+                                    dbSubjob.setUpdateTime(updateTime);
+                                    dbSubjob.setSummaryTime(summaryTime);
+                                
+                                PheaderHolder pheaderHolder = new PheaderHolder();
+                                //headerHolder.subjob=dbSubjob;
+                                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
+                               // subsurfaceJobs.add(dbSubjob);
+                                System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
+                                Pheader pheader=new Pheader();
+                                pheader.setJob(dbjob);
+                                pheader.setSubsurfaceJob(dbSubjob);
+                                pheader.setVolume(dbvol);
+                                pheader.setSubsurface(dbsub);
+                                pheader.setTimeStamp(latestTimestamp);
+                                
+                                //header.setSequence(dbsub.getSequence());
+                              populate(pheader);
+                             // setOfpHeadersInJob.add(pheader);
+                              
+                              //headers.add(pheader);
+                              pheaderHolder.pheader=pheader;
+                              pheaderHolder.subjob=pheader.getSubsurfaceJob();
+                              pheaderHolderList.add(pheaderHolder);
+//                                    System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
+                              
+                              //dbjob.setHeaders(setOfHeadersInJob);
+                             // dbjob.setSubsurfaces(setOfSubsurfacesInJob);
+                              //dbjob.getSubsurfaceJobs().add(dbSubjob);
+                             // dbjob.setSequences(setOfSequencesInJob);
+                              
+                              System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                                 // headerService.getMultipleInstances(dbjob, dbsub);
+                            }else{
+                                System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
+                               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                                 // headerService.getMultipleInstances(dbjob, dbsub);
+                            }
+                            
+                             
+                                return "Finished header extraction for sub: "+sub.getSubsurfaceName();
+                                
+                                }
+                            };  
+                                
+                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Adding task for "+sub.getSubsurfaceName());
+                         tasks.add(task);
+              }
+              
+                    try {
+                     List<Future<String>> futures=exec.invokeAll(tasks);
+                     for(Future<String> future:futures){
+                         System.out.println("future.get: "+future.get());
+                     }
+                     exec.shutdown();
+
+                 } catch (InterruptedException ex) {
+                     Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (ExecutionException ex) {
+                     Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+            
+                    
+                    /**
+                     * 
+                     * Database ops
+                     * 
+                    */
+                    
+                  
+                   // exec=Executors.newFixedThreadPool(processorsUsed());
+                   /*  for(Header h:headers){
+                   subsurfaceJobs.add(h.getSubsurfaceJob());
+                   }*/
+                   
+                   for(PheaderHolder ph:pheaderHolderList){
+                       SubsurfaceJobKey skey=generateSubsurfaceJobKey(ph.subjob.getSubsurface(), ph.subjob.getJob());
+                       if(!existingSubsurfaceJobs.contains(skey)){
+                                    subsurfaceJobs.add(ph.subjob);
+                                    existingSubsurfaceJobs.add(skey);
+                        }
+                       pheaders.add(ph.pheader);
+                   }
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
+                    
+                    subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+subsurfaceJobs.size()+" subsurfaceJob entries");
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Committing "+headers.size()+" headers");
+                    pheaderService.createBulkHeaders(pheaders);
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+headers.size()+" headers");
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Bulk update of logs for headers");
+                    for(Header h:headers){
+                        logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface());
+                    }
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
+                 //   jobService.updateJob(dbjob.getId(), dbjob);
+                    job.setDatabaseJob(dbjob);
+              
+          }
+         
+          
+          // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                
+                   //((JobType2Model)job).setHeadersCommited(true);
+                   System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
+       
+        }
+        
+        
        // exec.shutdown();
     }
 
@@ -449,7 +641,7 @@ public class HeaderExtractor {
                     Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
                     
                    // Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
-                   /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for header "+
+                   /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for pheader "+
                    hdr.getHeaderId()+" Latest Log: "+
                    latestLog.getIdLogs());*/
                     if(latestLog!=null){
@@ -477,6 +669,138 @@ public class HeaderExtractor {
                          
     }
     
+    
+    private void populate(Pheader hdr){
+         
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): populating headers for hdrs: id: "+hdr.getpHeaderId());
+                    Long traceCount=0L;
+                    Long cmpMax=0L;
+                    Long cmpMin=0L;
+                    Long cmpInc=0L;
+                    
+                    Long inlineMax=0L;
+                    Long inlineMin=0L;
+                    Long inlineInc=0L;
+                    Long xlineMax=0L;
+                    Long xlineMin=0L;
+                    Long xlineInc=0L;
+                    Long dugShotMax=0L;
+                    Long dugShotMin=0L;
+                    Long dugShotInc=0L;
+                    Long dugChannelMax=0L;
+                    Long dugChannelMin=0L;
+                    Long dugChannelInc=0L;
+                    Long offsetMax=0L;
+                    Long offsetMin=0L;
+                    Long offsetInc=0L;
+                    
+                    
+                    
+                    
+                    if( hdr.getVolume().getVolumeType().equals(Volume0.SEGY) ){
+                        try{
+                            traceCount=Long.valueOf(forTraces(hdr));
+                            cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                            cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                            cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                            
+                            inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                            inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                            inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                            xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                            xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                            xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                            dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                            dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                            dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                            dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                            dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                            dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                            offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                            offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                            offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                            
+                        }catch(NumberFormatException nfe){
+                            traceCount=-1L;
+                            cmpMax=-1L;
+                            cmpMin=-1L;
+                            cmpInc=-1L;
+                            
+                            inlineMax=-1L;
+                            inlineMin=-1L;
+                            inlineInc=-1L;
+                            xlineMax=-1L;
+                            xlineMin=-1L;
+                            xlineInc=-1L;
+                            dugShotMax=-1L;
+                            dugShotMin=-1L;
+                            dugShotInc=-1L;
+                            dugChannelMax=-1L;
+                            dugChannelMin=-1L;
+                            dugChannelInc=-1L;
+                            offsetMax=-1L;
+                            offsetMin=-1L;
+                            offsetInc=-1L;
+                        }catch(IOException ioe){
+                            System.out.println("middleware.dugex.HeaderExtractor.populate(): IOException: "+ioe.getMessage());
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    
+                    hdr.setTraceCount(traceCount);
+                    hdr.setCmpMax(cmpMax);
+                    hdr.setCmpMin(cmpMin);
+                    hdr.setCmpInc(cmpInc);
+                    hdr.setInlineMax(inlineMax);
+                    hdr.setInlineMin(inlineMin);
+                    hdr.setInlineInc(inlineInc);
+                    hdr.setXlineMax(xlineMax);
+                    hdr.setXlineMin(xlineMin);
+                    hdr.setXlineInc(xlineInc);
+                    hdr.setDugShotMax(dugShotMax);
+                    hdr.setDugShotMin(dugShotMin);
+                    hdr.setDugShotInc(dugShotInc);
+                    hdr.setDugChannelMax(dugChannelMax);
+                    hdr.setDugChannelMin(dugChannelMin);
+                    hdr.setDugChannelInc(dugChannelInc);
+                    hdr.setOffsetMax(offsetMax);
+                    hdr.setOffsetMin(offsetMin);
+                    hdr.setOffsetInc(offsetInc);
+                    
+                   // System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
+                    Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
+                    
+                   // Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
+                   /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for pheader "+
+                   hdr.getHeaderId()+" Latest Log: "+
+                   latestLog.getIdLogs());*/
+                    if(latestLog!=null){
+                    hdr.setInsightVersion(latestLog.getInsightVersion());
+                    hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
+                    hdr.setNumberOfRuns(latestLog.getVersion()+1);
+                    }
+                    else{
+                       hdr.setInsightVersion("ERROR");
+                       hdr.setWorkflowVersion(-1L);
+                       hdr.setNumberOfRuns(-1L);
+                    }
+                    
+                    
+                    //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
+                    
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing public headers for : "+hdr.getSubsurface().getSubsurface());
+                  //  headerService.createHeader(hdr);
+                    
+                
+                    //bulk update for logs belonging to headers
+                  //  logService.bulkUpdateOnLogs(hdr.getVolume(), hdr, hdr.getSubsurface());
+           
+         
+    }
+    
     private String forEachKey(Header hdr,String key) throws IOException {
                        /// System.out.println("Inside forEach key with key ="+key);
         
@@ -500,7 +824,51 @@ public class HeaderExtractor {
                         
     }
     
+     private String forEachKey(Pheader hdr,String key) throws IOException {
+                       /// System.out.println("Inside forEach key with key ="+key);
+        
+         try{
+                 Process process=new ProcessBuilder(dugioscript.getDugioHeaderValuesSh().getAbsolutePath(),hdr.getVolume().getPathOfVolume(),hdr.getSubsurface().getSubsurface(),key).start();
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr=new InputStreamReader(is);
+                        BufferedReader br=new BufferedReader(isr);
+                        
+                        String value;
+                        while((value=br.readLine())!=null){
+                        //    System.out.println("DHVEx: forEachKey Volume: "+volume+" sub: "+hdr.getSubsurface()+" key: "+key+" = "+value);
+                            return value;
+                        }
+         }catch(Exception ex){
+            // logger.severe(ex.getMessage());
+         }         
+           return null;
+                 
+                       
+                        
+    }
+    
+    
     private String forTraces(Header hdr) throws IOException{
+                      //  System.out.println("Inside forTraces key with NO key");
+                      try{
+                        Process process=new ProcessBuilder(dugioscript.getDugioGetTraces().getAbsolutePath(),hdr.getVolume().getPathOfVolume(),hdr.getSubsurface().getSubsurface()).start();
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr=new InputStreamReader(is);
+                        BufferedReader br=new BufferedReader(isr);
+                        
+                        String value;
+                        while((value=br.readLine())!=null){
+                         //   System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
+                            return value;
+                        }
+                      }catch(Exception ex){
+                         // logger.severe(ex.getMessage());
+                      }
+                        return null;
+                        
+    }
+    
+    private String forTraces(Pheader hdr) throws IOException{
                       //  System.out.println("Inside forTraces key with NO key");
                       try{
                         Process process=new ProcessBuilder(dugioscript.getDugioGetTraces().getAbsolutePath(),hdr.getVolume().getPathOfVolume(),hdr.getSubsurface().getSubsurface()).start();
@@ -543,6 +911,12 @@ public class HeaderExtractor {
         SubsurfaceJob subjob;
         Header header;
     }
+    
+      private class PheaderHolder{
+        SubsurfaceJob subjob;
+        Pheader pheader;
+    }
+    
     
     private class SubsurfaceJobKey {
         Subsurface subsurface;

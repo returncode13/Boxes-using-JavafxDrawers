@@ -350,21 +350,7 @@ public class Header implements Serializable{
         this.volume = volume;
     }
 
-    /*  public Long getSequenceNumber() {
-    return sequence;
-    }
-    
-    public void setSequenceNumber(Long sequence) {
-    this.sequence = sequence;
-    }
-    
-    public String getSubsurface() {
-    return subsurface;
-    }
-    
-    public void setSubsurface(String subsurface) {
-    this.subsurface = subsurface;
-    }*/
+ 
 
     
 

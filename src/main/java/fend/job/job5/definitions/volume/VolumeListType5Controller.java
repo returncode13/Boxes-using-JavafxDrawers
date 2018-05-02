@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job4.definitions.volume;
+package fend.job.job5.definitions.volume;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import db.model.Job;
 import db.model.Volume;
-import db.services.HeaderService;
-import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
 import db.services.LogServiceImpl;
+import db.services.PheaderService;
+import db.services.PheaderServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import db.services.WorkflowService;
@@ -24,12 +24,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
-import fend.job.job4.definitions.volume.listFiles.ListFilesModel;
-import fend.job.job4.definitions.volume.listFiles.ListFilesNode;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
-import fend.volume.volume2.Volume2;
-import fend.volume.volume4.Volume4;
+import fend.volume.volume5.Volume5;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,17 +38,16 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class VolumeListController {
+public class VolumeListType5Controller {
 
-    private VolumeListModel model;
-    private VolumeListView view;
+    private VolumeListType5Model model;
+    private VolumeListType5View view;
     private Long type;              //the type of job and volume
     private JobType0Model parentjob;
     private Job dbjob;
     private VolumeService volumeService=new VolumeServiceImpl();
     private JobService jobService=new JobServiceImpl();
-    private ListFilesModel listFilesModel;
-    private HeaderService headerService=new HeaderServiceImpl();
+    private PheaderService pheaderService=new PheaderServiceImpl();
     private LogService logService=new LogServiceImpl();
     private WorkflowService workflowService=new WorkflowServiceImpl();
     
@@ -71,16 +66,12 @@ public class VolumeListController {
         if(f==null){
             return;
         }
+        if(!f.getName().endsWith(".dugio")){
+            System.out.println("fend.job.job5.definitions.volume.VolumeListController.addNewVolume(): The chosen directory doesn't seem to be a dugio volume");
+            return;
+        }
         
-        List<String> filenames=new ArrayList<>();
-        File[] fileL=f.listFiles();
-                for(int i=0;i<fileL.length;i++){
-                    filenames.add(fileL[i].getName());
-                }
         
-               
-                
-                
         Volume vol=new Volume();
         vol.setNameVolume(f.getName());
         vol.setPathOfVolume(f.getAbsolutePath());
@@ -89,62 +80,58 @@ public class VolumeListController {
         volumeService.createVolume(vol);
         
         
-        
-        
-        
-        if(type.equals(JobType0Model.TEXT)){
-        Volume4 volume4=new Volume4(parentjob);
-        volume4.setId(vol.getId());
-        volume4.setName(f.getName());
-        volume4.setDbVolume(vol);
-        volume4.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
-        volume4.setVolume(f);
-        
-        model.addToVolumeList(volume4);
-        
-            listFilesModel=new ListFilesModel(filenames,volume4);
-            ListFilesNode lfnode=new ListFilesNode(listFilesModel);
+        if(type.equals(JobType0Model.SEGY)){
+            Volume5 volume5=new Volume5(parentjob);
+            volume5.setId(vol.getId());
+            volume5.setName(f.getName());
+            volume5.setVolume(f);
+            volume5.setDbVolume(vol);
+            volume5.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
+            model.addToVolumeList(volume5);
+            //parentjob.addVolume(volume5);
         }
-        
-        
+       
     }
     
      
      
      
      
-    void setModel(VolumeListModel item) {
+    void setModel(VolumeListType5Model item) {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
-        dbjob=jobService.getJob(parentjob.getId());
+      ///  dbjob=jobService.getJob(parentjob.getId());
+      dbjob=parentjob.getDatabaseJob();
         
         
          //Set<Volume> dbVolumesInJob=dbjob.getVolumes();
         Set<Volume> dbVolumesInJob= new HashSet<>(volumeService.getVolumesForJob(dbjob));
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
-            
-            
-            fevol=new Volume1(parentjob);
-            fevol.setId(dbVol.getId());
-            fevol.setName(dbVol.getNameVolume());
-            fevol.setDbVolume(dbVol);
-            fevol.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
-            File volumeOnDisk=new File(dbVol.getPathOfVolume());
-            fevol.setVolume(volumeOnDisk);
-            model.addToVolumeList(fevol);
-     
+            if(type.equals(JobType0Model.SEGY)){
+                fevol=new Volume5(parentjob);
+                fevol.setId(dbVol.getId());
+                fevol.setName(dbVol.getNameVolume());
+                fevol.setDbVolume(dbVol);
+                File volumeOnDisk=new File(dbVol.getPathOfVolume());
+                fevol.setVolume(volumeOnDisk);
+                fevol.deleteProperty().addListener(VOLUME_DELETE_LISTENER);
+                model.addToVolumeList(fevol);
+                //parentjob.addVolume(fevol);
+            }
+          
         }
         
     }
 
-    void setView(VolumeListView view) {
+    void setView(VolumeListType5View view) {
         this.view=view;
        
         volumeListView.setCellFactory(e->new VolumeListCell());
         volumeListView.setItems(model.getObservableListOfVolumes());
     }
+    
     
     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -167,23 +154,23 @@ public class VolumeListController {
                          * delete headers
                          * delete workflows
                          **/
-                         Volume dbVol=vols.getDbVolume();
-
-                         /*System.out.println("deleting associated logs");
-                         logService.deleteLogsFor(dbVol);*/
+                        Volume dbVol=vols.getDbVolume();
+                        System.out.println("Database volume: "+dbVol.getId());
+                        System.out.println("deleting associated logs");
+                        logService.deleteLogsFor(dbVol);
 
                         System.out.println("deleting associated headers");
-                        headerService.deleteHeadersFor(dbVol);
+                        pheaderService.deleteHeadersFor(dbVol);
 
 
-                        /*System.out.println("deleting associated workflows");
-                        workflowService.deleteWorkFlowsFor(dbVol);*/
-                        
-                        System.out.println("deleting volume  from the irdb database");
+                        System.out.println("deleting associated workflows");
+                        workflowService.deleteWorkFlowsFor(dbVol);
+
+                        System.out.println("deleting volume "+dbVol.getNameVolume()+" from the irdb database");
                         volumeService.deleteVolume(dbVol.getId());
 
                         
-                        
+                        parentjob.removeVolume(vols);
 
                        
                         
@@ -193,4 +180,5 @@ public class VolumeListController {
             
         }
     };
+    
 }

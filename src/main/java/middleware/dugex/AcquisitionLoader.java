@@ -59,6 +59,7 @@ public class AcquisitionLoader {
             acqsubhdr.setSubsurfaceFK(a.getSubsurfaceFK());
             acqsubhdr.setSequence(a.getSequence());
             acqsubhdr.setSubsurfaceName(a.getSubsurfaceFK().getSubsurface());
+            
             if(!lookupmap.containsKey(a.getSubsurfaceFK().getSequence())){
                     List<AcquisitionSubsurfaceHeaders> subMap=new ArrayList<>();
                     subMap.add(acqsubhdr);

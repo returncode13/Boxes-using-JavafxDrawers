@@ -86,6 +86,7 @@ import javafx.concurrent.Task;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
+import middleware.dugex.PheaderLoader;
 
 /**
  *
@@ -406,7 +407,7 @@ public class JobType5Controller implements JobType0Controller{
     
     @FXML
     void showTable(ActionEvent event) {
-        final HeaderLoader headerloader=new HeaderLoader(model);
+        final PheaderLoader headerloader=new PheaderLoader(model);
             Task<String> headerLoaderTask=new Task<String>(){
                 @Override
                 protected String call() throws Exception {

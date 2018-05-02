@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job1.definitions;
+package fend.job.job4.definitions;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobDefinitionsModel {
+public class JobDefinitionsType4Model {
     
 }

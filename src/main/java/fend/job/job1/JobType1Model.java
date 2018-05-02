@@ -249,6 +249,7 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public ObservableList<Volume0> getVolumes() {
+        System.out.println("fend.job.job1.JobType1Model.getVolumes(): number of volumes returned: "+observableVolumes.size());
         return observableVolumes;
     }
     
@@ -259,7 +260,9 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public void removeVolume(Volume0 vol){
+        System.out.println("fend.job.job5.JobType5Model.removeVolume(): removing volume "+vol.getId()+"from job: "+this.databaseJob.getId());
         observableVolumes.remove(vol);
+        System.out.println("fend.job.job5.JobType5Model.removeVolume(): Number of volumes: "+observableVolumes.size());
     }
    
 

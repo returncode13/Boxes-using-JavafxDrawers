@@ -18,6 +18,7 @@ import db.model.Link;
 import db.model.NodeProperty;
 import db.model.NodePropertyValue;
 import db.model.NodeType;
+import db.model.Pheader;
 import db.model.PropertyType;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
@@ -53,6 +54,8 @@ import db.services.NodePropertyValueService;
 import db.services.NodePropertyValueServiceImpl;
 import db.services.NodeTypeService;
 import db.services.NodeTypeServiceImpl;
+import db.services.PheaderService;
+import db.services.PheaderServiceImpl;
 import db.services.PropertyTypeService;
 import db.services.PropertyTypeServiceImpl;
 import db.services.QcMatrixRowService;
@@ -190,7 +193,15 @@ public class WorkspaceController {
     private DoubtType doubtTypeTime;
     private DoubtType doubtTypeInsight;
     private DoubtType doubtTypeInherit;
-
+    
+    private NodeType node2D;
+    private NodeType nodeSegd;
+    private NodeType nodeText;
+    private NodeType nodeAcq;
+    private NodeType nodeSegy;
+    
+    
+    
     private SummaryModel summaryModel = null;
     private SummaryView summaryView;
     private Executor exec;
@@ -204,6 +215,7 @@ public class WorkspaceController {
     private Map<SubsurfaceJobKey, SubsurfaceJob> subsurfaceJobSummaryTimeMap = new HashMap<>();
     private Map<Subsurface, Set<Link>> subsurfaceLinkMap = new HashMap<>();
     private Map<HeaderKey, Header> headerMap = new HashMap<>();
+    private Map<PheaderKey, Pheader> pheaderMap = new HashMap<>();
     private Map<SummaryKey, Summary> summaryMap = new HashMap<>();                 //used to check if an entry exists in the database
     
 
@@ -602,7 +614,7 @@ public class WorkspaceController {
 
         
     }
-
+   
     void setModel(WorkspaceModel item) {
 //        splitpane.prefWidthProperty().bind(baseWindow.widthProperty());
         //      splitpane.prefHeightProperty().bind(baseWindow.heightProperty());
@@ -631,7 +643,16 @@ public class WorkspaceController {
         doubtTypeTime = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
         doubtTypeInsight=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
         doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
-
+        
+        node2D=nodeTypeService.getNodeTypeObjForType(JobType0Model.PROCESS_2D);
+        nodeSegd=nodeTypeService.getNodeTypeObjForType(JobType0Model.SEGD_LOAD);
+        nodeAcq=nodeTypeService.getNodeTypeObjForType(JobType0Model.ACQUISITION);
+        nodeText=nodeTypeService.getNodeTypeObjForType(JobType0Model.TEXT);
+        nodeSegy=nodeTypeService.getNodeTypeObjForType(JobType0Model.SEGY);
+        
+        
+        
+        
         File insightLocation = new File(AppProperties.getINSIGHT_LOCATION());
         File[] insights = insightLocation.listFiles(insightFilter);
         List<String> insightVersionStrings = new ArrayList<>();
@@ -1120,26 +1141,110 @@ public class WorkspaceController {
     private ResultHolder checkTimeDependency(Link l, Subsurface subb){
         Job hparent = l.getParent();
         Job hchild = l.getChild();
-        HeaderKey parentKey = generateHeaderKey(hparent, subb);
-        HeaderKey childKey = generateHeaderKey(hchild, subb);
-        Header hp = headerMap.get(parentKey);
-        Header hc = headerMap.get(childKey);
-        Long hpt = Long.valueOf(hp.getTimeStamp());
-        Long hct = Long.valueOf(hc.getTimeStamp());
-            
+        /*boolean path1=(                                                                                     //path to take if both of them are either  2D or SEGD
+        (hparent.getNodetype().equals(node2D) || hparent.getNodetype().equals(nodeSegd))
+        &&
+        (hchild.getNodetype().equals(node2D) || hchild.getNodetype().equals(nodeSegd)));
+        
+        
+        boolean path2=(                                                                                     //path to take if atleast one of them is SEGY
+        hparent.getNodetype().equals(nodeSegy)
+        ||
+        hchild.getNodetype().equals(nodeSegy)
+        );*/
+        
+        boolean parentIsSegy=hparent.getNodetype().equals(nodeSegy);
+        boolean childIsSegy=hchild.getNodetype().equals(nodeSegy);
+        boolean bothAreSegy=parentIsSegy && childIsSegy;
+        boolean processIsNotSegy=!parentIsSegy &&  !childIsSegy;
+       
+                    
         ResultHolder resultHolder=new ResultHolder();
-        if(hpt >= hct) {    //parent header created not before child header
-            resultHolder.result=DEPENDENCY_FAIL_ERROR;
-            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-            return resultHolder;
+        
+        if(processIsNotSegy){
+                    HeaderKey parentKey = generateHeaderKey(hparent, subb);
+                    HeaderKey childKey = generateHeaderKey(hchild, subb);
+                    Header hp = headerMap.get(parentKey);
+                    Header hc = headerMap.get(childKey);
+                    Long hpt = Long.valueOf(hp.getTimeStamp());
+                    Long hct = Long.valueOf(hc.getTimeStamp());
+
+                     
+                    if(hpt >= hct) {    //parent header created not before child header
+                        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                       return resultHolder;
+                    }else{
+                        resultHolder.result=DEPENDENCY_PASS;
+                        resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        return resultHolder;
+                    }
         }else{
-            resultHolder.result=DEPENDENCY_PASS;
-            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-            return resultHolder;
+                   if(bothAreSegy){
+                        
+                        PheaderKey parentKey = generatePheaderKey(hparent, subb);
+                        PheaderKey childKey = generatePheaderKey(hchild, subb);
+                        Pheader hp = pheaderMap.get(parentKey);
+                        Pheader hc = pheaderMap.get(childKey);
+                        Long hpt = Long.valueOf(hp.getTimeStamp());
+                        Long hct = Long.valueOf(hc.getTimeStamp());
+
+
+                        if(hpt >= hct) {    //parent header created not before child header
+                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                           // return resultHolder;
+                        }else{
+                            resultHolder.result=DEPENDENCY_PASS;
+                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                            //return resultHolder;
+                        }
+                          
+                   }else if(parentIsSegy){
+                       
+                        PheaderKey parentKey = generatePheaderKey(hparent, subb);
+                        HeaderKey childKey = generateHeaderKey(hchild, subb);
+                        Pheader hp = pheaderMap.get(parentKey);
+                        Header hc = headerMap.get(childKey);
+                        Long hpt = Long.valueOf(hp.getTimeStamp());
+                        Long hct = Long.valueOf(hc.getTimeStamp());
+
+
+                        if(hpt >= hct) {    //parent header created not before child header
+                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                            //return resultHolder;
+                        }else{
+                            resultHolder.result=DEPENDENCY_PASS;
+                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                           // return resultHolder;
+                        }
+                       
+                   }else if(childIsSegy){
+                        HeaderKey parentKey = generateHeaderKey(hparent, subb);
+                        PheaderKey childKey = generatePheaderKey(hchild, subb);
+                        Header hp = headerMap.get(parentKey);
+                        Pheader hc = pheaderMap.get(childKey);
+                        Long hpt = Long.valueOf(hp.getTimeStamp());
+                        Long hct = Long.valueOf(hc.getTimeStamp());
+
+
+                        if(hpt >= hct) {    //parent header created not before child header
+                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                            //return resultHolder;
+                        }else{
+                            resultHolder.result=DEPENDENCY_PASS;
+                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                            //return resultHolder;
+                        }
+                   }
         }
-        
-        
+      return resultHolder;
     }
+    
+  
+    
     
     
     private ResultHolder checkTraceDependency(Link link,Subsurface subb){
@@ -1154,7 +1259,7 @@ public class WorkspaceController {
         Map<String, Double> mapForVariableSetting = new HashMap<>();
         Set<String> variableSet = new HashSet<>();
         Set<Job> argumentSet = new HashSet<>();
-        
+        ResultHolder resultHolder=new ResultHolder();
         mapForVariableSetting.clear();
         variableSet.clear();
         argumentSet.clear();
@@ -1162,15 +1267,29 @@ public class WorkspaceController {
             String var = va.getVariable();
             Job arg = va.getArgument();
             Double tracesArg;
-            HeaderKey hkey = generateHeaderKey(arg, subb);
-            /*Header h = headerService.getChosenHeaderFor(arg, subb);          //O-2*/
-            Header h = headerMap.get(hkey);
-            if (h == null) {
-                tracesArg = 0.0;
-            } else {
-                tracesArg = Double.valueOf(h.getTraceCount() + "");
-            }
+            
+            /*Header ph = headerService.getChosenHeaderFor(arg, subb);          //O-2*/
+             boolean argIsSegy=arg.getNodetype().equals(nodeSegy);
+             if(!argIsSegy){
+                 HeaderKey hkey = generateHeaderKey(arg, subb);
+                 Header h = headerMap.get(hkey);
+                    if (h == null) {
+                        tracesArg = 0.0;
+                    } else {
+                        tracesArg = Double.valueOf(h.getTraceCount() + "");
+                    }
 
+             }else{
+                 PheaderKey hkey=generatePheaderKey(arg, subb);
+                 Pheader ph = pheaderMap.get(hkey);
+                    if (ph == null) {
+                        tracesArg = 0.0;
+                    } else {
+                        tracesArg = Double.valueOf(ph.getTraceCount() + "");
+                    }
+
+             }
+                    
             mapForVariableSetting.put(var, tracesArg);
             if (!var.equals("y0")) {                      //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
                 variableSet.add(var);
@@ -1198,7 +1317,7 @@ public class WorkspaceController {
                 + "evaluated.result = " + result);
         Double evaluated = Math.abs(y - result) / y;
         
-        ResultHolder resultHolder=new ResultHolder();
+        
         if (evaluated <= tolerance) {
             resultHolder.result=DEPENDENCY_PASS;
             resultHolder.reason=DoubtStatusModel.getTraceDependencyPassedMessage(link.getParent().getNameJobStep(),link.getChild().getNameJobStep(),
@@ -1316,20 +1435,36 @@ public class WorkspaceController {
                 parentList.add(s);
             };
         
-        HeaderKey key=generateHeaderKey(parent, sub);
         
-        
-        if(headerMap.containsKey(key)){
-            Header hp=headerMap.get(key);     //get headers of the parent
-            insightVersionInHeader=hp.getInsightVersion();
-            System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-            if(!parentList.contains(insightVersionInHeader)) {
-                insightFail=true;
+        boolean parentIsSegy=parent.getNodetype().equals(nodeSegy);
+        if(!parentIsSegy){
+            HeaderKey key=generateHeaderKey(parent, sub);
+            if(headerMap.containsKey(key)){
+                Header hp=headerMap.get(key);     //get headers of the parent
+                insightVersionInHeader=hp.getInsightVersion();
+                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+                if(!parentList.contains(insightVersionInHeader)) {
+                    insightFail=true;
+                }
+
+            }else{
+                //do nothing. no header present for this key.
             }
-            
         }else{
-            //do nothing. no header present for this key.
+            PheaderKey key=generatePheaderKey(parent, sub);
+             if(pheaderMap.containsKey(key)){
+                Pheader ph=pheaderMap.get(key);     //get headers of the parent
+                insightVersionInHeader=ph.getInsightVersion();
+                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+                if(!parentList.contains(insightVersionInHeader)) {
+                    insightFail=true;
+                }
+
+            }else{
+                //do nothing. no header present for this key.
+            }
         }
+            
         
         
     }
@@ -1369,20 +1504,37 @@ public class WorkspaceController {
                 childList.add(s);
             };
         
-        HeaderKey key=generateHeaderKey(child, sub);
         
         
-        if(headerMap.containsKey(key)){
-            Header hp=headerMap.get(key);     //get headers of the parent
-            insightVersionInHeader=hp.getInsightVersion();
-            System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-            if(!childList.contains(insightVersionInHeader)) {
-                insightFail=true;
+        boolean childIsSegy=child.getNodetype().equals(nodeSegy);
+        if(!childIsSegy){
+            HeaderKey key=generateHeaderKey(child, sub);
+            if(headerMap.containsKey(key)){
+                Header hp=headerMap.get(key);     //get headers of the parent
+                insightVersionInHeader=hp.getInsightVersion();
+                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+                if(!childList.contains(insightVersionInHeader)) {
+                    insightFail=true;
+                }
+
+            }else{
+                //do nothing. no header present for this key.
             }
-            
         }else{
-            //do nothing. no header present for this key.
+            PheaderKey key=generatePheaderKey(child, sub);
+            if(pheaderMap.containsKey(key)){
+                Pheader ph=pheaderMap.get(key);     //get headers of the parent
+                insightVersionInHeader=ph.getInsightVersion();
+                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+                if(!childList.contains(insightVersionInHeader)) {
+                    insightFail=true;
+                }
+
+            }else{
+                //do nothing. no header present for this key.
+            }
         }
+            
         
         
     }
@@ -1454,9 +1606,12 @@ public class WorkspaceController {
                          * Based on the type of jobs at the end of each link , the procedure has to be customized
                          * 
                          */
-                        boolean acquisitionType=link.getParent().getNodetype().getIdNodeType().equals(JobType0Model.ACQUISITION) || link.getChild().getNodetype().getIdNodeType().equals(JobType0Model.ACQUISITION);
-                        boolean textType=link.getParent().getNodetype().getIdNodeType().equals(JobType0Model.TEXT) || link.getChild().getNodetype().getIdNodeType().equals(JobType0Model.TEXT);
-                        boolean segdOr2D= !acquisitionType && !textType;
+                        /*boolean acquisitionType=link.getParent().getNodetype().getIdNodeType().equals(JobType0Model.ACQUISITION) || link.getChild().getNodetype().getIdNodeType().equals(JobType0Model.ACQUISITION);
+                        boolean textType=link.getParent().getNodetype().getIdNodeType().equals(JobType0Model.TEXT) || link.getChild().getNodetype().getIdNodeType().equals(JobType0Model.TEXT);*/
+                        boolean acquisitionType=link.getParent().getNodetype().equals(nodeAcq) || link.getChild().getNodetype().equals(nodeAcq);
+                        boolean textType=link.getParent().getNodetype().equals(nodeText) || link.getChild().getNodetype().equals(nodeText) ;
+                        boolean segyType=link.getParent().getNodetype().equals(nodeSegy) || link.getChild().getNodetype().equals(nodeSegy);
+                        boolean segdOr2DOrSegy= !acquisitionType && !textType || segyType;
                         
                         if(acquisitionType){
                                 boolean forLeaf=true;
@@ -1485,7 +1640,7 @@ public class WorkspaceController {
                         }
                         
                         
-                        if(segdOr2D){
+                        if(segdOr2DOrSegy){
                                 boolean forLeaf=true;
                                 ResultHolder timestatus=checkTimeDependency(link, subb);
                                 setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf);
@@ -1511,6 +1666,35 @@ public class WorkspaceController {
                                 }
                                 
                         }
+                        
+                        /*   if(segyType){
+                        boolean forLeaf=true;
+                        ResultHolder timestatus=checkTimeDependency(link, subb);
+                        setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf);
+                        
+                        
+                        ResultHolder tracestatus=checkTraceDependency(link,subb);
+                        setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
+                        
+                        ResultHolder qcstatus=checkQcDependency(link, subb);
+                        setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+                        
+                        
+                        ResultHolder insightStatus=checkInsightDependency(link, subb);
+                        setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
+                        
+                        
+                        if(link.getChild().isLeaf()){
+                        ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                        setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                        
+                        ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                        setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                        }
+                        
+                        }
+                        */
+                        
                         
                         String summaryTime = DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
 
@@ -1571,6 +1755,8 @@ public class WorkspaceController {
         
         
     }
+    private PheaderService pheaderService=new PheaderServiceImpl();
+  
     
     private void loadAllMaps(){
         
@@ -1724,6 +1910,26 @@ public class WorkspaceController {
         /**
          * headerMap is now one-one with database table
          */
+        
+        
+        /**
+         * This is for the external (public) headers
+         * Get chosen headers for dependency checks
+         * Create a pheaderMap<PheaderKey(job,subsurface),Header> and populate it
+         */
+        
+        List<Pheader> pheadersInWorkspace = pheaderService.getChosenHeadersForWorkspace(dbWorkspace);
+        for (Pheader h : pheadersInWorkspace) {
+            PheaderKey pheaderKey = new PheaderKey();
+            pheaderKey.job = h.getJob();
+            pheaderKey.subsurface = h.getSubsurface();
+
+            pheaderMap.put(pheaderKey, h);
+        }
+        /**
+         * headerMap is now one-one with database table
+         */
+        
         
         /**
          * Get variable arguments for dependency checks
@@ -2834,6 +3040,42 @@ public class WorkspaceController {
         }
 
     }
+    
+      private class PheaderKey {
+
+        Subsurface subsurface;
+        Job job;
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 13 * hash + Objects.hashCode(this.subsurface);
+            hash = 13 * hash + Objects.hashCode(this.job);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final PheaderKey other = (PheaderKey) obj;
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            return true;
+        }
+
+    }
 
     private class SubsurfaceJobKey {
 
@@ -3004,6 +3246,14 @@ public class WorkspaceController {
 
     private HeaderKey generateHeaderKey(Job job, Subsurface sub) {
         HeaderKey key = new HeaderKey();
+        key.job = job;
+        key.subsurface = sub;
+
+        return key;
+    }
+    
+    private PheaderKey generatePheaderKey(Job job, Subsurface sub) {
+        PheaderKey key = new PheaderKey();
         key.job = job;
         key.subsurface = sub;
 

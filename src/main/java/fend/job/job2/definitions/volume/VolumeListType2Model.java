@@ -21,14 +21,14 @@ import fend.volume.volume0.Volume0;
  * @author sharath nair <sharath.nair@polarcus.com>
  * class holds a list of volumes
  */
-public class VolumeListModel {
+public class VolumeListType2Model {
     List<Volume0> volumes;
     List<String> subsurfacesInVolume;
     ObservableList<Volume0> observableListOfVolumes;
     JobType0Model parentJob;                     //the job that contains this list
     
     
-    public VolumeListModel(JobType0Model parentBox) {
+    public VolumeListType2Model(JobType0Model parentBox) {
         this.parentJob=parentBox;
         volumes=new ArrayList<>();
         observableListOfVolumes=FXCollections.observableArrayList(volumes);
@@ -44,7 +44,8 @@ public class VolumeListModel {
                         
                         for(Volume0 vol:c.getRemoved()){
                             if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): "+vol.getName());
-                            removeVolumeFromParentJob(vol);
+                           // removeVolumeFromParentJob(vol);
+                          removeVolumeFromParentJob(vol);
                         }
                     }
             }
@@ -84,14 +85,15 @@ public class VolumeListModel {
     }
     
      private void addVolumeToParentJob(Volume0 vol) {
-         System.out.println("box.definitions.volume.VolumeListModel.updateParentJob(): Send this update to the Parentjob");
+         System.out.println("fend.job.job2.definitions.volume.VolumeListMode.updateParentJob(): Send this update to the Parentjob");
          parentJob.addVolume(vol);
      
      }
 
      
      private void removeVolumeFromParentJob(Volume0 vol) {
-          vol.delete(true);
+           System.out.println("fend.job.job2.definitions.volume.VolumeListModel.removeVolumeFromParentJob(): removing volume:  "+vol.getId()+" from job: "+parentJob.getId());
+         parentJob.removeVolume(vol);
      }
 
            

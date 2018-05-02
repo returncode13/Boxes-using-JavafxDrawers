@@ -188,7 +188,7 @@ public class PheaderDAOImpl implements PheaderDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Pheader> result=null;
-        String hql="from Header h where h.job = :j";
+        String hql="from Pheader h where h.job = :j";
         try{
             transaction=session.beginTransaction();
             /*Criteria criteria=session.createCriteria(Header.class);

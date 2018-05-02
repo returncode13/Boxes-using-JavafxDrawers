@@ -44,7 +44,8 @@ public class VolumeListModel {
                         
                         for(Volume0 vol:c.getRemoved()){
                             if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): "+vol.getName());
-                            removeVolumeFromParentJob(vol);
+                            //removeVolumeFromParentJob(vol);
+                           // vol.delete(true);
                         }
                     }
             }
@@ -113,7 +114,8 @@ public class VolumeListModel {
 
      
      private void removeVolumeFromParentJob(Volume0 vol) {
-         parentJob.removeVolume(vol);
+         vol.delete(true);
+        // parentJob.removeVolume(vol);
      }
 
            

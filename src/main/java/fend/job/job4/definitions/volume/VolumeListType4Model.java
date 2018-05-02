@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job5.definitions.volume;
+package fend.job.job4.definitions.volume;
 
 import fend.workspace.WorkspaceModel;
 import fend.job.job1.JobType1Model;
@@ -21,40 +21,37 @@ import fend.volume.volume0.Volume0;
  * @author sharath nair <sharath.nair@polarcus.com>
  * class holds a list of volumes
  */
-public class VolumeListModel {
+public class VolumeListType4Model {
     List<Volume0> volumes;
     List<String> subsurfacesInVolume;
     ObservableList<Volume0> observableListOfVolumes;
     JobType0Model parentJob;                     //the job that contains this list
     
     
-    public VolumeListModel(JobType0Model parentBox) {
+    public VolumeListType4Model(JobType0Model parentBox) {
         this.parentJob=parentBox;
         volumes=new ArrayList<>();
         observableListOfVolumes=FXCollections.observableArrayList(volumes);
         
         observableListOfVolumes.addListener(new ListChangeListener<Volume0>(){
-        @Override
+            @Override
             public void onChanged(ListChangeListener.Change<? extends Volume0> c) {
-                while (c.next()) {
-                    for (Volume0 vol : c.getAddedSubList()) {
-                        if (WorkspaceModel.DEBUG) {
-                            System.out.println("fend.job.definitions.volume.VolumeListModel.added(): " + vol.getName());
+                    while(c.next()){
+                        for(Volume0 vol:c.getAddedSubList()){
+                            if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.added(): "+vol.getName());
+                            addVolumeToParentJob(vol);
                         }
-                        addVolumeToParentJob(vol);
+                        
+                        for(Volume0 vol:c.getRemoved()){
+                            if(WorkspaceModel.DEBUG) System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): "+vol.getName());
+                            removeVolumeFromParentJob(vol);
+                            
+                        }
                     }
+            }
 
-                    for (Volume0 vol : c.getRemoved()) {
-                        if (WorkspaceModel.DEBUG) {
-                            System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): " + vol.getName());
-                        }
-                        removeVolumeFromParentJob(vol);
-                    }
-                }
-        }
-        
-        
-        
+            
+           
         });
         
         
@@ -63,6 +60,9 @@ public class VolumeListModel {
         
     }
 
+   
+    
+    
 
     public ObservableList<Volume0> getObservableListOfVolumes() {
         return observableListOfVolumes;
@@ -85,15 +85,15 @@ public class VolumeListModel {
     }
     
      private void addVolumeToParentJob(Volume0 vol) {
-         System.out.println("box.definitions.volume.VolumeListModel.updateParentJob(): Send this update to the Parentjob");
+         
          parentJob.addVolume(vol);
      
      }
 
      
      private void removeVolumeFromParentJob(Volume0 vol) {
-         vol.delete(true);
-         //parentJob.removeVolume(vol);
+          System.out.println("fend.job.job4.definitions.volume.VolumeListModel.removeVolumeFromParentJob(): removing volume:  "+vol.getId()+" from job: "+parentJob.getId());
+         parentJob.removeVolume(vol);
      }
 
            

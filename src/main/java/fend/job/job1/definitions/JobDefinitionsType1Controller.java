@@ -5,36 +5,28 @@
  */
 package fend.job.job1.definitions;
 
-import fend.job.job1.JobType1Model;
-//import fend.job.definitions.volume.VolumeListModel;
-//import fend.job.definitions.volume.VolumeListView;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
-//import fend.job.definitions.insight.InsightListModel;
-//import fend.job.definitions.insight.InsightListView;
-//import fend.job.definitions.qcmatrix.QcMatrixModel;
-//import fend.job.definitions.qcmatrix.QcMatrixView;
-import fend.job.job0.JobType0Model;
+
+import fend.job.job1.JobType1Model;
 import fend.job.job1.definitions.insight.InsightListModel;
 import fend.job.job1.definitions.insight.InsightListView;
 import fend.job.job1.definitions.qcmatrix.QcMatrixModel;
 import fend.job.job1.definitions.qcmatrix.QcMatrixView;
-import fend.job.job1.definitions.volume.VolumeListModel;
-import fend.job.job1.definitions.volume.VolumeListView;
+import fend.job.job1.definitions.volume.VolumeListType1Model;
+import fend.job.job1.definitions.volume.VolumeListType1View;
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobDefinitionsController {
+public class JobDefinitionsType1Controller {
     final String volumeExpand="Volumes >";
     final String volumeCollapse="Volumes <";
     final String qmatrixExpand="QMatrix >";
@@ -42,9 +34,9 @@ public class JobDefinitionsController {
     final String insightExpand="Insight >";
     final String insightCollapse="Insight <";
     
-    JobType0Model parentBox;
-    JobDefinitionsModel model;
-    JobDefinitionsView view;
+    JobType1Model parentBox;
+    JobDefinitionsType1Model model;
+    JobDefinitionsType1View view;
     JFXDrawer qmatrixDrawer=new JFXDrawer();
     JFXDrawer volumeDrawer=new JFXDrawer();
     JFXDrawer insightDrawer=new JFXDrawer();
@@ -63,12 +55,12 @@ public class JobDefinitionsController {
 
 
 
-    void setModel(JobDefinitionsModel item,JobType0Model parentBox) {
+    void setModel(JobDefinitionsType1Model item,JobType1Model parentBox) {
         model=item;
         this.parentBox=parentBox;
     }
 
-    void setView(JobDefinitionsView vw) {
+    void setView(JobDefinitionsType1View vw) {
         view=vw;
         
         setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
@@ -81,8 +73,8 @@ public class JobDefinitionsController {
 
     private void setupVolumeDrawer(JFXDrawer drawer,JFXButton button) {
         drawer.setId("Volume");
-        VolumeListModel vol=new VolumeListModel(parentBox);
-        VolumeListView vollistview=new VolumeListView(vol);
+        VolumeListType1Model vol=new VolumeListType1Model(parentBox);
+        VolumeListType1View vollistview=new VolumeListType1View(vol);
         drawer.setSidePane(vollistview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         drawer.setDefaultDrawerSize(vollistview.computeAreaInScreen());
@@ -126,8 +118,8 @@ public class JobDefinitionsController {
         
         
          drawer.setId("QMatrix");
-         /*VolumeListModel insmodel=new VolumeListModel(parentBox);
-         VolumeListView insList=new VolumeListView(insmodel);*/
+         /*VolumeListType1Model insmodel=new VolumeListType1Model(parentBox);
+         VolumeListType1View insList=new VolumeListType1View(insmodel);*/
          
          QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
          QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);
