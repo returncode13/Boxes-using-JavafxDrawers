@@ -61,7 +61,7 @@ public class HeaderDAOImpl implements HeaderDAO{
         try{
             transaction=session.beginTransaction();
            for(int ii=0;ii<headers.size();ii++){
-               session.save(headers.get(ii));
+               session.saveOrUpdate(headers.get(ii));
                if(ii%batchsize ==0){
                    session.flush();
                    session.clear();
@@ -193,7 +193,7 @@ public class HeaderDAOImpl implements HeaderDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
-        String hql="from Header h where h.job = :j";
+        String hql="from Header h where h.job =:j";
         try{
             transaction=session.beginTransaction();
             /*Criteria criteria=session.createCriteria(Header.class);
@@ -574,9 +574,9 @@ selectQuery.setParameter("subid", sub);
             
             if(deletedSubs.isEmpty()){
                 System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): all subs in disk volume : "+vol.getPathOfVolume()+" are present in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
-                Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                /*Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
                 delFalse.setParameter("v", vol);
-                int delF=delFalse.executeUpdate();
+                int delF=delFalse.executeUpdate();*/
                 transaction.commit();
             }else{
                  System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): "+deletedSubs.size()+" in disk volume : "+vol.getPathOfVolume()+" are ABSENT in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
@@ -586,7 +586,10 @@ selectQuery.setParameter("subid", sub);
                  List<Long> headersToUdpate=selectHeaders.list();
                  
                     if(headersToUdpate.isEmpty()){
-                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): no headers found for the ABSENT subsurfaces");
+                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): no previously existing subsurfaces were deleted");
+                        Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                        delFalse.setParameter("v", vol);
+                        int delF=delFalse.executeUpdate();
                         transaction.commit();
                     }else{
                         System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): set delete=true on "+headersToUdpate.size()+" headers for vol: "+vol.getNameVolume()+" ("+vol.getId()+")");

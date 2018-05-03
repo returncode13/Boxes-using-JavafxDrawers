@@ -22,40 +22,40 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
     private Subsurface subsurfaceFK;
    
     
-    private Long cable;
+    private Long cable=0L;
     
     
-    private Long firstChannel;
+    private Long firstChannel=0L;
     
   
-    private Long lastChannel;
+    private Long lastChannel=0L;
     
     
-    private Long gun;
+    private Long gun=0L;
     
     
-    private Long firstFFID;
-    
-   
-    private Long lastFFID;
-    
-    
-    private Long firstShot;
-    
-    
-    private Long lastShot;
-    
-    
-    private Long firstGoodFFID;
-    
-    
-    private Long lastGoodFFID;
-    
-    
-    private Long fgsp;
+    private Long firstFFID=0L;
     
    
-    private Long lgsp;
+    private Long lastFFID=0L;
+    
+    
+    private Long firstShot=0L;
+    
+    
+    private Long lastShot=0L;
+    
+    
+    private Long firstGoodFFID=0L;
+    
+    
+    private Long lastGoodFFID=0L;
+    
+    
+    private Long fgsp=0L;
+    
+   
+    private Long lgsp=0L;
     
     private String subsurfaceName;
 
@@ -97,6 +97,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getCable() {
+        if(cable==null) cable=-1L;
         return cable;
     }
 
@@ -107,6 +108,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getFirstChannel() {
+        if(firstChannel==null) firstChannel=-1L;
         return firstChannel;
     }
 
@@ -117,6 +119,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getLastChannel() {
+        if(lastChannel==null) lastChannel=-1L;
         return lastChannel;
     }
 
@@ -127,6 +130,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getGun() {
+        if(gun==null) gun=-1L;
         return gun;
     }
 
@@ -137,6 +141,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getFirstFFID() {
+        if(firstFFID==null) firstFFID=-1L;
         return firstFFID;
     }
 
@@ -147,6 +152,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getLastFFID() {
+        if(lastFFID==null) lastFFID=-1L;
         return lastFFID;
     }
 
@@ -157,6 +163,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getFirstShot() {
+        if(firstShot==null) firstShot=-1L;
         return firstShot;
     }
 
@@ -167,6 +174,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getLastShot() {
+        if(lastShot==null) lastShot=-1L;
         return lastShot;
     }
 
@@ -177,6 +185,8 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getFirstGoodFFID() {
+        // System.out.println("middleware.sequences.acquisition.AcquisitionSubsurfaceHeaders.getFirstGoodFFID(): returning "+firstGoodFFID+" sub: "+subsurfaceName);
+        if(firstGoodFFID==null) firstGoodFFID=-1L; 
         return firstGoodFFID;
     }
 
@@ -187,6 +197,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getLastGoodFFID() {
+        if(lastGoodFFID==null) lastGoodFFID=-1L;
         return lastGoodFFID;
     }
 
@@ -197,6 +208,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getFgsp() {
+        if(fgsp==null) fgsp=-1L;
         return fgsp;
     }
 
@@ -207,6 +219,7 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
 
      @Override
     public Long getLgsp() {
+        if(lgsp==null) lgsp=-1L;
         return lgsp;
     }
 

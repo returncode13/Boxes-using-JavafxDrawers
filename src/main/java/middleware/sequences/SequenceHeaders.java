@@ -79,11 +79,23 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private Boolean chosen=true;
     private Boolean multiple=false;
     private Volume0 volume;
+    private Boolean deleted=false;
     
     
     private Sequence sequence;
     private Subsurface subsurface;
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    
+    
+    
     public Volume0 getVolume() {
         return volume;
     }

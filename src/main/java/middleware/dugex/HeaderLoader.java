@@ -113,6 +113,7 @@ public class HeaderLoader {
                 sub.setUpdateTime(h.getUpdateTime());
                 sub.setChosen(h.getChosen());
                 sub.setMultiple(h.getMultipleInstances());
+                sub.setDeleted(h.getDeleted());
                 if(!lookupmap.containsKey(h.getSubsurface().getSequence())){
                     List<SubsurfaceHeaders> subMap=new ArrayList<>();
                     subMap.add(sub);

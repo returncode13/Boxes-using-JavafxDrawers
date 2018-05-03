@@ -65,8 +65,8 @@ import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
 import fend.job.job3.definitions.JobDefinitionsType3Model;
 import fend.job.job3.definitions.JobDefinitionsType3View;
-import fend.job.job3.table.lineTable.LineTableModel;
-import fend.job.job3.table.lineTable.LineTableView;
+import fend.job.job3.table.acqLineTable.AcqLineTableModel;
+import fend.job.job3.table.acqLineTable.AcqLineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
@@ -386,8 +386,8 @@ parent.addChild(model);*/
     
     @FXML
     void showTable(ActionEvent event) {
-            LineTableModel lineTableModel=new LineTableModel(model);
-            LineTableView lineTableView=new LineTableView(lineTableModel);
+            AcqLineTableModel lineTableModel=new AcqLineTableModel(model);
+            AcqLineTableView lineTableView=new AcqLineTableView(lineTableModel);
     }
     
      @FXML

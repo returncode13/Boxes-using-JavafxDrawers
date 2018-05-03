@@ -55,14 +55,33 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     
     private BooleanProperty chosen=new SimpleBooleanProperty();
     private BooleanProperty multiple=new SimpleBooleanProperty();
+    private BooleanProperty deleted=new SimpleBooleanProperty();
+    
     
     private SequenceHeaders sequenceHeader;
     private Subsurface subsurface;
 
+    @Override
+    public Boolean getDeleted() {
+        return deleted.get();
+    }
+
+    @Override
+    public void setDeleted(Boolean deleted) {
+        this.deleted.set(deleted);
+    }
+
+    
+    
+    
+    
+    
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

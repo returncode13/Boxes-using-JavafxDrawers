@@ -103,6 +103,7 @@ public class LineTableController extends Stage{
         TreeTableColumn<SequenceHeaders,Long> workflowVersion=new TreeTableColumn<>("workflowVersion");
         TreeTableColumn<SequenceHeaders,Boolean>  multiple=new TreeTableColumn<>("multiple");
         TreeTableColumn<SequenceHeaders,Boolean>  chosen=new TreeTableColumn<>("chosen");
+        TreeTableColumn<SequenceHeaders,Boolean>  deleted=new TreeTableColumn<>("deleted");
         TreeTableColumn<SequenceHeaders,String> volume=new TreeTableColumn<>("volume");
      
      
@@ -333,6 +334,7 @@ public class LineTableController extends Stage{
         workflowVersion.setCellValueFactory(new TreeItemPropertyValueFactory<>("workflow"));
         multiple.setCellValueFactory(new TreeItemPropertyValueFactory<>("multiple"));
         chosen.setCellValueFactory(new TreeItemPropertyValueFactory<>("chosen"));
+        deleted.setCellValueFactory(new TreeItemPropertyValueFactory<>("deleted"));
         
         chosen.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
             TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
@@ -422,13 +424,13 @@ public class LineTableController extends Stage{
                 treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
                 numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
                 xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
-                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,deleted);
         }
         else{
             treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
                 numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
                 xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
-                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume);
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume,deleted);
         }
         
         
@@ -480,13 +482,13 @@ public class LineTableController extends Stage{
                 treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
                 numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
                 xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
-                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion);
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,deleted);
         }
         else{
             treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,
                 numberOfRuns,workflowVersion,chosen,multiple,timeStamp,tracecount,inlineMax,inlineMin,inlineInc,
                 xlineMax,xlineMin,xlineInc,dugShotMax,dugShotMin,dugShotInc,dugChannelMax,dugChannelMin,
-                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume);
+                dugChannelInc,offsetMax,offsetMin,offsetInc,cmpMax,cmpMin,cmpInc,insightVersion,volume,deleted);
         }
         
         

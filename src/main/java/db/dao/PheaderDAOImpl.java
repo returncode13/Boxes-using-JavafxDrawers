@@ -188,7 +188,7 @@ public class PheaderDAOImpl implements PheaderDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Pheader> result=null;
-        String hql="from Pheader h where h.job = :j";
+        String hql="from Pheader h where h.job =:j";
         try{
             transaction=session.beginTransaction();
             /*Criteria criteria=session.createCriteria(Header.class);
@@ -564,9 +564,9 @@ selectQuery.setParameter("subid", sub);
             
             if(deletedSubs.isEmpty()){
                 System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): all subs in disk volume : "+vol.getPathOfVolume()+" are present in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
-                Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                /*Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
                 delFalse.setParameter("v", vol);
-                int delF=delFalse.executeUpdate();
+                int delF=delFalse.executeUpdate();*/
                 transaction.commit();
             }else{
                  System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): "+deletedSubs.size()+" in disk volume : "+vol.getPathOfVolume()+" are ABSENT in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
@@ -576,7 +576,10 @@ selectQuery.setParameter("subid", sub);
                  List<Long> headersToUdpate=selectHeaders.list();
                  
                     if(headersToUdpate.isEmpty()){
-                        System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): no headers found for the ABSENT subsurfaces");
+                        System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): no previously existing subsurfaces were deleted");
+                        Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                        delFalse.setParameter("v", vol);
+                        int delF=delFalse.executeUpdate();
                         transaction.commit();
                     }else{
                         System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): set delete=true on "+headersToUdpate.size()+" headers for vol: "+vol.getNameVolume()+" ("+vol.getId()+")");

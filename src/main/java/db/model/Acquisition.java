@@ -38,40 +38,40 @@ public class Acquisition implements Serializable{
     private Subsurface subsurfaceFK;
    
     @Column(name="cable")
-    private Long cable;
+    private Long cable=-1L;
     
     @Column(name="firstChannel")
-    private Long firstChannel;
+    private Long firstChannel=-1L;
     
     @Column(name="lastChannel")
-    private Long lastChannel;
+    private Long lastChannel=-1L;
     
     @Column(name="gun")
-    private Long gun;
+    private Long gun=-1L;
     
     @Column(name="firstFFID")
-    private Long firstFFID;
+    private Long firstFFID=-1L;
     
     @Column(name="lastFFID")
-    private Long lastFFID;
+    private Long lastFFID=-1L;
     
     @Column(name="firstShot")
-    private Long firstShot;
+    private Long firstShot=-1L;
     
     @Column(name="lastShot")
-    private Long lastShot;
+    private Long lastShot=-1L;
     
     @Column(name="FGFFID")
-    private Long firstGoodFFID;
+    private Long firstGoodFFID=-1L;
     
     @Column(name="LGFFID")
-    private Long lastGoodFFID;
+    private Long lastGoodFFID=-1L;
     
     @Column(name="fgsp")
-    private Long fgsp;
+    private Long fgsp=-1L;
     
     @Column(name="lgsp")
-    private Long lgsp;
+    private Long lgsp=-1L;
     
     
     public Long getId() {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job3.table.lineTable;
+package fend.job.job3.table.acqLineTable;
 
 import fend.job.job0.JobType0Model;
 import javafx.collections.ObservableList;
@@ -13,11 +13,11 @@ import middleware.sequences.SequenceHeaders;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class LineTableModel {
+public class AcqLineTableModel {
     private ObservableList<SequenceHeaders> sequenceHeaders;
     private JobType0Model job;
 
-    public LineTableModel(JobType0Model job) {
+    public AcqLineTableModel(JobType0Model job) {
         this.job = job;
         sequenceHeaders=this.job.getSequenceHeaders();
     }

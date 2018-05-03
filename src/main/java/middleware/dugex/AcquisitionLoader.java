@@ -54,11 +54,26 @@ public class AcquisitionLoader {
         
         
         for(Acquisition a:acquisitions){
-            System.err.println("Seq: "+a.getSequence().getSequenceno()+" sub: "+a.getSubsurfaceFK().getSubsurface()+" fgsp: "+a.getFgsp());
+            System.err.println("Seq: "+a.getSequence().getSequenceno()+" sub: "+a.getSubsurfaceFK().getSubsurface()+" fgsp: "+a.getFgsp()+" firstGoodFFID: "+a.getFirstGoodFFID());
             AcquisitionSubsurfaceHeaders acqsubhdr=new AcquisitionSubsurfaceHeaders();
             acqsubhdr.setSubsurfaceFK(a.getSubsurfaceFK());
             acqsubhdr.setSequence(a.getSequence());
             acqsubhdr.setSubsurfaceName(a.getSubsurfaceFK().getSubsurface());
+            acqsubhdr.setCable(a.getCable());
+            acqsubhdr.setFgsp(a.getFgsp());
+            acqsubhdr.setFirstChannel(a.getFirstChannel());
+            acqsubhdr.setFirstFFID(a.getFirstFFID());
+            acqsubhdr.setFirstGoodFFID(a.getFirstGoodFFID());
+            acqsubhdr.setFirstShot(a.getFirstShot());
+            acqsubhdr.setGun(a.getGun());
+            acqsubhdr.setId(a.getId());
+            acqsubhdr.setLastChannel(a.getLastChannel());
+            acqsubhdr.setLastFFID(a.getLastFFID());
+            acqsubhdr.setLastGoodFFID(a.getLastGoodFFID());
+            acqsubhdr.setLastShot(a.getLastShot());
+            acqsubhdr.setLgsp(a.getLgsp());
+            acqsubhdr.setSequence(a.getSequence());
+            acqsubhdr.setSubsurfaceFK(a.getSubsurfaceFK());
             
             if(!lookupmap.containsKey(a.getSubsurfaceFK().getSequence())){
                     List<AcquisitionSubsurfaceHeaders> subMap=new ArrayList<>();

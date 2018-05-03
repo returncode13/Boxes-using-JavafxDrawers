@@ -26,40 +26,40 @@ public class AcquisitionSequenceHeaders extends SequenceHeaders{
     private Subsurface subsurfaceFK;
    
     
-    private Long cable;
+    private Long cable=0L;
     
     
-    private Long firstChannel;
+    private Long firstChannel=Long.MAX_VALUE;
     
   
-    private Long lastChannel;
+    private Long lastChannel=0L;
     
     
-    private Long gun;
+    private Long gun=0L;
     
     
-    private Long firstFFID;
-    
-   
-    private Long lastFFID;
-    
-    
-    private Long firstShot;
-    
-    
-    private Long lastShot;
-    
-    
-    private Long firstGoodFFID;
-    
-    
-    private Long lastGoodFFID;
-    
-    
-    private Long fgsp;
+    private Long firstFFID=Long.MAX_VALUE;
     
    
-    private Long lgsp;
+    private Long lastFFID=0L;
+    
+    
+    private Long firstShot=Long.MAX_VALUE;
+    
+    
+    private Long lastShot=0L;
+    
+    
+    private Long firstGoodFFID=Long.MAX_VALUE;
+    
+    
+    private Long lastGoodFFID=0L;
+    
+    
+    private Long fgsp=0L;
+    
+   
+    private Long lgsp=0L;
     
     private List<AcquisitionSubsurfaceHeaders> acquisitionSubsurfaceHeaders=new ArrayList<>();
     
@@ -186,6 +186,24 @@ public class AcquisitionSequenceHeaders extends SequenceHeaders{
 
     public void setAcquisitionSubsurfaceHeaders(List<AcquisitionSubsurfaceHeaders> acquisitionSubsurfaceHeaders) {
         this.acquisitionSubsurfaceHeaders = acquisitionSubsurfaceHeaders;
+        for(AcquisitionSubsurfaceHeaders subs:this.acquisitionSubsurfaceHeaders){
+            fgsp=Math.max(fgsp, subs.getFgsp());
+            lgsp=Math.max(lgsp, subs.getLgsp());
+            firstGoodFFID=Math.min(firstGoodFFID,
+                    subs.
+                            getFirstGoodFFID());
+            lastGoodFFID=Math.max(lastGoodFFID, 
+                    subs.getLastGoodFFID());
+            firstChannel=Math.min(firstChannel, subs.getFirstChannel());
+            lastChannel=Math.max(lastChannel,subs.getLastChannel());
+            gun=Math.max(gun, subs.getGun());
+            cable=Math.max(cable,subs.getCable());
+            firstShot=Math.min(firstShot, subs.getFirstShot());
+            lastShot=Math.max(lastShot, subs.getLastShot());
+            firstFFID=Math.min(firstFFID, subs.getFirstFFID());
+            lastFFID=Math.max(lastFFID,subs.getLastFFID());
+        }
+        
     }
     
     

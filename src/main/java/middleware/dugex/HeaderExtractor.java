@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -85,6 +86,8 @@ public class HeaderExtractor {
     List<PheaderHolder> pheaderHolderList=new ArrayList<>();
     
     List<SubsurfaceJobKey> existingSubsurfaceJobs=new ArrayList<>();
+    Map<VolumeSubsurfaceKey,Header> existingHeadersInThisJob=new HashMap<>();
+    Map<VolumeSubsurfaceKey,Pheader> existingPheadersInThisJob=new HashMap<>();
     
     public HeaderExtractor(JobType0Model j) throws Exception{
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
@@ -104,7 +107,14 @@ public class HeaderExtractor {
          //  subsurfaceJobs=new ArrayList<>();
          //  headers=new ArrayList<>();
            
-           
+            List<Header> headersExistingInJob=headerService.getHeadersFor(dbjob);
+                for(Header h:headersExistingInJob){
+                    VolumeSubsurfaceKey key=generateVolumeSubsurfaceKey(h.getVolume(), h.getSubsurface());
+                    
+                        existingHeadersInThisJob.put(key, h);
+                 
+                }
+                
           for(Volume0 vol:volumes){
               List<String> subsurfacesOnDisk=new ArrayList<>();
               subsurfaceJobs.clear();
@@ -117,7 +127,7 @@ public class HeaderExtractor {
                     existingSubsurfaceJobs.add(skey);
                 }
                 
-                
+               
               Volume dbvol=volumeService.getVolume(vol.getId());
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get()+" id: "+dbvol.getId());
               //Job dbjob=dbvol.getJob();
@@ -182,28 +192,33 @@ public class HeaderExtractor {
                                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
                                // subsurfaceJobs.add(dbSubjob);
                                 System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
-                                Header header=new Header();
-                                header.setJob(dbjob);
-                                header.setSubsurfaceJob(dbSubjob);
-                                header.setVolume(dbvol);
-                                header.setSubsurface(dbsub);
+                                VolumeSubsurfaceKey vskey=generateVolumeSubsurfaceKey(dbvol, dbsub);
+                                Header header;
+                                if(existingHeadersInThisJob.containsKey(vskey)){
+                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating existing Header");
+                                    header=existingHeadersInThisJob.get(vskey);
+                                }else{
+                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
+                                    header=new Header();
+                                    header.setJob(dbjob);
+                                    header.setSubsurfaceJob(dbSubjob);
+                                    header.setVolume(dbvol);
+                                    header.setSubsurface(dbsub);
+                                }
+                                
+                                
+                                
                                 header.setTimeStamp(latestTimestamp);
                                 
                                 //header.setSequence(dbsub.getSequence());
                               populate(header);
-                              setOfHeadersInJob.add(header);
+                           //   setOfHeadersInJob.add(header);
                               
                               //headers.add(pheader);
                               headerHolder.header=header;
                               headerHolder.subjob=header.getSubsurfaceJob();
                               headerHolderList.add(headerHolder);
-//                                    System.out.println(".call(): Job: "+dbjob.getId()+"Subsurface: "+dbsub.getSubsurface()+" --> Size of headers: "+headers.size()+" of subjs: "+subsurfaceJobs.size());
-                              
-                              //dbjob.setHeaders(setOfHeadersInJob);
-                             // dbjob.setSubsurfaces(setOfSubsurfacesInJob);
-                              //dbjob.getSubsurfaceJobs().add(dbSubjob);
-                             // dbjob.setSequences(setOfSequencesInJob);
-                              
+
                               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                                  // headerService.getMultipleInstances(dbjob, dbsub);
                             }else{
@@ -357,7 +372,14 @@ public class HeaderExtractor {
          **/
         
         if(job.getType().equals(JobType0Model.SEGY)){
-            
+            List<Pheader> headersExistingInJob=pheaderService.getHeadersFor(dbjob);
+                for(Pheader h:headersExistingInJob){
+                    VolumeSubsurfaceKey key=generateVolumeSubsurfaceKey(h.getVolume(), h.getSubsurface());
+                    
+                        existingPheadersInThisJob.put(key, h);
+                 
+                }
+                
           for(Volume0 vol:volumes){
               
               List<String> subsurfacesOnDisk=new ArrayList<>();
@@ -435,12 +457,26 @@ public class HeaderExtractor {
                                 //headerHolder.subjob=dbSubjob;
                                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): got the subsurface: "+dbsub.getSubsurface());
                                // subsurfaceJobs.add(dbSubjob);
-                                System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
-                                Pheader pheader=new Pheader();
+                                
+                                /*Pheader pheader=new Pheader();
                                 pheader.setJob(dbjob);
                                 pheader.setSubsurfaceJob(dbSubjob);
                                 pheader.setVolume(dbvol);
                                 pheader.setSubsurface(dbsub);
+                                */
+                                VolumeSubsurfaceKey vskey=generateVolumeSubsurfaceKey(dbvol, dbsub);
+                                 Pheader pheader;
+                                if(existingHeadersInThisJob.containsKey(vskey)){
+                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating existing Header");
+                                    pheader=existingPheadersInThisJob.get(vskey);
+                                }else{
+                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
+                                    pheader=new Pheader();
+                                    pheader.setJob(dbjob);
+                                    pheader.setSubsurfaceJob(dbSubjob);
+                                    pheader.setVolume(dbvol);
+                                    pheader.setSubsurface(dbsub);
+                                }
                                 pheader.setTimeStamp(latestTimestamp);
                                 
                                 //header.setSequence(dbsub.getSequence());
@@ -925,10 +961,58 @@ public class HeaderExtractor {
         SubsurfaceJob subjob;
         Header header;
     }
+   
+    
     
       private class PheaderHolder{
         SubsurfaceJob subjob;
         Pheader pheader;
+    }
+    
+    private class VolumeSubsurfaceKey{
+        Volume vol;
+        Subsurface subsurface;
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 61 * hash + Objects.hashCode(this.vol);
+            hash = 61 * hash + Objects.hashCode(this.subsurface);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final VolumeSubsurfaceKey other = (VolumeSubsurfaceKey) obj;
+            if (!Objects.equals(this.vol, other.vol)) {
+                return false;
+            }
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+        
+    }
+    
+    private VolumeSubsurfaceKey generateVolumeSubsurfaceKey(Volume vol,Subsurface sub){
+        VolumeSubsurfaceKey key=new VolumeSubsurfaceKey();
+        key.vol=vol;
+        key.subsurface=sub;
+                
+        
+        return key;
     }
     
     

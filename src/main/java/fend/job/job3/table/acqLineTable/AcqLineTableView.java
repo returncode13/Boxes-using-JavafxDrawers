@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job3.table.lineTable;
+package fend.job.job3.table.acqLineTable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,15 +15,15 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class LineTableView extends AnchorPane{
-    private  LineTableModel model;
-    private LineTableController  controller;
+public class AcqLineTableView extends AnchorPane{
+    private  AcqLineTableModel model;
+    private AcquisitionLineTableController  controller;
    
      private FXMLLoader fXMLLoader;
     private final URL location;
     
     
-    public LineTableView(LineTableModel item){
+    public AcqLineTableView(AcqLineTableModel item){
         
         this.location=getClass().getClassLoader().getResource("fxml/job3/table/lineTable/linetable.fxml"); 
        
@@ -38,7 +38,7 @@ public class LineTableView extends AnchorPane{
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(LineTableController)fXMLLoader.getController();
+                controller=(AcquisitionLineTableController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
