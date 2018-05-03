@@ -212,7 +212,7 @@ public class PheaderDAOImpl implements PheaderDAO{
         Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         
-        String hqlSelect="Select h.id from Pheader h where h.volume =:v";
+        String hqlSelect="Select h.pHeaderId from Pheader h where h.volume =:v";
         String hqlDelete="Delete from Pheader h where h.pHeaderId in (:ids)";
         try{
             transaction=session.beginTransaction();
@@ -463,8 +463,8 @@ selectQuery.setParameter("subid", sub);
         String hqlDetermineCommonSubs="Select h.subsurface.id from Pheader h    where h.job =:j "
                 + "                                                         group by h.subsurface.id "
                 + "                                                         having count(*) > 1";
-        String hqlSelectIds="Select h.headerId from Pheader h where h.subsurface.id in (:subs) and h.job =:j";
-        String hqlUpdateChoose="update Pheader h Set h.chosen = false,h.multipleInstances=true where h.headerId in (:ids)";
+        String hqlSelectIds="Select h.pHeaderId from Pheader h where h.subsurface.id in (:subs) and h.job =:j";
+        String hqlUpdateChoose="update Pheader h Set h.chosen = false,h.multipleInstances=true where h.pHeaderId in (:ids)";
         String hqlUpdateChooseTrue="update Pheader h Set h.chosen = true,h.multipleInstances = false where h.job =:j";
         try{
             transaction=session.beginTransaction();
@@ -548,6 +548,51 @@ selectQuery.setParameter("subid", sub);
         }
     }
 
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hqlSelectSubsNotInDiskVolume="select s from Subsurface s where s.subsurface not in (:names)";
+        String hqlSelectHeadersThatContainDeletedSubs="select h.headerId from Pheader h where h.volume =:v and h.subsurface in (:subs)";
+        String hqlUpdateDeleteFalse="update Pheader h set h.deleted=false where h.volume =:v";
+        String hqlUpdateDeleteTrue="update Pheader h set h.deleted=true where h.headerId in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query selectSubsNotInDisk=session.createQuery(hqlSelectSubsNotInDiskVolume);
+            selectSubsNotInDisk.setParameterList("names", subsurfacesOnDisk);
+            List<Subsurface> deletedSubs=selectSubsNotInDisk.list();
+            
+            if(deletedSubs.isEmpty()){
+                System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): all subs in disk volume : "+vol.getPathOfVolume()+" are present in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                delFalse.setParameter("v", vol);
+                int delF=delFalse.executeUpdate();
+                transaction.commit();
+            }else{
+                 System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): "+deletedSubs.size()+" in disk volume : "+vol.getPathOfVolume()+" are ABSENT in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                 Query selectHeaders=session.createQuery(hqlSelectHeadersThatContainDeletedSubs);
+                 selectHeaders.setParameter("v", vol);
+                 selectHeaders.setParameterList("subs", deletedSubs);
+                 List<Long> headersToUdpate=selectHeaders.list();
+                 
+                    if(headersToUdpate.isEmpty()){
+                        System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): no headers found for the ABSENT subsurfaces");
+                        transaction.commit();
+                    }else{
+                        System.out.println("db.dao.PheaderDAOImpl.updateDeleteFlagsFor(): set delete=true on "+headersToUdpate.size()+" headers for vol: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                        Query delTrue=session.createQuery(hqlUpdateDeleteTrue);
+                        delTrue.setParameterList("ids", headersToUdpate);
+                        int delT=delTrue.executeUpdate();
+                        transaction.commit();
+                    }
+                 
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
     
     
     

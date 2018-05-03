@@ -43,4 +43,6 @@ public interface PheaderDAO {
     public List<Pheader> getChosenHeadersForWorkspace(Workspace W);
     public void checkForMultipleSubsurfacesInHeadersForJob(Job job);
     public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded);    //all conflicted except the one selected will have chosen=false and multiple=true;
+
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk);   //if header has sub NOT belonging to subsurfacesOnDisk, then header.delete=true
 }

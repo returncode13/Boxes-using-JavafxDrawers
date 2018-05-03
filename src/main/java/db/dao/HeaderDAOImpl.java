@@ -217,7 +217,7 @@ public class HeaderDAOImpl implements HeaderDAO{
         Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         
-        String hqlSelect="Select h.id from Header h where h.volume =:v";
+        String hqlSelect="Select h.headerId from Header h where h.volume =:v";
         String hqlDelete="Delete from Header h where h.headerId in (:ids)";
         try{
             transaction=session.beginTransaction();
@@ -551,6 +551,52 @@ selectQuery.setParameter("subid", sub);
                             
                 }
             
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hqlSelectSubsNotInDiskVolume="select s from Subsurface s where s.subsurface not in (:names)";
+        String hqlSelectHeadersThatContainDeletedSubs="select h.headerId from Header h where h.volume =:v and h.subsurface in (:subs)";
+        String hqlUpdateDeleteFalse="update Header h set h.deleted=false where h.volume =:v";
+        String hqlUpdateDeleteTrue="update Header h set h.deleted=true where h.headerId in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query selectSubsNotInDisk=session.createQuery(hqlSelectSubsNotInDiskVolume);
+            selectSubsNotInDisk.setParameterList("names", subsurfacesOnDisk);
+            List<Subsurface> deletedSubs=selectSubsNotInDisk.list();
+            
+            if(deletedSubs.isEmpty()){
+                System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): all subs in disk volume : "+vol.getPathOfVolume()+" are present in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                delFalse.setParameter("v", vol);
+                int delF=delFalse.executeUpdate();
+                transaction.commit();
+            }else{
+                 System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): "+deletedSubs.size()+" in disk volume : "+vol.getPathOfVolume()+" are ABSENT in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                 Query selectHeaders=session.createQuery(hqlSelectHeadersThatContainDeletedSubs);
+                 selectHeaders.setParameter("v", vol);
+                 selectHeaders.setParameterList("subs", deletedSubs);
+                 List<Long> headersToUdpate=selectHeaders.list();
+                 
+                    if(headersToUdpate.isEmpty()){
+                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): no headers found for the ABSENT subsurfaces");
+                        transaction.commit();
+                    }else{
+                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): set delete=true on "+headersToUdpate.size()+" headers for vol: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                        Query delTrue=session.createQuery(hqlUpdateDeleteTrue);
+                        delTrue.setParameterList("ids", headersToUdpate);
+                        int delT=delTrue.executeUpdate();
+                        transaction.commit();
+                    }
+                 
+            }
         }catch(Exception e){
             e.printStackTrace();
         }finally{

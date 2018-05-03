@@ -47,6 +47,8 @@ public interface HeaderService {
     public void checkForMultipleSubsurfacesInHeadersForJob(Job dbjob);
 
     public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded);    //all conflicted except the one selected will have chosen=false and multiple=true;
+
+    public void updateDeleteFlagsFor(Volume dbvol, List<String> subsurfacesOnDisk);       //if header has sub NOT belonging to subsurfacesOnDisk, then header.delete=true
     
     
     

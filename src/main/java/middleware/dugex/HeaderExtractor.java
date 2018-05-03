@@ -106,6 +106,7 @@ public class HeaderExtractor {
            
            
           for(Volume0 vol:volumes){
+              List<String> subsurfacesOnDisk=new ArrayList<>();
               subsurfaceJobs.clear();
               headers.clear();
               headerHolderList.clear();
@@ -145,7 +146,7 @@ public class HeaderExtractor {
               
               
               for(SubsurfaceHeaders sub:subsInVol){
-                  
+                  subsurfacesOnDisk.add(sub.getSubsurfaceName());
                 
                             System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
 
@@ -269,14 +270,15 @@ public class HeaderExtractor {
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
                  //   jobService.updateJob(dbjob.getId(), dbjob);
                     job.setDatabaseJob(dbjob);
-                    
+                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating delete flags for volume: "+vol.getName());
+                         headerService.updateDeleteFlagsFor(dbvol,subsurfacesOnDisk);
                    
                     
           }
-                   //  if(!headers.isEmpty()){
+                   
                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any subsurfaces that might have been repeated in the job");
                         headerService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
-                   // }
+                   
           
           // System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                 
@@ -357,6 +359,8 @@ public class HeaderExtractor {
         if(job.getType().equals(JobType0Model.SEGY)){
             
           for(Volume0 vol:volumes){
+              
+              List<String> subsurfacesOnDisk=new ArrayList<>();
               subsurfaceJobs.clear();
               pheaders.clear();
               pheaderHolderList.clear();
@@ -396,7 +400,7 @@ public class HeaderExtractor {
               
               
               for(SubsurfaceHeaders sub:subsInVol){
-                  
+                            subsurfacesOnDisk.add(sub.getSubsurfaceName());
                 
                             System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
 
@@ -521,6 +525,8 @@ public class HeaderExtractor {
                  //   jobService.updateJob(dbjob.getId(), dbjob);
                     job.setDatabaseJob(dbjob);
               
+                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating delete flags for volume: "+vol.getName());
+                    pheaderService.updateDeleteFlagsFor(dbvol,subsurfacesOnDisk);
           }
                    // if(pheaders.isEmpty()){
                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any repeated subs in job: "+dbjob.getNameJobStep());

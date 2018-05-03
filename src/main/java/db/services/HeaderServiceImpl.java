@@ -73,43 +73,7 @@ public class HeaderServiceImpl implements HeaderService{
         hDao.deleteHeadersFor(job);
     }
     
-    /*
-    @Override
-    public void setHeaderFor(Volume v, List<Header> headers) {
-    hDao.setHeaderFor(v,headers);
-    }
-    
-    @Override
-    public void updateHeaderFor(Volume v, List<Header> headers) {
-    hDao.updateHeader(v, headers);
-    }*/
-
-    /* @Override
-    public void deleteHeadersFor(Volume v) {
-    hDao.deleteHeadersFor(v);
-    }*/
-
-    /*@Override
-    public Set<Volume> getVolumesContaining(String subsurface) {
-    System.out.println("sub: "+subsurface);
-    return hDao.getVolumesContaining(subsurface);
-    }
-    
-    @Override
-    public List<Header> getHeaderFor(Volume v, String subsurface) {
-    return hDao.getHeaderFor(v, subsurface);
-    }*/
-    /*  @Override
-    public Set<Volume> getVolumesContaining(Subsurface subsurface) {
-    System.out.println("sub: "+subsurface.getSubsurface());
-    return hDao.getVolumesContaining(subsurface);
-    }
-    
-    @Override
-    public List<Header> getHeaderFor(Volume v, Subsurface subsurface) {
-    return hDao.getHeaderFor(v, subsurface);
-    }*/
-
+   
     @Override
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
         return hDao.getHeadersFor(dbvol,dbsub,timestamp);
@@ -144,6 +108,11 @@ public class HeaderServiceImpl implements HeaderService{
     @Override
     public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
         hDao.setChosenToFalseForConflictingSubs(conflictedSub,job,volumeToBeExcluded);
+    }
+
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        hDao.updateDeleteFlagsFor(vol,  subsurfacesOnDisk);
     }
 
     

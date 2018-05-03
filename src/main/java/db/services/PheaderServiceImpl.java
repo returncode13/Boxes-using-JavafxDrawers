@@ -108,4 +108,9 @@ public class PheaderServiceImpl implements PheaderService {
     public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
         phDao.setChosenToFalseForConflictingSubs(conflictedSub, job, volumeToBeExcluded);;
     }
+
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        phDao.updateDeleteFlagsFor(vol, subsurfacesOnDisk);
+    }
 }
