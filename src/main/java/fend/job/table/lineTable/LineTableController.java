@@ -51,6 +51,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import middleware.sequences.SequenceHeaders;
@@ -61,6 +62,7 @@ import middleware.sequences.SubsurfaceHeaders;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class LineTableController extends Stage{
+    private final String colorisNotChosen="#f49542";
     private LineTableModel model;
     private LineTableView view;
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
@@ -131,6 +133,9 @@ public class LineTableController extends Stage{
          contextMenu.getItems().add(showWorkFlowVersion); 
          
          JFXTreeTableRow<SequenceHeaders> row=new JFXTreeTableRow<SequenceHeaders>(){
+             
+             
+             
              @Override
              protected void updateItem(SequenceHeaders item,boolean empty){
                  super.updateItem(item,empty);
@@ -329,27 +334,48 @@ public class LineTableController extends Stage{
         multiple.setCellValueFactory(new TreeItemPropertyValueFactory<>("multiple"));
         chosen.setCellValueFactory(new TreeItemPropertyValueFactory<>("chosen"));
         
-        
-        multiple.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
-                TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
-
-                @Override
-                protected void updateItem(Boolean item, boolean empty){
-                super.updateItem(item, empty);
-                    TreeTableRow<SequenceHeaders> seqTreeRow = getTreeTableRow();
-                    if (item == null || empty) {
-                        setText(null);
-                        seqTreeRow.setStyle("");
-                        setStyle("");
-                    } else {
-                        seqTreeRow.setStyle(item ? "-fx-background-color:orange" : "");
-                        setText(item.toString());
-                        setStyle(item ? "-fx-background-color:red" : "");
-                    }
-                }
+        chosen.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
+            TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
+              @Override
+              protected void updateItem(Boolean isChosen,boolean empty){
+                  super.updateItem(isChosen, empty);
+                  TreeTableRow<SequenceHeaders> seqTreeRow = getTreeTableRow();
+                  
+                  if(isChosen==null||empty){
+                      setText(null);
+                      seqTreeRow.setStyle("");
+                  }else if(isChosen){
+                      setText(isChosen.toString());
+                  }else if(!isChosen){
+                      seqTreeRow.setStyle("-fx-background-color: "+colorisNotChosen);
+                      setText(isChosen.toString());
+                  }
+                  
+                 
+              }  
             };
-        return cell;
+                    return cell;
         });
+        /*  multiple.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
+        TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
+        
+        @Override
+        protected void updateItem(Boolean item, boolean empty){
+        super.updateItem(item, empty);
+        TreeTableRow<SequenceHeaders> seqTreeRow = getTreeTableRow();
+        if (item == null || empty) {
+        setText(null);
+        seqTreeRow.setStyle("");
+        setStyle("");
+        } else {
+        seqTreeRow.setStyle(item ? "-fx-background-color:orange" : "");
+        setText(item.toString());
+        //setStyle(item ? "-fx-background-color:red" : "");
+        }
+        }
+        };
+        return cell;
+        });*/
         
         volume.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
             @Override
