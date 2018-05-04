@@ -9,7 +9,8 @@ and open the template in the editor.
 */
 
 .check-box:selected > .box{
-    -fx-background-color: greenyellow;
+    /*-fx-background-color: greenyellow;*/
+    -fx-background-color: #cdff82;
 }
 
 .check-box > .box{

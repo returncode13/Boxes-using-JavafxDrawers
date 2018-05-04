@@ -49,6 +49,11 @@ public class QcTableSubsurface extends QcTableSequence{
     public boolean updateChildren=false;
     public boolean updateParent=false;
    
+     @Override
+     public Boolean isChild() {
+        return isChild;
+    }
+
     
      @Override
     public Sequence getSequence() {
@@ -129,7 +134,7 @@ public class QcTableSubsurface extends QcTableSequence{
     }
 
      @Override
-    public Boolean isParent () {
+    public Boolean isParent() {
         return isParent;
     }
 
@@ -208,7 +213,7 @@ public class QcTableSubsurface extends QcTableSequence{
             selected+=q.getCheckUncheckProperty().get()?1:0;
         }
         
-         System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of qcmatrix: "+qcmatrix.size());
+      //   System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of qcmatrix: "+qcmatrix.size());
         
         if(indeterminate>0){
             String label=QcMatrixRowModelParent.INDETERMINATE;

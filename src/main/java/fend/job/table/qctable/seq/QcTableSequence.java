@@ -194,7 +194,7 @@ public class QcTableSequence  {
             indeterminate += child.getLabel().equals(QcMatrixRowModelParent.INDETERMINATE)?1:0;
             selected += child.getLabel().equals(QcMatrixRowModelParent.SELECTED)?1:0;
         }
-        System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of children: "+children.size());
+      //  System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of children: "+children.size());
         if (indeterminate > 0) {
             String label = QcMatrixRowModelParent.INDETERMINATE;
             setLabel(label);

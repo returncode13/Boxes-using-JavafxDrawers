@@ -31,9 +31,11 @@ public class LabelCell extends TreeTableCell<QcTableSequence, String> {
         if(empty||seq == null){
             setGraphic(null);
         }else{
+           
             int sel=getTreeTableRow().getIndex();
             selectedItem=getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
             String subOrSail=new String();
+             boolean isSub=selectedItem.isChild();
             if(selectedItem.isParent()){
                 subOrSail=selectedItem.getSequence().getRealLineName();
             }else{
@@ -41,16 +43,29 @@ public class LabelCell extends TreeTableCell<QcTableSequence, String> {
             }
            
             if(seq.equals(QcMatrixRowModelParent.INDETERMINATE)){
-                setStyle("-fx-background-color: red");
-                setText(subOrSail+" I ");
+                if(isSub){
+                    setStyle("-fx-background-color: #ffa07a");
+                }else{
+                    setStyle("-fx-background-color: red");
+                }
+                setText(subOrSail);
             }else if(seq.equals(QcMatrixRowModelParent.SELECTED)){
-                setStyle("-fx-background-color: greenyellow");
-                setText(subOrSail+" G ");
+                 if(isSub){
+                    setStyle("-fx-background-color: #cdff82");
+                }else{
+                    setStyle("-fx-background-color: greenyellow");
+                }
+                
+                setText(subOrSail);
             }else if(seq.equals(QcMatrixRowModelParent.UNSELECTED)){
-                setStyle("-fx-background-color: orange");
-                setText(subOrSail+" U ");
+                if(isSub){
+                    setStyle("-fx-background-color: #ffb732");
+                }else{
+                    setStyle("-fx-background-color: orange");
+                }
+                setText(subOrSail);
             } 
-            selectedItem.refreshTable();
+          
         }
         
     }
