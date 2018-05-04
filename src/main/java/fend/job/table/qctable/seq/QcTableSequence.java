@@ -84,7 +84,7 @@ public class QcTableSequence  {
             child.setQcmatrix(qcmatrix);
         }
         /**
-         * 
+         * during loading
          **/
         for(QcMatrixRowModelParent qmr:qcmatrix){
             int indeterminate=0;
@@ -117,6 +117,7 @@ public class QcTableSequence  {
                 
             }
         }
+        horizontalQc();
     }
 
     public void setUpdateTime(String updateTime) {
@@ -171,6 +172,52 @@ public class QcTableSequence  {
             System.out.println(".changed(): on SequenceLevel");
         }
     };
+
+    private StringProperty labelProperty=new SimpleStringProperty(QcMatrixRowModelParent.UNSELECTED);
+    
+    public String getLabel(){
+        return labelProperty.get();
+    }
+    
+    public void setLabel(String label){
+        labelProperty.set(label);
+    }
+    
+   public StringProperty labelProperty(){
+       return labelProperty;
+   }
+    
+    public void horizontalQc(){
+         int indeterminate=0;
+         int selected=0;
+        for(QcTableSequence child:children){
+            indeterminate += child.getLabel().equals(QcMatrixRowModelParent.INDETERMINATE)?1:0;
+            selected += child.getLabel().equals(QcMatrixRowModelParent.SELECTED)?1:0;
+        }
+        System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of children: "+children.size());
+        if (indeterminate > 0) {
+            String label = QcMatrixRowModelParent.INDETERMINATE;
+            setLabel(label);
+        } else if (indeterminate ==0 && selected == children.size()) {
+            String label = QcMatrixRowModelParent.SELECTED;
+            setLabel(label);
+        } else {
+            String label = QcMatrixRowModelParent.UNSELECTED;
+            setLabel(label);
+        }
+    }
+    
+        
+    private BooleanProperty refreshTableProperty=new SimpleBooleanProperty(true);
+    
+    public BooleanProperty refreshTableProperty(){
+        return refreshTableProperty;
+    }
+    
+    public void refreshTable(){
+        boolean val=refreshTableProperty.get();
+        refreshTableProperty.set(!val);
+    }
     
     
     

@@ -61,8 +61,10 @@ public class QcTableController extends Stage{
         System.out.println("fend.job.table.qctable.QcTableController.setModel(): starting to build the qc table");
          List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
         for(QcTableSequence qcseq:sequences){
+            qcseq.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
             TreeItem<QcTableSequence> qseqroot=new TreeItem<>(qcseq);
             for(QcTableSequence qcsub:qcseq.getChildren()){
+                qcsub.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
                 TreeItem<QcTableSequence> qcsubchild=new TreeItem<>(qcsub);
                 qseqroot.getChildren().add(qcsubchild);
             }
@@ -83,7 +85,7 @@ public class QcTableController extends Stage{
             qcMatrixForCols=FXCollections.observableArrayList();
         }
         
-        //JFXTreeTableColumn<QcTableSequence,Long> seqCol=new JFXTreeTableColumn<>();
+        
         
         TreeTableColumn<QcTableSequence,Long> seqCol=new TreeTableColumn<>();
         seqCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, Long>, ObservableValue<Long>>() {
@@ -94,24 +96,16 @@ public class QcTableController extends Stage{
         });
         //JFXTreeTableColumn<QcTableSequence,String> subCol=new JFXTreeTableColumn<>();
         TreeTableColumn<QcTableSequence,String> subCol=new TreeTableColumn<>();
+       
+        
         subCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<QcTableSequence, String> param) {
-                
-                String sublinename=new String();
-                try{
-                    sublinename=param.getValue().getValue().getSubsurface().getSubsurface();
-                }
-                catch(NullPointerException npe){
-                    //System.out.println("fend.job.table.qctable.QcTableController.setView(): Null Pointer encountered");
-                }
-                if(sublinename==null){
-                    return new SimpleStringProperty(sublinename=param.getValue().getValue().getSequence().getRealLineName());
-                }else{
-                    return new SimpleStringProperty(sublinename);
-                }
-            } 
+                return param.getValue().getValue().labelProperty();
+            }
         });
+        
+        subCol.setCellFactory(p->{return new LabelCell(p);});
         
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of qcmatrix (number of qctypes):  "+qcMatrixForCols.size());
         
@@ -133,9 +127,7 @@ public class QcTableController extends Stage{
                      if(name==null){
                          name=qseq.getSequence().getRealLineName();
                      }
-                     
-                   //  System.out.println(".call(): Sub: "+name+" DBQCResult CHKUNCHK: " +qseq.getQcmatrix().get(index).getCheckUncheckProperty().get());
-                   //  System.out.println(".call(): Sub: "+name+" DBQCResult INDETERM: " +qseq.getQcmatrix().get(index).getIndeterminateProperty().get());
+                 
                      checkUncheck.bindBidirectional(qseq.getQcmatrix().get(index).getCheckUncheckProperty());
                      indeterminate.bindBidirectional(qseq.getQcmatrix().get(index).getIndeterminateProperty());
                      
@@ -206,4 +198,13 @@ public class QcTableController extends Stage{
        
         
     }
+    
+    
+    private ChangeListener<Boolean> REFRESH_TABLE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            //treetableView.refresh();
+           
+        }
+    };
 }

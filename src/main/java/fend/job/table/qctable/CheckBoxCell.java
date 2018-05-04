@@ -116,11 +116,14 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                                          child.updateParent=false;
                                      }
                                      updateDownwards(updateTime);
+                                     selectedItem.horizontalQc();
                                  }
                                 else{
                                      selectedItem.getParent().updateChildren=false;
                                      selectedItem.updateParent=true;
                                      updateUpwards(updateTime);
+                                     selectedItem.horizontalQc();
+                                     selectedItem.getParent().horizontalQc();
                                  }
 
                             
@@ -329,7 +332,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                     
                     //
                     
-                    
+                    child.horizontalQc();
                     
                     
                  }

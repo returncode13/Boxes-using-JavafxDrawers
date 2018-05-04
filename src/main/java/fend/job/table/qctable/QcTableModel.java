@@ -95,7 +95,7 @@ public class QcTableModel {
             qctableSubsurface.setSequence(seq);
             qctableSubsurface.setSubsurface(s);
            
-            qctableSubsurface.setQcmatrix(feqcmr);
+            //qctableSubsurface.setQcmatrix(feqcmr);
            // qctableSubsurface.setIsParent(false);
             
             if(!lookupmap.containsKey(seq)){

@@ -16,7 +16,9 @@ import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -103,11 +105,10 @@ public class QcTableSubsurface extends QcTableSequence{
              }catch(Exception e){
                nq.setPassQc(q.isPassQc());
              }
-             /*nq.setCheckUncheckProperty(q.getCheckUncheckProperty().get());
-             nq.setIndeterminateProperty(q.getIndeterminateProperty().get());*/
+            
             nq.setCheckedByUser(q.getCheckedByUser());
             nq.setName(q.getName().get());
-            //nq.setPassQc(q.isPassQc());
+          
             nq.setQctype(q.getQctype());
             
             StringProperty changed=new SimpleStringProperty();
@@ -119,6 +120,7 @@ public class QcTableSubsurface extends QcTableSequence{
         this.observableQcMatrix=FXCollections.observableArrayList(this.qcmatrix);
         changedListProperty=new SimpleListProperty<>(changedList);
         changedListProperty.addListener(listHasChanged);
+        horizontalQc();
     }
 
      @Override
@@ -176,4 +178,61 @@ public class QcTableSubsurface extends QcTableSequence{
          }
      };
      
+     
+     
+    private StringProperty labelProperty=new SimpleStringProperty(QcMatrixRowModelParent.UNSELECTED);
+    
+    
+     @Override
+     public StringProperty labelProperty(){
+       return labelProperty;
+   }
+    
+     @Override
+    public void setLabel(String label){
+        labelProperty.set(label);
+    }
+    
+     @Override
+    public  String getLabel(){
+        return labelProperty.get();
+    }
+    
+     @Override
+    public void horizontalQc() {
+        int indeterminate=0;
+        int selected=0;
+        
+        for(QcMatrixRowModelParent q:qcmatrix){
+            indeterminate+=q.getIndeterminateProperty().get()?1:0;
+            selected+=q.getCheckUncheckProperty().get()?1:0;
+        }
+        
+         System.out.println("fend.job.table.qctable.seq.QcTableSequence.horizontalQc(): indeterminate: "+indeterminate+" selected: "+selected+" no of qcmatrix: "+qcmatrix.size());
+        
+        if(indeterminate>0){
+            String label=QcMatrixRowModelParent.INDETERMINATE;
+            setLabel(label);
+        }else if(indeterminate==0 && selected==qcmatrix.size()){
+            String label=QcMatrixRowModelParent.SELECTED;
+            setLabel(label);
+        }else{
+            String label=QcMatrixRowModelParent.UNSELECTED;
+            setLabel(label);
+        }
+    }
+    
+    
+    private BooleanProperty refreshTableProperty=new SimpleBooleanProperty(true);
+    
+    public BooleanProperty refreshTableProperty(){
+        return refreshTableProperty;
+    }
+    
+    public void refreshTable(){
+        boolean val=refreshTableProperty.get();
+        refreshTableProperty.set(!val);
+    }
+    
+    
 }
