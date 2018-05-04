@@ -76,8 +76,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
           selectedItem=this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
           selectedItem.getQcmatrix().get(index).getIndeterminateProperty().set(false);
           selectedItem.getQcmatrix().get(index).getCheckUncheckProperty().set(newValue);
-          /*selectedItem.getQctypes().get(index).getIndeterminate().set(false);
-          selectedItem.getQctypes().get(index).getCheckUncheck().set(newValue);*/
+          
           
           selectedItem.setUpdateTime(updateTime);
           selectedItem.getQcmatrix().get(index).setPassQc(passQcString);
@@ -89,13 +88,12 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
       
       
        checkBox.indeterminateProperty().addListener((observable,oldValue,newValue)->{
-           //System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>() indeterminate: old: "+oldValue+" new: "+newValue);
+          
           String indeterminateString=QcMatrixRowModelParent.INDETERMINATE;
           int sel=getTreeTableRow().getIndex();
           String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
           selectedItem=this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
           selectedItem.setUpdateTime(updateTime);
-         // System.out.println("fend.session.node.qcTable.CheckBoxCell.<init>(): indeterminateProperty(): "+newValue+" for "+selectedItem.getSequence().getSequenceno()+" : "+selectedItem.getSubsurface().getSubsurface());
           selectedItem.getQcmatrix().get(index).getIndeterminateProperty().set(newValue);
           
          
@@ -106,13 +104,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
        checkBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
            @Override
            public void handle(MouseEvent event) {
-               /*    //   System.out.println(".handle(): MouseClicked");
-               Task<Void> clickTask=new Task<Void>() {
-               @Override
-               protected Void call() throws Exception {*/
-            
-            
-                                String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+                             String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
 
                                 int sel=getTreeTableRow().getIndex();
                                 selectedItem=CheckBoxCell.this.param.getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
@@ -131,15 +123,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                                      updateUpwards(updateTime);
                                  }
 
-                                 /*   return null;
-                                 
-                                 }
-                                 };*/
-            
-                                 /*clickTask.setOnFailed(e->{});
-                                 clickTask.setOnSucceeded(e->{});
-                                 
-                                 exec.execute(clickTask);*/
+                            
            }
            
            
@@ -247,7 +231,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                 QcTableSequence parent=children.get(0).getParent();
                 for(QcTableSequence child:children){
                     indeterminateCount+=child.getQcmatrix().get(index).getIndeterminateProperty().get()?1:0;
-                    
+                    selectedCount+=child.getQcmatrix().get(index).getCheckUncheckProperty().get()?1:0;
                 }
                 //System.out.println(selectedItem.getSequence().getSequenceno()+" updating parent: indcount: "+indeterminateCount+" selectCount: "+selectedCount);    
                 if(indeterminateCount>0) {
@@ -263,6 +247,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                     parent.getQcmatrix().get(index).setPassQc(passQcString);
                     parent.setUpdateTime(updateTime);
                 }else{
+                    
                     passQcString=QcMatrixRowModelParent.UNSELECTED;
                     parent.getQcmatrix().get(index).getIndeterminateProperty().set(false);
                     parent.getQcmatrix().get(index).getCheckUncheckProperty().set(false);

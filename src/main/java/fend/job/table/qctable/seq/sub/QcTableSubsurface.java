@@ -136,6 +136,7 @@ public class QcTableSubsurface extends QcTableSequence{
         this.isParent = isParent;
     }
 
+     @Override
     public void setParent(QcTableSequence parent) {
         this.parent = parent;
     }
@@ -145,10 +146,12 @@ public class QcTableSubsurface extends QcTableSequence{
         return parent;
     }
     
+     @Override
      public ObservableList<QcTableSequence> getChildren() {
         return parent.getChildren();
     }
 
+     @Override
     public String getUpdateTime() {
         
         return updateTime;

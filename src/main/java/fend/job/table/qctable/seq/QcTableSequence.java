@@ -40,6 +40,7 @@ public class QcTableSequence  {
     public boolean updateChildren=false;
     public boolean updateParent=false;
     
+    private BooleanProperty updateParentStatusProperty=new SimpleBooleanProperty(false);
     
     public Sequence getSequence() {
         return sequence;
@@ -82,7 +83,40 @@ public class QcTableSequence  {
         for(QcTableSequence child:children){
             child.setQcmatrix(qcmatrix);
         }
-        
+        /**
+         * 
+         **/
+        for(QcMatrixRowModelParent qmr:qcmatrix){
+            int indeterminate=0;
+            int selected=0;
+            int qindex=qcmatrix.indexOf(qmr);
+            for(QcTableSequence child:children){
+                indeterminate+=child.getQcmatrix().get(qindex).getIndeterminateProperty().get()?1:0;
+                selected+=child.getQcmatrix().get(qindex).getCheckUncheckProperty().get()?1:0;
+                
+            }
+            //System.out.println("fend.job.table.qctable.seq.QcTableSequence.setQcmatrix(): indeterminate: "+indeterminate+" selected: "+selected);
+            
+            if(indeterminate > 0){
+                String passQC=QcMatrixRowModelParent.INDETERMINATE;
+                
+                this.qcmatrix.get(qindex).getIndeterminateProperty().set(true);
+                this.qcmatrix.get(qindex).setPassQc(passQC);
+                
+            }else if(indeterminate==0 && selected==children.size()){
+                String passQC=QcMatrixRowModelParent.SELECTED;
+                this.qcmatrix.get(qindex).getIndeterminateProperty().set(false);
+                this.qcmatrix.get(qindex).getCheckUncheckProperty().set(true);
+                this.qcmatrix.get(qindex).setPassQc(passQC);
+                
+            }else{
+                String passQC=QcMatrixRowModelParent.UNSELECTED;
+                this.qcmatrix.get(qindex).getIndeterminateProperty().set(false);
+                this.qcmatrix.get(qindex).getCheckUncheckProperty().set(false);
+                this.qcmatrix.get(qindex).setPassQc(passQC);
+                
+            }
+        }
     }
 
     public void setUpdateTime(String updateTime) {

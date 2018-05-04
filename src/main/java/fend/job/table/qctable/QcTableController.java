@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -52,14 +53,7 @@ public class QcTableController extends Stage{
                 return t;
         });
         
-        
-        /*        //List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
-        Task<Void> qctableLoadTask=new Task<Void>() {
-        @Override
-        protected Void call() throws Exception {*/
-                
-       
-        
+      
         
         
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
@@ -81,7 +75,13 @@ public class QcTableController extends Stage{
         
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of sequenceList received: "+sequences.size());
         List<TreeTableColumn<QcTableSequence,Boolean>> columns=new ArrayList<>();
-        ObservableList<QcMatrixRowModelParent> qcMatrixForCols=sequences.get(0).getQcmatrix();
+        ObservableList<QcMatrixRowModelParent> qcMatrixForCols;
+        if(!sequences.isEmpty()){
+            qcMatrixForCols=sequences.get(0).getQcmatrix();
+        }
+        else{
+            qcMatrixForCols=FXCollections.observableArrayList();
+        }
         
         //JFXTreeTableColumn<QcTableSequence,Long> seqCol=new JFXTreeTableColumn<>();
         
@@ -188,23 +188,7 @@ public class QcTableController extends Stage{
         treetableView.setRoot(root);
         treetableView.setShowRoot(false);
         
-        /*   return null;
         
-        }
-        };
-        
-        
-        
-        qctableLoadTask.setOnFailed(e->{
-        qctableLoadTask.getException().printStackTrace();
-        });
-        
-        qctableLoadTask.setOnSucceeded(e->{
-        
-        
-        });
-        
-        exec.execute(qctableLoadTask);*/
         
         
     }
