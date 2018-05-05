@@ -28,7 +28,9 @@ public class LabelCell extends TreeTableCell<QcTableSequence, String> {
     @Override
     protected void updateItem(String seq,boolean empty){
         super.updateItem(seq, empty);
-        if(empty||seq == null){
+        if(seq == null||empty){
+            setStyle("");
+            setText("");
             setGraphic(null);
         }else{
            
