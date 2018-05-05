@@ -71,5 +71,10 @@ public class QcMatrixRowServiceImpl implements QcMatrixRowService{
     public void deleteAllQcMatrixRowsForJob(Job job) {
         qcmDao.deleteAllQcMatrixRowsForJob(job);
     }
+
+    @Override
+    public List<String> getQcMatrixRowNamesForJob(Job job) {
+        return qcmDao.getQcMatrixRowNamesForJob(job);
+    }
     
 }

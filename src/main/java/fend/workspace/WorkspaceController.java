@@ -22,6 +22,7 @@ import db.model.Pheader;
 import db.model.PropertyType;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
+import db.model.QcType;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.Summary;
@@ -62,6 +63,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
 import db.services.SubsurfaceJobService;
 import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
@@ -181,13 +184,14 @@ public class WorkspaceController {
     private SubsurfaceService subsurfaceService = new SubsurfaceServiceImpl();
     private DoubtService doubtService = new DoubtServiceImpl();
     private DoubtTypeService doubtTypeService = new DoubtTypeServiceImpl();
+    private QcTypeService qcTypeService=new QcTypeServiceImpl();
     
     private QcTableService qcTableService = new QcTableServiceImpl();
     private SummaryService summaryService = new SummaryServiceImpl();
     private SubsurfaceJobService subsurfaceJobService = new SubsurfaceJobServiceImpl();
     private VariableArgumentService variableArgumentService = new VariableArgumentServiceImpl();
     private List<BooleanProperty> changePropertyList = new ArrayList<>();
-
+    
     private DoubtType doubtTypeQc;
     private DoubtType doubtTypeTraces;
     private DoubtType doubtTypeTime;
@@ -298,6 +302,16 @@ public class WorkspaceController {
                     npv.setValue(jobProperty.getPropertyValue());
                     nodePropertyValueService.createNodePropertyValue(npv);
                 }
+                
+                //create qc matrix row entries based on existing qc types for this job
+                List <QcType> qctypes=qcTypeService.getAllQcTypes();
+                for(QcType qt:qctypes){
+                     QcMatrixRow dbqcmr=new QcMatrixRow();
+                    dbqcmr.setJob(dbjob);
+                    dbqcmr.setQctype(qt);
+                    qcMatrixRowService.createQcMatrixRow(dbqcmr);
+                    
+                }
 
                 return "finished building a 2dProcess entry: " + dbjob.getId();
             }
@@ -369,6 +383,16 @@ public class WorkspaceController {
                     nodePropertyValueService.createNodePropertyValue(npv);
                     System.out.println(".call(): done creating for this property");
 
+                }
+                
+                //create qc matrix row entries based on existing qc types for this job
+                List <QcType> qctypes=qcTypeService.getAllQcTypes();
+                for(QcType qt:qctypes){
+                     QcMatrixRow dbqcmr=new QcMatrixRow();
+                    dbqcmr.setJob(dbjob);
+                    dbqcmr.setQctype(qt);
+                    qcMatrixRowService.createQcMatrixRow(dbqcmr);
+                    
                 }
                 return "finished building a SEGD entry: " + dbjob.getId();
             }

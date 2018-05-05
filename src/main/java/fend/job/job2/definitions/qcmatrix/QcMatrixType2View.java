@@ -15,15 +15,15 @@ import javafx.scene.layout.StackPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixView extends StackPane{
-    private  QcMatrixModel model;
-    private QcMatrixController  controller;
+public class QcMatrixType2View extends StackPane{
+    private  QcMatrixType2Model model;
+    private QcMatrixType2Controller  controller;
     
      private FXMLLoader fXMLLoader;
     private final URL location;
     
     
-    public QcMatrixView(QcMatrixModel item){
+    public QcMatrixType2View(QcMatrixType2Model item){
        model=item;
         this.location=getClass().getClassLoader().getResource("fxml/job2/definitions/qcmatrix/qcmatrix.fxml"); 
        
@@ -38,7 +38,7 @@ public class QcMatrixView extends StackPane{
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(QcMatrixController)fXMLLoader.getController();
+                controller=(QcMatrixType2Controller)fXMLLoader.getController();
                 controller.setModel(this.model);
                 controller.setView(this) ;
                

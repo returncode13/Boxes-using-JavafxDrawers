@@ -5,32 +5,24 @@
  */
 package fend.job.job2.definitions;
 
-import fend.job.job1.JobType1Model;
 //import fend.job.definitions.volume.VolumeListType2Model;
 //import fend.job.definitions.volume.VolumeListType2View;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
-//import fend.job.definitions.insight.InsightListModel;
-//import fend.job.definitions.insight.InsightListView;
-//import fend.job.definitions.qcmatrix.QcMatrixModel;
-//import fend.job.definitions.qcmatrix.QcMatrixView;
-import fend.job.job0.JobType0Model;
 import fend.job.job2.JobType2Model;
 import fend.job.job2.definitions.insight.InsightListModel;
 import fend.job.job2.definitions.insight.InsightListView;
-import fend.job.job2.definitions.qcmatrix.QcMatrixModel;
-import fend.job.job2.definitions.qcmatrix.QcMatrixView;
+import fend.job.job2.definitions.qcmatrix.QcMatrixType2Model;
+import fend.job.job2.definitions.qcmatrix.QcMatrixType2View;
+import fend.job.job2.definitions.qcmatrix.selected.SelectedQcType2View;
 import fend.job.job2.definitions.volume.VolumeListType2Model;
 import fend.job.job2.definitions.volume.VolumeListType2View;
-
+import fend.job.job2.definitions.qcmatrix.selected.SelectedQcType2Model;
 
 
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
-import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
 /**
@@ -48,9 +40,12 @@ public class JobDefinitionsType2Controller {
     JobType2Model parentBox;
     JobDefinitionsType2Model model;
     JobDefinitionsType2View view;
-    JFXDrawer qmatrixDrawer=new JFXDrawer();
+    //JFXDrawer qmatrixDrawer=new JFXDrawer();
     JFXDrawer volumeDrawer=new JFXDrawer();
     JFXDrawer insightDrawer=new JFXDrawer();
+    
+    JFXDrawer selectedQcMatrixDrawer=new JFXDrawer();
+    
     
     @FXML
     private JFXDrawersStack drawersStack;
@@ -75,9 +70,9 @@ public class JobDefinitionsType2Controller {
         view=vw;
         
         setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
-        setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
+       // setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
         setupInsightDrawer(insightDrawer,openInsightDrawer);
-        
+        setupSelectedQcMatrixDrawer(selectedQcMatrixDrawer,openQMatrixDrawer);
         
         
     }
@@ -125,54 +120,51 @@ public class JobDefinitionsType2Controller {
         });
     }
 
-    private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
-        
-        
-         drawer.setId("QMatrix");
-         /*VolumeListType2Model insmodel=new VolumeListType2Model(parentBox);
-         VolumeListType2View insList=new VolumeListType2View(insmodel);*/
-         
-         QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
-         QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);
-        drawer.setSidePane(qcMatrixView);
-        drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        drawer.setDefaultDrawerSize(qcMatrixView.computeAreaInScreen());
-        drawer.setOverLayVisible(false);
-        drawer.setResizableOnDrag(true);
-        drawer.setTranslateX(180);
-        drawer.setTranslateY(0);
-        
-        
-        
-        
-        button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
-        drawer.setOnDrawerClosed(e->{
-            drawer.setVisible(false);
-            button.setText(this.qmatrixExpand);
-            e.consume();                //prevent further collapse of the nested (previous) drawers
-        });
-        drawer.setOnDrawerOpening(e->{
-           drawer.setVisible(true);
-            button.setText(this.qmatrixCollapse);
-            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
-            ft.setFromValue(0.7);
-            ft.setToValue(1.0);
-            ft.setAutoReverse(true);
-            ft.setCycleCount(1);
-            ft.play();
-        });
-        
-        drawer.setOnDrawerClosing(e->{
-            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
-            ft.setFromValue(1.0);
-            ft.setToValue(0.7);
-            ft.setAutoReverse(true);
-            ft.setCycleCount(1);
-            ft.play();
-             
-        });
-     }
-
+    /* private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
+    
+    
+    drawer.setId("QMatrix");
+    
+    QcMatrixType2Model qcmatmodel=new QcMatrixType2Model(parentBox);
+    QcMatrixType2View qcMatrixView=new QcMatrixType2View(qcmatmodel);
+    drawer.setSidePane(qcMatrixView);
+    drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+    drawer.setDefaultDrawerSize(qcMatrixView.computeAreaInScreen());
+    drawer.setOverLayVisible(false);
+    drawer.setResizableOnDrag(true);
+    drawer.setTranslateX(180);
+    drawer.setTranslateY(0);
+    
+    
+    
+    
+    button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+    drawer.setOnDrawerClosed(e->{
+    drawer.setVisible(false);
+    button.setText(this.qmatrixExpand);
+    e.consume();                //prevent further collapse of the nested (previous) drawers
+    });
+    drawer.setOnDrawerOpening(e->{
+    drawer.setVisible(true);
+    button.setText(this.qmatrixCollapse);
+    FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+    ft.setFromValue(0.7);
+    ft.setToValue(1.0);
+    ft.setAutoReverse(true);
+    ft.setCycleCount(1);
+    ft.play();
+    });
+    
+    drawer.setOnDrawerClosing(e->{
+    FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+    ft.setFromValue(1.0);
+    ft.setToValue(0.7);
+    ft.setAutoReverse(true);
+    ft.setCycleCount(1);
+    ft.play();
+    
+    });
+    }*/
     private void setupInsightDrawer(JFXDrawer drawer,JFXButton button) {
          
          drawer.setId("Insight");
@@ -217,4 +209,52 @@ public class JobDefinitionsType2Controller {
         });
     }
     
+    
+    private void setupSelectedQcMatrixDrawer(JFXDrawer drawer, JFXButton button) {
+       
+         drawer.setId("QMatrix");
+         /*VolumeListType1Model insmodel=new VolumeListType1Model(parentBox);
+         VolumeListType1View insList=new VolumeListType1View(insmodel);*/
+         
+        SelectedQcType2Model smodel=new SelectedQcType2Model(parentBox);
+        SelectedQcType2View sview=new SelectedQcType2View(smodel);
+        drawer.setSidePane(sview);
+        drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+        drawer.setDefaultDrawerSize(sview.computeAreaInScreen());
+        drawer.setOverLayVisible(false);
+        drawer.setResizableOnDrag(true);
+        drawer.setTranslateX(122);
+        drawer.setTranslateY(0);
+        
+        
+        
+        
+        button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+        drawer.setOnDrawerClosed(e->{
+            drawer.setVisible(false);
+            button.setText(this.qmatrixExpand);
+            e.consume();                //prevent further collapse of the nested (previous) drawers
+        });
+        drawer.setOnDrawerOpening(e->{
+           
+           drawer.setVisible(true);
+            button.setText(this.qmatrixCollapse);
+            FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+            ft.setFromValue(0.7);
+            ft.setToValue(1.0);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+        });
+        
+        drawer.setOnDrawerClosing(e->{
+            FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+            ft.setFromValue(1.0);
+            ft.setToValue(0.7);
+            ft.setAutoReverse(true);
+            ft.setCycleCount(1);
+            ft.play();
+             
+        });
+    }
 }

@@ -30,4 +30,6 @@ public interface QcMatrixRowService {
     public void updatePresent(Long id,Boolean val);
 
     public void deleteAllQcMatrixRowsForJob(Job dbjob);
+
+    public List<String> getQcMatrixRowNamesForJob(Job job);
 }

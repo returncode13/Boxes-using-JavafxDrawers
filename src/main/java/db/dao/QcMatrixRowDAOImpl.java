@@ -245,5 +245,30 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
            session.close();
        }
     }
+
+    @Override
+    public List<String> getQcMatrixRowNamesForJob(Job job) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRowNamesForJob()");
+         Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select qt.name from  QcMatrixRow q INNER JOIN q.qctype qt where q.job =:j and q.present = true";
+       
+       List<String> result=null;
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", job);
+           result=selectQuery.list();
+           transaction.commit();
+           
+          
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+       
+       return result;
+    }
     
 }

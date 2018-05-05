@@ -31,4 +31,6 @@ public interface QcMatrixRowDAO {
     public void updatePresent(Long id, Boolean val);
 
     public void deleteAllQcMatrixRowsForJob(Job job);
+
+    public List<String> getQcMatrixRowNamesForJob(Job job);
 }
