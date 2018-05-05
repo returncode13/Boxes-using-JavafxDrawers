@@ -160,6 +160,7 @@ public class ParentChildEdgeController implements EdgeController{
         node.getChildren().add(0,childAnchor);
         node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
+        //this.interactivePane.getChildren().add(dotview);
         
     }
     
@@ -223,7 +224,7 @@ public class ParentChildEdgeController implements EdgeController{
         dotnode=new DotView(dotmodel, ParentChildEdgeController.this.interactivePane);
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): created a new dotnode: "+dotnode.getId());
             this.dotview=dotnode;
-        node.getChildren().add(this.dotview);
+        //node.getChildren().add(this.dotview);
         
        // dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
        // dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
@@ -276,7 +277,7 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
         }
-          
+          this.interactivePane.getChildren().add(dotview);
           }
         else{                                    //this is when the dot exists. and when it needs to be "joined" to.
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): binding to dotnode "+dotnode.getId());
@@ -285,9 +286,11 @@ public class ParentChildEdgeController implements EdgeController{
             this.dotview=dotnode;
             childAnchor.centerXProperty().bind(this.dotview.centerXProperty());
             childAnchor.centerYProperty().bind(this.dotview.centerYProperty());
+//            this.interactivePane.getChildren().add(dotview);
             
         }
         node.toBack();
+        
         this.dotview.toFront();
         //return dotnode;
         return this.dotview;
@@ -412,6 +415,10 @@ public class ParentChildEdgeController implements EdgeController{
 
     public CubicCurve getCurve() {
         return this.curve;
+    }
+
+    void add(DotView dot) {
+        this.interactivePane.getChildren().add(dot);
     }
     
       private class Delta{

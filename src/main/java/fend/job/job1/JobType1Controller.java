@@ -261,7 +261,8 @@ public class JobType1Controller implements JobType0Controller{
                    
                     setupAncestorsAndDescendants(parent);
                      
-                    parentChildEdgeNode.getChildren().add(0,dotnode);
+                   // parentChildEdgeNode.getChildren().add(0,dotnode);
+                   parentChildEdgeNode.add(dotnode);
                    
 
                     CubicCurve curve=parentChildEdgeNode.getController().getCurve();  //the curve in the node

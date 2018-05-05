@@ -130,6 +130,7 @@ public class DotJobEdgeController implements EdgeController {
         //node.getChildren().add(dotnode);
         node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
+      //  this.interactivePane.getChildren().add(dotnode);
        
         
     }

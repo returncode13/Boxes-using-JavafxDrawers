@@ -6,6 +6,7 @@
 package fend.edge.parentchildedge;
 
 
+import fend.dot.DotView;
 import fend.edge.edge.EdgeView;
 import java.io.IOException;
 import java.net.URL;
@@ -81,6 +82,10 @@ public class ParentChildEdgeView extends AnchorPane implements EdgeView{
     
     public boolean getDropReceived(){
         return this.dropReceived;
+    }
+    
+    public void add(DotView dot){
+        controller.add(dot);
     }
     
 }
