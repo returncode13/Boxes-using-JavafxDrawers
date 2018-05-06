@@ -56,6 +56,9 @@ public class Summary implements Serializable {
     @Column(name="insight_fail")
     private Boolean failedInsightSummary=false;
     
+    @Column(name="io_fail")
+    private Boolean failedIoSummary=false;
+    
     @Column(name="time_fail_inherited")
     private Boolean inheritedTimeFail=false;
     
@@ -67,6 +70,9 @@ public class Summary implements Serializable {
     
     @Column(name="insight_fail_inherited")
     private Boolean inheritedInsightFail=false;
+    
+    @Column(name="io_fail_inherited")
+    private Boolean inheritedIoFail=false;
     
     @Column(name="time_override_inherited")
     private Boolean inheritedTimeOverride=false;
@@ -80,6 +86,8 @@ public class Summary implements Serializable {
     @Column(name="insight_override_inherited")
     private Boolean inheritedInsightOverride=false;
     
+    @Column(name="io_override_inherited")
+    private Boolean inheritedIoOverride=false;
     
     @Column(name="time_fail_override")
     private Boolean overridenTimeFail=false;
@@ -93,6 +101,8 @@ public class Summary implements Serializable {
     @Column(name="insight_fail_override")
     private Boolean overridenInsightFail=false;
     
+    @Column(name="io_fail_override")
+    private Boolean overridenIoFail=false;
     
     @Column(name="time_fail_warning")
     private Boolean warningForTime=false;
@@ -106,6 +116,9 @@ public class Summary implements Serializable {
     @Column(name="insight_fail_warning")
     private Boolean warningForInsight=false;
     
+    
+    @Column(name="io_fail_warning")
+    private Boolean warningForIo=false;
     /*@Column(name="insight_inheritance_summary")
     private Boolean insightInheritanceSummary=false;
     */
@@ -191,7 +204,16 @@ public class Summary implements Serializable {
     public void setFailedInsightDependency(Boolean failedInsightSummary) {
         this.failedInsightSummary = this.failedInsightSummary || failedInsightSummary;
     }
+    
+    
+    public Boolean hasFailedIoDependency(){
+        return failedIoSummary;
+    }
 
+    public void setFailedIoDependency(Boolean failedIoSummary){
+        this.failedIoSummary=this.failedIoSummary || failedIoSummary;
+    }
+    
     public Boolean hasInheritedTimeFail() {
         return inheritedTimeFail;
     }
@@ -214,6 +236,22 @@ public class Summary implements Serializable {
 
     public void setInheritedQcFail(Boolean inheritedQcFail) {
         this.inheritedQcFail = this.inheritedQcFail || inheritedQcFail;
+    }
+    
+     public Boolean hasInheritedInsightFail() {
+        return inheritedInsightFail;
+    }
+
+    public void setInheritedInsightFail(Boolean inheritedInsightFail) {
+        this.inheritedInsightFail = this.inheritedInsightFail || inheritedInsightFail;
+    }
+
+    public Boolean hasInheritedIoFail(){
+        return inheritedIoFail;
+    }
+    
+    public void setInheritedIoFail(Boolean inheritedIoFail){
+        this.inheritedIoFail=this.inheritedIoFail || inheritedIoFail;
     }
 
     public Boolean hasOverridenTimeFail() {
@@ -246,6 +284,14 @@ public class Summary implements Serializable {
 
     public void setOverridenInsightFail(Boolean overridenInsightFail) {
         this.overridenInsightFail = this.overridenInsightFail || overridenInsightFail;
+    }
+    
+    public Boolean hasOverridenIoFail(){
+        return this.overridenIoFail;
+    }
+    
+    public void setOverridenIoFail(Boolean overridenIoFail){
+        this.overridenIoFail=this.overridenIoFail || overridenIoFail;
     }
 
     public Boolean hasWarningForTime() {
@@ -280,14 +326,14 @@ public class Summary implements Serializable {
         this.warningForInsight = this.warningForInsight || warningForInsight;
     }
 
-    public Boolean hasInheritedInsightFail() {
-        return inheritedInsightFail;
+    public Boolean hasWarningForIo(){
+        return warningForIo;
     }
-
-    public void setInheritedInsightFail(Boolean inheritedInsightFail) {
-        this.inheritedInsightFail = this.inheritedInsightFail || inheritedInsightFail;
+   
+    public void setWarningForIo(Boolean warningForIo){
+        this.warningForIo=this.warningForIo || warningForIo;
     }
-
+    
     public Boolean hasInheritedTimeOverride() {
         return inheritedTimeOverride;
     }
@@ -320,6 +366,13 @@ public class Summary implements Serializable {
         this.inheritedInsightOverride = this.inheritedInsightOverride || inheritedInsightOverride;
     }
     
+    public Boolean hasInheritedIoOverride(){
+        return inheritedIoOverride;
+    }
+    
+    public void  setInheritedIoOverride(Boolean inheritedIoOverride){
+        this.inheritedIoOverride=this.inheritedIoOverride ||inheritedIoOverride;
+    }
     
     
 
@@ -367,11 +420,12 @@ public class Summary implements Serializable {
     }
 
     public void setAll(boolean b) {
-        failedTimeDependency=failedTraceDependency=failedQcSummary=failedInsightSummary=b;
-        inheritedTimeFail=inheritedTraceFail=inheritedQcFail=inheritedInsightFail=b;
-        inheritedTimeOverride=inheritedTraceOverride=inheritedQcOverride=inheritedInsightOverride=b;
-        overridenTimeFail=overridenTraceFail=overridenQcFail=overridenInsightFail=b;
-        warningForTime=warningForTrace=warningForQc=warningForInsight=b;
+        failedTimeDependency=failedTraceDependency=failedQcSummary=failedInsightSummary=failedIoSummary=b;
+        inheritedTimeFail=inheritedTraceFail=inheritedQcFail=inheritedInsightFail=inheritedIoFail=b;
+        inheritedTimeOverride=inheritedTraceOverride=inheritedQcOverride=inheritedInsightOverride=inheritedIoOverride=b;
+        overridenTimeFail=overridenTraceFail=overridenQcFail=overridenInsightFail=overridenIoFail=b;
+        warningForTime=warningForTrace=warningForQc=warningForInsight=warningForIo=b;
+        
     }
     
     

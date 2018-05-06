@@ -7,6 +7,7 @@ package fend.summary.SequenceSummary.Depth.JobSummary;
 
 import db.model.Job;
 import db.model.Subsurface;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellModel;
@@ -27,6 +28,7 @@ public class JobSummaryModel {
     private TraceCellModel traceCellModel;
     private QcCellModel qcCellModel;
     private InsightCellModel insightCellModel;
+    private IOCellModel ioCellModell;
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
     private final BooleanProperty query = new SimpleBooleanProperty(false);      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
@@ -54,6 +56,9 @@ public class JobSummaryModel {
         
         insightCellModel=new InsightCellModel();
         insightCellModel.setJobSummaryModel(this);
+        
+        ioCellModell=new IOCellModel();
+        ioCellModell.setJobSummaryModel(this);
     }
     
     public SummaryModel getSummaryModel() {
@@ -116,6 +121,14 @@ public class JobSummaryModel {
         this.insightCellModel = insightCellModel;
     }
 
+    public IOCellModel getIoCellModel() {
+        return ioCellModell;
+    }
+
+    public void setIoCellModell(IOCellModel ioCellModell) {
+        this.ioCellModell = ioCellModell;
+    }
+
     
     
     
@@ -162,21 +175,5 @@ public class JobSummaryModel {
         return showOverride;
     }
     
-    
-    /*public TimeCellModel getFeModelTimeCellModel() {
-    return feModelTimeCellModel;
-    }
-    
-    public void setFeModelTimeCellModel(TimeCellModel feModelTimeCellModel) {
-    this.feModelTimeCellModel = feModelTimeCellModel;
-    }
-    
-    public TraceCellModel getFeModelTraceCellModel() {
-    return feModelTraceCellModel;
-    }
-    
-    public void setFeModelTraceCellModel(TraceCellModel feModelTraceCellModel) {
-    this.feModelTraceCellModel = feModelTraceCellModel;
-    }
-    */
+   
 }

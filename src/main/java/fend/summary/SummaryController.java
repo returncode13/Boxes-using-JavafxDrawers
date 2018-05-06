@@ -31,6 +31,7 @@ import db.services.SummaryServiceImpl;
 import db.services.WorkspaceService;
 import db.services.WorkspaceServiceImpl;
 import fend.summary.SequenceSummary.Depth.Depth;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCell.IOCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCell.InsightCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCell.QcCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
@@ -88,6 +89,7 @@ public class SummaryController extends Stage{
     private DoubtType traceDoubtType;
     private DoubtType qcDoubtType;
     private DoubtType insightDoubtType;
+    private DoubtType ioDoubtType;
     private DoubtType inheritanceDoubtType;
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
@@ -106,11 +108,8 @@ public class SummaryController extends Stage{
          qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
          insightDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
          inheritanceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
-         /* Map<TimeJobSubKey,Doubt> timeDoubtMap=new HashMap<>();
-         Map<TraceJobSubKey,Doubt> traceDoubtMap=new HashMap<>();
-         Map<QcJobSubKey,Doubt> qcDoubtMap=new HashMap<>();*/
-         
-         
+         ioDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.IO);
+        
 
          
          Map<Sequence,SequenceSummary> seqSummaryMap=new HashMap<>();
@@ -197,7 +196,7 @@ public class SummaryController extends Stage{
                                     newValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());         //Trace
                                     newValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());                  //Qc
                                     newValue.getInsightCellModel().setFailedInsightDependency(value.getInsightCellModel().cellHasFailedDependency());   //Insight
-                                    
+                                    newValue.getIoCellModel().setFailedIoDependency(value.getIoCellModel().cellHasFailedDependency());                //IO
                                     
                                     
                                     JobSummaryModel newSeqValue=new JobSummaryModel(model);
@@ -208,7 +207,7 @@ public class SummaryController extends Stage{
                                     newSeqValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());         //Trace
                                     newSeqValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());                  //Qc
                                     newSeqValue.getInsightCellModel().setFailedInsightDependency(value.getInsightCellModel().cellHasFailedDependency());   //Insight
-                                    
+                                    newSeqValue.getIoCellModel().setFailedIoDependency(value.getIoCellModel().cellHasFailedDependency());                //IO
                                     
                                     d1.addToJobSummaryMap(newValue);
                                     d2ForSeq.addToJobSummaryMap(newSeqValue);
@@ -284,6 +283,16 @@ public class SummaryController extends Stage{
                         seqJsm.getInsightCellModel().setWarningForInsight(seqJsm.getInsightCellModel().cellHasWarning()||x.hasWarningForInsight());
                         //<--End Insight
                         
+                        
+                        //<--Start IO
+                        seqJsm.getIoCellModel().setActive(true);
+                        seqJsm.getIoCellModel().setFailedIoDependency(seqJsm.getIoCellModel().cellHasFailedDependency() || x.hasFailedIoDependency());
+                        seqJsm.getIoCellModel().setInheritedIoFail(seqJsm.getIoCellModel().cellHasInheritedFail() || x.hasInheritedIoFail());
+                        seqJsm.getIoCellModel().setInheritedIoOverride(seqJsm.getIoCellModel().cellHasInheritedOverride() || x.hasInheritedIoOverride());
+                        seqJsm.getIoCellModel().setOverridenIoFail(seqJsm.getIoCellModel().cellHasOverridenFail() || x.hasOverridenIoFail());
+                        seqJsm.getIoCellModel().setWarningForIo(seqJsm.getIoCellModel().cellHasWarning() || x.hasWarningForIo());
+                        //<--End IO
+                        
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
                                 getChild(sub).
                                 getDepth(depth).
@@ -328,6 +337,14 @@ public class SummaryController extends Stage{
                         jsm.getInsightCellModel().setWarningForInsight(x.hasWarningForInsight());
                         //<--End Insight
                         
+                        //<--Start IO
+                        jsm.getIoCellModel().setActive(true);
+                        jsm.getIoCellModel().setFailedIoDependency(x.hasFailedIoDependency());
+                        jsm.getIoCellModel().setInheritedIoFail(x.hasInheritedIoFail());
+                        jsm.getIoCellModel().setInheritedIoOverride(x.hasInheritedIoOverride());
+                        jsm.getIoCellModel().setOverridenIoFail(x.hasOverridenIoFail());
+                        jsm.getIoCellModel().setWarningForIo(x.hasWarningForIo());
+                        //<--End IO
                         
                       
                         
@@ -408,6 +425,19 @@ public class SummaryController extends Stage{
                      jobcolumn.getColumns().add(insightColumn);
                  //<==End of Insight column
                  
+                 
+                 //<==Start of IO column
+                    TreeTableColumn<SequenceSummary,Boolean> ioColumn=new TreeTableColumn<>("IO"); 
+                    ioColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
+                        @Override
+                        public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
+                           return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getIoCellModel().isActive());
+                        }
+                    });
+                     ioColumn.setCellFactory(param->new IOCell(depthId,jobkey,insightDoubtType));
+                     jobcolumn.getColumns().add(ioColumn);
+                 
+                 //<==End of IO column
                  
                 depthColumn.getColumns().add(jobcolumn);
                 
