@@ -90,6 +90,11 @@ public class Log implements Serializable{
     @Column(name="version")
     private Long version;
 
+    
+    @Column(name="input_volumes",columnDefinition = "text")
+    private String inputVolumeNames=new String();
+    
+    
     public Long getVersion() {
         return version;
     }
@@ -263,6 +268,14 @@ public class Log implements Serializable{
 
     public void setPheader(Header pheader) {
         this.pheader = pheader;
+    }
+
+    public String getInputVolumeNames() {
+        return inputVolumeNames;
+    }
+
+    public void setInputVolumeNames(String inputVolumeNames) {
+        this.inputVolumeNames = inputVolumeNames;
     }
     
     

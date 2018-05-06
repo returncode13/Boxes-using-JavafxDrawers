@@ -35,7 +35,7 @@ public class DugioScripts implements Serializable{
     private File segdLoadCheckIfGCLogsFinished;
     private File subsurfaceInsightVersionForLog;
     private File workflowDifference;
-    
+    private File parentVolumesFrom2Dlogs;
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
             + "module add prod\n"
@@ -79,19 +79,38 @@ public class DugioScripts implements Serializable{
      /*private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
      "sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{$1=$2=$3=$4=$5=$6=$8=$9=$10=$11=\"\";printf $7;$7=\"\";printf\" Insight=\"$0}'";                //one log at a time . Currently using ths for 2D
      */
-       private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
+     /*      private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
+     "sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' |awk '{for(i=1;i<=NF;i++){\n" +
+     "										if($i ~ /lineName/){\n" +
+     "											printf $i\" Insight=\"\n" +
+     "										}\n" +
+     "										if($i ~ /VERSION/) {\n" +                                  // if the column contains VERSION, then print from there on till the end
+     "											for(j=i+1;j<=NF;j++){\n" +
+     "												printf $j\n" +
+     "											}\n" +
+     "											exit\n" +
+     "										}\n" +
+     "									   }\n" +
+     "									}'";                //one log at a time .
+     */
+       
+      private String  subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +                                                             //one log at a time.  Currently using this for 2D
 "sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' |awk '{for(i=1;i<=NF;i++){\n" +
 "										if($i ~ /lineName/){\n" +
 "											printf $i\" Insight=\"\n" +
 "										}\n" +
-"										if($i ~ /VERSION/) {\n" +                                  // if the column contains VERSION, then print from there on till the end 
+"										if($i ~ /VERSION/) {\n" +                                // if the column contains VERSION, then print from there on till the end 
 "											for(j=i+1;j<=NF;j++){\n" +
 "												printf $j\n" +
 "											}\n" +
 "											exit\n" +
 "										}\n" +
 "									   }\n" +
-"									}'";                //one log at a time . Currently using ths for 2D
+"									}'\n" +
+"\n" +
+"\n" +
+"grep -o \"Input File.*$\" $1 | awk -F '=' '{printf \" Input_File=\"$2 }'";                                                             //this line fetches the input volumes used for this job . 
+                                                                                                                                        //the result of the script is of the form lineName=<><space>Insight=<><space>Input_File=file_1<space>Input_File=file_2<space>...Input_File=<file_n                                        
      
       private String subsurfaceLogContent="#!/bin/bash\n" +
 "for i in $1/*; do sed '100q;2,100p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";
@@ -150,6 +169,10 @@ public class DugioScripts implements Serializable{
        
        private String workflowDifferenceContents="#!/bin/bash\n" +
         "/usr/bin/diff -y $1 $2";
+       
+       
+       private String parentVolumeFrom2DLogsContents="#!/bin/bash\n" +
+"grep -o \"Input File.*$\" $1 | awk -F '=' '{print $2 }'";                          //get parent volume names from 2d Logs
        
      public DugioScripts()
     {
@@ -380,7 +403,16 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+        try{
+            parentVolumesFrom2Dlogs=File.createTempFile("parentVolumesFrom2DLogs",".sh");
+            BufferedWriter bw= new BufferedWriter(new FileWriter(parentVolumesFrom2Dlogs));
+            bw.write(parentVolumeFrom2DLogsContents);
+            bw.close();
+            parentVolumesFrom2Dlogs.setExecutable(true,false);
+            
+        }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
     }
@@ -450,6 +482,10 @@ public class DugioScripts implements Serializable{
 
     public File getWorkflowDifference() {
         return workflowDifference;
+    }
+
+    public File getParentVolumesFrom2Dlogs() {
+        return parentVolumesFrom2Dlogs;
     }
     
     

@@ -37,6 +37,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -189,6 +190,12 @@ public class DugLogManager {
                         log.setVersion(li.version);
                         log.setTimestamp(li.timestamp);
                         log.setWorkflow(li.workflowHolder.workflow);
+                        List<String> inputVolumes=li.inputVolumeNames;
+                        String concat=new String();
+                        for(String inputVol:inputVolumes){
+                            concat+=inputVol+";";
+                        }
+                        log.setInputVolumeNames(concat);
                         logsService.createLogs(log);
                         
                             if(latestLogSet.contains(li)){
@@ -260,14 +267,27 @@ public class DugLogManager {
                     BufferedReader br=new BufferedReader(isr);
                     
                     String value;
-                    int lengthOfCharacterLinename="lineName=".length();
-                    int lengthOfCharacterInsight="Insight=".length();
+                    int lenCharLinename="lineName=".length();
+                    int lenCharInsight="Insight=".length();
+                    String inputFile="Input_File=";
                     while((value=br.readLine())!=null){
-                            System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //value= "lineName=<><space>Insight=<>"
+                            System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //
+                                                                                                                                                           //value = lineName=<><space>Insight=<><space>Input_File=file_1<space>Input_File=file_2<space>...Input_File=<file_n> 
                             String linename=value.substring(9,value.indexOf(" "));
-                            int insightSearchBegin = lengthOfCharacterLinename+linename.length()+1+lengthOfCharacterInsight;
-                            String insight=value.substring(insightSearchBegin);
+                            int insightSearchBegin = lenCharLinename+linename.length()+1+lenCharInsight;
+                            int indexOfFirstINPUT_FILE=value.indexOf(inputFile);
+                            
+                            String insight=new String();
+                            if(indexOfFirstINPUT_FILE>0){
+                                insight=value.substring(insightSearchBegin,indexOfFirstINPUT_FILE);
+                            }else{
+                                insight=value.substring(insightSearchBegin);
+                            }
+                                    
                             insight=insight.trim();
+                            
+                           
+                            
                             //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
 
                             LogInformation li=new LogInformation();
@@ -276,9 +296,15 @@ public class DugLogManager {
                             li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
                             li.insightVersion=insight;
                             li.timestamp=hackTimeStamp(fw.fwrap);
+                            if(indexOfFirstINPUT_FILE>0){
+                                 String inputFiles=value.substring(indexOfFirstINPUT_FILE);
+                                String[] volumeNames=inputFiles.split(inputFile);
+                                li.inputVolumeNames=Arrays.asList(volumeNames);
+                            }
+                            
                            // logInformation.add(li);
                             allSubs.add(li.linename.getSubsurface());
-                            System.out.println("middleware.dugex.DugLogManager.extractInformation():: looking for "+li.linename.getSubsurface()+" insight: "+li.insightVersion);
+                            System.out.println("middleware.dugex.DugLogManager.extractInformation():: looking for "+li.linename.getSubsurface()+" insight: "+li.insightVersion+" input volume(s): "+li.inputVolumeNames.toString());
                              if(!mapOfSubsurfaceLogs.containsKey(li.linename.getSubsurface())){
                                                 mapOfSubsurfaceLogs.put(li.linename.getSubsurface(), new ArrayList<>());
                                                 mapOfSubsurfaceLogs.get(li.linename.getSubsurface()).add(li);
@@ -832,6 +858,7 @@ public class DugLogManager {
         Volume volume;
         Long version;      
         WorkflowHolder workflowHolder=new WorkflowHolder();
+        List<String> inputVolumeNames=new ArrayList<>();
         
         @Override
         public int compareTo(LogInformation log2) {
