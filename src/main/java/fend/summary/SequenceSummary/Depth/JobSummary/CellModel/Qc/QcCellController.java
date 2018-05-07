@@ -322,11 +322,11 @@ public class QcCellController {
          String color=new String();
            if (model.isActive()) {
 
-               if (model.hasFailedQcDependency()) {
+               if (model.hasFailedQcDependency() &&  !model.hasOverridenQcFail()) {
                    color = JobSummaryColors.QC_DOUBT;
-               } else if (model.hasInheritedQcFail()) {
+               } else if (!model.hasFailedQcDependency() && model.hasInheritedQcFail()) {
                    color = JobSummaryColors.QC_INHERITED_DOUBT;
-               } else if (model.hasOverridenQcFail()) {
+               } else if (model.hasFailedQcDependency() && model.hasOverridenQcFail()) {
                    color = JobSummaryColors.QC_OVERRRIDE;
                } else if (model.hasInheritedQcOverride()) {
                    color = JobSummaryColors.QC_INHERITED_OVERRRIDE;

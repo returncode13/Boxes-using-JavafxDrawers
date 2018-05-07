@@ -327,11 +327,11 @@ public class InsightCellController {
          String color=new String();
            if (model.isActive()) {
 
-               if (model.hasFailedInsightDependency()) {
+               if (model.hasFailedInsightDependency() && !model.hasOverridenInsightFail()) {
                    color = JobSummaryColors.INSIGHT_DOUBT;
-               } else if (model.hasInheritedInsightFail()) {
+               } else if (!model.hasFailedInsightDependency() && model.hasInheritedInsightFail()) {
                    color = JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               } else if (model.hasOverridenInsightFail()) {
+               } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail()) {
                    color = JobSummaryColors.INSIGHT_OVERRRIDE;
                } else if (model.hasInheritedInsightOverride()) {
                    color = JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;

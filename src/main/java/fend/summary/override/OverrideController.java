@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -151,6 +153,14 @@ public class OverrideController extends Stage{
                                 }
                 }
                 
+                try {
+                    model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().summarizeOne();
+                } catch (Exception ex) {
+                    Logger.getLogger(OverrideController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                
+                model.getCellModel().getJobSummaryModel().toggleQuery();
                 
                 Doubt doubt=d;
                 //Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
@@ -167,13 +177,13 @@ public class OverrideController extends Stage{
                         }*/
                         
                            // Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
-                            Set<DoubtStatus> inhDoubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inhDoubt));
-                                for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
-                                        System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
-                                        inhDoubtStat.setStatus(status);
-                                        inhDoubtStat.setUser(AppProperties.getCurrentUser());
-                                        doubtStatusService.updateDoubtStatus(inhDoubtStat.getId(), inhDoubtStat);
-                                }
+                           /*  Set<DoubtStatus> inhDoubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inhDoubt));
+                           for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
+                           System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
+                           inhDoubtStat.setStatus(status);
+                           inhDoubtStat.setUser(AppProperties.getCurrentUser());
+                           doubtStatusService.updateDoubtStatus(inhDoubtStat.getId(), inhDoubtStat);
+                           }*/
                     }
                             
                     
@@ -190,13 +200,14 @@ public class OverrideController extends Stage{
                             .getDepth(inhDoubt.getChildJob().getDepth())
                             .getJobSummaryModel(inhDoubt.getChildJob());
                     System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
-                    System.out.println(".changed() : current Query flag: "+inhjsm.getTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getTimeCellModel().isQuery());
+                    System.out.print(".changed() : current Query flag: "+inhjsm.isQuery()+" changing to --> ");
+                    inhjsm.setQuery(!inhjsm.isQuery());
+                    System.out.println(" "+inhjsm.isQuery());
                     System.out.println(".changed(): refreshing table");
-                    Boolean ref=model.getCellModel().getJobSummaryModel().getSummaryModel().refreshTableProperty().get();
-                    model.getCellModel().getJobSummaryModel().getSummaryModel().setRefreshTable(!ref);
-                    //System.out.println(".changed() : current Query flag: "+inhjsm.getFeModelTimeCellModel().isQuery()+" changing to --> "+!inhjsm.getFeModelTimeCellModel().isQuery());
-                  //  inhjsm.setQuery(!inhjsm.isQuery());
-                   // inhjsm.getFeModelTimeCellModel().setQuery(!inhjsm.getFeModelTimeCellModel().isQuery());
+                    
+                    /* Boolean ref=model.getCellModel().getJobSummaryModel().getSummaryModel().refreshTableProperty().get();
+                    model.getCellModel().getJobSummaryModel().getSummaryModel().setRefreshTable(!ref);*/
+                
                 }
                 
                 

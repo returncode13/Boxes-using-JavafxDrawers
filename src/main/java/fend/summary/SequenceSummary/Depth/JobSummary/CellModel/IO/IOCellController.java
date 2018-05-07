@@ -323,11 +323,11 @@ public class IOCellController {
          String color=new String();
            if (model.isActive()) {
 
-               if (model.hasFailedIoDependency()) {
+               if (model.hasFailedIoDependency() && !model.hasOverridenIoFail()) {
                    color = JobSummaryColors.IO_DOUBT;
-               } else if (model.hasInheritedIoFail()) {
+               } else if (!model.hasFailedIoDependency() && model.hasInheritedIoFail()) {
                    color = JobSummaryColors.IO_INHERITED_DOUBT;
-               } else if (model.hasOverridenIoFail()) {
+               } else if (model.hasFailedIoDependency() && model.hasOverridenIoFail()) {
                    color = JobSummaryColors.IO_OVERRRIDE;
                } else if (model.hasInheritedIoOverride()) {
                    color = JobSummaryColors.IO_INHERITED_OVERRRIDE;

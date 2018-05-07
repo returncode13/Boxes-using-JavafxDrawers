@@ -219,52 +219,7 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-             //String typeToBeQueried=model.getContextAskedForDoubtType();
-             /* if(model.getJobSummaryModel().getSubsurface()!=null)
-             System.out.println(".changed(): Query listener called on "+model.
-             getJobSummaryModel().
-             getSubsurface().
-             getSubsurface()+" for "+
-             
-             model.
-             getJobSummaryModel().
-             getJob().
-             getNameJobStep());
-             */
-             
-             /*  model.cellProperty().removeListener(TIME_DOUBT_LISTENER);
-             model.inheritanceProperty().removeListener(TIME_INHERITANCE_LISTENER);
-             model.overrideProperty().removeListener(TIME_OVERRIDE_LISTENER);
-             
-             //does a doubt exist for the current model params (job,sub,doubttype) ?
-             Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),timeDoubtType);
-             if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-             model.setCellProperty(true);
-             // model.getJobSummaryModel().getFeModelTimeCellModel().setCellProperty(true);
-             
-             //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-             //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-             DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-             if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-             model.setOverride(true);
-             }else{
-             model.setOverride(false);
-             }
-             }else{           //else isTime()=false
-             model.setCellProperty(false);
-             // model.getJobSummaryModel().getFeModelTimeCellModel().setCellProperty(false);
-             
-             }*/
-            //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
-            //is not null then there;s an inherited doubt. set model.inheritance = true
-            //if null then there is no inherited doubt. set model.inheritance = false;
-            //if there is an inherited doubt.
-            //find cause.
-            //find status and state of cause.
-            //set model.inherited=true.
-            //if cause.status=override. then use color TIME_INH_OVER
-            //else use TIME_INH_DOUBT
-            //addressed in applyColor() / labelColor()
+           
             
            //  applyColor();
            labelColor();
@@ -343,11 +298,11 @@ public class TimeCellController {
           String color=new String();
            if (model.isActive()) {
 
-               if (model.hasFailedTimeDependency()) {
+               if (model.hasFailedTimeDependency() && !model.hasOverridenTimeFail()) {
                    color = JobSummaryColors.TIME_DOUBT;
-               } else if (model.hasInheritedTimeFail()) {
+               } else if (!model.hasFailedTimeDependency() && model.hasInheritedTimeFail()) {
                    color = JobSummaryColors.TIME_INHERITED_DOUBT;
-               } else if (model.hasOverridenTimeFail()) {
+               } else if (model.hasFailedTimeDependency() && model.hasOverridenTimeFail()) {
                    color = JobSummaryColors.TIME_OVERRRIDE;
                } else if (model.hasInheritedTimeOverride()) {
                    color = JobSummaryColors.TIME_INHERITED_OVERRRIDE;

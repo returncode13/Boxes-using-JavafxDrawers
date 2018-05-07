@@ -20,6 +20,7 @@ import javafx.scene.control.TreeTableCell;
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * This class is never called.   --OBSOLETE
  */
 public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
     SummaryModel summaryModel;
@@ -78,19 +79,12 @@ public class JobSummaryCell extends TreeTableCell<SequenceSummary, Boolean>{
            
               int index=getIndex();
             JobSummaryModel jsm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job);
-           
+           view.getController().setModel(jsm);
             if(jsm.getSubsurface()==null){//this means the selected item is the parent sequence.
           }else{
                 System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
             }
-            /*model.setSequence(jsm.getSequence());
-            model.setJob(jsm.getJob());
-            model.setInheritance(jsm.isInheritance());
-            model.setTime(jsm.isTime());
-            model.setTrace(jsm.isTrace());
-            model.setQc(jsm.isQc());
-            model.setInsight(jsm.isInsight());*/
-            //model.getTimeCellModel().setTimeProperty(jsm.getTimeCellModel().isTimeProperty());
+            
             if(jsm.getSubsurface()!=null){
                 model.setSubsurface(jsm.getSubsurface());
             }

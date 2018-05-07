@@ -7,6 +7,9 @@ package fend.summary.SequenceSummary.Depth.JobSummary;
 
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Summary;
+import db.services.SummaryService;
+import db.services.SummaryServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
@@ -15,6 +18,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellMo
 import fend.summary.SummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -38,7 +43,7 @@ public class JobSummaryModel {
     
     */
     
-    
+    SummaryService summaryService=new SummaryServiceImpl();                     //** This view corresponding to this model is NEVER CAlled and therefore cannot attach a listener to it in the usual manner (i.e. Controller)
     
     
     final private SummaryModel summaryModel;
@@ -59,6 +64,7 @@ public class JobSummaryModel {
         
         ioCellModell=new IOCellModel();
         ioCellModell.setJobSummaryModel(this);
+        this.query.addListener(QUERY_LISTENER);
     }
     
     public SummaryModel getSummaryModel() {
@@ -156,6 +162,10 @@ public class JobSummaryModel {
     public void setQuery(boolean value) {
         query.set(value);
     }
+    
+    public void toggleQuery(){
+        query.set(!query.get());
+    }
 
     public BooleanProperty queryProperty() {
         return query;
@@ -175,5 +185,53 @@ public class JobSummaryModel {
         return showOverride;
     }
     
-   
+    private ChangeListener<Boolean> QUERY_LISTENER=new ChangeListener<Boolean>(){
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryController.: toggling QUERY_LISTENER for the time cell in "+JobSummaryModel.this.getSubsurface().getSubsurface()+" "+JobSummaryModel.this.getJob().getNameJobStep());
+           //model.getTimeCellModel().setQuery(!model.getTimeCellModel().isQuery());
+           
+           Summary x=summaryService.getSummaryFor(JobSummaryModel.this.getSubsurface(), JobSummaryModel.this.getJob());
+           //time
+            
+                        JobSummaryModel.this.getTimeCellModel().setFailedTimeDependency(x.hasFailedTimeDependency());
+                        JobSummaryModel.this.getTimeCellModel().setInheritedTimeFail(x.hasInheritedTimeFail());
+                        JobSummaryModel.this.getTimeCellModel().setInheritedTimeOverride(x.hasInheritedTimeOverride());
+                        JobSummaryModel.this.getTimeCellModel().setOverridenTimeFail(x.hasOverridenTimeFail());
+                        JobSummaryModel.this.getTimeCellModel().setWarningForTime(x.hasWarningForTime());
+                        JobSummaryModel.this.getTimeCellModel().setQuery(!JobSummaryModel.this.getTimeCellModel().isQuery());                    //trigger the labelColors Call in the cells controller
+            
+           //trace
+                        JobSummaryModel.this.getTraceCellModel().setFailedTraceDependency(x.hasFailedTraceDependency());
+                        JobSummaryModel.this.getTraceCellModel().setInheritedTraceFail(x.hasInheritedTraceFail());
+                        JobSummaryModel.this.getTraceCellModel().setInheritedTraceOverride(x.hasInheritedTraceOverride());
+                        JobSummaryModel.this.getTraceCellModel().setOverridenTraceFail(x.hasOverridenTraceFail());
+                        JobSummaryModel.this.getTraceCellModel().setWarningForTrace(x.hasWarningForTrace());
+                        JobSummaryModel.this.getTraceCellModel().setQuery(!JobSummaryModel.this.getTraceCellModel().isQuery());                 //trigger the labelColors Call in the cells controller
+           
+           //qc
+                        JobSummaryModel.this.getQcCellModel().setFailedQcDependency(x.hasFailedQcDependency());
+                        JobSummaryModel.this.getQcCellModel().setInheritedQcFail(x.hasInheritedQcFail());
+                        JobSummaryModel.this.getQcCellModel().setInheritedQcOverride(x.hasInheritedQcOverride());
+                        JobSummaryModel.this.getQcCellModel().setOverridenQcFail(x.hasOverridenQcFail());
+                        JobSummaryModel.this.getQcCellModel().setWarningForQc(x.hasWarningForQc());
+                        JobSummaryModel.this.getQcCellModel().setQuery(!JobSummaryModel.this.getQcCellModel().isQuery());                      //trigger the labelColors Call in the cells controller
+           //insight
+                        JobSummaryModel.this.getInsightCellModel().setFailedInsightDependency(x.hasFailedInsightDependency());
+                        JobSummaryModel.this.getInsightCellModel().setInheritedInsightFail(x.hasInheritedInsightFail());
+                        JobSummaryModel.this.getInsightCellModel().setInheritedInsightOverride(x.hasInheritedInsightOverride());
+                        JobSummaryModel.this.getInsightCellModel().setOverridenInsightFail(x.hasOverridenInsightFail());
+                        JobSummaryModel.this.getInsightCellModel().setWarningForInsight(x.hasWarningForInsight());
+                        JobSummaryModel.this.getInsightCellModel().setQuery(!JobSummaryModel.this.getInsightCellModel().isQuery());//trigger the labelColors Call in the cells controller
+           //io
+                        JobSummaryModel.this.getIoCellModel().setFailedIoDependency(x.hasFailedIoDependency());
+                        JobSummaryModel.this.getIoCellModel().setInheritedIoFail(x.hasInheritedIoFail());
+                        JobSummaryModel.this.getIoCellModel().setInheritedIoOverride(x.hasInheritedIoOverride());
+                        JobSummaryModel.this.getIoCellModel().setOverridenIoFail(x.hasOverridenIoFail());
+                        JobSummaryModel.this.getIoCellModel().setWarningForIo(x.hasWarningForIo());
+                        JobSummaryModel.this.getIoCellModel().setQuery(!JobSummaryModel.this.getIoCellModel().isQuery());//trigger the labelColors Call in the cells controller
+            
+        }
+        
+    };
 }

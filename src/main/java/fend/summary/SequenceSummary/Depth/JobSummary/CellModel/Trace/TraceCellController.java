@@ -343,11 +343,11 @@ public class TraceCellController {
          String color=new String();
            if (model.isActive()) {
 
-               if (model.hasFailedTraceDependency()) {
+               if (model.hasFailedTraceDependency() && !model.hasOverridenTraceFail()) {
                    color = JobSummaryColors.TRACES_DOUBT;
-               } else if (model.hasInheritedTraceFail()) {
+               } else if (!model.hasFailedTraceDependency() && model.hasInheritedTraceFail()) {
                    color = JobSummaryColors.TRACES_INHERITED_DOUBT;
-               } else if (model.hasOverridenTraceFail()) {
+               } else if (model.hasFailedTraceDependency() && model.hasOverridenTraceFail()) {
                    color = JobSummaryColors.TRACES_OVERRRIDE;
                } else if (model.hasInheritedTraceOverride()) {
                    color = JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
