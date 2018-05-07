@@ -12,6 +12,7 @@ import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.Iterator;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -539,6 +540,32 @@ public class LogDAOImpl implements LogDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<Log> getLogsWithInputVolumes(Workspace workspace) {
+        System.out.println("db.dao.LogDAOImpl.getLogsWithInputVolumes()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Log> result=null;
+        String hql="Select l from Log l where (l.job,l.subsurface,l.version) in "
+                + "("
+                + " Select ll.job,ll.subsurface,max(ll.version) from Log ll Inner join ll.job j"
+                + " where j.workspace =:w "
+                + " group by ll.job,ll.subsurface"
+                + ")";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            result=query.list();
+            System.out.println("db.dao.LogDAOImpl.getLogsWithInputVolumes(): retrieved  "+result.size()+" logs for the workspace: "+workspace.getName() );
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+       return result;
     }
 
    

@@ -8,6 +8,7 @@ package db.dao;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -216,6 +217,30 @@ public class VolumeDAOImpl implements VolumeDAO {
             results=query.list();
             transaction.commit();
             
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return results;
+    }
+
+    @Override
+    public List<Volume> getAllVolumesIn(Workspace workspace) {
+         System.out.println("db.dao.VolumeDAOImpl.getVolumesForJob()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Volume> results=null;
+        String hql="select v from Volume v inner join v.job j where j.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+           
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.VolumeDAOImpl.getAllVolumesIn(): returning  "+results.size()+ " volumes belonging to workspace "+workspace.getName());
         }catch(Exception e){
             e.printStackTrace();
         }finally{

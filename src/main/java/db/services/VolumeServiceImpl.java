@@ -11,6 +11,7 @@ import db.model.Job;
 import java.util.List;
 
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -64,6 +65,11 @@ public class VolumeServiceImpl implements VolumeService{
     @Override
     public List<Volume> getVolumesForJob(Job dbjob) {
         return volDao.getVolumesForJob(dbjob);
+    }
+
+    @Override
+    public List<Volume> getAllVolumesIn(Workspace workspace) {
+        return volDao.getAllVolumesIn(workspace);
     }
 
     

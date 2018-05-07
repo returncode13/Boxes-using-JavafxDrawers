@@ -14,6 +14,7 @@ import java.util.List;
 import db.dao.LogDAO;
 import db.model.Job;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -130,6 +131,11 @@ public class LogServiceImpl implements LogService{
     @Override
     public void deleteLogsFor(Volume vol) {
         ldao.deleteLogsFor(vol);
+    }
+
+    @Override
+    public List<Log> getLogsWithInputVolumes(Workspace workspace) {
+        return ldao.getLogsWithInputVolumes(workspace);
     }
 
    

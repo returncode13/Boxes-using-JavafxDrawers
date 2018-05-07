@@ -83,7 +83,7 @@ public class Doubt implements Serializable {
     @OneToMany(mappedBy = "doubtCause",fetch=FetchType.EAGER)
     private Set<Doubt> inheritedDoubts=new HashSet<>();
     
-    @Column(name="reason")
+    @Column(name="reason",columnDefinition = "text")
     private String reason=new String();
     
     @Column(name="status")

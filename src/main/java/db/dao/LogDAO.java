@@ -11,6 +11,7 @@ import db.model.Log;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -48,4 +49,6 @@ public interface LogDAO {
     public String getLatestLogTimeFor(Volume dbVol);
 
     public void deleteLogsFor(Volume vol);
+
+    public List<Log> getLogsWithInputVolumes(Workspace workspace);
 }

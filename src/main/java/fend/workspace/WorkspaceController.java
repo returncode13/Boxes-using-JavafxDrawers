@@ -15,6 +15,7 @@ import db.model.DoubtType;
 import db.model.Header;
 import db.model.Job;
 import db.model.Link;
+import db.model.Log;
 import db.model.NodeProperty;
 import db.model.NodePropertyValue;
 import db.model.NodeType;
@@ -49,6 +50,8 @@ import db.services.JobVolumeMapService;
 import db.services.JobVolumeMapServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.LogService;
+import db.services.LogServiceImpl;
 import db.services.NodePropertyService;
 import db.services.NodePropertyServiceImpl;
 import db.services.NodePropertyValueService;
@@ -115,6 +118,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -197,6 +201,7 @@ public class WorkspaceController {
     private DoubtType doubtTypeTime;
     private DoubtType doubtTypeInsight;
     private DoubtType doubtTypeInherit;
+    private DoubtType doubtTypeIO;
     
     private NodeType node2D;
     private NodeType nodeSegd;
@@ -667,6 +672,7 @@ public class WorkspaceController {
         doubtTypeTime = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
         doubtTypeInsight=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
         doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+        doubtTypeIO=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.IO);
         
         node2D=nodeTypeService.getNodeTypeObjForType(JobType0Model.PROCESS_2D);
         nodeSegd=nodeTypeService.getNodeTypeObjForType(JobType0Model.SEGD_LOAD);
@@ -1156,6 +1162,8 @@ public class WorkspaceController {
         newInheritedDoubts.clear();
         inheritanceLUMap.clear();
         newSummaries.clear();
+        mIpVols.clear();
+        jvMap.clear();
     }
 
 
@@ -1576,7 +1584,44 @@ public class WorkspaceController {
     }
     
 
-
+    
+    private ResultHolder checkIODependency(Link link,Subsurface sub){
+        Job parent = link.getParent();
+        Job child = link.getChild();
+        ResultHolder result=new ResultHolder();
+        
+        if(child.getNodetype().equals(nodeSegd) && parent.getNodetype().equals(node2D)){
+            result.result=DEPENDENCY_FAIL_ERROR;
+            result.reason="the parent to : "+child.getNameJobStep()+" cannot be a non Acquisition node: the current parent "+parent.getNameJobStep()+" is of type "+parent.getNodetype().getName();
+            return result;
+        }
+        
+        
+        // get the childs input volumes from mIMap
+        SubsurfaceJobKey key=generateSubsurfaceJobKey(child, sub);
+        List<String> inputVolumes=new ArrayList<>(mIpVols.get(key));
+        System.out.println("fend.workspace.WorkspaceController.checkIODependency(): input volumes in child  : "+child.getNameJobStep()+" : "+inputVolumes.toString());
+        // get the names of the volumes in the parent (not the parents input.)
+        List<String> parentVolumes=jvMap.get(parent);
+        System.out.println("fend.workspace.WorkspaceController.checkIODependency():       volumes in parent : "+parent.getNameJobStep()+" : "+parentVolumes.toString());
+        
+        inputVolumes.removeAll(parentVolumes);
+        System.out.println("fend.workspace.WorkspaceController.checkIODependency(): after removing all the intersections: size of the input volumes in the child: "+inputVolumes.size());
+        if(!inputVolumes.isEmpty()){
+            result.result=DEPENDENCY_FAIL_ERROR;
+            result.reason=DoubtStatusModel.getIOMessage(sub.getSubsurface(), child, parent, mIpVols.get(key), parentVolumes, doubtTypeIO.getName());
+            
+        }else{
+            result.result=DEPENDENCY_PASS;
+            result.reason=DoubtStatusModel.getIODependencyPassedMessage(child, sub.getSubsurface(), doubtTypeIO.getName());
+        }
+        
+        return result;
+    
+    
+    }
+    
+    
  /**
   * Rebuild ancestors and descendants for a job that's deleted
   * handling delete 
@@ -1638,6 +1683,7 @@ public class WorkspaceController {
                         boolean segyType=link.getParent().getNodetype().equals(nodeSegy) || link.getChild().getNodetype().equals(nodeSegy);
                         boolean segdOr2DOrSegy= !acquisitionType && !textType || segyType;
                         
+                        
                         if(acquisitionType){
                                 boolean forLeaf=true;
                                 ResultHolder timestatus=new ResultHolder();
@@ -1655,6 +1701,11 @@ public class WorkspaceController {
                                 insightStatus.result=DEPENDENCY_PASS;                                                  // force good
                                 setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
                                 
+                                ResultHolder ioStatus=new ResultHolder();                                             // force good
+                                ioStatus.result=DEPENDENCY_PASS;
+                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);                                  
+                                
+                                
                                 if(link.getChild().isLeaf()){
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
@@ -1666,9 +1717,13 @@ public class WorkspaceController {
                         
                         
                         if(segdOr2DOrSegy){
-                                boolean forLeaf=true;
+                            
+                               
+                            
+                            
+                                boolean forLeaf=true; 
                                 ResultHolder timestatus=checkTimeDependency(link, subb);
-                                setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf);
+                                setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf); 
 
 
                                 ResultHolder tracestatus=checkTraceDependency(link,subb);
@@ -1682,7 +1737,10 @@ public class WorkspaceController {
                                 setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
                                 
                                  
-                                if(link.getChild().isLeaf()){
+                                ResultHolder ioStatus=checkIODependency(link, subb);
+                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);              
+                                
+                                if(link.getChild().isLeaf()){     //for doubts that arise on the nodes themselves (unchecked qcs , insight versions)
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
                                     
@@ -1781,13 +1839,58 @@ public class WorkspaceController {
         
     }
     private PheaderService pheaderService=new PheaderServiceImpl();
-  
+    private LogService logservice=new LogServiceImpl();
+    
+    private Map<SubsurfaceJobKey,List<String>> mIpVols=new HashMap<>();
+    private Map<Job,List<String>> jvMap=new HashMap<>();                  // lookup map for job and the paths of the volumes it contains. for summary
     
     private void loadAllMaps(){
         
         
-        
+        /**
+         * load all the input volumes from the latest log assigned for a particular sub-job combination.
+         * place them into a map <SubsurfaceJobKey,List<String> namesOfIpVols>
+         * Lookup Map
+         * 
+         */
        
+        List<Log> logsWithInputVols=logservice.getLogsWithInputVolumes(dbWorkspace); 
+        for(Log l:logsWithInputVols){
+           // System.out.println("fend.workspace.WorkspaceController.loadAllMaps():  "+l.getIdLogs()+" -> "+l.getJob().getNameJobStep()+" -> "+l.getSubsurface().getSubsurface()+" "+l.getVersion()+" "+l.getInputVolumeNames());
+            SubsurfaceJobKey key= generateSubsurfaceJobKey(l.getJob(), l.getSubsurface());
+            List<String> ipVols=new ArrayList<>();
+            if(l.getInputVolumeNames().contains(";")){
+                String[] vols=l.getInputVolumeNames().split(";");
+                if(vols.length>1){
+                    String[] volsWithOutTheFirstEmptyString=Arrays.copyOfRange(vols, 1, vols.length);
+                    ipVols=Arrays.asList(volsWithOutTheFirstEmptyString);
+                }
+                
+                
+            }
+            if(!mIpVols.containsKey(key)){
+                mIpVols.put(key, new ArrayList<>());
+                mIpVols.get(key).addAll(ipVols);
+            }else{
+                mIpVols.get(key).addAll(ipVols);
+            }
+        }
+        
+        
+        /***
+         * load all the jobs with their volumes and put them into a map. for Lookup
+         ***/
+        List<Volume> volumes=volumeService.getAllVolumesIn(dbWorkspace);
+        for(Volume v:volumes){
+            Job j=v.getJob();
+            if(!jvMap.containsKey(j)){
+                jvMap.put(j, new ArrayList<>());
+                jvMap.get(j).add(v.getPathOfVolume());
+            }else{
+                jvMap.get(j).add(v.getPathOfVolume());
+            }
+                    
+        }
         
         /**
          * Get all inherited doubts from the database.
@@ -2140,7 +2243,11 @@ public class WorkspaceController {
                                     
                 
                 
-            } else {
+            } else if (doubtType.equals(doubtTypeIO)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            }else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
             //DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //cycle through each key
@@ -2269,6 +2376,10 @@ public class WorkspaceController {
                                     
                 
                 
+            } else if (doubtType.equals(doubtTypeIO)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
             } else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
@@ -2378,7 +2489,11 @@ public class WorkspaceController {
                                     
                 
                 
-            } else {
+            }else if (doubtType.equals(doubtTypeIO)) {                      //trace on child
+                jobWithDoubt = link.getChild();
+                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                keys.add(key);
+            }  else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
              
@@ -2485,7 +2600,7 @@ public class WorkspaceController {
                     DoubtKey traceKey=generateDoubtKey(sub, job, dot, doubtTypeTraces);
                     DoubtKey qcKey=generateDoubtKey(sub, job, dot, doubtTypeQc);
                     DoubtKey insightKey=generateDoubtKey(sub, job, dot, doubtTypeInsight);
-                    
+                    DoubtKey ioKey=generateDoubtKey(sub,job,dot,doubtTypeIO);
                         //time Start
                         if(dMap.containsKey(timeKey)){
                             DoubtHolder dh=dMap.get(timeKey);
@@ -2618,6 +2733,37 @@ public class WorkspaceController {
                         }
                         //insight end
                         
+                        //io start
+                        
+                        if(dMap.containsKey(ioKey)){
+                            DoubtHolder dh=dMap.get(ioKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    
+                                    summary.setFailedIoDependency(true);
+                                    summary.setWarningForIo(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenIoFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenIoFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedIoDependency(false);
+                                    summary.setWarningForIo(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedIoDependency(false);
+                            summary.setWarningForIo(false);
+                            summary.setOverridenIoFail(false);
+                            
+                        }
+                        //io end
                         
                         //are there any inherited doubts on this job,sub?
                         SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(job, sub);
@@ -2657,6 +2803,13 @@ public class WorkspaceController {
                                         sh.inheritedInsightCause.add(cause);
                                     }
                                 }
+                                if(causeType.equals(doubtTypeIO)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedIOoverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedIOCause.add(cause);
+                                    }
+                                }
                             }
                             
                            boolean inheritedTime = !sh.inheritedTimeCause.isEmpty();
@@ -2671,6 +2824,9 @@ public class WorkspaceController {
                            boolean inheritedInsight = !sh.inheritedInsightCause.isEmpty();
                            boolean inheritedOverridenInsight = !sh.inheritedInsightOverridenCause.isEmpty();
                            
+                           boolean inheritedIO = !sh.inheritedIOCause.isEmpty();
+                           boolean inheritedOverridenIO = !sh.inheritedIOoverridenCause.isEmpty();
+                           
                            summary.setInheritedTimeFail(inheritedTime);
                            summary.setInheritedTimeOverride(inheritedOverridenTime);
                            
@@ -2683,6 +2839,9 @@ public class WorkspaceController {
                            summary.setInheritedInsightFail(inheritedInsight);
                            summary.setInheritedInsightOverride(inheritedOverridenInsight);
                            
+                           summary.setInheritedIoFail(inheritedIO);
+                           summary.setInheritedIoOverride(inheritedOverridenIO);
+                           
                         }else{                                                      // no inheritance on this key
                             summary.setInheritedTraceFail(false);
                             summary.setInheritedTimeOverride(false);
@@ -2694,7 +2853,11 @@ public class WorkspaceController {
                             summary.setInheritedQcOverride(false);
                             
                             summary.setInheritedInsightFail(false);
-                           summary.setInheritedInsightOverride(false);
+                            summary.setInheritedInsightOverride(false);
+                            
+                            summary.setInheritedIoFail(false);
+                            summary.setInheritedIoOverride(false);
+                           
                         }
             }
             
@@ -2723,6 +2886,13 @@ public class WorkspaceController {
             System.out.println("hasInheritedInsightOVerride: "+summary.hasInheritedInsightOverride());
             System.out.println("hasOverridenInsightFail:     "+summary.hasOverridenInsightFail());
             System.out.println("hasInsightWarning:           "+summary.hasWarningForInsight());
+            
+            System.out.println("");
+            System.out.println("failedIODependency:     "+summary.hasFailedIoDependency());
+            System.out.println("hasInheritedIOFail:     "+summary.hasInheritedIoFail());
+            System.out.println("hasInheritedIOoVerride: "+summary.hasInheritedIoOverride());
+            System.out.println("hasOverridenIOFail:     "+summary.hasOverridenIoFail());
+            System.out.println("hasIOWarning:           "+summary.hasWarningForIo());
         }
     }
     
@@ -2803,7 +2973,8 @@ public class WorkspaceController {
         List<Doubt> inheritedInsightCause=new ArrayList<>();
         List<Doubt> inheritedInsightOverridenCause=new ArrayList<>();
         
-        
+        List<Doubt> inheritedIOCause=new ArrayList<>();
+        List<Doubt> inheritedIOoverridenCause=new ArrayList<>();
     }
     
     private class ResultHolder{

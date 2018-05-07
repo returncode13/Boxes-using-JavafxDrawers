@@ -434,7 +434,7 @@ public class SummaryController extends Stage{
                            return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getIoCellModel().isActive());
                         }
                     });
-                     ioColumn.setCellFactory(param->new IOCell(depthId,jobkey,insightDoubtType));
+                     ioColumn.setCellFactory(param->new IOCell(depthId,jobkey,ioDoubtType));
                      jobcolumn.getColumns().add(ioColumn);
                  
                  //<==End of IO column

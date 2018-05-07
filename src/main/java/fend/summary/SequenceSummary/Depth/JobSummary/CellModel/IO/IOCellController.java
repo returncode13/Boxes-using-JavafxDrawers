@@ -47,7 +47,7 @@ public class IOCellController {
     private Label ioLabel;
 
     @FXML
-    void traceClicked(MouseEvent event) {
+    void ioClicked(MouseEvent event) {
         if(model.getJobSummaryModel().getSubsurface()!=null){
             
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
@@ -181,7 +181,7 @@ public class IOCellController {
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
                 System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
                 }*/
-                ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+                ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
                 ioLabel.setDisable(true);
             }
         }

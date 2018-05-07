@@ -7,6 +7,7 @@ package middleware.doubt;
 
 import db.model.Doubt;
 import db.model.Job;
+import java.util.List;
 
 /**
  *
@@ -70,6 +71,15 @@ public class DoubtStatusModel {
         return message;
     }
     
+      
+       public static String getIODependencyPassedMessage(Job child,String sub,String doubttype){
+        String message=new String();
+        if(doubttype.equals(DoubtTypeModel.IO)){
+            message=doubttype+": Passed Insight Dependency for line "+sub+" the jobs "+child.getNameJobStep()+" ";
+        }
+        return message;
+    }
+    
     
     
     public static String getNewDoubtTimeMessage(String parentJob,String parentTime,String childJob ,String childTime,String sub,String doubttype){
@@ -125,5 +135,11 @@ public class DoubtStatusModel {
         message= cause.getDoubtType().getName()+" : line : "+cause.getSubsurface().getSubsurface()+" : in job : "+desc.getNameJobStep()+""
                 + " has inherited doubt(s) from its parent : "+cause.getChildJob().getNameJobStep();
                 return message;
+    }
+    
+    public static String getIOMessage(String sub,Job child,Job parent,List<String> inputVolsToChild,List<String> parentVolumes,String doubttype){
+        String message=doubttype+": line: "+sub+" in child job: "+child.getNameJobStep()+" had the following input volume(s) "+inputVolsToChild.toString()+" \n "
+                + " while in parent job "+parent.getNameJobStep()+" has volumes "+parentVolumes.toString();
+        return message;
     }
 }
