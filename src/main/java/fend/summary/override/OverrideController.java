@@ -160,50 +160,49 @@ public class OverrideController extends Stage{
                 }
                 
                 
-                model.getCellModel().getJobSummaryModel().toggleQuery();
-                
+                model.getCellModel().getJobSummaryModel().toggleQuery();     //color the subsurface cell
+                model.getCellModel().getJobSummaryModel().getSummaryModel()
+                        .getSequenceSummary(d.getSequence())                //color the sequence cell
+                        .getDepth(d.getChildJob().getDepth()).getJobSummaryModel(d.getChildJob()).toggleQuery();
                 Doubt doubt=d;
                 //Set<Doubt> inheritedDoubts=doubt.getInheritedDoubts();
                 List<Doubt> inheritedDoubts=doubtService.getInheritedDoubtsForCause(doubt);
                 for (Iterator<Doubt> iterator = inheritedDoubts.iterator(); iterator.hasNext();) {
                     Doubt inhDoubt = iterator.next();
                     
-                    if(statusChanged){
-                        
-                        /*if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                        model.getCellModel().setOverride(true);
-                        }else{
-                        model.getCellModel().setOverride(false);
-                        }*/
-                        
-                           // Set<DoubtStatus> inhDoubtStatus=inhDoubt.getDoubtStatuses();
-                           /*  Set<DoubtStatus> inhDoubtStatus=new HashSet<>(doubtStatusService.getDoubtStatusForDoubt(inhDoubt));
-                           for (DoubtStatus inhDoubtStat : inhDoubtStatus) {
-                           System.out.println(".changed(): updating the status of inherited doubt "+inhDoubt.getId()+" on child "+inhDoubt.getChildJob().getNameJobStep());
-                           inhDoubtStat.setStatus(status);
-                           inhDoubtStat.setUser(AppProperties.getCurrentUser());
-                           doubtStatusService.updateDoubtStatus(inhDoubtStat.getId(), inhDoubtStat);
-                           }*/
-                    }
-                            
                     
                     
                     
                     
                     System.out.println(".changed(): inherited doubt: "+inhDoubt.getChildJob().getNameJobStep()+" will be requeried. for subsurface "+inhDoubt.getSubsurface().getSubsurface());
                     
-                    JobSummaryModel inhjsm=model.getCellModel().getJobSummaryModel()
+                    
+                    
+                    
+                    JobSummaryModel inhjsm_sub=model.getCellModel().getJobSummaryModel()
                             .getSummaryModel()
                             .getSequenceSummaryMap()
                             .get(inhDoubt.getSubsurface().getSequence())
                             .getChild(inhDoubt.getSubsurface())
                             .getDepth(inhDoubt.getChildJob().getDepth())
                             .getJobSummaryModel(inhDoubt.getChildJob());
-                    System.out.println(".changed() : will toggle flag under: "+inhjsm.getJob().getNameJobStep());
-                    System.out.print(".changed() : current Query flag: "+inhjsm.isQuery()+" changing to --> ");
-                    inhjsm.setQuery(!inhjsm.isQuery());
-                    System.out.println(" "+inhjsm.isQuery());
-                    System.out.println(".changed(): refreshing table");
+                    System.out.println(".changed() : will toggle flag under: "+inhjsm_sub.getJob().getNameJobStep());
+                    System.out.print(".changed() : current Query flag: "+inhjsm_sub.isQuery()+" changing to --> ");
+                    inhjsm_sub.setQuery(!inhjsm_sub.isQuery());
+                    System.out.println(" "+inhjsm_sub.isQuery());
+                    
+                    JobSummaryModel inhjsm_seq=model.getCellModel().getJobSummaryModel()
+                                                    .getSummaryModel()
+                                                    .getSequenceSummary(inhDoubt.getSubsurface().getSequence())
+                                                    .getDepth(inhDoubt.getChildJob().getDepth())
+                                                    .getJobSummaryModel(inhDoubt.getChildJob());
+                                                        
+                    
+                    inhjsm_seq.toggleQuery();
+                    
+                    
+                    
+                    //System.out.println(".changed(): refreshing table");
                     
                     /* Boolean ref=model.getCellModel().getJobSummaryModel().getSummaryModel().refreshTableProperty().get();
                     model.getCellModel().getJobSummaryModel().getSummaryModel().setRefreshTable(!ref);*/

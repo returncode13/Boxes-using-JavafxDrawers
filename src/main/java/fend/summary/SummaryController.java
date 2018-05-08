@@ -101,6 +101,12 @@ public class SummaryController extends Stage{
     
   
      void setModel(SummaryModel model){
+         treetable.onSortProperty().addListener((observable) -> {
+             treetable.refresh();
+         });
+         
+         
+         
          this.model=model;
          
          timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
@@ -191,6 +197,9 @@ public class SummaryController extends Stage{
                                     newValue.setActive(value.isActive());
                                     newValue.setJob(value.getJob());
                                     newValue.setSubsurface(sub);
+                                    newValue.setSequence(sub.getSequence());
+                                    
+                                    
                                     
                                     newValue.getTimeCellModel().setFailedTimeDependency(value.getTimeCellModel().cellHasFailedDependency());            //Time
                                     newValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());         //Trace
@@ -202,7 +211,8 @@ public class SummaryController extends Stage{
                                     JobSummaryModel newSeqValue=new JobSummaryModel(model);
                                     newSeqValue.setActive(value.isActive());
                                     newSeqValue.setJob(value.getJob());
-                                   
+                                    newSeqValue.setSequence(sub.getSequence());
+                                    
                                     newSeqValue.getTimeCellModel().setFailedTimeDependency(value.getTimeCellModel().cellHasFailedDependency());            //Time 
                                     newSeqValue.getTraceCellModel().setFailedTraceDependency(value.getTraceCellModel().cellHasFailedDependency());         //Trace
                                     newSeqValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());                  //Qc
@@ -247,6 +257,7 @@ public class SummaryController extends Stage{
                         JobSummaryModel seqJsm=seqSummaryMap.get(seq).getDepth(depth).getJobSummaryModel(job);
                         seqJsm.setActive(true);
                         seqJsm.setSubsurface(null);
+                        seqJsm.setSequence(seq);
                         //<--Start Time
                         seqJsm.getTimeCellModel().setActive(true);                                                                                      
                         seqJsm.getTimeCellModel().setFailedTimeDependency(seqJsm.getTimeCellModel().cellHasFailedDependency()||x.hasFailedTimeDependency());
@@ -299,6 +310,7 @@ public class SummaryController extends Stage{
                                 getJobSummaryModel(job);
                         jsm.setActive(true);
                         jsm.setSubsurface(sub);
+                        jsm.setSequence(sub.getSequence());
                         
                         //<--Start Time
                         jsm.getTimeCellModel().setActive(true);

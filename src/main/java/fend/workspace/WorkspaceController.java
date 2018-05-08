@@ -2243,7 +2243,7 @@ public class WorkspaceController {
                                     
                 
                 
-            } else if (doubtType.equals(doubtTypeIO)) {                      //trace on child
+            } else if (doubtType.equals(doubtTypeIO)) {                      //io on child
                 jobWithDoubt = link.getChild();
                 DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
                 keys.add(key);
@@ -2257,7 +2257,7 @@ public class WorkspaceController {
                 if (dMap.containsKey(key)) {
                     dh = dMap.get(key);
                     dh.cause.setReason(result.reason);
-                    dh.cause.setStatus(DoubtStatusModel.YES);
+                   // dh.cause.setStatus(DoubtStatusModel.YES);
                     dh.cause.setState(DoubtStatusModel.ERROR);
                     dh.update = true;
                     dh.delete = false;
@@ -2393,7 +2393,7 @@ public class WorkspaceController {
                                 if (dMap.containsKey(key)) {
                                     dh = dMap.get(key);
                                     dh.cause.setReason(result.reason);
-                                    dh.cause.setStatus(DoubtStatusModel.YES);
+                                  //  dh.cause.setStatus(DoubtStatusModel.YES);
                                     dh.cause.setState(DoubtStatusModel.WARNING);
                                     dh.update = true;
                                     dh.delete = false;

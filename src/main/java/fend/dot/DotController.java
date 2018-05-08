@@ -145,7 +145,7 @@ public class DotController extends Stage{
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if(newValue){
-                    deleteNodeAndLinks();
+                    deleteDotAndLinks();
                 }
             }
 
@@ -310,9 +310,21 @@ public class DotController extends Stage{
             if(model.getStatus().get().equals(DotModel.SPLIT))node.setFill(Color.NAVY);
     }
     
-     private void deleteNodeAndLinks() {
+     private void deleteDotAndLinks() {
          /*   Set<JobType0Model> parents=model.getParents();
          Set<JobType0Model> children=model.getChildren();*/
+         
+         List<Link> linksBelongingToDot=linkService.getLinksForDot(dbDot);
+         System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting  "+linksBelongingToDot.size()+" link(s) belonging to the dot: "+dbDot.getId());
+         for(Link l:linksBelongingToDot){
+             linkService.deleteLink(l.getId());
+         }
+         System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting variable and arguments related to the dot "+dbDot.getId());
+         variableArgumentService.deleteVariableArgumentFor(dbDot);
+         System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting the dot: "+dbDot.getId());
+         dotService.deleteDot(dbDot.getId());
+         
+         model.getWorkspaceModel().reload();
             
     }
      

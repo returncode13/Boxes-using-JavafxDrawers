@@ -90,14 +90,7 @@ public class TraceCellController {
         model.activeProperty().addListener(ACTIVE_LISTENER);
         //traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         traceDoubtType=model.getCellDoubtType();
-        /*
-        model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
-        
-        model.inheritanceProperty().addListener(TRACE_INHERITANCE_LISTENER);
-        
-        model.overrideProperty().addListener(TRACE_OVERRIDE_LISTENER);
-        */
-        
+       
         
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
@@ -230,47 +223,9 @@ public class TraceCellController {
                              getJob().
                              getNameJobStep());
            
-             /*
-             model.cellProperty().removeListener(TRACE_DOUBT_LISTENER);
-             model.inheritanceProperty().removeListener(TRACE_INHERITANCE_LISTENER);
-             model.overrideProperty().removeListener(TRACE_OVERRIDE_LISTENER);
-             */
-             //does a doubt exist for the current model params (job,sub,doubttype) ?
-             /* Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),traceDoubtType);
-             if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-             model.setCellProperty(true);
-             //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-             //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-             DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-             if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-             model.setOverride(true);
-             
-             }else{
-             model.setOverride(false);
-             }
-             }else{           //else isTime()=false
-             model.setCellProperty(false);
-             }*/
-            //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
-            //is not null then there;s an inherited doubt. set model.inheritance = true
-            //if null then there is no inherited doubt. set model.inheritance = false;
-            //if there is an inherited doubt.
-            //find cause.
-            //find status and state of cause.
-            //set model.inherited=true.
-            //if cause.status=override. then use color TIME_INH_OVER
-            //else use TIME_INH_DOUBT
-            //addressed in applyColor() //labelColor()
-            
-           //  applyColor();
-           labelColor();
-            
-           /*
-           model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
-           model.inheritanceProperty().addListener(TRACE_INHERITANCE_LISTENER);
-           model.overrideProperty().addListener(TRACE_OVERRIDE_LISTENER);*/
-         
-             
+          
+               labelColor();
+           
             
         }
      };
@@ -363,6 +318,8 @@ public class TraceCellController {
          traceLabel.setStyle("-fx-background-color: "+color);
      
         }
+       
+      
 
    
     

@@ -47,74 +47,7 @@ public class QcCellModel implements CellModel{
     
 
    
-    /*
-    
-    
-    
-    public boolean isInheritance() {
-    return inheritance.get();
-    }
-    
-    public void setInheritance(boolean value) {
-    inheritance.set(value);
-    }
-    
-    public BooleanProperty inheritanceProperty() {
-    return inheritance;
-    }
-    
-    
-    
-    
-    
-    
-    public boolean isOverride() {
-    return override.get();
-    }
-    
-    public void setOverride(boolean value) {
-    override.set(value);
-    }
-    
-    public BooleanProperty overrideProperty() {
-    return override;
-    }
-    
-    
-    
-    
-    
-    
-    
-    public String getState() {
-    return stateProperty.get();
-    }
-    
-    public void setState(String value) {
-    stateProperty.set(value);
-    }
-    
-    public StringProperty statePropertyProperty() {
-    return stateProperty;
-    }
-    
-    
-    
-    
-    
-    
-    public boolean cellHasDoubt() {
-    return qcProperty.get();
-    }
-    
-    public void setCellProperty(boolean value) {
-    qcProperty.set(value);
-    }
-    
-    public BooleanProperty cellProperty() {
-    return qcProperty;
-    }
-    */
+  
     
     public boolean isActive() {
         return active.get();

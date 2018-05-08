@@ -243,7 +243,11 @@ public class IOCellController {
             //addressed in applyColor() //labelColor()
             
            //  applyColor();
-           labelColor();
+          // if(model.getJobSummaryModel().getSubsurface()!=null){
+               labelColor();
+          // }else{
+              // labelColorForVerticalLogic();
+          // }
             
            /*
            model.cellProperty().addListener(TRACE_DOUBT_LISTENER);
@@ -343,7 +347,6 @@ public class IOCellController {
          ioLabel.setStyle("-fx-background-color: "+color);
      
         }
-
-   
+       
     
 }
