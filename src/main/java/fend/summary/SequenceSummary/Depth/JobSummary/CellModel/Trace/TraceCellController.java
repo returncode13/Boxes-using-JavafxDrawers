@@ -81,7 +81,7 @@ public class TraceCellController {
         
         if(model.isActive()){
             traceLabel.setDisable(false);
-            model.getJobSummaryModel().toggleQuery();
+            //model.getJobSummaryModel().toggleQuery();
         }else{
              traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
             traceLabel.setDisable(true);
@@ -215,16 +215,16 @@ public class TraceCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
              //String typeToBeQueried=model.getContextAskedForDoubtType();
-             if(model.getJobSummaryModel().getSubsurface()!=null)
-             System.out.println(".changed(): Query listener called on "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
+             /*if(model.getJobSummaryModel().getSubsurface()!=null)
+             System.out.println(".changed(): Trace Query listener called on "+model.
+             getJobSummaryModel().
+             getSubsurface().
+             getSubsurface()+" for "+
+             
+             model.
+             getJobSummaryModel().
+             getJob().
+             getNameJobStep());*/
            
              
             if (model.getJobSummaryModel().isChild()) {
@@ -302,37 +302,17 @@ public class TraceCellController {
      
        private void labelColorForSub(){
            
-           /*  String color=new String();
-           if (model.isActive()) {
            
-           if (model.hasFailedTraceDependency() && !model.hasOverridenTraceFail()) {
-           color = JobSummaryColors.TRACES_DOUBT;
-           } else if (!model.hasFailedTraceDependency() && model.hasInheritedTraceFail()) {
-           color = JobSummaryColors.TRACES_INHERITED_DOUBT;
-           } else if (model.hasFailedTraceDependency() && model.hasOverridenTraceFail()) {
-           color = JobSummaryColors.TRACES_OVERRRIDE;
-           } else if (model.hasInheritedTraceOverride()) {
-           color = JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-           } else if (model.hasWarningForTrace()) {
-           color = JobSummaryColors.TRACES_WARNING;
-           } else {
-           color = JobSummaryColors.TRACES_GOOD;
-           }
-           
-           }else{
-           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
-           }
-           traceLabel.setStyle("-fx-background-color: "+color);*/
            
            String color=new String();
            if(model.isActive()){
                model.calculateCellState();
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.TRACES_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
            }else{
            color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
            }
@@ -347,11 +327,11 @@ public class TraceCellController {
            if(model.isActive()){
                
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.TRACES_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
            }else{
            color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
            }

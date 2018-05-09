@@ -83,7 +83,7 @@ public class TimeCellController {
        
          if(model.isActive()){
         timeLabel.setDisable(false);
-            model.getJobSummaryModel().toggleQuery();
+            model.getJobSummaryModel().toggleQuery();                 //This call has only been left ON HERE . in the Time Cell controller. toggling the job Summary model requires the summaries for all doubttypes (time.trace.qc.insight.io) resulting in multiple db queries for the same object
         }else{
         timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
         timeLabel.setDisable(true);
@@ -217,7 +217,16 @@ public class TimeCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-           
+            /*if(model.getJobSummaryModel().getSubsurface()!=null)
+            System.out.println(".changed(): Time Query listener called on "+model.
+            getJobSummaryModel().
+            getSubsurface().
+            getSubsurface()+" for "+
+            
+            model.
+            getJobSummaryModel().
+            getJob().
+            getNameJobStep());*/
             
            //  applyColor();
            if(model.getJobSummaryModel().isChild()){
@@ -304,11 +313,11 @@ public class TimeCellController {
            if(model.isActive()){
                model.calculateCellState();
                if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
            }else{
            color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
            }
@@ -327,11 +336,11 @@ public class TimeCellController {
          
            if(model.isActive()){
                if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
            }else{
            color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
            }

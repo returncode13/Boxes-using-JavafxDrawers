@@ -80,7 +80,7 @@ public class InsightCellController {
         
         if(model.isActive()){
             insightLabel.setDisable(false);
-             model.getJobSummaryModel().toggleQuery();
+            // model.getJobSummaryModel().toggleQuery();
         }else{
              insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
             insightLabel.setDisable(true);
@@ -217,17 +217,17 @@ public class InsightCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
              //String typeToBeQueried=model.getContextAskedForDoubtType();
-             if(model.getJobSummaryModel().getSubsurface()!=null)
-             System.out.println(".changed(): Query listener called on "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
-           
+             /* if(model.getJobSummaryModel().getSubsurface()!=null)
+             System.out.println(".changed(): Insight Query listener called on "+model.
+             getJobSummaryModel().
+             getSubsurface().
+             getSubsurface()+" for "+
+             
+             model.
+             getJobSummaryModel().
+             getJob().
+             getNameJobStep());
+             */
              /*
              model.cellProperty().removeListener(TRACE_DOUBT_LISTENER);
              model.inheritanceProperty().removeListener(TRACE_INHERITANCE_LISTENER);
@@ -363,11 +363,11 @@ public class InsightCellController {
            if(model.isActive()){
                model.calculateCellState();
                if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
            }else{
            color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
            }
@@ -382,11 +382,11 @@ public class InsightCellController {
            if(model.isActive()){
              
                if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
            }else{
            color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
            }

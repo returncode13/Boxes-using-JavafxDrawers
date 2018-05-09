@@ -75,7 +75,7 @@ public class IOCellController {
         
         if(model.isActive()){
             ioLabel.setDisable(false);
-             model.getJobSummaryModel().toggleQuery();
+            // model.getJobSummaryModel().toggleQuery();
         }else{
              ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
             ioLabel.setDisable(true);
@@ -207,51 +207,18 @@ public class IOCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
              //String typeToBeQueried=model.getContextAskedForDoubtType();
-             if(model.getJobSummaryModel().getSubsurface()!=null)
-             System.out.println(".changed(): Query listener called on "+model.
-                     getJobSummaryModel().
-                     getSubsurface().
-                     getSubsurface()+" for "+
-                             
-                             model.
-                             getJobSummaryModel().
-                             getJob().
-                             getNameJobStep());
-           
-             /*
-             model.cellProperty().removeListener(TRACE_DOUBT_LISTENER);
-             model.inheritanceProperty().removeListener(TRACE_INHERITANCE_LISTENER);
-             model.overrideProperty().removeListener(TRACE_OVERRIDE_LISTENER);
-             */
-             //does a doubt exist for the current model params (job,sub,doubttype) ?
-             /* Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),ioDoubtType);
-             if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-             model.setCellProperty(true);
-             //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-             //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-             DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-             if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-             model.setOverride(true);
+             /*if(model.getJobSummaryModel().getSubsurface()!=null)
+             System.out.println(".changed(): IO Query listener called on "+model.
+             getJobSummaryModel().
+             getSubsurface().
+             getSubsurface()+" for "+
              
-             }else{
-             model.setOverride(false);
-             }
-             }else{           //else isTime()=false
-             model.setCellProperty(false);
-             }*/
-            //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
-            //is not null then there;s an inherited doubt. set model.inheritance = true
-            //if null then there is no inherited doubt. set model.inheritance = false;
-            //if there is an inherited doubt.
-            //find cause.
-            //find status and state of cause.
-            //set model.inherited=true.
-            //if cause.status=override. then use color TIME_INH_OVER
-            //else use TIME_INH_DOUBT
-            //addressed in applyColor() //labelColor()
-            
-           //  applyColor();
-          // if(model.getJobSummaryModel().getSubsurface()!=null){
+             model.
+             getJobSummaryModel().
+             getJob().
+             getNameJobStep());*/
+           
+           
           if(model.getJobSummaryModel().isChild()){
               labelColorForSub();
           }else{
@@ -345,11 +312,11 @@ public class IOCellController {
            if(model.isActive()){
                model.calculateCellState();
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.IO_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
            }else{
            color=JobSummaryColors.IO_NO_SEQ_PRESENT;
            }
@@ -363,11 +330,11 @@ public class IOCellController {
            if(model.isActive()){
                
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.IO_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
            }else{
            color=JobSummaryColors.IO_NO_SEQ_PRESENT;
            }

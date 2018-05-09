@@ -77,7 +77,7 @@ public class QcCellController {
        
          if(model.isActive()){
         qcLabel.setDisable(false);
-         model.getJobSummaryModel().toggleQuery();
+        // model.getJobSummaryModel().toggleQuery();
         }else{
         qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
         qcLabel.setDisable(true);
@@ -211,7 +211,16 @@ public class QcCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-           
+            /* if(model.getJobSummaryModel().getSubsurface()!=null)
+            System.out.println(".changed(): Qc Query listener called on "+model.
+            getJobSummaryModel().
+            getSubsurface().
+            getSubsurface()+" for "+
+            
+            model.
+            getJobSummaryModel().
+            getJob().
+            getNameJobStep());*/
             
            //  applyColor();
            if(model.getJobSummaryModel().isChild()){
@@ -294,11 +303,11 @@ public class QcCellController {
            if(model.isActive()){
                model.calculateCellState();
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.QC_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
            }else{
            color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
            }
@@ -315,11 +324,11 @@ public class QcCellController {
            if(model.isActive()){
                
                if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.QC_DOUBT;
-               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
-               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
-               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
-               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
-               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
+               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
+               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
+               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
            }else{
            color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
            }
