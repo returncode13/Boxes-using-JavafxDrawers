@@ -15,6 +15,7 @@ import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
@@ -76,26 +77,18 @@ public class QcCellController {
        
          if(model.isActive()){
         qcLabel.setDisable(false);
+         model.getJobSummaryModel().toggleQuery();
         }else{
         qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
         qcLabel.setDisable(true);
         }
         
         //    applyColor();
-        labelColor();
-       
+               
+                    labelColorForSub();
+            
         
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        
-        
-        /*  model.cellProperty().addListener(QC_DOUBT_LISTENER);
-        
-        model.inheritanceProperty().addListener(QC_INHERITANCE_LISTENER);
-        
-        model.overrideProperty().addListener(QC_OVERRIDE_LISTENER); */
-        
-        
-        
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
        
@@ -135,7 +128,7 @@ public class QcCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
           //  applyColor();
-          labelColor();
+          labelColorForSub();
         }
     };
     
@@ -149,7 +142,7 @@ public class QcCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
          //   applyColor();
-         labelColor();
+         labelColorForSub();
         }
         
     };
@@ -164,7 +157,7 @@ public class QcCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
          //   applyColor();
-         labelColor();
+         labelColorForSub();
         }
         
     };
@@ -190,7 +183,12 @@ public class QcCellController {
                 */
                 qcLabel.setDisable(false);
               //  applyColor();
-              labelColor();
+              // model.getJobSummaryModel().toggleQuery();
+                if(model.getJobSummaryModel().isChild()){
+                    labelColorForSub();
+                }else{
+                    labelColorForSeq();
+                }
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -213,43 +211,14 @@ public class QcCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
-            
-            /*  model.cellProperty().removeListener(QC_DOUBT_LISTENER);
-            model.inheritanceProperty().removeListener(QC_INHERITANCE_LISTENER);
-            model.overrideProperty().removeListener(QC_OVERRIDE_LISTENER);
-            
-            //does a doubt exist for the current model params (job,sub,doubttype) ?
-            Doubt doubt=doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(),qcDoubtType);
-            if(doubt!=null){   //if yes then set the isTime()=true boolean on the model.
-            model.setCellProperty(true);
-            // model.getJobSummaryModel().getFeModelQcCellModel().setCellProperty(true);
-            
-            //if there is a doubt, then fetch the status .i.e is the doubt overriden?
-            //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
-            DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
-            if(ds.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-            model.setOverride(true);
-            }else{
-            model.setOverride(false);
-            }
-            }else{           //else isTime()=false
-            model.setCellProperty(false);*/
-               // model.getJobSummaryModel().getFeModelQcCellModel().setCellProperty(false);
-                 
-           //  }
-            //if Time()==false. next check if the model has any inherited any doubts. Ie. (job,sub,inhdbtype)==null?
-            //is not null then there;s an inherited doubt. set model.inheritance = true
-            //if null then there is no inherited doubt. set model.inheritance = false;
-            //if there is an inherited doubt.
-            //find cause.
-            //find status and state of cause.
-            //set model.inherited=true.
-            //if cause.status=override. then use color TIME_INH_OVER
-            //else use TIME_INH_DOUBT
-            //addressed in applyColor() / labelColor()
+           
             
            //  applyColor();
-           labelColor();
+           if(model.getJobSummaryModel().isChild()){
+              labelColorForSub();
+          }else{
+              labelColorForSeq();
+          }
             
              
            /*   model.cellProperty().addListener(QC_DOUBT_LISTENER);
@@ -316,33 +285,45 @@ public class QcCellController {
      
 
      
-     private void labelColor(){
+     private void labelColorForSub(){
         
-        
+       
+         
+         
          String color=new String();
-           if (model.isActive()) {
-
-               if (model.hasFailedQcDependency() &&  !model.hasOverridenQcFail()) {
-                   color = JobSummaryColors.QC_DOUBT;
-               } else if (!model.hasFailedQcDependency() && model.hasInheritedQcFail()) {
-                   color = JobSummaryColors.QC_INHERITED_DOUBT;
-               } else if (model.hasFailedQcDependency() && model.hasOverridenQcFail()) {
-                   color = JobSummaryColors.QC_OVERRRIDE;
-               } else if (model.hasInheritedQcOverride()) {
-                   color = JobSummaryColors.QC_INHERITED_OVERRRIDE;
-               } else if (model.hasWarningForQc()) {
-                   color = JobSummaryColors.QC_WARNING;
-               } else {
-                   color = JobSummaryColors.QC_GOOD;
-               }
-
+           if(model.isActive()){
+               model.calculateCellState();
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.QC_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
            }else{
-               color=JobSummaryColors.QC_NO_SEQ_PRESENT;
+           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
            }
+           qcLabel.setStyle("-fx-background-color: "+color);
+     
+     }
+     
+      private void labelColorForSeq(){
+        
+        
         
          
-     
-     qcLabel.setStyle("-fx-background-color: "+color);
+         String color=new String();
+           if(model.isActive()){
+               
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.QC_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
+           }else{
+           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           }
+           qcLabel.setStyle("-fx-background-color: "+color);
      
      }
     

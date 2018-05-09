@@ -15,6 +15,7 @@ import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
@@ -75,21 +76,21 @@ public class InsightCellController {
     
     public void setModel(InsightCellModel item) {
         model=item;
-        
+        insightDoubtType=model.getCellDoubtType();
         
         if(model.isActive()){
             insightLabel.setDisable(false);
+             model.getJobSummaryModel().toggleQuery();
         }else{
              insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
             insightLabel.setDisable(true);
         }
         
           //  applyColor();
-          labelColor();
+        labelColorForSub();
+       
        
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        insightDoubtType=model.getCellDoubtType();
-        
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
     }
@@ -128,7 +129,7 @@ public class InsightCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
           //  applyColor();
-          labelColor();
+          labelColorForSub();
           
         }
     };
@@ -144,7 +145,7 @@ public class InsightCellController {
             
             
            // applyColor();
-            labelColor();
+            labelColorForSub();
         }
         
     };
@@ -160,7 +161,7 @@ public class InsightCellController {
            
             
           //  applyColor();
-          labelColor();
+          labelColorForSub();
         }
         
     };
@@ -186,7 +187,13 @@ public class InsightCellController {
                 */
                 insightLabel.setDisable(false);
                // applyColor();
-               labelColor();
+               // model.getJobSummaryModel().toggleQuery();
+               if(model.getJobSummaryModel().isChild()){
+                    labelColorForSub();
+                }else{
+                    labelColorForSeq();
+                }
+       
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -254,7 +261,11 @@ public class InsightCellController {
             //addressed in applyColor() //labelColor()
             
            //  applyColor();
-           labelColor();
+           if(model.getJobSummaryModel().isChild()){
+              labelColorForSub();
+          }else{
+              labelColorForSeq();
+          }
            
         }
      };
@@ -322,29 +333,64 @@ public class InsightCellController {
      
      
      
-       private void labelColor(){
+       private void labelColorForSub(){
            
-         String color=new String();
+           /*String color=new String();
            if (model.isActive()) {
-
-               if (model.hasFailedInsightDependency() && !model.hasOverridenInsightFail()) {
-                   color = JobSummaryColors.INSIGHT_DOUBT;
-               } else if (!model.hasFailedInsightDependency() && model.hasInheritedInsightFail()) {
-                   color = JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail()) {
-                   color = JobSummaryColors.INSIGHT_OVERRRIDE;
-               } else if (model.hasInheritedInsightOverride()) {
-                   color = JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-               } else if (model.hasWarningForInsight()) {
-                   color = JobSummaryColors.INSIGHT_WARNING;
-               } else {
-                   color = JobSummaryColors.INSIGHT_GOOD;
-               }
-
-           }else{
-               color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
+           
+           if (model.hasFailedInsightDependency() && !model.hasOverridenInsightFail()) {
+           color = JobSummaryColors.INSIGHT_DOUBT;
+           } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail() && model.hasInheritedInsightFail()) {
+           color = JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+           } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail()) {
+           color = JobSummaryColors.INSIGHT_OVERRRIDE;
+           } else if (model.hasInheritedInsightOverride()) {
+           color = JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+           } else if (model.hasWarningForInsight()) {
+           color = JobSummaryColors.INSIGHT_WARNING;
+           } else {
+           color = JobSummaryColors.INSIGHT_GOOD;
            }
-         insightLabel.setStyle("-fx-background-color: "+color);
+           
+           }else{
+           color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
+           }
+           insightLabel.setStyle("-fx-background-color: "+color);*/
+           
+           
+            String color=new String();
+          
+           if(model.isActive()){
+               model.calculateCellState();
+               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+           }else{
+           color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
+           }
+           insightLabel.setStyle("-fx-background-color: "+color);
+     
+        }
+       
+       private void labelColorForSeq(){
+           
+          String color=new String();
+          
+           if(model.isActive()){
+             
+               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+           }else{
+           color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
+           }
+           insightLabel.setStyle("-fx-background-color: "+color);
      
         }
 

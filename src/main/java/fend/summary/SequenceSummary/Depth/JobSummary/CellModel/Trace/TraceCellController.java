@@ -15,6 +15,7 @@ import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
@@ -76,22 +77,19 @@ public class TraceCellController {
     public void setModel(TraceCellModel item) {
         model=item;
         
+        traceDoubtType=model.getCellDoubtType();
         
         if(model.isActive()){
             traceLabel.setDisable(false);
+            model.getJobSummaryModel().toggleQuery();
         }else{
              traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
             traceLabel.setDisable(true);
         }
         
           //  applyColor();
-          labelColor();
-       
+        labelColorForSub();
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        //traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
-        traceDoubtType=model.getCellDoubtType();
-       
-        
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
     }
@@ -130,7 +128,7 @@ public class TraceCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
           //  applyColor();
-          labelColor();
+          labelColorForSub();
           
         }
     };
@@ -146,7 +144,7 @@ public class TraceCellController {
             
             
            // applyColor();
-            labelColor();
+            labelColorForSub();
         }
         
     };
@@ -162,7 +160,7 @@ public class TraceCellController {
            
             
           //  applyColor();
-          labelColor();
+          labelColorForSub();
         }
         
     };
@@ -186,9 +184,14 @@ public class TraceCellController {
                 " active: "+newValue);
                 }
                 */
+               // model.getJobSummaryModel().toggleQuery();
                 traceLabel.setDisable(false);
                // applyColor();
-               labelColor();
+               if (model.getJobSummaryModel().isChild()) {
+                labelColorForSub();
+            } else {
+                labelColorForSeq();
+            }
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -223,8 +226,12 @@ public class TraceCellController {
                              getJob().
                              getNameJobStep());
            
-          
-               labelColor();
+             
+            if (model.getJobSummaryModel().isChild()) {
+                labelColorForSub();
+            } else {
+                labelColorForSeq();
+            }
            
             
         }
@@ -293,33 +300,64 @@ public class TraceCellController {
      
      
      
-       private void labelColor(){
+       private void labelColorForSub(){
            
-         String color=new String();
+           /*  String color=new String();
            if (model.isActive()) {
-
-               if (model.hasFailedTraceDependency() && !model.hasOverridenTraceFail()) {
-                   color = JobSummaryColors.TRACES_DOUBT;
-               } else if (!model.hasFailedTraceDependency() && model.hasInheritedTraceFail()) {
-                   color = JobSummaryColors.TRACES_INHERITED_DOUBT;
-               } else if (model.hasFailedTraceDependency() && model.hasOverridenTraceFail()) {
-                   color = JobSummaryColors.TRACES_OVERRRIDE;
-               } else if (model.hasInheritedTraceOverride()) {
-                   color = JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
-               } else if (model.hasWarningForTrace()) {
-                   color = JobSummaryColors.TRACES_WARNING;
-               } else {
-                   color = JobSummaryColors.TRACES_GOOD;
-               }
-
-           }else{
-               color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           
+           if (model.hasFailedTraceDependency() && !model.hasOverridenTraceFail()) {
+           color = JobSummaryColors.TRACES_DOUBT;
+           } else if (!model.hasFailedTraceDependency() && model.hasInheritedTraceFail()) {
+           color = JobSummaryColors.TRACES_INHERITED_DOUBT;
+           } else if (model.hasFailedTraceDependency() && model.hasOverridenTraceFail()) {
+           color = JobSummaryColors.TRACES_OVERRRIDE;
+           } else if (model.hasInheritedTraceOverride()) {
+           color = JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+           } else if (model.hasWarningForTrace()) {
+           color = JobSummaryColors.TRACES_WARNING;
+           } else {
+           color = JobSummaryColors.TRACES_GOOD;
            }
-         traceLabel.setStyle("-fx-background-color: "+color);
+           
+           }else{
+           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           }
+           traceLabel.setStyle("-fx-background-color: "+color);*/
+           
+           String color=new String();
+           if(model.isActive()){
+               model.calculateCellState();
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.TRACES_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
+           }else{
+           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           }
+           traceLabel.setStyle("-fx-background-color: "+color);
      
         }
        
-      
+       private void labelColorForSeq(){
+          
+           
+           String color=new String();
+           if(model.isActive()){
+               
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.TRACES_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TRACES_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TRACES_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TRACES_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TRACES_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TRACES_GOOD;
+           }else{
+           color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
+           }
+           traceLabel.setStyle("-fx-background-color: "+color);
+     
+        }
 
    
     

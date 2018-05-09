@@ -14,6 +14,8 @@ import javafx.beans.property.StringProperty;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
+
+
 public interface CellModel {
 
     public JobSummaryModel getJobSummaryModel();
@@ -29,6 +31,12 @@ public interface CellModel {
     public boolean cellHasInheritedOverride();
     public boolean cellHasOverridenFail();
     public boolean cellHasWarning();
+    
+    public void setCellHasFailedDependency(boolean b);
+    public void setCellHasInheritedFail(boolean b);
+    public void setCellHasInheritedOverride(boolean b);
+    public void setCellHasOverridenFail(boolean b);
+    public void setCellHasWarning(boolean b);
     
     
     public boolean isActive();
@@ -50,4 +58,7 @@ public interface CellModel {
     public BooleanProperty showOverrideProperty();
 
     public void setOverride(boolean b);
+    public void calculateCellState();
+    public void setCellState(CellState cellstate);
+    public CellState getCellState();
 }

@@ -7,6 +7,7 @@ package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc;
 
 import db.model.DoubtType;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -201,4 +202,80 @@ public class QcCellModel implements CellModel{
         setOverridenQcFail(b);
     }
     
+    
+     @Override
+    public void calculateCellState() {
+        CellState cellstate=CellState.FAILED;
+                
+        if(cellHasFailedDependency()){ //1
+            
+            if(cellHasOverridenFail()){  //1.1
+                
+                if(cellHasInheritedFail()){  //1.1.1
+                    cellstate=CellState.INHERITED_FAIL;
+                }else{    //1.1.2
+                    cellstate=CellState.OVERRIDE;
+                }
+                
+            }else{ //1.2
+                cellstate=CellState.FAILED;
+            }
+                
+        }else{//2
+            if(cellHasInheritedFail()){ //2.1
+                cellstate=CellState.INHERITED_FAIL;
+            }else{  //2.2
+                if(cellHasInheritedOverride()){  //2.2.1
+                    cellstate=CellState.INHERITED_OVERRIDE;
+                }else{  //2.2.2
+                    if(cellHasWarning()){  //2.2.2.1
+                        cellstate=CellState.WARNING;
+                    }else{      //2.2.2.2
+                        cellstate=CellState.GOOD;
+                    }
+                }
+            }
+        }
+        this.cellstate=cellstate;
+        
+       //return this.cellstate;
+        
+        
+    }
+private CellState cellstate;
+    
+    @Override
+    public void setCellState(CellState cellstate) {
+        this.cellstate=cellstate;
+    }
+    
+    @Override
+    public CellState getCellState() {
+        return cellstate;
+    } 
+    
+     @Override
+    public void setCellHasFailedDependency(boolean b) {
+        setFailedQcDependency(b);
+    }
+
+    @Override
+    public void setCellHasInheritedFail(boolean b) {
+        setInheritedQcFail(b);
+    }
+
+    @Override
+    public void setCellHasInheritedOverride(boolean b) {
+        setInheritedQcOverride(b);
+    }
+
+    @Override
+    public void setCellHasOverridenFail(boolean b) {
+        setOverridenQcFail(b);
+    }
+
+    @Override
+    public void setCellHasWarning(boolean b) {
+        setWarningForQc(b);
+    }
 }

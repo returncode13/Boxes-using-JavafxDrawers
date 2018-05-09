@@ -258,6 +258,8 @@ public class SummaryController extends Stage{
                         seqJsm.setActive(true);
                         seqJsm.setSubsurface(null);
                         seqJsm.setSequence(seq);
+                        seqJsm.setIsParent(true);
+                        seqJsm.setIsChild(false);
                         //<--Start Time
                         seqJsm.getTimeCellModel().setActive(true);                                                                                      
                         seqJsm.getTimeCellModel().setFailedTimeDependency(seqJsm.getTimeCellModel().cellHasFailedDependency()||x.hasFailedTimeDependency());
@@ -311,7 +313,8 @@ public class SummaryController extends Stage{
                         jsm.setActive(true);
                         jsm.setSubsurface(sub);
                         jsm.setSequence(sub.getSequence());
-                        
+                        jsm.setIsParent(false);
+                        jsm.setIsChild(true);
                         //<--Start Time
                         jsm.getTimeCellModel().setActive(true);
                         jsm.getTimeCellModel().setFailedTimeDependency(x.hasFailedTimeDependency());
@@ -540,151 +543,7 @@ public class SummaryController extends Stage{
         }
     };
     
-    /*
-    private class TimeJobSubKey{
-    Job job;
-    Subsurface subsurface;
-    
-    @Override
-    public int hashCode() {
-    int hash = 3;
-    hash = 29 * hash + Objects.hashCode(this.job);
-    hash = 29 * hash + Objects.hashCode(this.subsurface);
-    return hash;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-    if (this == obj) {
-    return true;
-    }
-    if (obj == null) {
-    return false;
-    }
-    if (getClass() != obj.getClass()) {
-    return false;
-    }
-    final TimeJobSubKey other = (TimeJobSubKey) obj;
-    if (!Objects.equals(this.job, other.job)) {
-    return false;
-    }
-    if (!Objects.equals(this.subsurface, other.subsurface)) {
-    return false;
-    }
-    return true;
-    }
-    
-    
-    
-    }
-    
-    
-    private class TraceJobSubKey{
-    Job job;
-    Subsurface subsurface;
-    
-    @Override
-    public int hashCode() {
-    int hash = 5;
-    hash = 97 * hash + Objects.hashCode(this.job);
-    hash = 97 * hash + Objects.hashCode(this.subsurface);
-    return hash;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-    if (this == obj) {
-    return true;
-    }
-    if (obj == null) {
-    return false;
-    }
-    if (getClass() != obj.getClass()) {
-    return false;
-    }
-    final TraceJobSubKey other = (TraceJobSubKey) obj;
-    if (!Objects.equals(this.job, other.job)) {
-    return false;
-    }
-    if (!Objects.equals(this.subsurface, other.subsurface)) {
-    return false;
-    }
-    return true;
-    }
-    
-    
-    
-    
-    }
-    
-    
-    private class QcJobSubKey{
-    Job job;
-    Subsurface subsurface;
-    
-    @Override
-    public int hashCode() {
-    int hash = 7;
-    hash = 53 * hash + Objects.hashCode(this.job);
-    hash = 53 * hash + Objects.hashCode(this.subsurface);
-    return hash;
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-    if (this == obj) {
-    return true;
-    }
-    if (obj == null) {
-    return false;
-    }
-    if (getClass() != obj.getClass()) {
-    return false;
-    }
-    final QcJobSubKey other = (QcJobSubKey) obj;
-    if (!Objects.equals(this.job, other.job)) {
-    return false;
-    }
-    if (!Objects.equals(this.subsurface, other.subsurface)) {
-    return false;
-    }
-    return true;
-    }
-    
-    
-    
-    
-    
-    }
-    
-    
-    private TimeJobSubKey generateTimeJobSubKey(Job job,Subsurface sub){
-    TimeJobSubKey key=new TimeJobSubKey();
-    key.job=job;
-    key.subsurface=sub;
-    
-    return key;
-    }
-    
-    
-    private TraceJobSubKey generateTraceJobSubKey(Job job,Subsurface sub){
-    TraceJobSubKey key=new TraceJobSubKey();
-    key.job=job;
-    key.subsurface=sub;
-    
-    return key;
-    
-    }
-    
-    private QcJobSubKey generateQcJobSubKey(Job job,Subsurface sub){
-    QcJobSubKey key=new QcJobSubKey();
-    key.job=job;
-    key.subsurface=sub;
-    
-    return key;
-    
-    }
-    */
+  
      private String timeNow(){
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }

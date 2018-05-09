@@ -15,6 +15,7 @@ import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
@@ -70,19 +71,21 @@ public class IOCellController {
     
     public void setModel(IOCellModel item) {
         model=item;
-        
+        model.activeProperty().addListener(ACTIVE_LISTENER);
         
         if(model.isActive()){
             ioLabel.setDisable(false);
+             model.getJobSummaryModel().toggleQuery();
         }else{
              ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
             ioLabel.setDisable(true);
         }
         
           //  applyColor();
-          labelColor();
-       
-        model.activeProperty().addListener(ACTIVE_LISTENER);
+              
+                    labelColorForSub();
+              
+        
         //traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         ioDoubtType=model.getCellDoubtType();
        
@@ -126,7 +129,7 @@ public class IOCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
           //  applyColor();
-          labelColor();
+          labelColorForSub();
           
         }
     };
@@ -142,7 +145,7 @@ public class IOCellController {
             
             
            // applyColor();
-            labelColor();
+            labelColorForSub();
         }
         
     };
@@ -158,7 +161,7 @@ public class IOCellController {
            
             
           //  applyColor();
-          labelColor();
+          labelColorForSub();
         }
         
     };
@@ -175,7 +178,12 @@ public class IOCellController {
                
                 ioLabel.setDisable(false);
                // applyColor();
-               labelColor();
+              //  model.getJobSummaryModel().toggleQuery();
+               if(model.getJobSummaryModel().isChild()){
+                    labelColorForSub();
+                }else{
+                    labelColorForSeq();
+                }
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -244,7 +252,12 @@ public class IOCellController {
             
            //  applyColor();
           // if(model.getJobSummaryModel().getSubsurface()!=null){
-               labelColor();
+          if(model.getJobSummaryModel().isChild()){
+              labelColorForSub();
+          }else{
+              labelColorForSeq();
+          }
+               
           // }else{
               // labelColorForVerticalLogic();
           // }
@@ -257,6 +270,8 @@ public class IOCellController {
              
             
         }
+
+       
      };
     
      
@@ -322,30 +337,41 @@ public class IOCellController {
      
      
      
-       private void labelColor(){
+       private void labelColorForSub(){
            
-         String color=new String();
-           if (model.isActive()) {
-
-               if (model.hasFailedIoDependency() && !model.hasOverridenIoFail()) {
-                   color = JobSummaryColors.IO_DOUBT;
-               } else if (!model.hasFailedIoDependency() && model.hasInheritedIoFail()) {
-                   color = JobSummaryColors.IO_INHERITED_DOUBT;
-               } else if (model.hasFailedIoDependency() && model.hasOverridenIoFail()) {
-                   color = JobSummaryColors.IO_OVERRRIDE;
-               } else if (model.hasInheritedIoOverride()) {
-                   color = JobSummaryColors.IO_INHERITED_OVERRRIDE;
-               } else if (model.hasWarningForIo()) {
-                   color = JobSummaryColors.IO_WARNING;
-               } else {
-                   color = JobSummaryColors.IO_GOOD;
-               }
-
+         
+           
+           String color=new String();
+           if(model.isActive()){
+               model.calculateCellState();
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.IO_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
            }else{
-               color=JobSummaryColors.IO_NO_SEQ_PRESENT;
+           color=JobSummaryColors.IO_NO_SEQ_PRESENT;
            }
-         ioLabel.setStyle("-fx-background-color: "+color);
+           ioLabel.setStyle("-fx-background-color: "+color);
      
+        }
+       
+        private void labelColorForSeq() {
+            
+           String color=new String();
+           if(model.isActive()){
+               
+               if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.IO_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.IO_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.IO_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.IO_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.IO_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.IO_GOOD;
+           }else{
+           color=JobSummaryColors.IO_NO_SEQ_PRESENT;
+           }
+           ioLabel.setStyle("-fx-background-color: "+color);
         }
        
     

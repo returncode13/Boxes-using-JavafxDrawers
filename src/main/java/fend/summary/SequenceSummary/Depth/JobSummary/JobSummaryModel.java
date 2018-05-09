@@ -11,6 +11,8 @@ import db.model.Subsurface;
 import db.model.Summary;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellModel;
@@ -40,7 +42,8 @@ public class JobSummaryModel {
     private final BooleanProperty active = new SimpleBooleanProperty();    //if sequence is present in the job, then the active flag is set, unset otherwise
     private final BooleanProperty query = new SimpleBooleanProperty(false);      //toggling this flag will trigger a query in the db which in turn will set the values for qc,time,trace,insight,inheritance 
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
-    
+    boolean isParent=false;
+    boolean isChild=false;
     /* private TimeCellModel feModelTimeCellModel;                             //these are front end models. these are the ones that are updated for the UI. (colors) etc whenever the db is updated. Find a way to get rid of these.
     private TraceCellModel feModelTraceCellModel;
     
@@ -188,13 +191,29 @@ public class JobSummaryModel {
         return showOverride;
     }
     
+    public boolean isParent(){
+        return isParent;
+    }
+    
+    public void setIsParent(boolean p){
+        isParent=p;
+    }
+    
+    public boolean isChild(){
+        return isChild;
+    }
+    
+    public void setIsChild(boolean v){
+        isChild=v;
+    }
+    
     private ChangeListener<Boolean> QUERY_LISTENER=new ChangeListener<Boolean>(){
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             //
            //model.getTimeCellModel().setQuery(!model.getTimeCellModel().isQuery());
             if (JobSummaryModel.this.subsurface != null) {        //for subsurfaces
-                System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: toggling QUERY_LISTENER for the time cell in "+JobSummaryModel.this.getSubsurface().getSubsurface()+" "+JobSummaryModel.this.getJob().getNameJobStep());
+                //System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: toggling QUERY_LISTENER for the time cell in "+JobSummaryModel.this.getSubsurface().getSubsurface()+" "+JobSummaryModel.this.getJob().getNameJobStep());
                 Summary x = summaryService.getSummaryFor(JobSummaryModel.this.getSubsurface(), JobSummaryModel.this.getJob());
                 //time
 
@@ -236,90 +255,174 @@ public class JobSummaryModel {
                 JobSummaryModel.this.getIoCellModel().setQuery(!JobSummaryModel.this.getIoCellModel().isQuery());//trigger the labelColors Call in the cells controller
 
             }else{                                      //for sequences
-                System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: toggling QUERY_LISTENER for the cells  in job:  "+job.getNameJobStep()+" for seq :"+sequence.getSequenceno());
+              //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: toggling QUERY_LISTENER for the cells  in job:  "+job.getNameJobStep()+" for seq :"+sequence.getSequenceno());
                 List<Summary> xs = summaryService.getSummariesForJobSeq(job, sequence);
                 
-                timeCellModel.setFailedTimeDependency(false);
+                /* timeCellModel.setFailedTimeDependency(false);
                 timeCellModel.setInheritedTimeFail(false);
                 timeCellModel.setInheritedTimeOverride(false);
                 timeCellModel.setOverridenTimeFail(false);
                 timeCellModel.setWarningForTime(false);
-
+                
                 traceCellModel.setFailedTraceDependency(false);
                 traceCellModel.setInheritedTraceFail(false);
                 traceCellModel.setInheritedTraceOverride(false);
                 traceCellModel.setOverridenTraceFail(false);
                 traceCellModel.setWarningForTrace(false);
-
+                
                 qcCellModel.setFailedQcDependency(false);
                 qcCellModel.setInheritedQcFail(false);
                 qcCellModel.setInheritedQcOverride(false);
                 qcCellModel.setOverridenQcFail(false);
                 qcCellModel.setWarningForQc(false);
-
+                
                 insightCellModel.setFailedInsightDependency(false);
                 insightCellModel.setInheritedInsightFail(false);
                 insightCellModel.setInheritedInsightOverride(false);
                 insightCellModel.setOverridenInsightFail(false);
                 insightCellModel.setWarningForInsight(false);
-                    
-                    
-                ioCellModell.setFailedIoDependency(false);     
-                ioCellModell.setInheritedIoFail(false);   
+                
+                
+                ioCellModell.setFailedIoDependency(false);
+                ioCellModell.setInheritedIoFail(false);
                 ioCellModell.setInheritedIoOverride(false);
                 ioCellModell.setOverridenIoFail(false);
-                ioCellModell.setWarningForIo(false);
+                ioCellModell.setWarningForIo(false);*/
                 
                 
+                boolean timeFail=false;
+                boolean timeInhFail=false;
+                boolean timeOver=false;
+                boolean timeInhOver=false;
+                boolean timeWarn=false;
+                
+                boolean traceFail=false;
+                boolean traceInhFail=false;
+                boolean traceOver=false;
+                boolean traceInhOver=false;
+                boolean traceWarn=false;
+                
+                
+                boolean qcFail=false;
+                boolean qcInhFail=false;
+                boolean qcOver=false;
+                boolean qcInhOver=false;
+                boolean qcWarn=false;
+                
+                boolean insightFail=false;
+                boolean insightInhFail=false;
+                boolean insightOver=false;
+                boolean insightInhOver=false;
+                boolean insightWarn=false;
+                
+                boolean ioFail=false;
+                boolean ioInhFail=false;
+                boolean ioOver=false;
+                boolean ioInhOver=false;
+                boolean ioWarn=false;
+               
                 for(Summary x:xs){
                     
-                    //time
-                    timeCellModel.setFailedTimeDependency(timeCellModel.cellHasFailedDependency() || (x.hasFailedTimeDependency()  && !x.hasOverridenTimeFail()));
-                    timeCellModel.setInheritedTimeFail(timeCellModel.cellHasInheritedFail() || x.hasInheritedTimeFail());
-                    timeCellModel.setInheritedTimeOverride(timeCellModel.cellHasInheritedOverride() || x.hasInheritedTimeOverride());
-                    timeCellModel.setOverridenTimeFail(timeCellModel.cellHasOverridenFail() || (x.hasFailedTimeDependency() && x.hasOverridenTimeFail()));
-                    timeCellModel.setWarningForTime(timeCellModel.cellHasWarning() || x.hasWarningForTime());
+                    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: summary sub : "+x.getSubsurface().getSubsurface());
+                    CellState subTimecellState=figureCellState(timeCellModel, x);
+                    
+                        timeFail=timeFail || (subTimecellState == CellState.FAILED);
+                        timeInhFail=timeInhFail || (subTimecellState == CellState.INHERITED_FAIL);
+                        timeOver=timeOver || (subTimecellState == CellState.OVERRIDE);
+                        timeInhOver=timeInhOver || (subTimecellState == CellState.INHERITED_OVERRIDE);
+                        timeWarn=timeWarn || (subTimecellState == CellState.WARNING);
                     
                     
-                    //trace
-                    traceCellModel.setFailedTraceDependency(traceCellModel.cellHasFailedDependency() || (x.hasFailedTraceDependency() && !x.hasOverridenTraceFail()));
-                    traceCellModel.setInheritedTraceFail(traceCellModel.cellHasInheritedFail() || x.hasInheritedTraceFail());
-                    traceCellModel.setInheritedTraceOverride(traceCellModel.cellHasInheritedOverride() || x.hasInheritedTraceOverride());
-                    traceCellModel.setOverridenTraceFail(traceCellModel.cellHasOverridenFail() || (x.hasFailedTraceDependency() && x.hasOverridenTraceFail()));
-                    traceCellModel.setWarningForTrace(traceCellModel.cellHasWarning() || x.hasWarningForTrace());
+                    CellState subTracecellState=figureCellState(traceCellModel,x);
+                        
+                        traceFail=traceFail || (subTracecellState == CellState.FAILED);
+                        traceInhFail=traceInhFail ||(subTracecellState == CellState.INHERITED_FAIL);
+                        traceOver=traceOver || (subTracecellState == CellState.OVERRIDE);
+                        traceInhOver = traceInhOver || (subTracecellState == CellState.INHERITED_OVERRIDE);
+                        traceWarn=traceWarn || (subTracecellState == CellState.WARNING);
+                        
+                        
+                    CellState subQcCellState=figureCellState(qcCellModel, x);
+                        
+                        qcFail=qcFail || (subQcCellState == CellState.FAILED);
+                        qcInhFail=qcInhFail || (subQcCellState == CellState.INHERITED_FAIL);
+                        qcOver = qcOver || (subQcCellState == CellState.OVERRIDE);
+                        qcInhOver = qcInhOver || (subQcCellState == CellState.INHERITED_OVERRIDE);
+                        qcWarn = qcWarn || (subQcCellState == CellState.WARNING);
+                        
+                        
+                    CellState subInsightCellState=figureCellState(insightCellModel, x);
                     
-                    
-                    //qc
-                    qcCellModel.setFailedQcDependency(qcCellModel.cellHasFailedDependency() || (x.hasFailedQcDependency()) && !x.hasOverridenQcFail());
-                    qcCellModel.setInheritedQcFail(qcCellModel.cellHasInheritedFail() || x.hasInheritedQcFail());
-                    qcCellModel.setInheritedQcOverride(qcCellModel.cellHasInheritedOverride() ||  x.hasInheritedQcOverride());
-                    qcCellModel.setOverridenQcFail(qcCellModel.cellHasOverridenFail() || (x.hasFailedQcDependency() && x.hasOverridenQcFail()));
-                    qcCellModel.setWarningForQc(qcCellModel.cellHasWarning() || x.hasWarningForQc());
-                    
-                    
-                    //insight
-                    insightCellModel.setFailedInsightDependency(insightCellModel.cellHasFailedDependency() || (x.hasFailedInsightDependency()) && !x.hasOverridenInsightFail());
-                    insightCellModel.setInheritedInsightFail(insightCellModel.cellHasInheritedFail() || x.hasInheritedInsightFail());
-                    insightCellModel.setInheritedInsightOverride(insightCellModel.cellHasInheritedOverride() || x.hasInheritedInsightOverride());
-                    insightCellModel.setOverridenInsightFail(insightCellModel.cellHasOverridenFail() || (x.hasFailedInsightDependency() && x.hasOverridenInsightFail()) );
-                    insightCellModel.setWarningForInsight(insightCellModel.cellHasWarning() || x.hasWarningForInsight());
-                    
-                    
-                    //io
-                    ioCellModell.setFailedIoDependency(ioCellModell.cellHasFailedDependency() || (x.hasFailedIoDependency()) && !x.hasOverridenIoFail());
-                    ioCellModell.setInheritedIoFail(ioCellModell.cellHasInheritedFail() || x.hasInheritedIoFail());
-                    ioCellModell.setInheritedIoOverride(ioCellModell.cellHasInheritedOverride() || x.hasInheritedIoOverride());
-                    ioCellModell.setOverridenIoFail(ioCellModell.cellHasOverridenFail() || (x.hasFailedQcDependency() && x.hasOverridenIoFail()));
-                    ioCellModell.setWarningForIo(ioCellModell.cellHasWarning() || x.hasWarningForIo());
-                    
+                        insightFail=insightFail || (subInsightCellState == CellState.FAILED);
+                        insightInhFail = insightInhFail || (subInsightCellState == CellState.INHERITED_FAIL);
+                        insightOver = insightOver || (subInsightCellState == CellState.OVERRIDE);
+                        insightInhOver = insightInhOver || (subInsightCellState == CellState.INHERITED_OVERRIDE);
+                        insightWarn = insightWarn || (subInsightCellState == CellState.WARNING);
+                        
+                    CellState subIoCellState=figureCellState(ioCellModell,x);
+                        
+                        ioFail= ioFail ||(subIoCellState == CellState.FAILED);
+                        ioInhFail = ioInhFail || (subIoCellState == CellState.INHERITED_FAIL);
+                        ioOver = ioOver || (subIoCellState == CellState.OVERRIDE);
+                        ioInhOver = ioInhOver || (subIoCellState == CellState.INHERITED_OVERRIDE);
+                        ioWarn = ioWarn || (subIoCellState == CellState.WARNING);
+                        
+                        /* System.out.println("Values for seq "+sequence.getSequenceno()+" current sub: "+x.getSubsurface().getSubsurface());
+                        System.out.println("Time: ");
+                        System.out.println("    fail    : "+timeFail);
+                        System.out.println("    inhFail : "+timeInhFail);
+                        System.out.println("    override: "+timeOver);
+                        System.out.println("    inhOver : "+timeInhOver);
+                        System.out.println("    warn    : "+timeWarn);
+                        
+                        System.out.println("Trace: ");
+                        System.out.println("    fail    : "+traceFail);
+                        System.out.println("    inhFail : "+traceInhFail);
+                        System.out.println("    override: "+traceOver);
+                        System.out.println("    inhOver : "+traceInhOver);
+                        System.out.println("    warn    : "+traceWarn);
+                        
+                        System.out.println("QC: ");
+                        System.out.println("    fail    : "+qcFail);
+                        System.out.println("    inhFail : "+qcInhFail);
+                        System.out.println("    override: "+qcOver);
+                        System.out.println("    inhOver : "+qcInhOver);
+                        System.out.println("    warn    : "+qcWarn);
+                        
+                        System.out.println("Insight: ");
+                        System.out.println("    fail    : "+insightFail);
+                        System.out.println("    inhFail : "+insightInhFail);
+                        System.out.println("    override: "+insightOver);
+                        System.out.println("    inhOver : "+insightInhOver);
+                        System.out.println("    warn    : "+insightWarn);
+                        
+                        System.out.println("IO: ");
+                        System.out.println("    fail    : "+ioFail);
+                        System.out.println("    inhFail : "+ioInhFail);
+                        System.out.println("    override: "+ioOver);
+                        System.out.println("    inhOver : "+ioInhOver);
+                        System.out.println("    warn    : "+ioWarn);*/
+                     
                 }
                 
                 
-            System.out.println("failedDependency  :     "+ioCellModell.cellHasFailedDependency());
-            System.out.println("hasInheritedIOFail:     "+ioCellModell.cellHasInheritedFail());
-            System.out.println("hasIOoVerride     :     "+ioCellModell.cellHasInheritedOverride());
-            System.out.println("hasOverridenIOFail:     "+ioCellModell.cellHasOverridenFail());
-            System.out.println("hasIOWarning      :     "+ioCellModell.cellHasWarning());
+                setCellStateFor(timeCellModel,timeFail,timeInhFail,timeOver,timeInhOver,timeWarn);
+                setCellStateFor(traceCellModel, traceFail, traceInhFail, traceOver, traceInhOver, traceWarn);
+                setCellStateFor(qcCellModel, qcFail, qcInhFail, qcOver, qcInhOver, qcWarn);
+                setCellStateFor(insightCellModel, insightFail, insightInhFail, insightOver, insightInhOver, insightWarn);
+                setCellStateFor(ioCellModell, ioFail, ioInhFail, ioOver, ioInhOver, ioWarn);
+                /*
+                System.out.println(".changed(): cell states for seq: "+sequence.getSequenceno());
+                System.out.println("time    : "+timeCellModel.getCellState().name());
+                System.out.println("trace   : "+traceCellModel.getCellState().name());
+                System.out.println("qc      : "+qcCellModel.getCellState().name());
+                System.out.println("insight : "+insightCellModel.getCellState().name());
+                System.out.println("io      : "+ioCellModell.getCellState().name());*/
+                /*  System.out.println("failedDependency  :     "+ioCellModell.cellHasFailedDependency());
+                System.out.println("hasInheritedIOFail:     "+ioCellModell.cellHasInheritedFail());
+                System.out.println("hasIOoVerride     :     "+ioCellModell.cellHasInheritedOverride());
+                System.out.println("hasOverridenIOFail:     "+ioCellModell.cellHasOverridenFail());
+                System.out.println("hasIOWarning      :     "+ioCellModell.cellHasWarning());*/
                 
                 timeCellModel.setQuery(!timeCellModel.isQuery());
                 traceCellModel.setQuery(!traceCellModel.isQuery());
@@ -328,8 +431,72 @@ public class JobSummaryModel {
                 ioCellModell.setQuery(!ioCellModell.isQuery());
             }
         }
+
+       
+        
+        
         
     };
+    
+    
+     private void setCellStateFor(CellModel cellModel, boolean fail, boolean inhFail, boolean over, boolean inhOver, boolean warn) {
+            if(fail){          //1
+                cellModel.setCellState(CellState.FAILED);
+            }else{             //2
+                if(inhFail){   //2.1
+                    cellModel.setCellState(CellState.INHERITED_FAIL);
+                }else{        //2.2
+                    
+                    if(over){ //2.2.1
+                        cellModel.setCellState(CellState.OVERRIDE);
+                    }else{   //2.2.2
+                        
+                        if(inhOver){  //2.2.2.1
+                            cellModel.setCellState(CellState.INHERITED_OVERRIDE);
+                        }else{       //2.2.2.2
+                            
+                            if(warn){//2.2.2.2.1
+                                cellModel.setCellState(CellState.WARNING);
+                            }else{   //2.2.2.2.2
+                                cellModel.setCellState(CellState.GOOD);
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            CellState cs=cellModel.getCellState();
+            if(cs == CellState.FAILED){
+                cellModel.setCellHasFailedDependency(true);
+                cellModel.setCellHasOverridenFail(false);
+            }
+            if(cs == CellState.INHERITED_FAIL){
+                cellModel.setCellHasFailedDependency(false);
+                cellModel.setCellHasInheritedFail(true);
+            }
+            if(cs == CellState.OVERRIDE){
+                cellModel.setCellHasFailedDependency(true);
+                cellModel.setCellHasOverridenFail(true);
+                cellModel.setCellHasInheritedFail(false);
+            }
+            if(cs == CellState.INHERITED_OVERRIDE){
+                cellModel.setCellHasFailedDependency(false);
+                cellModel.setCellHasInheritedFail(false);
+                cellModel.setCellHasInheritedOverride(true);
+            }
+            if(cs == CellState.WARNING){
+                cellModel.setCellHasFailedDependency(false);
+                cellModel.setCellHasInheritedFail(false);
+                cellModel.setCellHasInheritedOverride(false);
+                cellModel.setCellHasWarning(true);
+            }
+            if(cs == CellState.GOOD){
+                cellModel.setCellHasFailedDependency(false);
+                cellModel.setCellHasInheritedFail(false);
+                cellModel.setCellHasInheritedOverride(false);
+                cellModel.setCellHasWarning(false);
+            }
+        }
 
     public void setSequence(Sequence sequence) {
         this.sequence=sequence;
@@ -339,5 +506,59 @@ public class JobSummaryModel {
         return sequence;
     }
     
-    
+    private CellState figureCellState(CellModel cm,Summary x){
+       CellState cellstate=CellState.FAILED;
+       if(cm.equals(timeCellModel)){
+           if(x.hasFailedTimeDependency() && x.hasOverridenTimeFail() && x.hasInheritedTimeFail()) cellstate=CellState.INHERITED_FAIL;   //1.1.1
+           if(x.hasFailedTimeDependency() && x.hasOverridenTimeFail() && !x.hasInheritedTimeFail()) cellstate=CellState.OVERRIDE;  //1.1.2
+           if(x.hasFailedTimeDependency() && !x.hasOverridenTimeFail()) cellstate=CellState.FAILED; //1.2
+           if(!x.hasFailedTimeDependency() && x.hasInheritedTimeFail()) cellstate=CellState.INHERITED_FAIL;  //2.1
+           if(!x.hasFailedTimeDependency() && !x.hasInheritedTimeFail() && x.hasInheritedTimeOverride()) cellstate=CellState.INHERITED_OVERRIDE; //2.2.1
+           if(!x.hasFailedTimeDependency() && !x.hasInheritedTimeFail() && !x.hasInheritedTimeOverride() && x.hasWarningForTime()) cellstate=CellState.WARNING;   //2.2.2.1
+           if(!x.hasFailedTimeDependency() && !x.hasInheritedTimeFail() && !x.hasInheritedTimeOverride() && !x.hasWarningForTime()) cellstate=CellState.GOOD;   //2.2.2.2
+       }
+       
+       if(cm.equals(traceCellModel)){
+           if(x.hasFailedTraceDependency() && x.hasOverridenTraceFail() && x.hasInheritedTraceFail()) cellstate=CellState.INHERITED_FAIL;   //1.1.1
+           if(x.hasFailedTraceDependency() && x.hasOverridenTraceFail() && !x.hasInheritedTraceFail()) cellstate=CellState.OVERRIDE;  //1.1.2
+           if(x.hasFailedTraceDependency() && !x.hasOverridenTraceFail()) cellstate=CellState.FAILED; //1.2
+           if(!x.hasFailedTraceDependency() && x.hasInheritedTraceFail()) cellstate=CellState.INHERITED_FAIL;  //2.1
+           if(!x.hasFailedTraceDependency() && !x.hasInheritedTraceFail() && x.hasInheritedTraceOverride()) cellstate=CellState.INHERITED_OVERRIDE; //2.2.1
+           if(!x.hasFailedTraceDependency() && !x.hasInheritedTraceFail() && !x.hasInheritedTraceOverride() && x.hasWarningForTrace()) cellstate=CellState.WARNING;   //2.2.2.1
+           if(!x.hasFailedTraceDependency() && !x.hasInheritedTraceFail() && !x.hasInheritedTraceOverride() && !x.hasWarningForTrace()) cellstate=CellState.GOOD;   //2.2.2.2
+       }
+       
+       if(cm.equals(qcCellModel)){
+           if(x.hasFailedQcDependency() && x.hasOverridenQcFail() && x.hasInheritedQcFail()) cellstate=CellState.INHERITED_FAIL;   //1.1.1
+           if(x.hasFailedQcDependency() && x.hasOverridenQcFail() && !x.hasInheritedQcFail()) cellstate=CellState.OVERRIDE;  //1.1.2
+           if(x.hasFailedQcDependency() && !x.hasOverridenQcFail()) cellstate=CellState.FAILED; //1.2
+           if(!x.hasFailedQcDependency() && x.hasInheritedQcFail()) cellstate=CellState.INHERITED_FAIL;  //2.1
+           if(!x.hasFailedQcDependency() && !x.hasInheritedQcFail() && x.hasInheritedQcOverride()) cellstate=CellState.INHERITED_OVERRIDE; //2.2.1
+           if(!x.hasFailedQcDependency() && !x.hasInheritedQcFail() && !x.hasInheritedQcOverride() && x.hasWarningForQc()) cellstate=CellState.WARNING;   //2.2.2.1
+           if(!x.hasFailedQcDependency() && !x.hasInheritedQcFail() && !x.hasInheritedQcOverride() && !x.hasWarningForQc()) cellstate=CellState.GOOD;   //2.2.2.2
+       }
+       
+       if(cm.equals(insightCellModel)){
+           if(x.hasFailedInsightDependency() && x.hasOverridenInsightFail() && x.hasInheritedInsightFail()) cellstate=CellState.INHERITED_FAIL;   //1.1.1
+           if(x.hasFailedInsightDependency() && x.hasOverridenInsightFail() && !x.hasInheritedInsightFail()) cellstate=CellState.OVERRIDE;  //1.1.2
+           if(x.hasFailedInsightDependency() && !x.hasOverridenInsightFail()) cellstate=CellState.FAILED; //1.2
+           if(!x.hasFailedInsightDependency() && x.hasInheritedInsightFail()) cellstate=CellState.INHERITED_FAIL;  //2.1
+           if(!x.hasFailedInsightDependency() && !x.hasInheritedInsightFail() && x.hasInheritedInsightOverride()) cellstate=CellState.INHERITED_OVERRIDE; //2.2.1
+           if(!x.hasFailedInsightDependency() && !x.hasInheritedInsightFail() && !x.hasInheritedInsightOverride() && x.hasWarningForInsight()) cellstate=CellState.WARNING;   //2.2.2.1
+           if(!x.hasFailedInsightDependency() && !x.hasInheritedInsightFail() && !x.hasInheritedInsightOverride() && !x.hasWarningForInsight()) cellstate=CellState.GOOD;   //2.2.2.2
+       }
+       
+       
+       if(cm.equals(ioCellModell)){
+           if(x.hasFailedIoDependency() && x.hasOverridenIoFail() && x.hasInheritedIoFail()) cellstate=CellState.INHERITED_FAIL;   //1.1.1
+           if(x.hasFailedIoDependency() && x.hasOverridenIoFail() && !x.hasInheritedIoFail()) cellstate=CellState.OVERRIDE;  //1.1.2
+           if(x.hasFailedIoDependency() && !x.hasOverridenIoFail()) cellstate=CellState.FAILED; //1.2
+           if(!x.hasFailedIoDependency() && x.hasInheritedIoFail()) cellstate=CellState.INHERITED_FAIL;  //2.1
+           if(!x.hasFailedIoDependency() && !x.hasInheritedIoFail() && x.hasInheritedIoOverride()) cellstate=CellState.INHERITED_OVERRIDE; //2.2.1
+           if(!x.hasFailedIoDependency() && !x.hasInheritedIoFail() && !x.hasInheritedIoOverride() && x.hasWarningForIo()) cellstate=CellState.WARNING;   //2.2.2.1
+           if(!x.hasFailedIoDependency() && !x.hasInheritedIoFail() && !x.hasInheritedIoOverride() && !x.hasWarningForIo()) cellstate=CellState.GOOD;   //2.2.2.2
+       }
+       
+        return cellstate;
+    }
 }

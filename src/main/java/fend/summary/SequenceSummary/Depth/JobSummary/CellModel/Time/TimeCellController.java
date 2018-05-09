@@ -15,6 +15,7 @@ import db.services.DoubtStatusService;
 import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
@@ -82,26 +83,18 @@ public class TimeCellController {
        
          if(model.isActive()){
         timeLabel.setDisable(false);
+            model.getJobSummaryModel().toggleQuery();
         }else{
         timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
         timeLabel.setDisable(true);
         }
         
         //    applyColor();
-        labelColor();
+        labelColorForSub();
+        
        
         
         model.activeProperty().addListener(ACTIVE_LISTENER);
-        
-        
-        /*  model.cellProperty().addListener(TIME_DOUBT_LISTENER);
-        
-        model.inheritanceProperty().addListener(TIME_INHERITANCE_LISTENER);
-        
-        model.overrideProperty().addListener(TIME_OVERRIDE_LISTENER); */
-        
-        
-        
         model.queryProperty().addListener(QUERY_LISTENER);
         model.showOverrideProperty().addListener(SHOW_OVERRIDE_CHANGE_LISTENER);
        
@@ -141,7 +134,7 @@ public class TimeCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
           //  applyColor();
-          labelColor();
+          labelColorForSub();
         }
     };
     
@@ -155,7 +148,7 @@ public class TimeCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
          //   applyColor();
-         labelColor();
+         labelColorForSub();
         }
         
     };
@@ -170,7 +163,7 @@ public class TimeCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
          //   applyColor();
-         labelColor();
+         labelColorForSub();
         }
         
     };
@@ -196,7 +189,12 @@ public class TimeCellController {
                 */
                 timeLabel.setDisable(false);
               //  applyColor();
-              labelColor();
+             //  model.getJobSummaryModel().toggleQuery();
+                if (model.getJobSummaryModel().isChild()) {
+                    labelColorForSub();
+                } else {
+                    labelColorForSeq();
+                }
                 
             }if(!newValue){
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -222,7 +220,11 @@ public class TimeCellController {
            
             
            //  applyColor();
-           labelColor();
+           if(model.getJobSummaryModel().isChild()){
+              labelColorForSub();
+          }else{
+              labelColorForSeq();
+          }
             
            /*
            model.cellProperty().addListener(TIME_DOUBT_LISTENER);
@@ -293,29 +295,47 @@ public class TimeCellController {
       **/
    
      
-     private void labelColor(){
+     private void labelColorForSub(){
+         
+        
          
           String color=new String();
-           if (model.isActive()) {
-
-               if (model.hasFailedTimeDependency() && !model.hasOverridenTimeFail()) {
-                   color = JobSummaryColors.TIME_DOUBT;
-               } else if (!model.hasFailedTimeDependency() && model.hasInheritedTimeFail()) {
-                   color = JobSummaryColors.TIME_INHERITED_DOUBT;
-               } else if (model.hasFailedTimeDependency() && model.hasOverridenTimeFail()) {
-                   color = JobSummaryColors.TIME_OVERRRIDE;
-               } else if (model.hasInheritedTimeOverride()) {
-                   color = JobSummaryColors.TIME_INHERITED_OVERRRIDE;
-               } else if (model.hasWarningForTime()) {
-                   color = JobSummaryColors.TIME_WARNING;
-               } else {
-                   color = JobSummaryColors.TIME_GOOD;
-               }
-
+          
+           if(model.isActive()){
+               model.calculateCellState();
+               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
            }else{
-               color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
+           color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
            }
-         timeLabel.setStyle("-fx-background-color: "+color);
+           timeLabel.setStyle("-fx-background-color: "+color);
+         
+         
+            
+     }
+     
+     
+       private void labelColorForSeq(){
+         
+         
+         
+          String color=new String();
+         
+           if(model.isActive()){
+               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
+               if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+               if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+               if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+               if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+               if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+           }else{
+           color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
+           }
+           timeLabel.setStyle("-fx-background-color: "+color);
          
          
             

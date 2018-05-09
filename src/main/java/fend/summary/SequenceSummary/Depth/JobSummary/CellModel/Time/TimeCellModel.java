@@ -7,6 +7,7 @@ package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time;
 
 import db.model.DoubtType;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellModel;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -184,5 +185,82 @@ public class TimeCellModel implements CellModel{
     @Override
     public void setOverride(boolean b) {
         setOverridenTimeFail(b);
+    }
+    
+     @Override
+    public void calculateCellState() {
+        CellState cellstate=CellState.FAILED;
+                
+        if(cellHasFailedDependency()){ //1
+            
+            if(cellHasOverridenFail()){  //1.1
+                
+                if(cellHasInheritedFail()){  //1.1.1
+                    cellstate=CellState.INHERITED_FAIL;
+                }else{    //1.1.2
+                    cellstate=CellState.OVERRIDE;
+                }
+                
+            }else{ //1.2
+                cellstate=CellState.FAILED;
+            }
+                
+        }else{//2
+            if(cellHasInheritedFail()){ //2.1
+                cellstate=CellState.INHERITED_FAIL;
+            }else{  //2.2
+                if(cellHasInheritedOverride()){  //2.2.1
+                    cellstate=CellState.INHERITED_OVERRIDE;
+                }else{  //2.2.2
+                    if(cellHasWarning()){  //2.2.2.1
+                        cellstate=CellState.WARNING;
+                    }else{      //2.2.2.2
+                        cellstate=CellState.GOOD;
+                    }
+                }
+            }
+        }
+        this.cellstate=cellstate;
+        
+       //return this.cellstate;
+        
+        
+    }
+private CellState cellstate;
+    
+    @Override
+    public void setCellState(CellState cellstate) {
+        this.cellstate=cellstate;
+    }
+    
+    
+    @Override
+    public CellState getCellState() {
+        return cellstate;
+    }
+
+    @Override
+    public void setCellHasFailedDependency(boolean b) {
+        setFailedTimeDependency(b);
+    }
+
+    @Override
+    public void setCellHasInheritedFail(boolean b) {
+        setInheritedTimeFail(b);
+    }
+
+    @Override
+    public void setCellHasInheritedOverride(boolean b) {
+        setInheritedTimeOverride(b);
+    }
+
+    @Override
+    public void setCellHasOverridenFail(boolean b) {
+        setOverridenTimeFail(b);
+    }
+
+    @Override
+    public void setCellHasWarning(boolean b) {
+        setWarningForTime(b);
     }
 }
