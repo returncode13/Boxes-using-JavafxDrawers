@@ -13,6 +13,7 @@ import db.model.NodePropertyValue;
 
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Workspace;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -247,6 +248,37 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValuesForWorkspace()");
+        System.out.println("db.dao.NodePropertyValueDAOImpl.removeAllNodePropertyValuesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        List<NodePropertyValue> results=null;
+        //String hql="select npv from NodePropertyValue npv inner join npv.job j where j.workspace =:w";
+        String hql="select npv from NodePropertyValue npv            INNER JOIN npv.nodeProperty np "
+                + "                                                  INNER JOIN np.propertyType pt "
+                + "                                                  INNER JOIN npv.job j"
+                + "                                                  WHERE (pt.name =:xx OR pt.name =:yy)"
+                + "                                                         AND"
+                + "                                                  j.workspace =:w"
+                + "";
+        try{
+            transaction =session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            query.setParameter("xx", "x");
+            query.setParameter("yy", "y");
+            results=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
     }
 
    

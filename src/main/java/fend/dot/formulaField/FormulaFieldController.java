@@ -85,7 +85,7 @@ public class FormulaFieldController extends Stage{
     void setView(FormulaFieldView nd) {
          node=nd;
         this.setScene(new Scene(node));
-        this.showAndWait();
+        this.show();
     }
     
     
@@ -152,7 +152,7 @@ public class FormulaFieldController extends Stage{
             pass=res.isValid();
         }catch(UnknownFunctionOrVariableException un){
             pass=false;
-        }catch(IllegalArgumentException ia){
+        }catch(IllegalArgumentException | EmptyStackException ia){
             pass=false;
         }
        

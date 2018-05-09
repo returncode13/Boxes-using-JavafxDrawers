@@ -130,6 +130,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -715,10 +716,30 @@ public class WorkspaceController {
 
     private void loadSession() {
         Workspace dbWorkspace = workspaceService.getWorkspace(model.getId());
-
+        
         //Set<Job> jobsInDb = dbWorkspace.getJobs();
         Set<Job> jobsInDb = new HashSet<>(jobService.getJobsInWorkspace(dbWorkspace));
-
+        List<NodePropertyValue> npvalues=nodePropertyValueService.getNodePropertyXYvaluesForWorkspace(dbWorkspace);
+        Map<Long,XYHolder> mapNpv=new HashMap<>();
+        
+            for(NodePropertyValue n:npvalues){
+                XYHolder xyh=new XYHolder();
+                
+                Long key=n.getJob().getId();
+                if(!mapNpv.containsKey(key)){
+                    mapNpv.put(key, xyh);
+                    xyh=mapNpv.get(key);
+                }else{
+                    xyh=mapNpv.get(key);
+                }
+                if(n.getNodeProperty().getPropertyType().getName().equalsIgnoreCase("x")){
+                    xyh.x=Double.valueOf(n.getValue());
+                }else{
+                    xyh.y=Double.valueOf(n.getValue());
+                }
+            }
+        
+        
         List<JobType0Model> frontEndJobModels = new ArrayList<>();
 
         Map<Long, JobType0Model> idFrontEndJobMap = new HashMap<>();              //used to link the nodes later. alook up map
@@ -778,58 +799,7 @@ public class WorkspaceController {
 
             }
 
-            /*Set<Volume> dbvols = new HashSet<>(volumeService.getVolumesForJob(dbj));
             
-            List<Volume0> frontEndVolumeModels = new ArrayList<>();
-            for (Volume dbv : dbvols) {
-                Volume0 fevol = null;
-                Long vtype = dbv.getVolumeType();
-
-                if (vtype.equals(Volume0.PROCESS_2D)) {
-                    fevol = new Volume1(fejob);                  //parent g1Child and id set in contructor
-
-                    fevol.setId(dbv.getId());
-                    fevol.setName(dbv.getNameVolume());
-                    File volumeOnDisk = new File(dbv.getPathOfVolume());
-                    fevol.setVolume(volumeOnDisk);
-                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
-                }
-                if (vtype.equals(Volume0.SEGD_LOAD)) {
-                    fevol = new Volume2(fejob);                  //parent g1Child and id set in contructor
-
-                    fevol.setId(dbv.getId());
-                    fevol.setName(dbv.getNameVolume());
-                    File volumeOnDisk = new File(dbv.getPathOfVolume());
-                    fevol.setVolume(volumeOnDisk);
-                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
-                }
-                
-                 // Skip the process for the Acq node
-                 
-                if (vtype.equals(Volume0.TEXT)) {
-                    fevol = new Volume4(fejob);                  //parent g1Child and id set in contructor
-
-                    fevol.setId(dbv.getId());
-                    fevol.setName(dbv.getNameVolume());
-                    File volumeOnDisk = new File(dbv.getPathOfVolume());
-                    fevol.setVolume(volumeOnDisk);
-                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
-                }
-                if (vtype.equals(Volume0.SEGY)) {
-                    fevol = new Volume5(fejob);                  //parent g1Child and id set in contructor
-
-                    fevol.setId(dbv.getId());
-                    fevol.setName(dbv.getNameVolume());
-                    File volumeOnDisk = new File(dbv.getPathOfVolume());
-                    fevol.setVolume(volumeOnDisk);
-                    System.out.println("fend.workspace.WorkspaceController.loadSession(): Added Volume : " + dbv.getNameVolume() + " to job: " + dbj.getNameJobStep());
-                }
-                frontEndVolumeModels.add(fevol);
-
-            }
-            fejob.setVolumes(frontEndVolumeModels);
-            */
-
             idFrontEndJobMap.put(fejob.getId(), fejob);
 
             frontEndJobModels.add(fejob);
@@ -956,10 +926,34 @@ public class WorkspaceController {
         }
 
         model.setObservableEdges(edges);
+        moveNodesIntoPosition(mapNpv,idJobViewsMap); 
 
         //  
         //  model.setObservableEdges(new HashSet<>(frontEnd));
     }
+    
+    private class XYHolder{
+        double x;
+        double y;
+    }
+    
+     private void moveNodesIntoPosition(Map<Long,XYHolder> mapOfJobIdsNodePropertyValues, Map<Long, JobType0View> idFrontEndJobMap ) {
+        if(mapOfJobIdsNodePropertyValues.keySet().size() != idFrontEndJobMap.keySet().size()){
+            return;
+        }else{
+            
+            for (Map.Entry<Long, JobType0View> entry : idFrontEndJobMap.entrySet()) {
+                Long key = entry.getKey();
+                JobType0View value = entry.getValue();
+                
+                XYHolder xyh=mapOfJobIdsNodePropertyValues.get(key);
+                System.out.println("fend.workspace.WorkspaceController.moveNodesIntoPosition(): moving job "+key+" to ("+xyh.x+","+xyh.y+")");
+                Point2D p=new Point2D(xyh.x, xyh.y);
+                value.relocateToPoint(p);
+            }
+        }
+    }
+
 
     private Map<Long, JobType0View> inflateFrontEndViews() {
         Set<JobType0Model> jobmodels = (Set<JobType0Model>) model.getObservableJobs();
@@ -2917,6 +2911,7 @@ public class WorkspaceController {
         
     }
 
+   
    
     private class DoubtHolder {
 

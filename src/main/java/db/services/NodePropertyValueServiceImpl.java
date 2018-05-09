@@ -12,6 +12,7 @@ import db.model.Job;
 import db.model.NodeProperty;
 
 import db.model.NodePropertyValue;
+import db.model.Workspace;
 
 import java.util.List;
 
@@ -67,6 +68,11 @@ public class NodePropertyValueServiceImpl implements NodePropertyValueService{
     @Override
     public void updateCoordinateYforJob(Job job, double y) {
         npvdao.updateCoordinateYforJob(job, y);
+    }
+
+    @Override
+    public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace) {
+        return npvdao.getNodePropertyXYvaluesForWorkspace(workspace);
     }
     
     
