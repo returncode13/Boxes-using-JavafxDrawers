@@ -358,26 +358,7 @@ public class LineTableController extends Stage{
             };
                     return cell;
         });
-        /*  multiple.setCellFactory((TreeTableColumn<SequenceHeaders,Boolean> p)->{
-        TreeTableCell cell=new TreeTableCell<SequenceHeaders,Boolean>(){
-        
-        @Override
-        protected void updateItem(Boolean item, boolean empty){
-        super.updateItem(item, empty);
-        TreeTableRow<SequenceHeaders> seqTreeRow = getTreeTableRow();
-        if (item == null || empty) {
-        setText(null);
-        seqTreeRow.setStyle("");
-        setStyle("");
-        } else {
-        seqTreeRow.setStyle(item ? "-fx-background-color:orange" : "");
-        setText(item.toString());
-        //setStyle(item ? "-fx-background-color:red" : "");
-        }
-        }
-        };
-        return cell;
-        });*/
+       
         
         volume.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
             @Override

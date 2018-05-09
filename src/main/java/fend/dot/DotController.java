@@ -139,7 +139,8 @@ public class DotController extends Stage{
             
          //   workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.            
            
-       model.dotClickedProperty().addListener(DOT_CLICKED_LISTENER);
+    //   model.dotClickedProperty().addListener(DOT_CLICKED_LISTENER);
+       model.exitedFormulaFieldProperty().addListener(FORMULA_FIELD_EXITED);
         
         model.getDelete().addListener(new ChangeListener<Boolean>(){
             @Override
@@ -241,13 +242,16 @@ public class DotController extends Stage{
         
         
         
-        node.setOnMouseClicked(e->{
+        node.setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 if (e.getClickCount() == 2) {
                     if (model.enableFurtherLinks()) {
-
-                        FormulaFieldModel formulaModel = new FormulaFieldModel(model);
-                        FormulaFieldView formulaFieldNode = new FormulaFieldView(formulaModel);
+                                        if(formulaModel == null){
+                                          formulaModel=new FormulaFieldModel(model);
+                                          formulaFieldNode=new FormulaFieldView(formulaModel);
+                                        }else{
+                                          //formulaFieldNode.requestFocus();
+                                        }
                     } else {
                         System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
                     }
@@ -278,21 +282,31 @@ public class DotController extends Stage{
          model.getTolerance().addListener(toleranceChangeListener);
          model.getError().addListener(errorChangeListener);
     }
+    
+    private FormulaFieldModel formulaModel=null;
+    private FormulaFieldView formulaFieldNode;
 
+    /**
+     * UNUSED method. kept because it still exists in the fxml file
+     */
      @FXML
     void dotClicked(MouseEvent e) {
-        if(e.getButton().equals(MouseButton.PRIMARY)){
-            if(e.getClickCount()==2){
-               if(model.enableFurtherLinks()){
-                   
-                   FormulaFieldModel formulaModel=new FormulaFieldModel(model);
-                   FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
-               }else{
-                   System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
-               }
-                
-            }
+        /*if(e.getButton().equals(MouseButton.PRIMARY)){
+        if(e.getClickCount()==2){
+        if(model.enableFurtherLinks()){
+        if(formulaModel == null){
+        formulaModel=new FormulaFieldModel(model);
+        formulaFieldNode=new FormulaFieldView(formulaModel);
+        }else{
+        formulaFieldNode.requestFocus();
         }
+        
+        }else{
+        System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
+        }
+        
+        }
+        }*/
     }
 
     @FXML
@@ -770,19 +784,25 @@ public class DotController extends Stage{
                     child.toggleUpdateProperty();
     }
     
-    private ChangeListener<Boolean> DOT_CLICKED_LISTENER=new ChangeListener<Boolean>() {
+    /*private ChangeListener<Boolean> DOT_CLICKED_LISTENER=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    if(model.enableFurtherLinks()){
+    
+    FormulaFieldModel formulaModel=new FormulaFieldModel(model);
+    FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
+    }else{
+    System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
+    }
+    }
+    };*/
+    
+    private ChangeListener<Boolean> FORMULA_FIELD_EXITED=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            if(model.enableFurtherLinks()){
-                   
-                   FormulaFieldModel formulaModel=new FormulaFieldModel(model);
-                   FormulaFieldView formulaFieldNode=new FormulaFieldView(formulaModel);
-               }else{
-                   System.out.println("fend.dot.DotController.setView(): Nope! this dot has its enableFutherLinks param set to false. Do links exist?");
-               }
+            formulaModel=null;
+            formulaFieldNode=null;
         }
     };
-    
-    
     
 }

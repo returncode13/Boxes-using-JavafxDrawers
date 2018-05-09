@@ -84,8 +84,13 @@ public class FormulaFieldController extends Stage{
 
     void setView(FormulaFieldView nd) {
          node=nd;
+         this.setOnCloseRequest(e->{
+            model.getDot().exitedFormulaField();
+         });
+         
         this.setScene(new Scene(node));
         this.show();
+         
     }
     
     
@@ -97,6 +102,7 @@ public class FormulaFieldController extends Stage{
         model.setError(Double.valueOf(error.getText()));
         
         close();
+        model.getDot().exitedFormulaField();
     }
     
     
@@ -138,6 +144,7 @@ public class FormulaFieldController extends Stage{
     @FXML
     void cancel(ActionEvent event) {
         close();
+        model.getDot().exitedFormulaField();
     }
 
     private boolean checkFunction(String text)  {
@@ -216,34 +223,6 @@ public class FormulaFieldController extends Stage{
     
     
     
-    /*private ChangeListener<String> functionListener=new ChangeListener<String>() {
-    @Override
-    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-    model.setFunction(newValue);
-    }
-    };*/
-    /*
-    private ChangeListener<String> errorListener=new ChangeListener<String>() {
-    @Override
-    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-    try{
-    model.setError(Double.valueOf(newValue));
-    }catch(NumberFormatException nfe){
-    model.setError(0.0);
-    }
-    }
-    };
-    
-    private ChangeListener<String> toleranceListener=new ChangeListener<String>() {
-    @Override
-    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-    try{
-    model.setError(Double.valueOf(newValue));
-    }catch(NumberFormatException nfe){
-    model.setError(0.0);
-    }
-    }
-    };*/
 
    
 }

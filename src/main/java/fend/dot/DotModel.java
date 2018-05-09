@@ -298,6 +298,17 @@ public class DotModel {
         linkWasCreated.set(!linkWasCreated.get());
     }
 
+    private BooleanProperty exitedFormulaFieldProperty=new SimpleBooleanProperty(false);
+    
+    public BooleanProperty exitedFormulaFieldProperty(){
+        return this.exitedFormulaFieldProperty;
+    }
+    
+    public void exitedFormulaField() {
+        this.exitedFormulaFieldProperty.set(!exitedFormulaFieldProperty.get());
+        
+    }
+
    
   
    

@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
@@ -28,7 +29,12 @@
         </rowConstraints>
          <children>
             <JFXButton fx:id="okButton" buttonType="RAISED" maxWidth="1.7976931348623157E308" onAction="#okClicked" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Ok" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" />
-            <JFXTextField fx:id="function" alignment="CENTER" onKeyReleased="#onFunctionKeyReleased" promptText="y=f(x1,x2,..,xn)" GridPane.rowIndex="2" />
+            <HBox GridPane.rowIndex="2">
+               <children>
+                  <JFXTextField editable="false" text="     y =" />
+                  <JFXTextField fx:id="function" alignment="BOTTOM_LEFT" onKeyReleased="#onFunctionKeyReleased" prefHeight="26.0" prefWidth="389.0" promptText="f(x1,x2,..,xn)" />
+               </children>
+            </HBox>
             <JFXTextArea fx:id="textArea" editable="false" />
             <JFXButton fx:id="cancel" buttonType="RAISED" layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" onAction="#cancel" style="-fx-background-color: #5264AE; -fx-text-fill: WHITE;" text="Cancel" GridPane.columnIndex="4" GridPane.rowIndex="3" />
             <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onToleranceKeyReleased" promptText="tolerance %" GridPane.columnIndex="2" GridPane.rowIndex="2">

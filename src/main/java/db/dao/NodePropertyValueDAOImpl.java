@@ -178,7 +178,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
 
     @Override
     public void updateCoordinateXforJob(Job job, double xcord) {
-        System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateXforJob()");
+     //   System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateXforJob()");
          
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction =null;
@@ -215,7 +215,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
     
     @Override
     public void updateCoordinateYforJob(Job job, double ycord) {
-        System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateXforJob()");
+       // System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateYforJob()");
          
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction =null;
@@ -253,7 +253,7 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
     @Override
     public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace) {
         System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValuesForWorkspace()");
-        System.out.println("db.dao.NodePropertyValueDAOImpl.removeAllNodePropertyValuesFor()");
+       
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction =null;
         List<NodePropertyValue> results=null;
