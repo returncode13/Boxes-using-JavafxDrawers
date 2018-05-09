@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -66,6 +68,26 @@ public class FormulaFieldModel {
     private Dot dbDot;
     private Set<VariableArgument> dbVariableArguments;
     private Map<String,Job> variableArgumentMap=new HashMap<>();
+    private BooleanProperty functionValidityProperty=new SimpleBooleanProperty(true);
+    private BooleanProperty limitsValidityProperty=new SimpleBooleanProperty(true);
+    
+    public BooleanProperty limitsValidityProperty(){
+        return this.limitsValidityProperty;
+    }
+    
+    public void setLimitsValidity(boolean b){
+        this.limitsValidityProperty.set(b);
+    }
+    
+    public BooleanProperty functionValidityProperty(){
+        return this.functionValidityProperty;
+    }
+    
+    public void setFunctionValidity(boolean b){
+        this.functionValidityProperty.set(b);
+    }
+    
+    
     
     public FormulaFieldModel(DotModel dot) {
         this.dot = dot;
@@ -121,7 +143,11 @@ public class FormulaFieldModel {
         this.error.set(error);
     }
 
-   
+    public DotModel getDot() {
+        return dot;
+    }
+
+    
 
     public String getInfo(){
        return dot.getVariableArgumentModel().getInfo();

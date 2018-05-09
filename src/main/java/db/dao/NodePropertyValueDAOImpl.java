@@ -167,6 +167,80 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
             Query query=session.createQuery(hql);
             query.setParameter("j", job);
             int result=query.executeUpdate();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateCoordinateXforJob(Job job, double xcord) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateXforJob()");
+         
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        String hqlSelect="Select npv.idNodePropertyValue from NodePropertyValue npv INNER JOIN npv.nodeProperty np "
+                + "                                                                 INNER JOIN np.propertyType pt "
+                + "                                                                 WHERE pt.name =:xx"
+                + "                                                                     AND"
+                + "                                                                 npv.job =:j   ";
+        
+        String hqlUpdate="Update NodePropertyValue npv set npv.value =:val where npv.idNodePropertyValue in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query querySelect=session.createQuery(hqlSelect);
+            querySelect.setParameter("j", job);
+            querySelect.setParameter("xx", "x");                                //looking for the x-coordinate (x)
+            List<Long> xid=querySelect.list();
+            if(xid.isEmpty()){
+                transaction.commit();
+            }else{
+                Query queryUpdate=session.createQuery(hqlUpdate);
+                String valX=""+xcord;
+                queryUpdate.setParameter("val", valX);
+                queryUpdate.setParameterList("ids", xid);
+                int upres=queryUpdate.executeUpdate();
+                transaction.commit();
+            }
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
+    @Override
+    public void updateCoordinateYforJob(Job job, double ycord) {
+        System.out.println("db.dao.NodePropertyValueDAOImpl.updateCoordinateXforJob()");
+         
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        String hqlSelect="Select npv.idNodePropertyValue from NodePropertyValue npv INNER JOIN npv.nodeProperty np "
+                + "                                                                 INNER JOIN np.propertyType pt "
+                + "                                                                 WHERE pt.name =:xx"
+                + "                                                                     AND"
+                + "                                                                 npv.job =:j   ";
+        
+        String hqlUpdate="Update NodePropertyValue npv set npv.value =:val where npv.idNodePropertyValue in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query querySelect=session.createQuery(hqlSelect);
+            querySelect.setParameter("j", job);
+            querySelect.setParameter("xx", "y");                                //looking for the y-coordinate (y)
+            List<Long> xid=querySelect.list();
+            if(xid.isEmpty()){
+                transaction.commit();
+            }else{
+                Query queryUpdate=session.createQuery(hqlUpdate);
+                String valY=""+ycord;
+                queryUpdate.setParameter("val", valY);
+                queryUpdate.setParameterList("ids", xid);
+                int upres=queryUpdate.executeUpdate();
+                transaction.commit();
+            }
             
         }catch(Exception e){
             e.printStackTrace();

@@ -25,4 +25,8 @@ public interface NodePropertyValueDAO {
     public NodePropertyValue getNodePropertyValuesFor(Job jobStep, NodeProperty nodeProperty);
 
     public void removeAllNodePropertyValuesFor(Job job);
+
+    public void updateCoordinateXforJob(Job job, double x);
+
+    public void updateCoordinateYforJob(Job job, double y);
 }

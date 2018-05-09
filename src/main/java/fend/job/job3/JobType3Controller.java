@@ -199,6 +199,10 @@ public class JobType3Controller implements JobType0Controller{
         
          node.setOnMouseDragged(event->{
             node.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
+            double x=event.getSceneX();
+            double y=event.getSceneY();
+            nodePropertyValueService.updateCoordinateXforJob(dbjob,x);
+            nodePropertyValueService.updateCoordinateYforJob(dbjob,y);
          });
          
          node.setOnMouseDragReleased(e->{

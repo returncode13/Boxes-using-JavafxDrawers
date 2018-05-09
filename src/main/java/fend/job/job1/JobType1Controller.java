@@ -112,7 +112,8 @@ public class JobType1Controller implements JobType0Controller{
     private LineTableView lineTableView;
     
     private BooleanProperty checkForHeaders;
-    
+    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
+            
     
     
     @FXML
@@ -214,8 +215,13 @@ public class JobType1Controller implements JobType0Controller{
         });
         
          node.setOnMouseDragged(event->{
+             double x=event.getSceneX();
+             double y=event.getSceneY();
              //System.out.println("fend.job.job1.JobType1Controller.setView(): "+dbjob.getNameJobStep()+" isLeaf? "+dbjob.isLeaf()+" isRoot? "+dbjob.isRoot());
             node.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
+             //System.out.println("fend.job.job1.JobType1Controller.setView(): will store (x,y) = ("+event.getSceneX()+","+event.getSceneY()+")");
+             nodePropertyValueService.updateCoordinateXforJob(dbjob,x);
+             nodePropertyValueService.updateCoordinateYforJob(dbjob,y);
          });
          
          node.setOnMouseDragReleased(e->{
@@ -926,7 +932,7 @@ public class JobType1Controller implements JobType0Controller{
         }
 
 
-    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
+   
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override

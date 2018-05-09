@@ -38,16 +38,12 @@ import db.services.DotService;
 import db.services.DotServiceImpl;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
-import db.services.DoubtStatusService;
-import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
-import db.services.JobVolumeMapService;
-import db.services.JobVolumeMapServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
 import db.services.LogService;
@@ -108,15 +104,9 @@ import fend.job.job5.JobType5Model;
 import fend.job.job5.JobType5View;
 import fend.summary.SummaryModel;
 import fend.summary.SummaryView;
-import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume1;
-import fend.volume.volume2.Volume2;
-import fend.volume.volume4.Volume4;
-import fend.volume.volume5.Volume5;
 import fend.workspace.gLink.GLink;
 import java.io.File;
 import java.io.FileFilter;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -139,15 +129,10 @@ import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.SVGPath;
@@ -1106,7 +1091,7 @@ public class WorkspaceController {
                     }
 
                     if (node instanceof DotView) {
-                        System.out.println(".onChanged() new Dot was added to the workspace");
+                       // System.out.println(".onChanged() new Dot was added to the workspace");
                     }
                 }
             }

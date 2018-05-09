@@ -217,6 +217,10 @@ public class JobType5Controller implements JobType0Controller{
          node.setOnMouseDragged(event->{
              //System.out.println("fend.job.job1.JobType1Controller.setView(): "+dbjob.getNameJobStep()+" isLeaf? "+dbjob.isLeaf()+" isRoot? "+dbjob.isRoot());
             node.relocateToPoint(new Point2D(event.getSceneX(),event.getSceneY()));
+            double x=event.getSceneX();
+            double y=event.getSceneY();
+            nodePropertyValueService.updateCoordinateXforJob(dbjob,x);
+            nodePropertyValueService.updateCoordinateYforJob(dbjob,y);
          });
          
          node.setOnMouseDragReleased(e->{

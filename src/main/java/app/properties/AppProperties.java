@@ -39,7 +39,7 @@ public class AppProperties {
     private String irdbHost=new String("no host assigned");
     private static User currentUser;
         
-    public static int BULK_TRANSACTION_BATCH_SIZE=50;                            //control for batch processing.
+    public static int BULK_TRANSACTION_BATCH_SIZE=1000;                            //control for batch processing.
     public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
     
     
@@ -48,7 +48,7 @@ public class AppProperties {
     public static final String URLTEMPLATE_FOR_DATABASE_LISTING="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/template1";   //for listing the databases
     final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";  //for appending to the chosen database
     public final static String DATABASE_USER="fgeo";
-    public final static double TIME_FOR_GUEST_QUERY=60;                   //10 secs
+    public final static double TIME_FOR_GUEST_QUERY=60;                   //in  secs
    
     
     public final static Integer LOG_RECURSION_COUNTER=10;                   //the number of times to recursively check for logs . A hack for the race condition until a better solution is found

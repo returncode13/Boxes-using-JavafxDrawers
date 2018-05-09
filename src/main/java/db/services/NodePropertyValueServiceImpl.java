@@ -58,6 +58,16 @@ public class NodePropertyValueServiceImpl implements NodePropertyValueService{
     public void removeAllNodePropertyValuesFor(Job job) {
         npvdao.removeAllNodePropertyValuesFor(job);
     }
+
+    @Override
+    public void updateCoordinateXforJob(Job job, double x) {
+        npvdao.updateCoordinateXforJob(job, x);
+    }
+
+    @Override
+    public void updateCoordinateYforJob(Job job, double y) {
+        npvdao.updateCoordinateYforJob(job, y);
+    }
     
     
    

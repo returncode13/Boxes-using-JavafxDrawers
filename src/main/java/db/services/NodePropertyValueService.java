@@ -25,4 +25,8 @@ public interface NodePropertyValueService {
     public NodePropertyValue getNodePropertyValueFor(Job jobStep, NodeProperty nodeProperty);
 
     public void removeAllNodePropertyValuesFor(Job dbjob);
+
+    public void updateCoordinateXforJob(Job dbjob, double x);
+
+    public void updateCoordinateYforJob(Job dbjob, double y);
 }
