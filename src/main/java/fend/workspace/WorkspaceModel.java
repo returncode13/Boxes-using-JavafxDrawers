@@ -45,6 +45,7 @@ public class WorkspaceModel {
     private AppModel appmodel;
     public WorkspaceModel(AppModel model) {
         appmodel=model;
+         id=null;
     }
 
     
@@ -93,10 +94,10 @@ public class WorkspaceModel {
     
     
     
-    public WorkspaceModel(){
-  //      id=UUID.randomUUID().getMostSignificantBits();
-          id=null;
-    }
+    /*public WorkspaceModel(){
+    //      id=UUID.randomUUID().getMostSignificantBits();
+    id=null;
+    }*/
 
     public Workspace getWorkspace() {
         return workspace;

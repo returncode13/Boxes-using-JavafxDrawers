@@ -9,6 +9,6 @@ package fend.job.job5.definitions;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobDefinitionsModel {
+public class JobDefinitionsType5Model {
     
 }

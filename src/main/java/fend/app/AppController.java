@@ -770,7 +770,7 @@ public class AppController extends Stage implements Initializable{
                     
                   //   }
                     
-                    WorkspaceModel model=new WorkspaceModel();
+                    WorkspaceModel model=new WorkspaceModel(AppController.this.model);
                     model.setId(dbWorkspace.getId());
                     model.setName(dbWorkspace.getName());
                     model.setWorkspace(dbWorkspace);

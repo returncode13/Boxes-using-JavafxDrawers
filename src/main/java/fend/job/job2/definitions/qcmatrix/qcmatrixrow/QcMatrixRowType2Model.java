@@ -55,6 +55,10 @@ public class QcMatrixRowType2Model extends QcMatrixRowModelParent{
         });
     }
     
+      public void setSelectionModel(SelectedQcType2Model selectedModel) {
+       this.selectedModel=selectedModel;
+    }
+    
      public JobType0Model getParentJob() {
         return parentJob;
     }
@@ -218,8 +222,6 @@ public class QcMatrixRowType2Model extends QcMatrixRowModelParent{
     }
     
    
-     public void setSelectionModel(SelectedQcType2Model selectedModel) {
-       this.selectedModel=selectedModel;
-    }
+   
     
 }

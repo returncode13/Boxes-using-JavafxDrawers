@@ -7,7 +7,7 @@ package fend.job.job5.definitions.qcmatrix;
 
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
-import fend.job.job5.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job5.definitions.qcmatrix.qcmatrixrow.QcMatrixRowType5Model;
 
 
 
@@ -20,14 +20,14 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
+public class QcMatrixType5ListCell extends JFXListCell<QcMatrixRowType5Model>{
     HBox hbox=new HBox();
    
     Pane pane=new Pane();
     JFXCheckBox  checkbox=new JFXCheckBox();
     
     
-    public QcMatrixListCell(){
+    public QcMatrixType5ListCell(){
        // super();
         checkbox.getStyleClass().add("-fx-background-color: #5264AE ");
         checkbox.getStyleClass().add("-jfx-button-type: RAISED");
@@ -50,7 +50,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
    
     
     @Override
-    protected void updateItem(QcMatrixRowModel qctype,boolean empty){
+    protected void updateItem(QcMatrixRowType5Model qctype,boolean empty){
         super.updateItem(qctype, empty);
         if(qctype==null||empty){
             setText(null);

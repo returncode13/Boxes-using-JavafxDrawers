@@ -64,8 +64,8 @@ import javafx.scene.shape.CubicCurve;
 import javafx.util.Duration;
 import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
-import fend.job.job5.definitions.JobDefinitionsModel;
-import fend.job.job5.definitions.JobDefinitionsView;
+import fend.job.job5.definitions.JobDefinitionsType5Model;
+import fend.job.job5.definitions.JobDefinitionsType5View;
 
 import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
@@ -168,8 +168,8 @@ public class JobType5Controller implements JobType0Controller{
         node=vw;
         this.interactivePane=interactivePane;
         drawer.setId("LEFT");
-        JobDefinitionsModel bdmodel=new JobDefinitionsModel();
-        JobDefinitionsView bdview=new JobDefinitionsView(bdmodel,this.model);
+        JobDefinitionsType5Model bdmodel=new JobDefinitionsType5Model();
+        JobDefinitionsType5View bdview=new JobDefinitionsType5View(bdmodel,this.model);
         drawer.setSidePane(bdview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
         drawer.setDefaultDrawerSize(bdview.computeAreaInScreen());

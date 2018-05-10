@@ -3,11 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.job5.definitions;
+package fend.job.job5.definitions.qcmatrix;
 
-import fend.job.job1.JobType1Model;
-import com.jfoenix.controls.JFXDrawersStack;
-import fend.job.job0.JobType0Model;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -18,19 +15,17 @@ import javafx.scene.layout.StackPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class JobDefinitionsView extends JFXDrawersStack {
-    private JobType0Model parentBox;
-    private  JobDefinitionsModel model;
-    private JobDefinitionsController  controller;
-   
+public class QcMatrixType5View extends StackPane{
+    private  QcMatrixType5Model model;
+    private QcMatrixType5Controller  controller;
+    
      private FXMLLoader fXMLLoader;
     private final URL location;
     
     
-    public JobDefinitionsView(JobDefinitionsModel item,JobType0Model parentBox){
-        this.model=item;
-        this.parentBox=parentBox;
-        this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/jobdefinitions.fxml"); 
+    public QcMatrixType5View(QcMatrixType5Model item){
+       model=item;
+        this.location=getClass().getClassLoader().getResource("fxml/job5/definitions/qcmatrix/qcmatrix.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
@@ -43,8 +38,8 @@ public class JobDefinitionsView extends JFXDrawersStack {
             try{
                 fXMLLoader.load(location.openStream());
            
-                controller=(JobDefinitionsController)fXMLLoader.getController();
-                controller.setModel(item,this.parentBox);
+                controller=(QcMatrixType5Controller)fXMLLoader.getController();
+                controller.setModel(this.model);
                 controller.setView(this) ;
                
                 
@@ -52,5 +47,4 @@ public class JobDefinitionsView extends JFXDrawersStack {
                 throw new RuntimeException(e);
             }
     }
-    
 }

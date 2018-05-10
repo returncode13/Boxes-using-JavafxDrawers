@@ -8,12 +8,14 @@ package fend.job.job5.definitions.qcmatrix;
  
 //import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
-import fend.job.job5.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job5.definitions.qcmatrix.qcmatrixrow.QcMatrixRowType5Model;
+import fend.job.job5.definitions.qcmatrix.selected.SelectedQcType5Model;
 
 
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -24,30 +26,54 @@ import javafx.collections.ObservableList;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixModel {
-    List<QcMatrixRowModel> qcMatrixRows;
-    ObservableList<QcMatrixRowModel> observableQcMatrixRows;
+public class QcMatrixType5Model {
+    List<QcMatrixRowType5Model> qcMatrixRows;
+    ObservableList<QcMatrixRowType5Model> observableQcMatrixRows;
     JobType0Model parentjob;
     List<BooleanProperty> changePropertyList;
+    SelectedQcType5Model selectedModel;
+    BooleanProperty reloadProperty=new SimpleBooleanProperty(false);
     
-    public QcMatrixModel(JobType0Model parentjob) {
+    
+    public BooleanProperty reloadProperty(){
+        return reloadProperty;
+    }
+    
+    public void reload(){
+        boolean val=reloadProperty.get();
+        reloadProperty.set(!val);
+    }
+    
+    
+    public QcMatrixType5Model(JobType0Model parentjob,SelectedQcType5Model sm) {
         this.parentjob=parentjob;
         qcMatrixRows=new ArrayList<>();
         observableQcMatrixRows=FXCollections.observableArrayList(qcMatrixRows);
         observableQcMatrixRows.addListener(qcmatrixChangeListener);
-        
+        selectedModel=sm;
        
     }
 
-    public ObservableList<QcMatrixRowModel> getMatrixRows() {
+    public SelectedQcType5Model getSelectedModel() {
+        return selectedModel;
+    }
+
+    public void setSelectedModel(SelectedQcType5Model selectedModel) {
+        this.selectedModel = selectedModel;
+    }
+
+    
+    
+    
+    public ObservableList<QcMatrixRowType5Model> getMatrixRows() {
         return observableQcMatrixRows;
     }
 
-    public void setQcMatrixRows(List<QcMatrixRowModel> qcMatrixRows) {
+    public void setQcMatrixRows(List<QcMatrixRowType5Model> qcMatrixRows) {
         this.observableQcMatrixRows=FXCollections.observableArrayList(qcMatrixRows);
     }
     
-    public void addQcMatrixRow(QcMatrixRowModel qcmatrixrowmodel){
+    public void addQcMatrixRow(QcMatrixRowType5Model qcmatrixrowmodel){
         this.observableQcMatrixRows.add(qcmatrixrowmodel);
         BooleanProperty changed=qcmatrixrowmodel.checkedProperty();
         //changed.addListener();
@@ -58,15 +84,15 @@ public class QcMatrixModel {
      * Listeners
      *
      */
-    final private ListChangeListener<QcMatrixRowModel> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowModel>() {
+    final private ListChangeListener<QcMatrixRowType5Model> qcmatrixChangeListener=new ListChangeListener<QcMatrixRowType5Model>() {
         @Override
-        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowModel> c) {
+        public void onChanged(ListChangeListener.Change<? extends QcMatrixRowType5Model> c) {
             while(c.next()){
-                for(QcMatrixRowModel q:c.getAddedSubList()){
+                for(QcMatrixRowType5Model q:c.getAddedSubList()){
                      System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.added() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      addToParentJob(q);
                 }
-                for(QcMatrixRowModel q:c.getRemoved()){
+                for(QcMatrixRowType5Model q:c.getRemoved()){
                      System.out.println("fend.job.definitions.qcmatrix.QcMatrixModel.qcmatrixChangedListener.removed() "+q.getName().get()+" selected? "+q.getCheckedByUser());
                      removeFromParentJob(q);
                 }
@@ -87,11 +113,11 @@ public class QcMatrixModel {
      * private implementations
      */
     
-     private void addToParentJob(QcMatrixRowModel qcmr) {
+     private void addToParentJob(QcMatrixRowType5Model qcmr) {
          parentjob.addQcMatrixRow(qcmr);
      }
      
-      private void removeFromParentJob(QcMatrixRowModel q) {
+      private void removeFromParentJob(QcMatrixRowType5Model q) {
           parentjob.removeQcMatrixRow(q);
       }
 

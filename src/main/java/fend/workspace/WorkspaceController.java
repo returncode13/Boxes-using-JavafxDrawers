@@ -585,6 +585,16 @@ public class WorkspaceController {
                     npv.setValue(jobProperty.getPropertyValue());
                     nodePropertyValueService.createNodePropertyValue(npv);
                 }
+                
+                //create qc matrix row entries based on existing qc types for this job
+                List <QcType> qctypes=qcTypeService.getAllQcTypes();
+                for(QcType qt:qctypes){
+                     QcMatrixRow dbqcmr=new QcMatrixRow();
+                    dbqcmr.setJob(dbjob);
+                    dbqcmr.setQctype(qt);
+                    qcMatrixRowService.createQcMatrixRow(dbqcmr);
+                    
+                }
 
                 return "finished building a SEGY entry: " + dbjob.getId();
             }
@@ -692,8 +702,8 @@ public class WorkspaceController {
         model.setInsightVersions(insightVersionStrings);
         model.rebuildGraphOrderProperty().addListener(REBUILD_GRAPH_LISTENER);
         model.prepareToRebuildProperty().addListener(CLEAR_ANCESTOR_LISTENER);
-        model.reloadProperty().addListener(RELOAD_LISTENER);
-       // model.clearDescendantsProperty().addListener(CLEAR_DESCENDANT_LISTENER);
+       
+       
         exec = Executors.newCachedThreadPool((r) -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
