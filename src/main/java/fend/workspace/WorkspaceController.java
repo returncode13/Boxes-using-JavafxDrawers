@@ -459,6 +459,17 @@ public class WorkspaceController {
                     System.out.println(".call(): done creating for this property");
 
                 }
+                
+                 //create qc matrix row entries based on existing qc types for this job
+                List <QcType> qctypes=qcTypeService.getAllQcTypes();
+                for(QcType qt:qctypes){
+                     QcMatrixRow dbqcmr=new QcMatrixRow();
+                    dbqcmr.setJob(dbjob);
+                    dbqcmr.setQctype(qt);
+                    qcMatrixRowService.createQcMatrixRow(dbqcmr);
+                    
+                }
+
                 return "finished building an Acq entry: " + dbjob.getId();
             }
         };
@@ -645,6 +656,7 @@ public class WorkspaceController {
         interactivePane.prefHeightProperty().bind(scrollpane.heightProperty());
         interactivePane.getChildren().addListener(jobLinkChangeListener);
         loadingProperty.addListener(loadingListener);
+        
         //   createGraphAndChartsButton();
         //   createSummaryButton();
         // moveScrollPanesToTheLeft();
@@ -652,7 +664,7 @@ public class WorkspaceController {
         model = item;
         //dbWorkspace = workspaceService.getWorkspace(model.getId());
         dbWorkspace = model.getWorkspace();
-
+        model.reloadProperty().addListener(loadingListener);
         doubtTypeQc = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
         doubtTypeTraces = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         doubtTypeTime = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
@@ -3751,10 +3763,10 @@ public class WorkspaceController {
    
    private Map<Job,AncestorDescendantHolder> adLum=new HashMap<>();
    
-   private ChangeListener<Boolean> RELOAD_LISTENER=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                System.out.println(".changed(): Auto-RELOAD of workspace implementation pending. Manually reload the workspace "+dbWorkspace.getName());
-        }
-    };
+   /*private ChangeListener<Boolean> RELOAD_LISTENER=new ChangeListener<Boolean>() {
+   @Override
+   public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+   System.out.println(".changed(): Auto-RELOAD of workspace implementation pending. Manually reload the workspace "+dbWorkspace.getName());
+   }
+   };*/
 }

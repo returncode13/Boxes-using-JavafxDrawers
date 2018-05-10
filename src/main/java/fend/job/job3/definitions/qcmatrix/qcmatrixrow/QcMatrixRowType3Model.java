@@ -11,6 +11,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.job1.definitions.qcmatrix.selected.SelectedQcType1Model;
+import fend.job.job3.definitions.qcmatrix.selected.SelectedQcType3Model;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,7 +25,7 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixRowModel extends QcMatrixRowModelParent{
+public class QcMatrixRowType3Model extends QcMatrixRowModelParent{
     public static final String INDETERMINATE="indeterminate";
     public static final String SELECTED="selected";
     public static final String UNSELECTED="unselected";
@@ -36,24 +38,26 @@ public class QcMatrixRowModel extends QcMatrixRowModelParent{
     
     BooleanProperty checkUncheckProperty=new SimpleBooleanProperty();
     BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
-    
+    SelectedQcType3Model selectedModel;
     JobType0Model parentJob;
     
-    public QcMatrixRowModel() {
+    public QcMatrixRowType3Model() {
         
         checkedByUser.addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                /*QcMatrixRow dbqcmatrixrow=qcMatrixRowService.getQcMatrixRow(id);
-                dbqcmatrixrow.setPresent(newValue);
-                qcMatrixRowService.updateQcMatrixRow(dbqcmatrixrow.getId(), dbqcmatrixrow);*/
+               
                 qcMatrixRowService.updatePresent(id,newValue);
                 parentJob.toggleQcChangedProperty();
+                selectedModel.updateList();
             }
             
         });
     }
     
+     public void setSelectionModel(SelectedQcType3Model selectedModel) {
+       this.selectedModel=selectedModel;
+    }
     
     public JobType0Model getParentJob() {
         return parentJob;
@@ -157,7 +161,7 @@ public class QcMatrixRowModel extends QcMatrixRowModelParent{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final QcMatrixRowModel other = (QcMatrixRowModel) obj;
+        final QcMatrixRowType3Model other = (QcMatrixRowType3Model) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }

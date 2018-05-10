@@ -6,6 +6,7 @@
 package fend.workspace;
 
 import db.model.Workspace;
+import fend.app.AppModel;
 import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
@@ -41,15 +42,20 @@ public class WorkspaceModel {
     private BooleanProperty prepareToRebuildProperty = new SimpleBooleanProperty(false);
     private BooleanProperty clearDescendantsProperty = new SimpleBooleanProperty(false);
     private BooleanProperty reloadProperty=new SimpleBooleanProperty(false);
+    private AppModel appmodel;
+    public WorkspaceModel(AppModel model) {
+        appmodel=model;
+    }
 
-    public BooleanProperty reloadProperty() {
+    
+     public BooleanProperty reloadProperty() {
         return reloadProperty;
     }
 
     public void reload() {
-        Boolean val=reloadProperty.get();
-        this.reloadProperty.set(!val);
+       appmodel.reload();
     }
+   
     
     
     

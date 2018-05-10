@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<fx:root fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="140.0" stylesheets="@../../../../../styles/bootstrap3.css" type="JFXDrawersStack" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job1.definitions.qcmatrix.selected.SelectedQcType1Controller">
+<fx:root fx:id="drawersStack" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="140.0" stylesheets="@../../../../../styles/bootstrap3.css" type="JFXDrawersStack" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.job.job3.definitions.qcmatrix.selected.SelectedQcType3Controller">
    <children>
-      <GridPane style="-fx-background-color: #3A3F44;">
+      <GridPane style="-fx-background-color: #ee5f5b;">
          <columnConstraints>
             <ColumnConstraints hgrow="NEVER" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" />
          </columnConstraints>
@@ -21,12 +21,12 @@
          <children>
             <AnchorPane>
                <children>
-                  <JFXButton fx:id="openQMatrix" style="-fx-background-color: #515960; -fx-text-fill: white;" stylesheets="@../../../../../styles/bootstrap3.css" text="Qc types  &gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <JFXButton fx:id="openQMatrix" style="-fx-background-color: #ee5f5b; -fx-text-fill: white;" stylesheets="@../../../../../styles/bootstrap3.css" text="Qc types  &gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane GridPane.rowIndex="1">
                <children>
-                  <JFXListView fx:id="selectedList" style="-fx-background-color: #515960;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <JFXListView fx:id="selectedList" style="-fx-background-color: #ee5f5b;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>

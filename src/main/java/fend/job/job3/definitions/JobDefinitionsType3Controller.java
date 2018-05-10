@@ -11,8 +11,10 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
 import fend.job.job0.JobType0Model;
 import fend.job.job3.JobType3Model;
-import fend.job.job3.definitions.qcmatrix.QcMatrixModel;
-import fend.job.job3.definitions.qcmatrix.QcMatrixView;
+import fend.job.job3.definitions.qcmatrix.QcMatrixType3Model;
+import fend.job.job3.definitions.qcmatrix.QcMatrixType3View;
+import fend.job.job3.definitions.qcmatrix.selected.SelectedQcType3Model;
+import fend.job.job3.definitions.qcmatrix.selected.SelectedQcType3View;
 import javafx.animation.FadeTransition;
 import javafx.fxml.FXML;
 import javafx.util.Duration;
@@ -35,7 +37,7 @@ public class JobDefinitionsType3Controller {
     JFXDrawer qmatrixDrawer=new JFXDrawer();
     JFXDrawer volumeDrawer=new JFXDrawer();
     JFXDrawer insightDrawer=new JFXDrawer();
-    
+    JFXDrawer selectedQcMatrixDrawer=new JFXDrawer();
     @FXML
     private JFXDrawersStack drawersStack;
 
@@ -59,8 +61,9 @@ public class JobDefinitionsType3Controller {
         view=vw;
         
       //  setupVolumeDrawer(volumeDrawer,openVolumeDrawer);
-        setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
+       // setupQMatrixDrawer(qmatrixDrawer,openQMatrixDrawer);
       //  setupInsightDrawer(insightDrawer,openInsightDrawer);
+       setupSelectedQcMatrixDrawer(selectedQcMatrixDrawer,openQMatrixDrawer);
         
         
         
@@ -109,21 +112,66 @@ public class JobDefinitionsType3Controller {
         });
     }
 */
-    private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
-        
-        
+    /* private void setupQMatrixDrawer(JFXDrawer drawer,JFXButton button) {
+    
+    
+    drawer.setId("QMatrix");
+    
+    
+    QcMatrixType3Model qcmatmodel=new QcMatrixType3Model(parentBox);
+    QcMatrixType3View qcMatrixView=new QcMatrixType3View(qcmatmodel);
+    drawer.setSidePane(qcMatrixView);
+    drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
+    drawer.setDefaultDrawerSize(qcMatrixView.computeAreaInScreen());
+    drawer.setOverLayVisible(false);
+    drawer.setResizableOnDrag(true);
+    drawer.setTranslateX(180);
+    drawer.setTranslateY(0);
+    
+    
+    
+    
+    button.setOnMousePressed(e->{drawersStack.toggle(drawer);});
+    drawer.setOnDrawerClosed(e->{
+    drawer.setVisible(false);
+    button.setText(this.qmatrixExpand);
+    e.consume();                //prevent further collapse of the nested (previous) drawers
+    });
+    drawer.setOnDrawerOpening(e->{
+    drawer.setVisible(true);
+    button.setText(this.qmatrixCollapse);
+    FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
+    ft.setFromValue(0.7);
+    ft.setToValue(1.0);
+    ft.setAutoReverse(true);
+    ft.setCycleCount(1);
+    ft.play();
+    });
+    
+    drawer.setOnDrawerClosing(e->{
+    FadeTransition ft=new FadeTransition(Duration.millis(200),drawer);
+    ft.setFromValue(1.0);
+    ft.setToValue(0.7);
+    ft.setAutoReverse(true);
+    ft.setCycleCount(1);
+    ft.play();
+    
+    });
+    }*/
+     private void setupSelectedQcMatrixDrawer(JFXDrawer drawer, JFXButton button) {
+       
          drawer.setId("QMatrix");
-         /*VolumeListModel insmodel=new VolumeListModel(parentBox);
-         VolumeListView insList=new VolumeListView(insmodel);*/
+         /*VolumeListType1Model insmodel=new VolumeListType1Model(parentBox);
+         VolumeListType1View insList=new VolumeListType1View(insmodel);*/
          
-         QcMatrixModel qcmatmodel=new QcMatrixModel(parentBox);
-         QcMatrixView qcMatrixView=new QcMatrixView(qcmatmodel);
-        drawer.setSidePane(qcMatrixView);
+        SelectedQcType3Model smodel=new SelectedQcType3Model(parentBox);
+        SelectedQcType3View sview=new SelectedQcType3View(smodel); 
+        drawer.setSidePane(sview);
         drawer.setDirection(JFXDrawer.DrawerDirection.LEFT);
-        drawer.setDefaultDrawerSize(qcMatrixView.computeAreaInScreen());
+        drawer.setDefaultDrawerSize(sview.computeAreaInScreen());
         drawer.setOverLayVisible(false);
         drawer.setResizableOnDrag(true);
-        drawer.setTranslateX(180);
+        drawer.setTranslateX(122);
         drawer.setTranslateY(0);
         
         
@@ -136,6 +184,7 @@ public class JobDefinitionsType3Controller {
             e.consume();                //prevent further collapse of the nested (previous) drawers
         });
         drawer.setOnDrawerOpening(e->{
+           
            drawer.setVisible(true);
             button.setText(this.qmatrixCollapse);
             FadeTransition ft=new FadeTransition(Duration.millis(500),drawer);
@@ -155,8 +204,10 @@ public class JobDefinitionsType3Controller {
             ft.play();
              
         });
-     }
-
+    }
+    
+    
+    
     /*
     private void setupInsightDrawer(JFXDrawer drawer,JFXButton button) {
          

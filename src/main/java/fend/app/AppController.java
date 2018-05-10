@@ -481,7 +481,7 @@ public class AppController extends Stage implements Initializable{
         
         Workspace workspaceToBeLoaded=lwm.getWorkspaceToBeLoaded();
         if(workspaceToBeLoaded==null) return;
-        WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel();
+        WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel(model);
         frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
         frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());
         frontEndWorkspaceModel.setWorkspace(workspaceToBeLoaded);
@@ -501,6 +501,30 @@ public class AppController extends Stage implements Initializable{
         
         refreshGuestList();
         
+    }
+    
+    private void reloadCurrentWorkspace(){
+        Workspace workspaceToBeLoaded=currentWorkspace;
+        if(workspaceToBeLoaded==null) return;
+        WorkspaceModel frontEndWorkspaceModel=new WorkspaceModel(model);
+        frontEndWorkspaceModel.setId(workspaceToBeLoaded.getId());
+        frontEndWorkspaceModel.setName(workspaceToBeLoaded.getName());
+        frontEndWorkspaceModel.setWorkspace(workspaceToBeLoaded);
+        WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
+        currentWorkspaceController=frontEndWorkspaceView.getController();
+        frontEndWorkspaceView.getController().setLoading(true);
+       
+        
+        
+        basePane.getChildren().add(frontEndWorkspaceView);
+        previousUser=currentUser;
+        logout();
+        currentWorkspace=workspaceToBeLoaded;
+        enableButtons.set(true);
+        login();
+        this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        
+        refreshGuestList();
     }
 
     @FXML
@@ -891,7 +915,7 @@ public class AppController extends Stage implements Initializable{
                 
          projectLabel.setText(AppProperties.getProject());
          ownerLabel.setText("");
-         
+         model.reloadProperty().addListener(WORKSPACE_RELOAD_LISTENER);
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
         //createUserButton();
@@ -1264,5 +1288,11 @@ public class AppController extends Stage implements Initializable{
         }
     };
     
-    
+    private ChangeListener<Boolean> WORKSPACE_RELOAD_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                reloadCurrentWorkspace();
+                
+        }
+    };
 }
