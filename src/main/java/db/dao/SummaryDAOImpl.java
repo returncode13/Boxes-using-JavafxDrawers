@@ -266,14 +266,19 @@ public class SummaryDAOImpl implements  SummaryDAO{
          Session session=HibernateUtil.getSessionFactory().openSession();
          Transaction transaction=null;
          List<Summary> result=null;
-         
+         String hql="Select s from Summary s where s.subsurface =:s and s.job =:j";
          try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Summary.class);
+            /*Criteria criteria=session.createCriteria(Summary.class);
             criteria.add(Restrictions.eq("subsurface", subsurface));
             criteria.add(Restrictions.eq("job", job));
-            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            result=criteria.list();
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);*/
+                
+                Query query=session.createQuery(hql);
+                query.setParameter("s", subsurface);
+                query.setParameter("j", job);
+                result=query.list();
+           // result=criteria.list();
             
              System.out.println("db.dao.SummaryDAOImpl.getSummaryFor(): For job: "+job.getNameJobStep()+ " and subsurface: "+subsurface.getSubsurface()+" No of existing Summaries found : "+result.size());
             transaction.commit();

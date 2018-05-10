@@ -301,9 +301,6 @@ public class TraceCellController {
      
      
        private void labelColorForSub(){
-           
-           
-           
            String color=new String();
            if(model.isActive()){
                model.calculateCellState();
@@ -320,9 +317,8 @@ public class TraceCellController {
      
         }
        
+       
        private void labelColorForSeq(){
-          
-           
            String color=new String();
            if(model.isActive()){
                

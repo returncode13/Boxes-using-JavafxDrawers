@@ -20,6 +20,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellMode
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel;
 import fend.summary.SummaryModel;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -44,6 +46,8 @@ public class JobSummaryModel {
     private final BooleanProperty showOverride = new SimpleBooleanProperty();
     boolean isParent=false;
     boolean isChild=false;
+    private Executor exec;
+    
     /* private TimeCellModel feModelTimeCellModel;                             //these are front end models. these are the ones that are updated for the UI. (colors) etc whenever the db is updated. Find a way to get rid of these.
     private TraceCellModel feModelTraceCellModel;
     
@@ -71,6 +75,12 @@ public class JobSummaryModel {
         ioCellModell=new IOCellModel();
         ioCellModell.setJobSummaryModel(this);
         this.query.addListener(QUERY_LISTENER);
+        
+        exec=Executors.newCachedThreadPool(r->{
+        Thread t=new Thread(r);
+        t.setDaemon(true);
+        return t;
+        });
     }
     
     public SummaryModel getSummaryModel() {
@@ -222,6 +232,7 @@ public class JobSummaryModel {
                 JobSummaryModel.this.getTimeCellModel().setInheritedTimeOverride(x.hasInheritedTimeOverride());
                 JobSummaryModel.this.getTimeCellModel().setOverridenTimeFail(x.hasOverridenTimeFail());
                 JobSummaryModel.this.getTimeCellModel().setWarningForTime(x.hasWarningForTime());
+                timeCellModel.calculateCellState();
                 JobSummaryModel.this.getTimeCellModel().setQuery(!JobSummaryModel.this.getTimeCellModel().isQuery());                    //trigger the labelColors Call in the cells controller
 
                 //trace
@@ -230,6 +241,7 @@ public class JobSummaryModel {
                 JobSummaryModel.this.getTraceCellModel().setInheritedTraceOverride(x.hasInheritedTraceOverride());
                 JobSummaryModel.this.getTraceCellModel().setOverridenTraceFail(x.hasOverridenTraceFail());
                 JobSummaryModel.this.getTraceCellModel().setWarningForTrace(x.hasWarningForTrace());
+                traceCellModel.calculateCellState();
                 JobSummaryModel.this.getTraceCellModel().setQuery(!JobSummaryModel.this.getTraceCellModel().isQuery());                 //trigger the labelColors Call in the cells controller
 
                 //qc
@@ -238,6 +250,7 @@ public class JobSummaryModel {
                 JobSummaryModel.this.getQcCellModel().setInheritedQcOverride(x.hasInheritedQcOverride());
                 JobSummaryModel.this.getQcCellModel().setOverridenQcFail(x.hasOverridenQcFail());
                 JobSummaryModel.this.getQcCellModel().setWarningForQc(x.hasWarningForQc());
+                qcCellModel.calculateCellState();
                 JobSummaryModel.this.getQcCellModel().setQuery(!JobSummaryModel.this.getQcCellModel().isQuery());                      //trigger the labelColors Call in the cells controller
                 //insight
                 JobSummaryModel.this.getInsightCellModel().setFailedInsightDependency(x.hasFailedInsightDependency());
@@ -245,49 +258,23 @@ public class JobSummaryModel {
                 JobSummaryModel.this.getInsightCellModel().setInheritedInsightOverride(x.hasInheritedInsightOverride());
                 JobSummaryModel.this.getInsightCellModel().setOverridenInsightFail(x.hasOverridenInsightFail());
                 JobSummaryModel.this.getInsightCellModel().setWarningForInsight(x.hasWarningForInsight());
-                JobSummaryModel.this.getInsightCellModel().setQuery(!JobSummaryModel.this.getInsightCellModel().isQuery());//trigger the labelColors Call in the cells controller
+                insightCellModel.calculateCellState();
+                JobSummaryModel.this.getInsightCellModel().setQuery(!JobSummaryModel.this.getInsightCellModel().isQuery());        //trigger the labelColors Call in the cells controller
+                
                 //io
                 JobSummaryModel.this.getIoCellModel().setFailedIoDependency(x.hasFailedIoDependency());
                 JobSummaryModel.this.getIoCellModel().setInheritedIoFail(x.hasInheritedIoFail());
                 JobSummaryModel.this.getIoCellModel().setInheritedIoOverride(x.hasInheritedIoOverride());
                 JobSummaryModel.this.getIoCellModel().setOverridenIoFail(x.hasOverridenIoFail());
                 JobSummaryModel.this.getIoCellModel().setWarningForIo(x.hasWarningForIo());
+                ioCellModell.calculateCellState();
                 JobSummaryModel.this.getIoCellModel().setQuery(!JobSummaryModel.this.getIoCellModel().isQuery());//trigger the labelColors Call in the cells controller
 
             }else{                                      //for sequences
               //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: toggling QUERY_LISTENER for the cells  in job:  "+job.getNameJobStep()+" for seq :"+sequence.getSequenceno());
                 List<Summary> xs = summaryService.getSummariesForJobSeq(job, sequence);
                 
-                /* timeCellModel.setFailedTimeDependency(false);
-                timeCellModel.setInheritedTimeFail(false);
-                timeCellModel.setInheritedTimeOverride(false);
-                timeCellModel.setOverridenTimeFail(false);
-                timeCellModel.setWarningForTime(false);
-                
-                traceCellModel.setFailedTraceDependency(false);
-                traceCellModel.setInheritedTraceFail(false);
-                traceCellModel.setInheritedTraceOverride(false);
-                traceCellModel.setOverridenTraceFail(false);
-                traceCellModel.setWarningForTrace(false);
-                
-                qcCellModel.setFailedQcDependency(false);
-                qcCellModel.setInheritedQcFail(false);
-                qcCellModel.setInheritedQcOverride(false);
-                qcCellModel.setOverridenQcFail(false);
-                qcCellModel.setWarningForQc(false);
-                
-                insightCellModel.setFailedInsightDependency(false);
-                insightCellModel.setInheritedInsightFail(false);
-                insightCellModel.setInheritedInsightOverride(false);
-                insightCellModel.setOverridenInsightFail(false);
-                insightCellModel.setWarningForInsight(false);
-                
-                
-                ioCellModell.setFailedIoDependency(false);
-                ioCellModell.setInheritedIoFail(false);
-                ioCellModell.setInheritedIoOverride(false);
-                ioCellModell.setOverridenIoFail(false);
-                ioCellModell.setWarningForIo(false);*/
+               
                 
                 
                 boolean timeFail=false;
@@ -323,7 +310,7 @@ public class JobSummaryModel {
                
                 for(Summary x:xs){
                     
-                    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: summary sub : "+x.getSubsurface().getSubsurface());
+                  //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel.: summary sub : "+x.getSubsurface().getSubsurface());
                     CellState subTimecellState=figureCellState(timeCellModel, x);
                     
                         timeFail=timeFail || (subTimecellState == CellState.FAILED);
@@ -470,27 +457,27 @@ public class JobSummaryModel {
                 cellModel.setCellHasFailedDependency(true);
                 cellModel.setCellHasOverridenFail(false);
             }
-            if(cs == CellState.INHERITED_FAIL){
+            else if(cs == CellState.INHERITED_FAIL){
                 cellModel.setCellHasFailedDependency(false);
                 cellModel.setCellHasInheritedFail(true);
             }
-            if(cs == CellState.OVERRIDE){
+            else if(cs == CellState.OVERRIDE){
                 cellModel.setCellHasFailedDependency(true);
                 cellModel.setCellHasOverridenFail(true);
                 cellModel.setCellHasInheritedFail(false);
             }
-            if(cs == CellState.INHERITED_OVERRIDE){
+            else if(cs == CellState.INHERITED_OVERRIDE){
                 cellModel.setCellHasFailedDependency(false);
                 cellModel.setCellHasInheritedFail(false);
                 cellModel.setCellHasInheritedOverride(true);
             }
-            if(cs == CellState.WARNING){
+            else if(cs == CellState.WARNING){
                 cellModel.setCellHasFailedDependency(false);
                 cellModel.setCellHasInheritedFail(false);
                 cellModel.setCellHasInheritedOverride(false);
                 cellModel.setCellHasWarning(true);
             }
-            if(cs == CellState.GOOD){
+            else if(cs == CellState.GOOD){
                 cellModel.setCellHasFailedDependency(false);
                 cellModel.setCellHasInheritedFail(false);
                 cellModel.setCellHasInheritedOverride(false);

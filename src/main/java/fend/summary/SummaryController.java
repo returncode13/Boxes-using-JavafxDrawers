@@ -48,8 +48,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -58,8 +61,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
@@ -93,21 +98,32 @@ public class SummaryController extends Stage{
     private DoubtType inheritanceDoubtType;
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
+    private Executor exec;
     // @FXML
    // private TableView<SequenceSummary> table;
     
      @FXML
     private TreeTableView<SequenceSummary> treetable;
     
+  List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
+   TreeTableColumn<SequenceSummary,Long> seqTableColumn=new TreeTableColumn<>("seq");
+    TreeTableColumn<SequenceSummary,String> subsurfaceTableColumn=new TreeTableColumn<>("subsurface");
+    List<TreeItem<SequenceSummary>> treeSeq=new ArrayList<>();
   
-     void setModel(SummaryModel model){
+     void setModel(SummaryModel mod){
          treetable.onSortProperty().addListener((observable) -> {
+             System.out.println("fend.summary.SummaryController.setModel(): table sorting!" );
              treetable.refresh();
          });
          
+          exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
          
          
-         this.model=model;
+         this.model=mod;
          
          timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
          traceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
@@ -119,16 +135,21 @@ public class SummaryController extends Stage{
 
          
          Map<Sequence,SequenceSummary> seqSummaryMap=new HashMap<>();
-        
+         
+        Task<String> summaryTask = new Task<String>() {
+            @Override
+            protected String call() throws Exception {
+               
+       
          model.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
          try {
-              this.model.getWorkspaceController().summarizeOne();
+              model.getWorkspaceController().summarizeOne();
         } catch (Exception ex) {
             Logger.getLogger(SummaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
          
          
-         Workspace workspace=this.model.getWorkspaceController().getModel().getWorkspace();
+         Workspace workspace=model.getWorkspaceController().getModel().getWorkspace();
         
                     System.out.println("fend.summary.SummaryController.setModel(): building summary table");
 
@@ -139,20 +160,20 @@ public class SummaryController extends Stage{
         // System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the doubtstatus map");
         
                    
-                    Workspace dbWorkspace=workspaceService.getWorkspace(model.getWorkspaceController().getModel().getId());
+                    Workspace dbWorkspace=workspaceService.getWorkspace(mod.getWorkspaceController().getModel().getId());
                     List<Long> depths=jobService.getDepthOfGraph(dbWorkspace);
                     Set<Job> allJobsInWorkspace=new HashSet<>(jobService.listJobs(dbWorkspace));
                     Map<Long,List<JobSummaryModel>> depthJobMap=new HashMap<>();
                     for(Job job:allJobsInWorkspace){
                         if(depthJobMap.containsKey(job.getDepth())){
-                            JobSummaryModel jsm=new JobSummaryModel(this.model);
+                            JobSummaryModel jsm=new JobSummaryModel(model);
                            
                             jsm.setActive(false);
                             jsm.setJob(job);
                             depthJobMap.get(job.getDepth()).add(jsm);
                         }else{
                             depthJobMap.put(job.getDepth(), new ArrayList<>());
-                            JobSummaryModel jsm=new JobSummaryModel(this.model);
+                            JobSummaryModel jsm=new JobSummaryModel(model);
                             jsm.setActive(false);
                             jsm.setJob(job);
                             depthJobMap.get(job.getDepth()).add(jsm);
@@ -267,6 +288,8 @@ public class SummaryController extends Stage{
                         seqJsm.getTimeCellModel().setInheritedTimeOverride(seqJsm.getTimeCellModel().cellHasInheritedOverride()||x.hasInheritedTimeOverride());
                         seqJsm.getTimeCellModel().setOverridenTimeFail(seqJsm.getTimeCellModel().cellHasOverridenFail()||x.hasOverridenTimeFail());
                         seqJsm.getTimeCellModel().setWarningForTime(seqJsm.getTimeCellModel().cellHasWarning()||x.hasWarningForTime());
+                        seqJsm.getTimeCellModel().calculateCellState();
+                        
                         //<-- End Time
                         
                         //<--Start Trace
@@ -276,6 +299,7 @@ public class SummaryController extends Stage{
                         seqJsm.getTraceCellModel().setInheritedTraceOverride(seqJsm.getTraceCellModel().cellHasInheritedOverride()||x.hasInheritedTraceOverride());
                         seqJsm.getTraceCellModel().setOverridenTraceFail(seqJsm.getTraceCellModel().cellHasOverridenFail()||x.hasOverridenTraceFail());
                         seqJsm.getTraceCellModel().setWarningForTrace(seqJsm.getTraceCellModel().cellHasWarning()||x.hasWarningForTrace());
+                        seqJsm.getTraceCellModel().calculateCellState();
                         //<--End Trace
                         
                         //<--Start Qc
@@ -285,6 +309,7 @@ public class SummaryController extends Stage{
                         seqJsm.getQcCellModel().setInheritedQcOverride(seqJsm.getQcCellModel().cellHasInheritedOverride()||x.hasInheritedQcOverride());
                         seqJsm.getQcCellModel().setOverridenQcFail(seqJsm.getQcCellModel().cellHasOverridenFail()||x.hasOverridenQcFail());
                         seqJsm.getQcCellModel().setWarningForQc(seqJsm.getQcCellModel().cellHasWarning()||x.hasWarningForQc());
+                        seqJsm.getQcCellModel().calculateCellState();
                         //<--End Qc
                         
                         //<--Start Insight
@@ -294,6 +319,7 @@ public class SummaryController extends Stage{
                         seqJsm.getInsightCellModel().setInheritedInsightOverride(seqJsm.getInsightCellModel().cellHasInheritedOverride()||x.hasInheritedInsightOverride());
                         seqJsm.getInsightCellModel().setOverridenInsightFail(seqJsm.getInsightCellModel().cellHasOverridenFail()||x.hasOverridenInsightFail());
                         seqJsm.getInsightCellModel().setWarningForInsight(seqJsm.getInsightCellModel().cellHasWarning()||x.hasWarningForInsight());
+                        seqJsm.getInsightCellModel().calculateCellState();
                         //<--End Insight
                         
                         
@@ -304,6 +330,7 @@ public class SummaryController extends Stage{
                         seqJsm.getIoCellModel().setInheritedIoOverride(seqJsm.getIoCellModel().cellHasInheritedOverride() || x.hasInheritedIoOverride());
                         seqJsm.getIoCellModel().setOverridenIoFail(seqJsm.getIoCellModel().cellHasOverridenFail() || x.hasOverridenIoFail());
                         seqJsm.getIoCellModel().setWarningForIo(seqJsm.getIoCellModel().cellHasWarning() || x.hasWarningForIo());
+                        seqJsm.getIoCellModel().calculateCellState();
                         //<--End IO
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
@@ -322,6 +349,7 @@ public class SummaryController extends Stage{
                         jsm.getTimeCellModel().setInheritedTimeOverride(x.hasInheritedTimeOverride());
                         jsm.getTimeCellModel().setOverridenTimeFail(x.hasOverridenTimeFail());
                         jsm.getTimeCellModel().setWarningForTime(x.hasWarningForTime());
+                        jsm.getTimeCellModel().calculateCellState();
                         //<--End Time
                         
                         //<--Start Trace
@@ -331,6 +359,7 @@ public class SummaryController extends Stage{
                         jsm.getTraceCellModel().setInheritedTraceOverride(x.hasInheritedTraceOverride());
                         jsm.getTraceCellModel().setOverridenTraceFail(x.hasOverridenTraceFail());
                         jsm.getTraceCellModel().setWarningForTrace(x.hasWarningForTrace());
+                        jsm.getTraceCellModel().calculateCellState();
                         //<--End Trace
                         
                         //<--Start Qc
@@ -340,6 +369,7 @@ public class SummaryController extends Stage{
                         jsm.getQcCellModel().setInheritedQcOverride(x.hasInheritedQcOverride());
                         jsm.getQcCellModel().setOverridenQcFail(x.hasOverridenQcFail());
                         jsm.getQcCellModel().setWarningForQc(x.hasWarningForQc());
+                        jsm.getQcCellModel().calculateCellState();
                         //<--End Qc
                         
                         
@@ -350,6 +380,7 @@ public class SummaryController extends Stage{
                         jsm.getInsightCellModel().setInheritedInsightOverride(x.hasInheritedInsightOverride());
                         jsm.getInsightCellModel().setOverridenInsightFail(x.hasOverridenInsightFail());
                         jsm.getInsightCellModel().setWarningForInsight(x.hasWarningForInsight());
+                        jsm.getInsightCellModel().calculateCellState();
                         //<--End Insight
                         
                         //<--Start IO
@@ -359,6 +390,7 @@ public class SummaryController extends Stage{
                         jsm.getIoCellModel().setInheritedIoOverride(x.hasInheritedIoOverride());
                         jsm.getIoCellModel().setOverridenIoFail(x.hasOverridenIoFail());
                         jsm.getIoCellModel().setWarningForIo(x.hasWarningForIo());
+                        jsm.getIoCellModel().calculateCellState();
                         //<--End IO
                         
                       
@@ -371,7 +403,7 @@ public class SummaryController extends Stage{
                     
                 
                  
-                 List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
+              //   List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
                  
         for(Depth depth: depthForColumns){
             TreeTableColumn<SequenceSummary,Depth> depthColumn = new TreeTableColumn<>("Depth: "+depth.getDepth()+"");
@@ -463,7 +495,7 @@ public class SummaryController extends Stage{
         
         
         
-        TreeTableColumn<SequenceSummary,Long> seqTableColumn=new TreeTableColumn<>("seq");
+       // TreeTableColumn<SequenceSummary,Long> seqTableColumn=new TreeTableColumn<>("seq");
         seqTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Long>, ObservableValue<Long>>() {
             @Override
             public ObservableValue<Long> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Long> param) {
@@ -471,7 +503,7 @@ public class SummaryController extends Stage{
             }
         });
         
-        TreeTableColumn<SequenceSummary,String> subsurfaceTableColumn=new TreeTableColumn<>("subsurface");
+       
         subsurfaceTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceSummary, String> param) {
@@ -483,7 +515,7 @@ public class SummaryController extends Stage{
         });
         
         
-        List<TreeItem<SequenceSummary>> treeSeq=new ArrayList<>();
+        
         
          for (Map.Entry<Sequence, SequenceSummary> entry : seqSummaryMap.entrySet()) {
              Sequence seq = entry.getKey();
@@ -505,10 +537,27 @@ public class SummaryController extends Stage{
         
        
         
-        this.model.setSequenceSummaryMap(seqSummaryMap);
-       
-       
-        treetable.getColumns().add(seqTableColumn);
+        model.setSequenceSummaryMap(seqSummaryMap);
+        
+        
+                return "Finished summary db ops for workspace ";
+                
+                
+            }
+        };
+
+        summaryTask.setOnFailed(e -> {
+            summaryTask.getException().printStackTrace();
+        });
+
+        summaryTask.setOnRunning(e -> {
+            System.out.println("fend.workspace.WorkspaceController.summaryOne(): Summary db operations running in the background thread");
+            treetable.setPlaceholder(new ProgressBar(-1.0));
+        });
+
+        summaryTask.setOnSucceeded(e -> {
+           // summaryView = new SummaryView(summaryModel);
+           treetable.getColumns().add(seqTableColumn);
         treetable.getColumns().add(subsurfaceTableColumn);
         treetable.getColumns().addAll(depthColumns);
         TreeItem<SequenceSummary> root=new TreeItem<>();
@@ -517,11 +566,23 @@ public class SummaryController extends Stage{
         treetable.setRoot(root);
         treetable.setShowRoot(false);
         treetable.getSelectionModel().setCellSelectionEnabled(true);
+           treetable.refresh();
+
+        });
+        exec.execute(summaryTask);
+       
+        
                     
      }
      
      
+     /* private BooleanProperty showProperty=new SimpleBooleanProperty(false);
+     private ChangeListener<Boolean>  SHOW_LISTENER=new ChangeListener<Boolean>() {
+     @Override
+     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
      
+     }
+     };*/
      
      
      

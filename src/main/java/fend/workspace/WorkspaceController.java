@@ -1835,10 +1835,14 @@ public class WorkspaceController {
          */
         summaryDatabaseOperations();
        
+
+        
+       
         
         
         
     }
+   
     private PheaderService pheaderService=new PheaderServiceImpl();
     private LogService logservice=new LogServiceImpl();
     
@@ -2862,7 +2866,7 @@ public class WorkspaceController {
                         }
             }
             
-            System.out.println("fend.workspace.WorkspaceController.populateSummaries(): for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
+            /*System.out.println("fend.workspace.WorkspaceController.populateSummaries(): for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
             System.out.println("failedTimeDependency:     "+summary.hasFailedTimeDependency());
             System.out.println("hasInheritedTimeFail:     "+summary.hasInheritedTimeFail());
             System.out.println("hasInheritedTimeOVerride: "+summary.hasInheritedTimeOverride());
@@ -2893,7 +2897,7 @@ public class WorkspaceController {
             System.out.println("hasInheritedIOFail:     "+summary.hasInheritedIoFail());
             System.out.println("hasInheritedIOoVerride: "+summary.hasInheritedIoOverride());
             System.out.println("hasOverridenIOFail:     "+summary.hasOverridenIoFail());
-            System.out.println("hasIOWarning:           "+summary.hasWarningForIo());
+            System.out.println("hasIOWarning:           "+summary.hasWarningForIo());*/
         }
     }
     

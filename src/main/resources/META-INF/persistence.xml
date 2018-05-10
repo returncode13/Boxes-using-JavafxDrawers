@@ -9,7 +9,7 @@
       <property name="javax.persistence.jdbc.password" value=""/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
      <property name="hibernate.hbm2ddl.auto" value="update"/>  <!----><!--  USe this to when creating new tables disable the line above..javax.persistence.schema...action..value=create-->
-   
+     <property name="hibernate.jdbc.batch_size" value="1000"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -19,7 +19,7 @@ public class AppProperties {
     public static String DEVELOPER_MODE="DEVELOPER";
     public static String OFFICE_MODE="OFFICE";
     public static String PRODUCTION_MODE="PRODUCTION";
-    public static final String VERSION="Internal-19.0.1";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="Internal-29.1.1";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
@@ -39,7 +39,7 @@ public class AppProperties {
     private String irdbHost=new String("no host assigned");
     private static User currentUser;
         
-    public static int BULK_TRANSACTION_BATCH_SIZE=1000;                            //control for batch processing.
+    public static int BULK_TRANSACTION_BATCH_SIZE=1000;                            //control for batch processing.   see persistence.xml. the two values HAVE to be the same
     public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
     
     

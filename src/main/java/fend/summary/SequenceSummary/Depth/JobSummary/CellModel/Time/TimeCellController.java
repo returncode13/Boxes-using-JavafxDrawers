@@ -55,12 +55,7 @@ public class TimeCellController {
         if(model.getJobSummaryModel().getSubsurface()!=null){
             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
-            /*System.out.println("doubt   : "+model.cellHasDoubt());
-            System.out.println("state   : "+model.getState());
-            System.out.println("inherit : "+model.isInheritance());
-            System.out.println("override: "+model.isOverride());
-            System.out.println("query   : "+model.isQuery());
-            System.out.println("showOver: "+model.isShowOverride());*/
+           
             System.out.println("failedDependency:     "+model.cellHasFailedDependency());
             System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
             System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
@@ -83,7 +78,7 @@ public class TimeCellController {
        
          if(model.isActive()){
         timeLabel.setDisable(false);
-            model.getJobSummaryModel().toggleQuery();                 //This call has only been left ON HERE . in the Time Cell controller. toggling the job Summary model requires the summaries for all doubttypes (time.trace.qc.insight.io) resulting in multiple db queries for the same object
+         //   model.getJobSummaryModel().toggleQuery();                 //This call has only been left ON HERE . in the Time Cell controller. toggling the job Summary model requires the summaries for all doubttypes (time.trace.qc.insight.io) resulting in multiple db queries for the same object
         }else{
         timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
         timeLabel.setDisable(true);
@@ -311,7 +306,7 @@ public class TimeCellController {
           String color=new String();
           
            if(model.isActive()){
-               model.calculateCellState();
+             //  model.calculateCellState();
                if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
                else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
                else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
