@@ -5,8 +5,6 @@
  */
 package fend.job.table.lineTable;
 
-import com.jfoenix.controls.JFXTreeTableRow;
-import com.jfoenix.controls.JFXTreeTableView;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
@@ -50,6 +48,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -73,7 +72,7 @@ public class LineTableController extends Stage{
     private LogService logservice=new LogServiceImpl();
     private boolean multipleSubsPresent=false;
      @FXML
-    private JFXTreeTableView<SequenceHeaders> treetableView;
+    private TreeTableView<SequenceHeaders> treetableView;
 
     
         TreeTableColumn<SequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("SEQUENCE");
@@ -133,7 +132,7 @@ public class LineTableController extends Stage{
          contextMenu.getItems().add(showLogsMenuItem);
          contextMenu.getItems().add(showWorkFlowVersion); 
          
-         JFXTreeTableRow<SequenceHeaders> row=new JFXTreeTableRow<SequenceHeaders>(){
+         TreeTableRow<SequenceHeaders> row=new TreeTableRow<SequenceHeaders>(){
              
              
              

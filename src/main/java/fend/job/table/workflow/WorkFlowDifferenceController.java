@@ -173,8 +173,8 @@ public class WorkFlowDifferenceController extends Stage{
        File lhsWk=File.createTempFile("lhsWk", ".sh");
        Workflow lhsWorkflow=mapOfVersionsVersusWorkflows.get(lhs);
        BufferedWriter bw = new BufferedWriter(new FileWriter(lhsWk));
-        System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): LHS CONTENTS: ");
-        System.out.println(""+lhsWorkflow.getContents());
+       // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): LHS CONTENTS: ");
+       // System.out.println(""+lhsWorkflow.getContents());
        bw.write(lhsWorkflow.getContents());
        bw.close();
        
@@ -182,16 +182,16 @@ public class WorkFlowDifferenceController extends Stage{
        File rhsWk=File.createTempFile("rhsWk", ".sh");
        Workflow rhsWorkflow=mapOfVersionsVersusWorkflows.get(rhs);
        BufferedWriter brw = new BufferedWriter(new FileWriter(rhsWk));
-       System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): RHS CONTENTS: ");
-        System.out.println(""+rhsWorkflow.getContents());
+       //System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): RHS CONTENTS: ");
+       // System.out.println(""+rhsWorkflow.getContents());
        brw.write(rhsWorkflow.getContents());
        brw.close();
        
        
        
-        System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute LHS PATH: "+lhsWk.getAbsolutePath());
-        System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute RHS PATH: "+rhsWk.getAbsolutePath());
-        System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute SCR PATH: "+dugioScripts.getWorkflowDifference().getAbsolutePath());
+       // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute LHS PATH: "+lhsWk.getAbsolutePath());
+       // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute RHS PATH: "+rhsWk.getAbsolutePath());
+       // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute SCR PATH: "+dugioScripts.getWorkflowDifference().getAbsolutePath());
         String contents=new String("");
             Process process=new ProcessBuilder(dugioScripts.getWorkflowDifference().getAbsolutePath(),lhsWk.getAbsolutePath(),rhsWk.getAbsolutePath()).start();
             InputStream is = process.getInputStream();
@@ -202,8 +202,8 @@ public class WorkFlowDifferenceController extends Stage{
                 val+=contents;
                 val+="\n";
             };
-            System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() val     "+val);
-            System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() contents "+contents);
+           // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() val     "+val);
+           // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() contents "+contents);
                 
             lhsWk.deleteOnExit();
             rhsWk.deleteOnExit();

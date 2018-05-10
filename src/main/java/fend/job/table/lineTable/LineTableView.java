@@ -25,7 +25,7 @@ public class LineTableView extends AnchorPane{
     
     public LineTableView(LineTableModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/lineTable/linetable.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/lineTable/linetable_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
