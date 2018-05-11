@@ -14,6 +14,7 @@ import app.settings.ssh.SShSettings;
 import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
 import com.jfoenix.controls.JFXTextArea;
+import db.model.DoubtType;
 import db.model.Job;
 import db.model.NodeProperty;
 import db.model.NodePropertyValue;
@@ -22,6 +23,8 @@ import db.model.PropertyType;
 import db.model.User;
 import db.model.UserWorkspace;
 import db.model.Workspace;
+import db.services.DoubtTypeService;
+import db.services.DoubtTypeServiceImpl;
 import db.services.NodePropertyService;
 import db.services.NodePropertyServiceImpl;
 import db.services.NodeTypeService;
@@ -109,6 +112,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import middleware.doubt.DoubtStatusModel;
+import middleware.doubt.DoubtTypeModel;
 
 /**
  *
@@ -802,7 +807,7 @@ public class AppController extends Stage implements Initializable{
                     checkForJobPropertiesForJobType(JobType0Model.TEXT);
                     checkForJobPropertiesForJobType(JobType0Model.SEGY);
                     
-                    
+                    checkForDoubtTypes();
                
         
                     
@@ -811,6 +816,47 @@ public class AppController extends Stage implements Initializable{
                 }else{
                     enableButtons.set(false);
                     return;
+                }
+            }
+            
+            
+            
+            /**
+             * Check if the doubt types exist
+             * If they dont exist then create
+             * 
+             **/
+            private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
+            private void checkForDoubtTypes(){
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME)==null){
+                    DoubtType time=new DoubtType();
+                    time.setName(DoubtTypeModel.TIME);
+                    doubtTypeService.createDoubtType(time);
+                }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES)==null){
+                    DoubtType traces=new DoubtType();
+                    traces.setName(DoubtTypeModel.TRACES);
+                    doubtTypeService.createDoubtType(traces);
+                }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC)==null){
+                    DoubtType qc=new DoubtType();
+                    qc.setName(DoubtTypeModel.QC);
+                    doubtTypeService.createDoubtType(qc);
+                }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT)==null){
+                    DoubtType insight=new DoubtType();
+                    insight.setName(DoubtTypeModel.INSIGHT);
+                    doubtTypeService.createDoubtType(insight);
+                }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.IO)==null){
+                    DoubtType io=new DoubtType();
+                    io.setName(DoubtTypeModel.IO);
+                    doubtTypeService.createDoubtType(io);
+                }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT)==null){
+                    DoubtType inherit=new DoubtType();
+                    inherit.setName(DoubtTypeModel.INHERIT);
+                    doubtTypeService.createDoubtType(inherit);
                 }
             }
             

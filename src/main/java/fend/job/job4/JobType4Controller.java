@@ -734,6 +734,7 @@ parent.addChild(model);*/
               for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());
             if(dot.canBeDeleted()){ //if dot no longer has any links then its candidate for delete
+                 doubtService.deleteAllDoubtsRelatedTo(dot);
             System.out.println("fend.job.job1.JobType1Controller.deleteLinksBelongingtoCurrentJob(): deleting dot "+dot.getId());
             dotService.deleteDot(dot.getId());
             }else{

@@ -164,6 +164,16 @@ public class DoubtServiceImpl implements DoubtService{
         dsDAO.deleteAllDoubtsRelatedTo(job);
     }
 
+    @Override
+    public void deleteAllDoubtsRelatedTo(Dot dot) {
+        dsDAO.deleteAllDoubtsRelatedTo(dot);
+    }
+
+    @Override
+    public void deleteAllDoubtsRelatedTo(Link link) {
+        dsDAO.deleteAllDoubtsRelatedTo(link);
+    }
+
     
     
 }

@@ -886,6 +886,7 @@ public class JobType5Controller implements JobType0Controller{
               for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());
             if(dot.canBeDeleted()){ //if dot no longer has any links then its candidate for delete
+                 doubtService.deleteAllDoubtsRelatedTo(dot);
             System.out.println("fend.job.job5.JobType5Controller.deleteLinksBelongingtoCurrentJob(): deleting dot "+dot.getId());
             dotService.deleteDot(dot.getId());
             }else{

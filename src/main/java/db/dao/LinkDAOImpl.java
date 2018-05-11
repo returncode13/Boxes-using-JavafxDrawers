@@ -6,6 +6,7 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Dot;
 import db.model.Job;
 import db.model.Link;
@@ -20,6 +21,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -228,9 +231,10 @@ public class LinkDAOImpl implements LinkDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Link> result=null;
-        String hql="from Link l where l.dot = :d";
+        String hql="Select l from Link l where l.dot =:d";
          try{
             transaction=session.beginTransaction();
+             System.out.println("db.dao.LinkDAOImpl.getLinksForDot() starting query @ "+timeNow());
             Query query=session.createQuery(hql);
             query.setParameter("d", dbDot);
             //query.setParameter("subq", sub);
@@ -242,6 +246,7 @@ public class LinkDAOImpl implements LinkDAO{
         }finally{
             session.close();
         }
+         System.out.println("db.dao.LinkDAOImpl.getLinksForDot(): returning results @ "+timeNow());
         return result;
     }
 
@@ -366,5 +371,9 @@ public class LinkDAOImpl implements LinkDAO{
         return result;
     }
 
+    
+    private String timeNow() {
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
    
 }

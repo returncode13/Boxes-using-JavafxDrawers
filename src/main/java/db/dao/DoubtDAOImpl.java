@@ -656,7 +656,9 @@ public class DoubtDAOImpl implements DoubtDAO{
             result=query.list();
             
             transaction.commit();
-            System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsJobsAndSubsurfacesFor(): returing "+result.size()+" doubts for workspace "+W.getId()+" type: "+type.getName());
+            System.out.println("db.dao.DoubtDAOImpl.getAllDoubtsJobsAndSubsurfacesFor(): returing "+result.size()+""
+                    + " doubts for workspace "+W.getId()+""
+                            + " type: "+type.getName());
         }catch(Exception e){
             e.printStackTrace();
         }finally{
@@ -807,6 +809,108 @@ public class DoubtDAOImpl implements DoubtDAO{
             
         }catch (Exception e){
             
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void deleteAllDoubtsRelatedTo(Dot dot) {
+        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+       
+        
+        Transaction transaction=null;
+        String hqlSelectCauseIds="Select d.id from Doubt d where d.dot =:dt";       
+        String hqlinheritedDoubtIds="Select d.id from Doubt d where d.doubtCause.id in (:cids)";
+        String hqlDelete="DELETE FROM Doubt d where d.id in (:ids)";
+        try{
+            transaction = session.beginTransaction();
+            Query query1=session.createQuery(hqlSelectCauseIds);
+            query1.setParameter("dt", dot);
+         
+            List<Long> ids=query1.list();
+            System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): Number of cause ids returned: "+ids.size());
+            
+            
+            if(ids.isEmpty()) {
+                transaction.commit();
+                
+            }else{
+                //get inherited ids to delete.
+                Query inhquery=session.createQuery(hqlinheritedDoubtIds);
+                inhquery.setParameterList("cids", ids);
+                List<Long> inhids=inhquery.list();
+                    if(inhids.isEmpty()){
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): no inherited doubts to delete for dot : "+dot.getId());
+                    }else{
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting "+inhids.size()+" inherited doubts related to the dot : "+dot.getId() );
+                        Query inhDel=session.createQuery(hqlDelete);
+                        inhDel.setParameterList("ids", inhids);
+                        int inhRes=inhDel.executeUpdate();
+                    }
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting "+ids.size()+" causes ");
+                Query query2=session.createQuery(hqlDelete);
+                query2.setParameterList("ids", ids);
+                int result2=query2.executeUpdate();
+                transaction.commit();
+            }
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
+    
+    
+    @Override
+    public void deleteAllDoubtsRelatedTo(Link link) {
+        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+       
+        
+        Transaction transaction=null;
+        String hqlSelectCauseIds="Select d.id from Doubt d where d.link =:lk";       
+        String hqlinheritedDoubtIds="Select d.id from Doubt d where d.doubtCause.id in (:cids)";
+        String hqlDelete="DELETE FROM Doubt d where d.id in (:ids)";
+        try{
+            transaction = session.beginTransaction();
+            Query query1=session.createQuery(hqlSelectCauseIds);
+            query1.setParameter("lk", link);
+         
+            List<Long> ids=query1.list();
+            System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): Number of cause ids returned: "+ids.size());
+            
+            
+            if(ids.isEmpty()) {
+                transaction.commit();
+                
+            }else{
+                //get inherited ids to delete.
+                Query inhquery=session.createQuery(hqlinheritedDoubtIds);
+                inhquery.setParameterList("cids", ids);
+                List<Long> inhids=inhquery.list();
+                    if(inhids.isEmpty()){
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): no inherited doubts to delete for link : "+link.getId());
+                    }else{
+                        System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting "+inhids.size()+" inherited doubts related to the link : "+link.getId() );
+                        Query inhDel=session.createQuery(hqlDelete);
+                        inhDel.setParameterList("ids", inhids);
+                        int inhRes=inhDel.executeUpdate();
+                    }
+                    System.out.println("db.dao.DoubtDAOImpl.deleteAllDoubtsRelatedTo(): deleting "+ids.size()+" causes ");
+                Query query2=session.createQuery(hqlDelete);
+                query2.setParameterList("ids", ids);
+                int result2=query2.executeUpdate();
+                transaction.commit();
+            }
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
         }finally{
             session.close();
         }

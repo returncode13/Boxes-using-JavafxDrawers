@@ -20,6 +20,8 @@ import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
 import db.services.DotService;
 import db.services.DotServiceImpl;
+import db.services.DoubtService;
+import db.services.DoubtServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
@@ -324,13 +326,14 @@ public class DotController extends Stage{
             if(model.getStatus().get().equals(DotModel.SPLIT))node.setFill(Color.NAVY);
     }
     
-     private void deleteDotAndLinks() {
+    private void deleteDotAndLinks() {
          /*   Set<JobType0Model> parents=model.getParents();
          Set<JobType0Model> children=model.getChildren();*/
-         
+         deleteDoubtsRelatedToThisDot();
          List<Link> linksBelongingToDot=linkService.getLinksForDot(dbDot);
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting  "+linksBelongingToDot.size()+" link(s) belonging to the dot: "+dbDot.getId());
          for(Link l:linksBelongingToDot){
+             doubtService.deleteAllDoubtsRelatedTo(l);
              linkService.deleteLink(l.getId());
          }
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting variable and arguments related to the dot "+dbDot.getId());
@@ -340,6 +343,13 @@ public class DotController extends Stage{
          
          model.getWorkspaceModel().reload();
             
+    }
+     
+    private DoubtService doubtService=new DoubtServiceImpl();
+    
+    private void deleteDoubtsRelatedToThisDot(){
+        doubtService.deleteAllDoubtsRelatedTo(dbDot);
+         
     }
      
     private void updateDatabaseAndFormulaFieldinModel() {

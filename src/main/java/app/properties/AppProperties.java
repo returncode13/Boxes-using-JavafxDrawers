@@ -39,7 +39,7 @@ public class AppProperties {
     private String irdbHost=new String("no host assigned");
     private static User currentUser;
         
-    public static int BULK_TRANSACTION_BATCH_SIZE=1000;                            //control for batch processing.   see persistence.xml. the two values HAVE to be the same
+    public static int BULK_TRANSACTION_BATCH_SIZE=50;                            //control for batch processing.   see persistence.xml. the two values HAVE to be the same
     public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
     
     

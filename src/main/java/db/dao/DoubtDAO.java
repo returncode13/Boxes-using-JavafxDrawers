@@ -61,5 +61,9 @@ public interface DoubtDAO {
     public void deleteAllInheritedDoubts(Workspace dbWorkspace);
 
     public void deleteAllDoubtsRelatedTo(Job job);                 //delete all causes (l.child=job or l.parent=job) and all inherited doubts from these causes
+
+    public void deleteAllDoubtsRelatedTo(Dot dot);
+    public void deleteAllDoubtsRelatedTo(Link link);                // used in the cases where the doubt exists on the parent and not the child. in such cases the dot belonges to the link originating from the parent , but the dot belongs to the link that ends on the parent
+    
    
 }
