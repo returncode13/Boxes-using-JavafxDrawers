@@ -28,6 +28,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
@@ -49,26 +50,65 @@ public class TraceCellController {
 
     @FXML
     void traceClicked(MouseEvent event) {
-        if(model.getJobSummaryModel().getSubsurface()!=null){
+        
+         if(event.getButton() == MouseButton.SECONDARY){
+             System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.traceClicked(): Showing the override dialog");
+             
+            if(model.getJobSummaryModel().isChild()){
+                System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.traceClicked(): will show the override dialog for "+model.getJobSummaryModel().getSubsurface().getSubsurface());
+                model.getJobSummaryModel().getSummaryModel().setRefreshTable(true);
+                model.setShowOverride(true);
+                
+                /*
+                final ContextMenu contextMenu=new ContextMenu();
+                if( model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+                final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+                overrideMenuItem.setOnAction(e->{
+                System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
+                
+                
+                
+                model.setShowOverride(true);
+                
+                });
+                contextMenu.getItems().add(overrideMenuItem);
+                }
+                contextMenu.show(view, event.getSceneX(), event.getSceneY());*/
+            }
+        }
+         else{
+             
+             if(event.getClickCount() == 2){
+                 System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellController.traceClicked(): Double clicked");
+             }
+             else{
+                  if(model.getJobSummaryModel().getSubsurface()!=null){
             
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
-            System.out.println("active  : "+model.isActive());
-            /*System.out.println("doubt   : "+model.cellHasDoubt());
-            System.out.println("state   : "+model.getState());
-            System.out.println("inherit : "+model.isInheritance());
-            System.out.println("override: "+model.isOverride());
-            System.out.println("query   : "+model.isQuery());
-            System.out.println("showOver: "+model.isShowOverride());*/
-            System.out.println("failedDependency:     "+model.cellHasFailedDependency());
-            System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
-            System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
-            System.out.println("hasOverridenFail:     "+model.cellHasOverridenFail());
-            System.out.println("hasWarning:           "+model.cellHasWarning());
+                    System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TraceCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
+                    System.out.println("active  : "+model.isActive());
+                    /*System.out.println("doubt   : "+model.cellHasDoubt());
+                    System.out.println("state   : "+model.getState());
+                    System.out.println("inherit : "+model.isInheritance());
+                    System.out.println("override: "+model.isOverride());
+                    System.out.println("query   : "+model.isQuery());
+                    System.out.println("showOver: "+model.isShowOverride());*/
+                    System.out.println("failedDependency:     "+model.cellHasFailedDependency());
+                    System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
+                    System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
+                    System.out.println("hasOverridenFail:     "+model.cellHasOverridenFail());
+                    System.out.println("hasWarning:           "+model.cellHasWarning());
+             }
+             
+             
          
             
             
             
-        }
+            }
+         }
+        
+        
+       
             
             
     }

@@ -31,6 +31,7 @@ import db.services.SummaryServiceImpl;
 import db.services.WorkspaceService;
 import db.services.WorkspaceServiceImpl;
 import fend.summary.SequenceSummary.Depth.Depth;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCell.IOCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Insight.InsightCell.InsightCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCell.QcCell;
@@ -111,10 +112,10 @@ public class SummaryController extends Stage{
     List<TreeItem<SequenceSummary>> treeSeq=new ArrayList<>();
   
      void setModel(SummaryModel mod){
-         treetable.onSortProperty().addListener((observable) -> {
-             System.out.println("fend.summary.SummaryController.setModel(): table sorting!" );
-             treetable.refresh();
-         });
+         /* treetable.onSortProperty().addListener((observable) -> {
+         System.out.println("fend.summary.SummaryController.setModel(): table sorting!" );
+         treetable.refresh();
+         });*/
          
           exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
@@ -281,14 +282,15 @@ public class SummaryController extends Stage{
                         seqJsm.setSequence(seq);
                         seqJsm.setIsParent(true);
                         seqJsm.setIsChild(false);
+                        seqJsm.setParent(seqJsm);
                         //<--Start Time
                         seqJsm.getTimeCellModel().setActive(true);                                                                                      
                         seqJsm.getTimeCellModel().setFailedTimeDependency(seqJsm.getTimeCellModel().cellHasFailedDependency()||x.hasFailedTimeDependency());
                         seqJsm.getTimeCellModel().setInheritedTimeFail(seqJsm.getTimeCellModel().cellHasInheritedFail()||x.hasInheritedTimeFail());
                         seqJsm.getTimeCellModel().setInheritedTimeOverride(seqJsm.getTimeCellModel().cellHasInheritedOverride()||x.hasInheritedTimeOverride());
-                        seqJsm.getTimeCellModel().setOverridenTimeFail(seqJsm.getTimeCellModel().cellHasOverridenFail()||x.hasOverridenTimeFail());
+                        seqJsm.getTimeCellModel().setOverridenTimeFail(seqJsm.getTimeCellModel().cellHasOverridenFail()&&x.hasOverridenTimeFail());
                         seqJsm.getTimeCellModel().setWarningForTime(seqJsm.getTimeCellModel().cellHasWarning()||x.hasWarningForTime());
-                        seqJsm.getTimeCellModel().calculateCellState();
+                        
                         
                         //<-- End Time
                         
@@ -299,7 +301,7 @@ public class SummaryController extends Stage{
                         seqJsm.getTraceCellModel().setInheritedTraceOverride(seqJsm.getTraceCellModel().cellHasInheritedOverride()||x.hasInheritedTraceOverride());
                         seqJsm.getTraceCellModel().setOverridenTraceFail(seqJsm.getTraceCellModel().cellHasOverridenFail()||x.hasOverridenTraceFail());
                         seqJsm.getTraceCellModel().setWarningForTrace(seqJsm.getTraceCellModel().cellHasWarning()||x.hasWarningForTrace());
-                        seqJsm.getTraceCellModel().calculateCellState();
+                        
                         //<--End Trace
                         
                         //<--Start Qc
@@ -309,7 +311,7 @@ public class SummaryController extends Stage{
                         seqJsm.getQcCellModel().setInheritedQcOverride(seqJsm.getQcCellModel().cellHasInheritedOverride()||x.hasInheritedQcOverride());
                         seqJsm.getQcCellModel().setOverridenQcFail(seqJsm.getQcCellModel().cellHasOverridenFail()||x.hasOverridenQcFail());
                         seqJsm.getQcCellModel().setWarningForQc(seqJsm.getQcCellModel().cellHasWarning()||x.hasWarningForQc());
-                        seqJsm.getQcCellModel().calculateCellState();
+                        
                         //<--End Qc
                         
                         //<--Start Insight
@@ -319,7 +321,7 @@ public class SummaryController extends Stage{
                         seqJsm.getInsightCellModel().setInheritedInsightOverride(seqJsm.getInsightCellModel().cellHasInheritedOverride()||x.hasInheritedInsightOverride());
                         seqJsm.getInsightCellModel().setOverridenInsightFail(seqJsm.getInsightCellModel().cellHasOverridenFail()||x.hasOverridenInsightFail());
                         seqJsm.getInsightCellModel().setWarningForInsight(seqJsm.getInsightCellModel().cellHasWarning()||x.hasWarningForInsight());
-                        seqJsm.getInsightCellModel().calculateCellState();
+                        
                         //<--End Insight
                         
                         
@@ -330,7 +332,7 @@ public class SummaryController extends Stage{
                         seqJsm.getIoCellModel().setInheritedIoOverride(seqJsm.getIoCellModel().cellHasInheritedOverride() || x.hasInheritedIoOverride());
                         seqJsm.getIoCellModel().setOverridenIoFail(seqJsm.getIoCellModel().cellHasOverridenFail() || x.hasOverridenIoFail());
                         seqJsm.getIoCellModel().setWarningForIo(seqJsm.getIoCellModel().cellHasWarning() || x.hasWarningForIo());
-                        seqJsm.getIoCellModel().calculateCellState();
+                        
                         //<--End IO
                         
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
@@ -342,6 +344,9 @@ public class SummaryController extends Stage{
                         jsm.setSequence(sub.getSequence());
                         jsm.setIsParent(false);
                         jsm.setIsChild(true);
+                        jsm.setParent(seqJsm);
+                        seqJsm.addToChildren(jsm);
+                        
                         //<--Start Time
                         jsm.getTimeCellModel().setActive(true);
                         jsm.getTimeCellModel().setFailedTimeDependency(x.hasFailedTimeDependency());
@@ -393,7 +398,12 @@ public class SummaryController extends Stage{
                         jsm.getIoCellModel().calculateCellState();
                         //<--End IO
                         
-                      
+                        seqJsm.setParentCellState();
+                        /*seqJsm.getTimeCellModel().calculateCellState();
+                        seqJsm.getTraceCellModel().calculateCellState();
+                        seqJsm.getQcCellModel().calculateCellState();
+                        seqJsm.getInsightCellModel().calculateCellState();
+                        seqJsm.getIoCellModel().calculateCellState();*/
                         
                         }
                     
@@ -522,7 +532,7 @@ public class SummaryController extends Stage{
              SequenceSummary seqSummaryRoot = entry.getValue();
              
              TreeItem<SequenceSummary> seqItem=new TreeItem<>(seqSummaryRoot);
-             
+             seqItem.expandedProperty().addListener(REFRESH_TABLE_LISTENER);
                 Map<Subsurface,SequenceSummary> children=seqSummaryRoot.getChildren();
                 for (Map.Entry<Subsurface, SequenceSummary> entry1 : children.entrySet()) {
                  Subsurface key = entry1.getKey();
@@ -566,7 +576,9 @@ public class SummaryController extends Stage{
         treetable.setRoot(root);
         treetable.setShowRoot(false);
         treetable.getSelectionModel().setCellSelectionEnabled(true);
-           treetable.refresh();
+        treetable.setOnSort(ee->{treetable.refresh();});
+        
+          // treetable.refresh();
 
         });
         exec.execute(summaryTask);

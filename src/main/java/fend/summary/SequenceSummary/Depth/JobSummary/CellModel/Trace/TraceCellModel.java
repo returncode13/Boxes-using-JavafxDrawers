@@ -28,7 +28,7 @@ public class TraceCellModel implements CellModel {
 
     
     private JobSummaryModel jobSummaryModel;
-    private final BooleanProperty showOverride = new SimpleBooleanProperty();                                       //used to show the override dialog in the TimeCellController
+    private final BooleanProperty showOverride = new SimpleBooleanProperty(false);                                       //used to show the override dialog in the TimeCellController
     
     private DoubtType cellDoubtType;
 
@@ -80,6 +80,7 @@ public class TraceCellModel implements CellModel {
     }
 
     public void setShowOverride(boolean value) {
+        System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellModel.setShowOverride(): called for "+jobSummaryModel.getSubsurface().getSubsurface());
         showOverride.set(value);
     }
 

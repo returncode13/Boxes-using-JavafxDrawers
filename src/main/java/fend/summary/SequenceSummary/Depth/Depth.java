@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class Depth {
+public class Depth implements Comparable<Depth>{
     private Long  depth; //depth of this column
     //private List<JobSummaryModel> jobSummaries=new ArrayList<>();
     private Map<Job,JobSummaryModel> jobSummaryMap=new HashMap<>();
@@ -55,6 +55,11 @@ public class Depth {
     
     public void addToJobSummaryMap(JobSummaryModel jobSummaryModel){
         this.jobSummaryMap.put(jobSummaryModel.getJob(), jobSummaryModel);
+    }
+
+    @Override
+    public int compareTo(Depth o) {
+        return o.depth.compareTo(depth);
     }
     
     

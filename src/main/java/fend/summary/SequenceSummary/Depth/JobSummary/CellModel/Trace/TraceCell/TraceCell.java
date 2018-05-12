@@ -42,10 +42,16 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
     
     protected void updateItem(Boolean t,boolean empty){
         super.updateItem(t, empty);
-        if(!empty){
+        if(empty||t==null){
+            setGraphic(null);
+        }else{
+            /*
+            }
+            if(!empty){*/
            
             int index=getIndex();
-            TraceCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
+            TraceCellModel tcm=getTreeTableView().getSelectionModel().getModelItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
+           // TraceCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
             
             model=tcm;
@@ -84,20 +90,21 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             }
            // jsm.setFeModelTraceCellModel(model);*/
             
-            final ContextMenu contextMenu=new ContextMenu();
-            if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
-            final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
-            overrideMenuItem.setOnAction(e->{
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.updateItem(): Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
-            
-            
-            
-            model.setShowOverride(true);
-            
-            });
-            contextMenu.getItems().add(overrideMenuItem);
-            }
-            setContextMenu(contextMenu);
+           /*    final ContextMenu contextMenu=new ContextMenu();
+           if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
+           final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+           overrideMenuItem.setOnAction(e->{
+           System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.updateItem(): Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: "+model.getJobSummaryModel().getJob().getNameJobStep());
+           
+           
+           
+           model.setShowOverride(true);
+           
+           
+           });
+           contextMenu.getItems().add(overrideMenuItem);
+           }
+           setContextMenu(contextMenu);*/
             
             setGraphic(view);
         }

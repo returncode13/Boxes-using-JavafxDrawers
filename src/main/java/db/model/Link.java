@@ -43,7 +43,7 @@ public class Link implements Serializable {
     @JoinColumn(name="dot_fk")
     private Dot dot;
     
-    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dot")
     private Set<Doubt> doubts;
     
     @Column(name="creation_time")
