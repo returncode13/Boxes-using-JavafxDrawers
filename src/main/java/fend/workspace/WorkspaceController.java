@@ -954,6 +954,866 @@ public class WorkspaceController {
         //  model.setObservableEdges(new HashSet<>(frontEnd));
     }
     
+    public void summaryFor(Job job,Subsurface sub){
+        Summary summary=summaryService.getSummaryFor(sub, job);
+        System.out.println("fend.workspace.WorkspaceController.summaryFor(): the initial summary for "+sub.getSubsurface()+" for job: "+job.getNameJobStep()+" is: ");
+            System.out.println("traces: ");
+            System.out.println("   fail    : "+summary.hasFailedTraceDependency());
+            System.out.println("   over    : "+summary.hasOverridenTraceFail());
+            System.out.println("   inh     : "+summary.hasInheritedTraceFail());
+            System.out.println("   inhover : "+summary.hasInheritedTraceOverride());
+            System.out.println("   warn    : "+summary.hasWarningForTrace());
+            System.out.println(" Setting everything in summary  to false");
+        
+        summary.setAll(false);
+            
+        List<Doubt> causes=doubtService.getCausalDoubtsFor(sub,job);     //only causes
+        List<Doubt> inheritedDoubts=doubtService.getInheritedDoubtsOn(sub,job);   //only inheritances for this job -sub combination
+        for(Doubt c:causes){
+            DoubtType t=c.getDoubtType();
+            System.out.println("fend.workspace.WorkspaceController.summaryFor(): Doubt "+c.getId()+" is of type: "+t.getName());
+            //time
+            if(t.equals(doubtTypeTime)){
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedTimeDependency(true);
+                        summary.setOverridenTimeFail(true);
+                        summary.setWarningForTime(false);
+                    }else{
+                        summary.setFailedTimeDependency(true);
+                        summary.setOverridenTimeFail(false);
+                        summary.setWarningForTime(false);
+                    }
+                    
+                }else{
+                    summary.setFailedTimeDependency(false);
+                    summary.setOverridenTimeFail(false);
+                    summary.setWarningForTime(true);
+                }
+            }
+            //traces
+            if(t.equals(doubtTypeTraces)){              // note to self. the setters in the summary class are OR'd internally .see definitions
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedTraceDependency(true);
+                        summary.setOverridenTraceFail(true);
+                        summary.setWarningForTrace(false);
+                    }else{
+                        summary.setFailedTraceDependency(true);
+                        summary.setOverridenTraceFail(false);
+                        summary.setWarningForTrace(false);
+                    }
+                    
+                }else{
+                    summary.setFailedTraceDependency(false);
+                    summary.setOverridenTraceFail(false);
+                    summary.setWarningForTrace(true);
+                }
+            }
+            //qc
+            if(t.equals(doubtTypeQc)){              // note to self. the setters in the summary class are OR'd internally .see definitions
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedQcDependency(true);
+                        summary.setOverridenQcFail(true);
+                        summary.setWarningForQc(false);
+                    }else{
+                        summary.setFailedQcDependency(true);
+                        summary.setOverridenQcFail(false);
+                        summary.setWarningForQc(false);
+                    }
+                    
+                }else{
+                    summary.setFailedQcDependency(false);
+                    summary.setOverridenQcFail(false);
+                    summary.setWarningForQc(true);
+                }
+            }
+            //insight
+            if(t.equals(doubtTypeInsight)){              // note to self. the setters in the summary class are OR'd internally .see definitions
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedInsightDependency(true);
+                        summary.setOverridenInsightFail(true);
+                        summary.setWarningForInsight(false);
+                    }else{
+                        summary.setFailedInsightDependency(true);
+                        summary.setOverridenInsightFail(false);
+                        summary.setWarningForInsight(false);
+                    }
+                    
+                }else{
+                    summary.setFailedInsightDependency(false);
+                    summary.setOverridenInsightFail(false);
+                    summary.setWarningForInsight(true);
+                }
+            }
+            //io
+            if(t.equals(doubtTypeIO)){              // note to self. the setters in the summary class are OR'd internally .see definitions
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedIoDependency(true);
+                        summary.setOverridenIoFail(true);
+                        summary.setWarningForIo(false);
+                    }else{
+                        summary.setFailedIoDependency(true);
+                        summary.setOverridenIoFail(false);
+                        summary.setWarningForIo(false);
+                    }
+                    
+                }else{
+                    summary.setFailedIoDependency(false);
+                    summary.setOverridenIoFail(false);
+                    summary.setWarningForIo(true);
+                }
+            }
+            
+        }
+        
+        int timeInhFail=0;
+        int timeInhOver=0;
+        
+        int traceInhFail=0;
+        int traceInhOver=0;
+        
+        int qcInhFail=0;
+        int qcInhOver=0;
+        
+        int insightInhFail=0;
+        int insightInhOver=0;
+        
+        int ioInhFail=0;
+        int ioInhOver=0;
+        
+        for(Doubt i:inheritedDoubts){
+            Doubt c=i.getDoubtCause();
+            DoubtType t=c.getDoubtType();
+            boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+            if(t.equals(doubtTypeTime)){
+                if(causeIsOverriden) ++timeInhOver;
+                else ++timeInhFail;
+            }
+            if(t.equals(doubtTypeTraces)){
+                if(causeIsOverriden) ++traceInhOver;
+                else ++traceInhFail;
+            }
+            if(t.equals(doubtTypeQc)){
+                if(causeIsOverriden) ++qcInhOver;
+                else ++qcInhFail;
+            }
+            if(t.equals(doubtTypeInsight)){
+                if(causeIsOverriden) ++insightInhOver;
+                else ++insightInhFail;
+            }
+            if(t.equals(doubtTypeIO)){
+                if(causeIsOverriden) ++ioInhOver;
+                else ++ioInhFail;
+            }
+        }
+        //time start
+        if(timeInhFail>0){
+            summary.setInheritedTimeFail(true);
+        }else{
+            summary.setInheritedTimeFail(false);
+        }
+        
+        if(timeInhOver>0){
+            summary.setInheritedTimeOverride(true);
+        }else{
+            summary.setInheritedTimeOverride(false);
+        }
+        //time end
+        //trace start
+        if(traceInhFail>0){
+            summary.setInheritedTraceFail(true);
+        }else{
+            summary.setInheritedTraceFail(false);
+        }
+        
+        if(traceInhOver>0){
+            summary.setInheritedTraceOverride(true);
+        }else{
+            summary.setInheritedTraceOverride(false);
+        }
+        //trace end
+        //qc start
+        if(qcInhFail>0){
+            summary.setInheritedQcFail(true);
+        }else{
+            summary.setInheritedQcFail(false);
+        }
+        
+        if(qcInhOver>0){
+            summary.setInheritedQcOverride(true);
+        }else{
+            summary.setInheritedQcOverride(false);
+        }        
+        //qc end
+        //insight start
+        if(insightInhFail>0){
+            summary.setInheritedInsightFail(true);
+        }else{
+            summary.setInheritedInsightFail(false);
+        }
+        
+        if(insightInhOver>0){
+            summary.setInheritedInsightOverride(true);
+        }else{
+            summary.setInheritedInsightOverride(false);
+        }    
+        //insight end
+        //io start
+         if(ioInhFail>0){
+            summary.setInheritedIoFail(true);
+        }else{
+            summary.setInheritedIoFail(false);
+        }
+        
+        if(ioInhOver>0){
+            summary.setInheritedIoOverride(true);
+        }else{
+            summary.setInheritedIoOverride(false);
+        }    
+        //io end
+        System.out.println("final summary for "+sub.getSubsurface()+" for job: "+job.getNameJobStep()+" is: ");
+            System.out.println("traces: ");
+            System.out.println("   fail    : "+summary.hasFailedTraceDependency());
+            System.out.println("   over    : "+summary.hasOverridenTraceFail());
+            System.out.println("   inh     : "+summary.hasInheritedTraceFail());
+            System.out.println("   inhover : "+summary.hasInheritedTraceOverride());
+            System.out.println("   warn    : "+summary.hasWarningForTrace());
+            
+            System.out.println("fend.workspace.WorkspaceController.summaryFor(): updating summary: "+summary.getId());
+        summaryService.updateSummary(summary.getId(), summary);
+        
+    }
+
+            
+            
+            ///OBSOLETE function. to be removed
+    public void resummarizeFor(Job job, Subsurface sub) {
+        //get all summaries for sub;
+        //get all doubts for sub;
+        //List<Summary> subsummaries=summaryService.getSummariesFor(sub);
+      
+        Summary sum=summaryService.getSummaryFor(sub, job);
+        Map<SummaryKey,SummaryHolder> subSmap=new HashMap<>();
+        /*  for(Summary s:subsummaries){
+        SummaryKey key=generateSummaryKey(s.getSubsurface(), s.getJob());
+        SummaryHolder sh=new SummaryHolder();
+        sh.update=true;
+        sh.delete=false;
+        sh.create=false;
+        sh.summary=s;
+        subSmap.put(key, sh);
+        
+        
+        }*/
+        
+        List<Doubt> subDoubts=doubtService.getDoubtsFor(sub); 
+        
+        Map<DoubtKey,DoubtHolder> subDmap=new HashMap<>();                                  //holds causes
+        Map<SubsurfaceJobKey,List<Doubt>> inLUMap=new HashMap<>();                          //inheritance lookups
+        Map<DoubtKey,DoubtHolder> causeLUMap=new HashMap<>();                             //cause lookups
+        
+        for(Doubt d:subDoubts){
+           
+            if(d.getDoubtType().equals(doubtTypeInherit)){
+                 SubsurfaceJobKey sjKey=generateSubsurfaceJobKey(d.getChildJob(), d.getSubsurface());
+                if(!inLUMap.containsKey(sjKey)){
+                    inLUMap.put(sjKey, new ArrayList<>());
+                    inLUMap.get(sjKey).add(d);
+                }else{
+                    inLUMap.get(sjKey).add(d);
+                }
+            }else{
+                    DoubtKey dkey=generateDoubtKey(d.getSubsurface(), d.getChildJob(), d.getDot(), d.getDoubtType());
+                    DoubtHolder dh=new DoubtHolder();
+                    dh.cause=d;
+                    causeLUMap.put(dkey, dh);
+            }
+            
+            
+               
+            
+            for (Map.Entry<SummaryKey, SummaryHolder> entry : subSmap.entrySet()) {
+            SummaryKey key = entry.getKey();
+            SummaryHolder sh = entry.getValue();
+            Summary summary=sh.summary;   
+               List<Dot> dots=djMap.get(key.job);
+            for(Dot dot:dots){
+                    DoubtKey timeKey=generateDoubtKey(key.subsurface, key.job, dot, doubtTypeTime);
+                    DoubtKey traceKey=generateDoubtKey(key.subsurface, key.job, dot, doubtTypeTraces);
+                    DoubtKey qcKey=generateDoubtKey(key.subsurface, key.job, dot, doubtTypeQc);
+                    DoubtKey insightKey=generateDoubtKey(key.subsurface, key.job, dot, doubtTypeInsight);
+                    DoubtKey ioKey=generateDoubtKey(key.subsurface,key.job,dot,doubtTypeIO);
+                        //time Start
+                        
+                        
+                         //time Start
+                        if(causeLUMap.containsKey(timeKey)){
+                            DoubtHolder dh=causeLUMap.get(timeKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    summary.setFailedTimeDependency(true);
+                                    summary.setWarningForTime(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenTimeFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenTimeFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedTimeDependency(false);
+                                    summary.setWarningForTime(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedTimeDependency(false);
+                            summary.setWarningForTime(false);
+                            summary.setOverridenTimeFail(false);
+                            
+                        }
+                        
+                        //time end
+                        
+                        //trace start
+                        if(causeLUMap.containsKey(traceKey)){
+                            DoubtHolder dh=causeLUMap.get(traceKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    summary.setFailedTraceDependency(true);
+                                    summary.setWarningForTrace(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenTraceFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenTraceFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedTraceDependency(false);
+                                    summary.setWarningForTrace(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedTraceDependency(false);
+                            summary.setWarningForTrace(false);
+                            summary.setOverridenTraceFail(false);
+                            
+                        }
+                        //trace end
+                        
+                        //qc start
+                        
+                        //qc end
+                        
+                        //inheritance on this job, sub?
+                         SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(job, sub);
+                        List<Doubt> inheritedDoubts=new ArrayList<>();
+                        if(inheritanceLUMap.containsKey(sjkey)){                    // There is inheritance on this key
+                            inheritedDoubts=inheritanceLUMap.get(sjkey);
+                            for(Doubt inheritedDoubt:inheritedDoubts){
+                                Doubt cause=inheritedDoubt.getDoubtCause();
+                                DoubtType causeType=cause.getDoubtType();
+                                boolean causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                
+                                if(causeType.equals(doubtTypeTime)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedTimeOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedTimeCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeTraces)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedTraceOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedTraceCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeQc)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedQcOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedQcCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeInsight)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedInsightOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedInsightCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeIO)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedIOoverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedIOCause.add(cause);
+                                    }
+                                }
+                            }
+                            
+                           boolean inheritedTime = !sh.inheritedTimeCause.isEmpty();
+                           boolean inheritedOverridenTime = !sh.inheritedTimeOverridenCause.isEmpty();
+                           
+                           boolean inheritedTrace = !sh.inheritedTraceCause.isEmpty();
+                           boolean inheritedOverridenTrace = !sh.inheritedTraceOverridenCause.isEmpty();
+                           
+                           boolean inheritedQc = !sh.inheritedQcCause.isEmpty();
+                           boolean inheritedOverridenQc = !sh.inheritedQcOverridenCause.isEmpty();
+                           
+                           boolean inheritedInsight = !sh.inheritedInsightCause.isEmpty();
+                           boolean inheritedOverridenInsight = !sh.inheritedInsightOverridenCause.isEmpty();
+                           
+                           boolean inheritedIO = !sh.inheritedIOCause.isEmpty();
+                           boolean inheritedOverridenIO = !sh.inheritedIOoverridenCause.isEmpty();
+                           
+                           summary.setInheritedTimeFail(inheritedTime);
+                           summary.setInheritedTimeOverride(inheritedOverridenTime);
+                           
+                           summary.setInheritedTraceFail(inheritedTrace);
+                           summary.setInheritedTraceOverride(inheritedOverridenTrace);
+                           
+                           summary.setInheritedQcFail(inheritedQc);
+                           summary.setInheritedQcOverride(inheritedOverridenQc);
+                           
+                           summary.setInheritedInsightFail(inheritedInsight);
+                           summary.setInheritedInsightOverride(inheritedOverridenInsight);
+                           
+                           summary.setInheritedIoFail(inheritedIO);
+                           summary.setInheritedIoOverride(inheritedOverridenIO);
+                           
+                        }else{                                                      // no inheritance on this key
+                            summary.setInheritedTraceFail(false);
+                            summary.setInheritedTimeOverride(false);
+                            
+                            summary.setInheritedTraceFail(false);
+                            summary.setInheritedTraceOverride(false);
+                            
+                            summary.setInheritedQcFail(false);
+                            summary.setInheritedQcOverride(false);
+                            
+                            summary.setInheritedInsightFail(false);
+                            summary.setInheritedInsightOverride(false);
+                            
+                            summary.setInheritedIoFail(false);
+                            summary.setInheritedIoOverride(false);
+                           
+                        }
+                }
+            }
+            /*
+            for (Map.Entry<SummaryKey, SummaryHolder> entry : subSmap.entrySet()) {
+            SummaryKey key = entry.getKey();
+            SummaryHolder sh = entry.getValue();
+            Summary summary=sh.summary;
+            Job job=key.job;
+            Subsurface s=key.subsurface;
+            if(causeLUMap.containsKey(key)){    //1.1
+            Doubt c=causeLUMap.get(key);
+            DoubtType t=c.getDoubtType();
+            if(c.getState().equals(DoubtStatusModel.ERROR)){  //1.1.1        dep_fail=true; warning=false
+            //<--time
+            if(t.equals(doubtTypeTime)){
+            summary.setFailedTimeDependency(true);
+            summary.setWarningForTime(false);
+            }
+            
+            //<--trace
+            if(t.equals(doubtTypeTraces)){
+            summary.setFailedTraceDependency(true);
+            summary.setWarningForTrace(false);
+            }
+            //<--qc
+            if(t.equals(doubtTypeQc)){
+            summary.setFailedQcDependency(true);
+            summary.setWarningForQc(false);
+            }
+            //<--insight
+            if(t.equals(doubtTypeInsight)){
+            summary.setFailedInsightDependency(true);
+            summary.setWarningForInsight(false);
+            }
+            //<--io
+            if(t.equals(doubtTypeIO)){
+            summary.setFailedIoDependency(true);
+            summary.setWarningForIo(false);
+            }
+            
+            if(c.getStatus().equals(DoubtStatusModel.OVERRIDE)){        //1.1.1.1   override_fail=true
+            //<--time
+            if(t.equals(doubtTypeTime)){
+            summary.setOverridenTimeFail(true);
+            }
+            
+            //<--trace
+            if(t.equals(doubtTypeTraces)){
+            summary.setOverridenTraceFail(true);
+            }
+            //<--qc
+            if(t.equals(doubtTypeQc)){
+            summary.setOverridenQcFail(true);
+            }
+            //<--insight
+            if(t.equals(doubtTypeInsight)){
+            summary.setOverridenInsightFail(true);
+            }
+            //<--io
+            if(t.equals(doubtTypeIO)){
+            summary.setOverridenIoFail(true);
+            }
+            
+            inheritSubSumChecks(sjKey, inLUMap, sh);
+            
+            }else{          //1.1.1.2  override_fail=false
+            //<--time
+            if(t.equals(doubtTypeTime)){
+            summary.setOverridenTimeFail(false);
+            }
+            
+            //<--trace
+            if(t.equals(doubtTypeTraces)){
+            summary.setOverridenTraceFail(false);
+            }
+            //<--qc
+            if(t.equals(doubtTypeQc)){
+            summary.setOverridenQcFail(false);
+            }
+            //<--insight
+            if(t.equals(doubtTypeInsight)){
+            summary.setOverridenInsightFail(false);
+            }
+            //<--io
+            if(t.equals(doubtTypeIO)){
+            summary.setOverridenIoFail(false);
+            }
+            
+            inheritSubSumChecks(sjKey, inLUMap, sh);
+            }
+            }else{      //1.1.2       dep_fail=false;warning=true
+            if(t.equals(doubtTypeTime)){
+            summary.setFailedTimeDependency(false);
+            summary.setWarningForTime(true);
+            }
+            
+            //<--trace
+            if(t.equals(doubtTypeTraces)){
+            summary.setFailedTraceDependency(false);
+            summary.setWarningForTrace(true);
+            }
+            //<--qc
+            if(t.equals(doubtTypeQc)){
+            summary.setFailedQcDependency(false);
+            summary.setWarningForQc(true);
+            }
+            //<--insight
+            if(t.equals(doubtTypeInsight)){
+            summary.setFailedInsightDependency(false);
+            summary.setWarningForInsight(true);
+            }
+            //<--io
+            if(t.equals(doubtTypeIO)){
+            summary.setFailedIoDependency(false);
+            summary.setWarningForIo(true);
+            }
+            
+            inheritSubSumChecks(sjKey, inLUMap, sh);
+            }
+            }
+            else{                       // 1.2 dep_fail=false; warning=false;override_fail=false
+            //<--time
+            summary.setFailedTimeDependency(false);
+            summary.setWarningForTime(false);
+            summary.setOverridenTimeFail(false);
+            
+            
+            //<--trace
+            
+            summary.setFailedTraceDependency(false);
+            summary.setWarningForTrace(false);
+            summary.setOverridenTraceFail(false);
+            
+            //<--qc
+            
+            summary.setFailedQcDependency(false);
+            summary.setWarningForQc(false);
+            summary.setOverridenQcFail(false);
+            
+            //<--insight
+            
+            summary.setFailedInsightDependency(false);
+            summary.setWarningForInsight(false);
+            summary.setOverridenInsightFail(false);
+            
+            //<--io
+            
+            summary.setFailedIoDependency(false);
+            summary.setWarningForIo(false);
+            summary.setOverridenIoFail(false);
+            
+            inheritSubSumChecks(sjKey, inLUMap, sh);
+            
+            
+            }
+            
+            
+            
+            
+            
+            
+            }*/
+        }
+        
+       
+        
+        
+        List<Summary> summariesSubUpdate=new ArrayList<>();
+        for (Map.Entry<SummaryKey, SummaryHolder> entry : subSmap.entrySet()) {
+            SummaryKey key = entry.getKey();
+            SummaryHolder sh = entry.getValue();
+            summariesSubUpdate.add(sh.summary);
+            Summary s=sh.summary;
+            System.out.println("fend.workspace.WorkspaceController.resummarizeFor(): for : "+s.getJob().getNameJobStep()+" : "+sh.summary.getSubsurface().getSubsurface()+" : ");
+            System.out.println(" trace     : ");
+            System.out.println("   fail    : "+s.hasFailedTraceDependency());
+            System.out.println("   over    : "+s.hasOverridenTraceFail());
+            System.out.println("   inh     : "+s.hasInheritedTraceFail());
+            System.out.println("   inhover : "+s.hasInheritedTraceOverride());
+            System.out.println("   warn    : "+s.hasWarningForTrace());
+            
+            
+        }
+        
+        System.out.println("fend.workspace.WorkspaceController.resummarizeFor(): updating "+summariesSubUpdate.size()+" summaries");
+        summaryService.updateBulkSummaries(summariesSubUpdate);
+        
+    }
+    
+     private void inheritSubSumChecks(SubsurfaceJobKey key,Map<SubsurfaceJobKey,List<Doubt>> inLUMap,SummaryHolder sh){
+         Summary summary=sh.summary;
+         /*  if(inLUMap.containsKey(key)){   //P
+         List<Doubt> inheritedDs=inLUMap.get(key);
+         for(Doubt i:inheritedDs){
+         DoubtType tc=i.getDoubtCause().getDoubtType();
+         if(i.getDoubtCause().getStatus().equals(DoubtStatusModel.OVERRIDE)){            //P.1   add the sh inheritedOverride(TIME/TRACE) list. the cause is overriden
+         if(tc.equals(doubtTypeTime)){
+         sh.inheritedTimeOverridenCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeTraces)) {
+         sh.inheritedTraceOverridenCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeQc)) {
+         sh.inheritedQcOverridenCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeInsight)) {
+         sh.inheritedInsightOverridenCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeIO)) {
+         sh.inheritedIOoverridenCause.add(i.getDoubtCause());
+         }
+         
+         }else{                                                                          //P.2   the cause is not overriden
+         if(tc.equals(doubtTypeTime)){
+         sh.inheritedTimeCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeTraces)) {
+         sh.inheritedTraceCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeQc)) {
+         sh.inheritedQcCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeInsight)) {
+         sh.inheritedInsightCause.add(i.getDoubtCause());
+         }
+         if (tc.equals(doubtTypeIO)) {
+         sh.inheritedIOCause.add(i.getDoubtCause());
+         }
+         }
+         }
+         //B
+         
+         //time
+         if (sh.inheritedTimeOverridenCause.isEmpty()) {                        //B.1   no inherited overrides
+         summary.setInheritedTimeOverride(false);
+         } else {                                                              //B.2   inherited override present
+         summary.setInheritedTimeOverride(true);
+         }
+         
+         if (sh.inheritedTimeCause.isEmpty()) {                                //D.1   no inherited fails
+         summary.setInheritedTimeFail(false);
+         } else {                                                              //D.2  inherited fails present
+         summary.setInheritedTimeFail(true);
+         }
+         //trace
+         if(sh.inheritedTraceOverridenCause.isEmpty()){                        //B.1   no inherited overrides
+         summary.setInheritedTraceOverride(false);
+         }else{                                                              //B.2   inherited override present
+         summary.setInheritedTraceOverride(true);
+         }
+         
+         if(sh.inheritedTraceCause.isEmpty()){                                //D.1   no inherited fails
+         summary.setInheritedTraceFail(false);
+         }else{                                                              //D.2  inherited fails present
+         summary.setInheritedTraceFail(true);
+         }
+         //qc
+         if(sh.inheritedQcOverridenCause.isEmpty()){                        //B.1   no inherited overrides
+         summary.setInheritedQcOverride(false);
+         }else{                                                              //B.2   inherited override present
+         summary.setInheritedQcOverride(true);
+         }
+         
+         if(sh.inheritedQcCause.isEmpty()){                                //D.1   no inherited fails
+         summary.setInheritedQcFail(false);
+         }else{                                                              //D.2  inherited fails present
+         summary.setInheritedQcFail(true);
+         }
+         //insight
+         if (sh.inheritedInsightOverridenCause.isEmpty()) {                        //B.1   no inherited overrides
+         summary.setInheritedInsightOverride(false);
+         } else {                                                              //B.2   inherited override present
+         summary.setInheritedInsightOverride(true);
+         }
+         
+         if (sh.inheritedInsightCause.isEmpty()) {                                //D.1   no inherited fails
+         summary.setInheritedInsightFail(false);
+         } else {                                                              //D.2  inherited fails present
+         summary.setInheritedInsightFail(true);
+         }
+         //io
+         if (sh.inheritedIOoverridenCause.isEmpty()) {                        //B.1   no inherited overrides
+         summary.setInheritedIoOverride(false);
+         } else {                                                              //B.2   inherited override present
+         summary.setInheritedIoOverride(true);
+         }
+         
+         if (sh.inheritedIOCause.isEmpty()) {                                //D.1   no inherited fails
+         summary.setInheritedIoFail(false);
+         } else {                                                              //D.2  inherited fails present
+         summary.setInheritedIoFail(true);
+         }
+         
+         
+         
+         }else{  //C                  all good.set everything to false.
+         
+         summary.setAll(false);
+         }*/
+         
+          
+          List<Doubt> inheritedDoubts=new ArrayList<>();
+          if(inLUMap.containsKey(key)){                    // There is inheritance on this key
+                            inheritedDoubts=inLUMap.get(key);
+                            for(Doubt inheritedDoubt:inheritedDoubts){
+                                Doubt cause=inheritedDoubt.getDoubtCause();
+                                DoubtType causeType=cause.getDoubtType();
+                                boolean causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                
+                                if(causeType.equals(doubtTypeTime)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedTimeOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedTimeCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeTraces)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedTraceOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedTraceCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeQc)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedQcOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedQcCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeInsight)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedInsightOverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedInsightCause.add(cause);
+                                    }
+                                }
+                                if(causeType.equals(doubtTypeIO)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedIOoverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedIOCause.add(cause);
+                                    }
+                                }
+                            }
+                            
+                           boolean inheritedTime = !sh.inheritedTimeCause.isEmpty();
+                           boolean inheritedOverridenTime = !sh.inheritedTimeOverridenCause.isEmpty();
+                           
+                           boolean inheritedTrace = !sh.inheritedTraceCause.isEmpty();
+                           boolean inheritedOverridenTrace = !sh.inheritedTraceOverridenCause.isEmpty();
+                           
+                           boolean inheritedQc = !sh.inheritedQcCause.isEmpty();
+                           boolean inheritedOverridenQc = !sh.inheritedQcOverridenCause.isEmpty();
+                           
+                           boolean inheritedInsight = !sh.inheritedInsightCause.isEmpty();
+                           boolean inheritedOverridenInsight = !sh.inheritedInsightOverridenCause.isEmpty();
+                           
+                           boolean inheritedIO = !sh.inheritedIOCause.isEmpty();
+                           boolean inheritedOverridenIO = !sh.inheritedIOoverridenCause.isEmpty();
+                           
+                           summary.setInheritedTimeFail(inheritedTime);
+                           summary.setInheritedTimeOverride(inheritedOverridenTime);
+                           
+                           summary.setInheritedTraceFail(inheritedTrace);
+                           summary.setInheritedTraceOverride(inheritedOverridenTrace);
+                           
+                           summary.setInheritedQcFail(inheritedQc);
+                           summary.setInheritedQcOverride(inheritedOverridenQc);
+                           
+                           summary.setInheritedInsightFail(inheritedInsight);
+                           summary.setInheritedInsightOverride(inheritedOverridenInsight);
+                           
+                           summary.setInheritedIoFail(inheritedIO);
+                           summary.setInheritedIoOverride(inheritedOverridenIO);
+                           
+                        }else{                                                      // no inheritance on this key
+                            summary.setInheritedTraceFail(false);
+                            summary.setInheritedTimeOverride(false);
+                            
+                            summary.setInheritedTraceFail(false);
+                            summary.setInheritedTraceOverride(false);
+                            
+                            summary.setInheritedQcFail(false);
+                            summary.setInheritedQcOverride(false);
+                            
+                            summary.setInheritedInsightFail(false);
+                            summary.setInheritedInsightOverride(false);
+                            
+                            summary.setInheritedIoFail(false);
+                            summary.setInheritedIoOverride(false);
+                           
+                        }
+     }
+    
     private class XYHolder{
         double x;
         double y;

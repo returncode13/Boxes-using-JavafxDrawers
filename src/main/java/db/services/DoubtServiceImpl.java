@@ -26,6 +26,7 @@ import java.util.Set;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class DoubtServiceImpl implements DoubtService{
+    
 
     DoubtDAO dsDAO=new DoubtDAOImpl();
             
@@ -172,6 +173,21 @@ public class DoubtServiceImpl implements DoubtService{
     @Override
     public void deleteAllDoubtsRelatedTo(Link link) {
         dsDAO.deleteAllDoubtsRelatedTo(link);
+    }
+
+    @Override
+    public List<Doubt> getDoubtsFor(Subsurface sub) {
+        return dsDAO.getDoubtsFor(sub);
+    }
+
+    @Override
+    public List<Doubt> getCausalDoubtsFor(Subsurface sub, Job job) {
+        return dsDAO.getCausalDoubtsFor(sub,job);
+    }
+
+    @Override
+    public List<Doubt> getInheritedDoubtsOn(Subsurface sub, Job job) {
+        return dsDAO.getInheritedDoubtsOn(sub,job);
     }
 
     

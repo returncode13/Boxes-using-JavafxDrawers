@@ -113,16 +113,42 @@ public class SummaryDAOImpl implements  SummaryDAO{
        try{
             transaction=session.beginTransaction();
             Summary summary=(Summary) session.get(Summary.class, id);
-            summary.setInheritedTimeFail(newSummary.hasInheritedTimeFail());
-            summary.setInheritedTraceFail(newSummary.hasInheritedTraceFail());
-            summary.setInheritedQcFail(newSummary.hasInheritedQcFail());
-           // summary.setInsightInheritanceSummary(newSummary.getInsightInheritanceSummary());
-            summary.setFailedInsightDependency(newSummary.hasFailedInsightDependency());
-            summary.setFailedQcDependency(newSummary.hasFailedQcDependency());
+            summary.setAll(false);
             summary.setFailedTimeDependency(newSummary.hasFailedTimeDependency());
+            summary.setOverridenTimeFail(newSummary.hasOverridenTimeFail());
+            summary.setInheritedTimeFail(newSummary.hasInheritedTimeFail());
+            summary.setInheritedTimeOverride(newSummary.hasInheritedTimeOverride());
+            summary.setWarningForTime(newSummary.hasWarningForTime());
+            
             summary.setFailedTraceDependency(newSummary.hasFailedTraceDependency());
+            summary.setOverridenTraceFail(newSummary.hasOverridenTraceFail());
+            summary.setInheritedTraceFail(newSummary.hasInheritedTraceFail());
+            summary.setInheritedTraceOverride(newSummary.hasInheritedTraceOverride());
+            summary.setWarningForTrace(newSummary.hasWarningForTrace());
+            
+            
+            summary.setFailedQcDependency(newSummary.hasFailedQcDependency());
+            summary.setOverridenQcFail(newSummary.hasOverridenQcFail());
+            summary.setInheritedQcFail(newSummary.hasInheritedQcFail());
+            summary.setInheritedQcOverride(newSummary.hasInheritedQcOverride());
+            summary.setWarningForQc(newSummary.hasWarningForQc());
+            
+           
+            summary.setFailedInsightDependency(newSummary.hasFailedInsightDependency());
+            summary.setOverridenInsightFail(newSummary.hasOverridenInsightFail());
+            summary.setInheritedInsightFail(newSummary.hasInheritedInsightFail());
+            summary.setInheritedInsightOverride(newSummary.hasInheritedInsightOverride());
+            summary.setWarningForInsight(newSummary.hasWarningForInsight());
+            
+            summary.setFailedIoDependency(newSummary.hasFailedIoDependency());
+            summary.setOverridenIoFail(newSummary.hasOverridenIoFail());
+            summary.setInheritedIoFail(newSummary.hasInheritedIoFail());
+            summary.setInheritedIoOverride(newSummary.hasInheritedIoOverride());
+            summary.setWarningForIo(newSummary.hasWarningForIo());
+            
             summary.setJob(newSummary.getJob());
             summary.setSequence(newSummary.getSequence());
+            summary.setSubsurface(newSummary.getSubsurface());
             session.update(summary);
             
             transaction.commit();
@@ -393,6 +419,30 @@ public class SummaryDAOImpl implements  SummaryDAO{
          }finally{
              session.close();
          }
+    }
+
+    @Override
+    public List<Summary> getSummariesFor(Subsurface sub) {
+       Session session=HibernateUtil.getSessionFactory().openSession();
+       
+         Transaction transaction=null;
+         List<Summary> result=null;
+         String hql="select s from Summary s where s.subsurface =:sub";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("sub", sub);
+            result=query.list();
+            
+             System.out.println("db.dao.SummaryDAOImpl.getSummariesFor(): returning summaries of size : "+result.size());
+            
+            transaction.commit();
+         }catch(Exception e){
+             e.printStackTrace();
+         }finally{
+             session.close();
+         }
+         return result;
     }
 
     

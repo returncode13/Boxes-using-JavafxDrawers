@@ -11,6 +11,8 @@ import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Job;
+import db.model.Subsurface;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
 import db.services.DoubtStatusService;
@@ -145,16 +147,20 @@ public class OverrideController extends Stage{
                 d.setComments(userComment);
                 doubtService.updateDoubt(d.getId(), d);
                 
-                if(statusChanged){
-                        if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
-                                        model.getCellModel().setOverride(true);
-                                }else{
-                                    model.getCellModel().setOverride(false);
-                                }
+                /*if(statusChanged){
+                if(model.getStatus().equals(DoubtStatusModel.OVERRIDE)){
+                model.getCellModel().setOverride(true);
+                }else{
+                model.getCellModel().setOverride(false);
                 }
+                }*/
                 
                 try {
-                    model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().summarizeOne();
+                    //model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().summarizeOne();
+                    Job origin=model.getCellModel().getJobSummaryModel().getJob();
+                    Subsurface sub=model.getCellModel().getJobSummaryModel().getSubsurface();
+                    //model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().resummarizeFor(origin,sub);
+                    model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().summaryFor(origin, sub);
                 } catch (Exception ex) {
                     Logger.getLogger(OverrideController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -177,7 +183,9 @@ public class OverrideController extends Stage{
                     System.out.println(".changed(): inherited doubt: "+inhDoubt.getChildJob().getNameJobStep()+" will be requeried. for subsurface "+inhDoubt.getSubsurface().getSubsurface());
                     
                     
-                    
+                    Job inhJob=inhDoubt.getChildJob();
+                    Subsurface sub=inhDoubt.getSubsurface();
+                    model.getCellModel().getJobSummaryModel().getSummaryModel().getWorkspaceController().summaryFor(inhJob, sub);
                     
                     JobSummaryModel inhjsm_sub=model.getCellModel().getJobSummaryModel()
                             .getSummaryModel()

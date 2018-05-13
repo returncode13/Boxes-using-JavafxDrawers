@@ -916,6 +916,77 @@ public class DoubtDAOImpl implements DoubtDAO{
         }
     }
 
+    @Override
+    public List<Doubt> getDoubtsFor(Subsurface sub) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction=null;
+        String hql="from Doubt d where d.subsurface =:sub";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("sub", sub);
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Doubt> getCausalDoubtsFor(Subsurface sub, Job job) {
+        DoubtTypeService doubtTypeService= new DoubtTypeServiceImpl();
+        DoubtType dt=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction=null;
+        String hql="from Doubt d where d.subsurface =:sub and d.childJob =:j and d.doubtType !=:dt";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("sub", sub);
+            query.setParameter("j",job);
+            query.setParameter("dt", dt);
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return result;
+    }
+
+    @Override
+    public List<Doubt> getInheritedDoubtsOn(Subsurface sub, Job job) {
+        DoubtTypeService doubtTypeService= new DoubtTypeServiceImpl();
+        DoubtType dt=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        List<Doubt> result=null;
+        Transaction transaction=null;
+        String hql="from Doubt d where d.subsurface =:sub and d.childJob =:j and d.doubtType =:dt";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("sub", sub);
+            query.setParameter("j",job);
+            query.setParameter("dt", dt);
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return result;
+    }
+
     
     
 

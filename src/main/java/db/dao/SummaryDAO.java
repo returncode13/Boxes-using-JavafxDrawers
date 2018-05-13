@@ -37,4 +37,6 @@ public interface SummaryDAO {
     public void deleteAllSummaries(Workspace dbWorkspace);
 
     public void deleteAllSummariesForJob(Job job);
+
+    public List<Summary> getSummariesFor(Subsurface sub);
 }

@@ -62,6 +62,12 @@ public interface DoubtService {
     public void deleteAllDoubtsRelatedTo(Dot dbDot);
 
     public void deleteAllDoubtsRelatedTo(Link link);                // used in the cases where the doubt exists on the parent and not the child. in such cases the dot belonges to the link originating from the parent , but the dot belongs to the link that ends on the parent
+
+    public List<Doubt> getDoubtsFor(Subsurface sub);
+
+    public List<Doubt> getCausalDoubtsFor(Subsurface sub, Job job);
+
+    public List<Doubt> getInheritedDoubtsOn(Subsurface sub, Job job);
     
 
     
