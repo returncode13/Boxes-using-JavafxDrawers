@@ -32,4 +32,6 @@ public interface NodePropertyValueService {
     public void updateCoordinateYforJob(Job dbjob, double y);
 
     public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace dbWorkspace);
+
+    public NodePropertyValue getNodePropertyValueFor(Job dbjob, String propName);
 }

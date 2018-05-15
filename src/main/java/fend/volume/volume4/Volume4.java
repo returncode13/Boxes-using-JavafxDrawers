@@ -176,44 +176,18 @@ public class Volume4 implements Volume0{
     @Override
     public List<SubsurfaceHeaders> getSubsurfaces() {
         subsurfaces.clear();
-        /*
-        for(File sub:this.volume.listFiles(getSubsurfaceTimeStampFilter)){
-            String s=sub.getName();                                 //2D-subname.0
-            String name=s.substring(3, s.indexOf("."));             //subname
-           
-            SubsurfaceHeaders subsurface=new SubsurfaceHeaders(this);
-            subsurface.setSubsurfaceName(name);
-             BasicFileAttributes attr=null;
-           try {
-              attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
-           } catch (IOException ex) {
-               Logger.getLogger(Volume4.class.getName()).log(Level.SEVERE, null, ex);
-           }
-            DateTimeFormatter formatter=DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            DateTime dt=formatter.parseDateTime(attr.creationTime().toString());
-            DateTimeFormatter opformat=new DateTimeFormatterBuilder()
-              .appendYear(4, 4)
-              .appendMonthOfYear(2)
-              .appendDayOfMonth(2)
-              .appendHourOfDay(2)
-              .appendMinuteOfHour(2)
-              .appendSecondOfMinute(2)
-              .toFormatter();
-            //if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume4.setVolume(): found "+sub.getName()+" sn: "+name+" with time "+opformat.print(dt));
-            subsurface.setTimeStamp(opformat.print(dt));
-            subsurfaces.add(subsurface);
-         
-       }
-        */
-        
+       
         
         return this.subsurfaces;
     }
     
+    
+    
+    
     /**
      * Lesser privates
      */
-   //final private String SUBSURFACE_SEARCH="*.0";                                //get only these files under the dugio
+   final private String FILE_SEARCH="*.0";                                //get only these files under the dugio
    //final private FileFilter getSubsurfaceNamesFilter=new WildcardFileFilter(SUBSURFACE_SEARCH);
    
   // final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names  only the .single.idx files. Exclude the headers.single.idx files

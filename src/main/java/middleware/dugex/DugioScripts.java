@@ -36,6 +36,10 @@ public class DugioScripts implements Serializable{
     private File subsurfaceInsightVersionForLog;
     private File workflowDifference;
     private File parentVolumesFrom2Dlogs;
+    private File md5SumCheckforText;
+    
+    
+    
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
             + "module add prod\n"
@@ -174,6 +178,10 @@ public class DugioScripts implements Serializable{
        private String parentVolumeFrom2DLogsContents="#!/bin/bash\n" +
 "grep -o \"Input File.*$\" $1 | awk -F '=' '{print $2 }'";                          //get parent volume names from 2d Logs
        
+       
+       private String md5SumCheckforTextContents="#!/bin/bash\n" +
+"md5sum $1";
+       
      public DugioScripts()
     {
         try {
@@ -267,7 +275,7 @@ public class DugioScripts implements Serializable{
             logStatusCompletedSuccessfully.setExecutable(true,false);
             
             logStatusCompletedSuccessfully.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -280,7 +288,7 @@ public class DugioScripts implements Serializable{
             logStatusErrored.setExecutable(true,false);
             
             logStatusErrored.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+          
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -293,7 +301,7 @@ public class DugioScripts implements Serializable{
             logStatusCancelled.setExecutable(true,false);
             
             logStatusCancelled.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -307,7 +315,7 @@ public class DugioScripts implements Serializable{
             workflowExtractor.setExecutable(true,false);
             
             workflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -321,7 +329,7 @@ public class DugioScripts implements Serializable{
             p190TimeStampLineNameExtractor.setExecutable(true,false);
             
             p190TimeStampLineNameExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -333,8 +341,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadNotesTxtTimeWorkflowExtractor.setExecutable(true,false);
             
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           
         } catch (IOException ex) {  
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -346,8 +354,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadLinenameTimeFromGCLogs.setExecutable(true,false);
             segdLoadLinenameTimeFromGCLogs.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -359,8 +367,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadSaillineInsightFromGCLogs.setExecutable(true,false);
             segdLoadSaillineInsightFromGCLogs.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -372,8 +380,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadCheckIfGCLogsFinished.setExecutable(true,false);
             segdLoadCheckIfGCLogsFinished.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -384,8 +392,7 @@ public class DugioScripts implements Serializable{
             bw.close();
             subsurfaceInsightVersionForLog.setExecutable(true,false);
             subsurfaceInsightVersionForLog.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -397,8 +404,7 @@ public class DugioScripts implements Serializable{
             bw.close();
             workflowDifference.setExecutable(true,false);
             workflowDifference.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -409,7 +415,18 @@ public class DugioScripts implements Serializable{
             bw.write(parentVolumeFrom2DLogsContents);
             bw.close();
             parentVolumesFrom2Dlogs.setExecutable(true,false);
-            
+            parentVolumesFrom2Dlogs.deleteOnExit();
+        }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+         try{
+            md5SumCheckforText=File.createTempFile("md5SumCheckforText",".sh");
+            BufferedWriter bw= new BufferedWriter(new FileWriter(md5SumCheckforText));
+            bw.write(md5SumCheckforTextContents);
+            bw.close();
+            md5SumCheckforText.setExecutable(true,false);
+            md5SumCheckforText.deleteOnExit();
         }catch(IOException ex){
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -486,6 +503,10 @@ public class DugioScripts implements Serializable{
 
     public File getParentVolumesFrom2Dlogs() {
         return parentVolumesFrom2Dlogs;
+    }
+
+    public File getMd5SumCheckforText() {
+        return md5SumCheckforText;
     }
     
     

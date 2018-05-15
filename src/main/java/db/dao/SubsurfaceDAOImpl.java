@@ -193,4 +193,27 @@ public class SubsurfaceDAOImpl implements SubsurfaceDAO{
       
     }
     
+    
+     @Override
+    public List<Object[]> getSequenceSubsurfaceMap() {
+        
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="select seq,sub from Subsurface sub inner Join sub.sequence seq";
+        List<Object[]> results=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            results=query.list();
+            transaction.commit();
+             
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+              
+    }
+    
 }

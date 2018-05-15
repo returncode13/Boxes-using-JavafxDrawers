@@ -47,5 +47,7 @@ public class SequenceServiceImpl implements SequenceService{
     public List<Sequence> getSequenceList() {
         return seqDao.getSequenceList();
     }
+
+    
     
 }

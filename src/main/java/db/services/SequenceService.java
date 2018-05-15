@@ -20,4 +20,6 @@ public interface SequenceService {
     public Sequence getSequenceObjByseqno(Long seqno);
 
     public List<Sequence> getSequenceList();
+
+    
 }

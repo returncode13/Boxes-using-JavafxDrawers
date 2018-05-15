@@ -28,5 +28,5 @@ public interface SubsurfaceService {
 
     public List<Subsurface> getSubsurfacesPresentInJob(Job parentJob);
     
-    
+     public List<Object[]> getSequenceSubsurfaceMap();
 }

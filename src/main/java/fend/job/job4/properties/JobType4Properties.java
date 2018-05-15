@@ -18,10 +18,12 @@ import java.util.Map;
  */
 public class JobType4Properties implements JobType0Properties{
     List<String> properties=new ArrayList<>();
-
+    public final static String FROM="from";
+    public final static String TO="to";
+    
     public JobType4Properties() {
-        this.properties.add("from");
-        this.properties.add("to");
+        this.properties.add(FROM);
+        this.properties.add(TO);
         this.properties.add("x");
         this.properties.add("y");
     }

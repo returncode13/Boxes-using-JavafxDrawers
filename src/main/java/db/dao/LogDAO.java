@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Pheader;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
@@ -51,4 +52,6 @@ public interface LogDAO {
     public void deleteLogsFor(Volume vol);
 
     public List<Log> getLogsWithInputVolumes(Workspace workspace);
+
+    public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub);
 }

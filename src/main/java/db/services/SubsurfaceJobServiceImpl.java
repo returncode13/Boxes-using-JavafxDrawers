@@ -100,7 +100,7 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         return subsurfaceJobDAO.getSubsurfaceJobFor(dbWorkspace);
     }
 
-   
+    
    
     
 }

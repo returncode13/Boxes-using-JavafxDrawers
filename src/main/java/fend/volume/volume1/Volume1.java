@@ -231,7 +231,7 @@ public class Volume1 implements Volume0{
    final private String SUBSURFACE_SEARCH="*.0";                                //get only these files under the dugio
    final private FileFilter getSubsurfaceNamesFilter=new WildcardFileFilter(SUBSURFACE_SEARCH);
    
-   final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names  only the .single.idx files. Exclude the headers.single.idx files
+   final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names . Only the .single.idx files. Exclude the headers.single.idx files
    final Pattern pat=Pattern.compile(SUBSURFACE_TIMESTAMP);
    final private FileFilter getSubsurfaceTimeStampFilter=new FileFilter(){
         @Override

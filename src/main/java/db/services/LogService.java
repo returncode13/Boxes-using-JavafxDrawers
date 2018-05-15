@@ -8,6 +8,7 @@ package db.services;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Pheader;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
@@ -45,6 +46,7 @@ public interface LogService {
     public void bulkUpdateOnLogs(Volume v,Workflow w);    //usually a lot of logs have their wk=null and this is to do a bulk update on all of them
 
     public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub);
+    public void bulkUpdateOnLogs(Volume volume, Pheader hdr,Subsurface sub);
 
     public String getLatestLogTimeFor(Volume dbVol);
 

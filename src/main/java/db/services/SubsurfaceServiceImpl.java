@@ -59,5 +59,11 @@ public class SubsurfaceServiceImpl implements SubsurfaceService{
     public List<Subsurface> getSubsurfacesPresentInJob(Job parentJob) {
         return sDao.getSubsurfacesPresentInJob(parentJob);
     }
+
+    @Override
+    public List<Object[]> getSequenceSubsurfaceMap() {
+        return sDao.getSequenceSubsurfaceMap();
+    }
+    
     
 }

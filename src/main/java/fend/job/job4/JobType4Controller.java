@@ -65,8 +65,6 @@ import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
 import fend.job.job4.definitions.JobDefinitionsType4Model;
 import fend.job.job4.definitions.JobDefinitionsType4View;
-import fend.job.table.lineTable.LineTableModel;
-import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
@@ -80,6 +78,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import middleware.dugex.HeaderExtractor;
 
 /**
  *
@@ -339,22 +338,39 @@ parent.addChild(model);*/
      * Extract headers for the current job
      
      */
-    
+    private HeaderExtractor headerExtractor=null;
     @FXML
     void extractHeadersForJob(ActionEvent event) {
-            showTable.setDisable(true);
-            qctable.setDisable(true);
+            
             
             Task<Void> timeStampAndMd5ExtractionTask=new Task<Void>(){
                 @Override
                 protected Void call() throws Exception {
-                    //put extraction code here
+                    headerExtractor=new HeaderExtractor(model);
                     return null;
                 }
                 
             };
-                    
-            model.extractLogs();
+                   
+            timeStampAndMd5ExtractionTask.setOnFailed(e->{
+                showTable.setDisable(false);
+                qctable.setDisable(false);
+                headerButton.setDisable(false);
+            });
+            
+            timeStampAndMd5ExtractionTask.setOnRunning(e->{
+                showTable.setDisable(true);
+                qctable.setDisable(true);
+                headerButton.setDisable(true);
+            });
+            
+            timeStampAndMd5ExtractionTask.setOnSucceeded(e->{
+                showTable.setDisable(false);
+                qctable.setDisable(false);
+                headerButton.setDisable(false);
+            });
+           
+            exec.execute(timeStampAndMd5ExtractionTask);
             
     }
     
@@ -366,8 +382,7 @@ parent.addChild(model);*/
     
     @FXML
     void showTable(ActionEvent event) {
-            LineTableModel lineTableModel=new LineTableModel(model);
-            LineTableView lineTableView=new LineTableView(lineTableModel);
+            
     }
     
      @FXML
@@ -516,6 +531,12 @@ parent.addChild(model);*/
                 
             }
         });
+        
+        deleteThisJob.setOnAction(e->{
+            model.toggleDeleteProperty();
+        });
+      
+        
         
         menu.getItems().addAll(addAChildJob,deleteThisJob);
     }

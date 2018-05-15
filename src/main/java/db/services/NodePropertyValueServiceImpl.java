@@ -74,6 +74,11 @@ public class NodePropertyValueServiceImpl implements NodePropertyValueService{
     public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace) {
         return npvdao.getNodePropertyXYvaluesForWorkspace(workspace);
     }
+
+    @Override
+    public NodePropertyValue getNodePropertyValueFor(Job job, String propname) {
+        return npvdao.getNodePropertyValueFor(job,propname);
+    }
     
     
    

@@ -32,4 +32,6 @@ public interface NodePropertyValueDAO {
     public void updateCoordinateYforJob(Job job, double y);
 
     public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace);
+
+    public NodePropertyValue getNodePropertyValueFor(Job job, String propname);
 }

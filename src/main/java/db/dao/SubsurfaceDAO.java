@@ -28,4 +28,6 @@ public interface SubsurfaceDAO {
     public List<Subsurface> getSubsurfaceList();
 
     public List<Subsurface> getSubsurfacesPresentInJob(Job job);
+    
+     public List<Object[]> getSequenceSubsurfaceMap();
 }

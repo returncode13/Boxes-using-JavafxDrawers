@@ -598,9 +598,7 @@ public class JobType4Model implements JobType0Model {
     }
 
     public void extractLogs() {
-        System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
-        new DugLogManager(this);
-       finishedCheckingLogs.set(!finishedCheckingLogs.get());
+     
     }
     
      private void extractHeaders() {

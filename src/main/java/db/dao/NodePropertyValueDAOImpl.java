@@ -281,6 +281,37 @@ public class NodePropertyValueDAOImpl implements NodePropertyValueDAO {
         return results;
     }
 
+    @Override
+    public NodePropertyValue getNodePropertyValueFor(Job job, String propname) {
+         System.out.println("db.dao.NodePropertyValueDAOImpl.getNodePropertyValuesFor()");
+       
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        List<NodePropertyValue> results=null;
+        //String hql="select npv from NodePropertyValue npv inner join npv.job j where j.workspace =:w";
+        String hql="select npv from NodePropertyValue npv            INNER JOIN npv.nodeProperty np "
+                + "                                                  INNER JOIN np.propertyType pt "
+                + "                                                  WHERE pt.name =:xx"
+                + "                                                         AND"
+                + "                                                  npv.job =:j"
+                + "";
+        try{
+            transaction =session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            query.setParameter("xx", propname);
+            
+            results=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        if(results.isEmpty()) return null;
+        else return results.get(0);
+    }
+
    
     
 }
