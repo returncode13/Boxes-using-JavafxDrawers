@@ -528,6 +528,16 @@ public class WorkspaceController {
                     npv.setValue(jobProperty.getPropertyValue());
                     nodePropertyValueService.createNodePropertyValue(npv);
                 }
+                
+                List <QcType> qctypes=qcTypeService.getAllQcTypes();
+                for(QcType qt:qctypes){
+                     QcMatrixRow dbqcmr=new QcMatrixRow();
+                    dbqcmr.setJob(dbjob);
+                    dbqcmr.setQctype(qt);
+                    qcMatrixRowService.createQcMatrixRow(dbqcmr);
+                    
+                }
+
 
                 return "finished building a Text entry: " + dbjob.getId();
             }

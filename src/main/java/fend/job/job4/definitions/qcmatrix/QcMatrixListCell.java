@@ -7,7 +7,7 @@ package fend.job.job4.definitions.qcmatrix;
 
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListCell;
-import fend.job.job4.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
+import fend.job.job4.definitions.qcmatrix.qcmatrixrow.QcMatrixRowType4Model;
 
 
 
@@ -20,7 +20,7 @@ import javafx.beans.value.ObservableValue;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
+public class QcMatrixListCell extends JFXListCell<QcMatrixRowType4Model>{
     HBox hbox=new HBox();
    
     Pane pane=new Pane();
@@ -50,7 +50,7 @@ public class QcMatrixListCell extends JFXListCell<QcMatrixRowModel>{
    
     
     @Override
-    protected void updateItem(QcMatrixRowModel qctype,boolean empty){
+    protected void updateItem(QcMatrixRowType4Model qctype,boolean empty){
         super.updateItem(qctype, empty);
         if(qctype==null||empty){
             setText(null);

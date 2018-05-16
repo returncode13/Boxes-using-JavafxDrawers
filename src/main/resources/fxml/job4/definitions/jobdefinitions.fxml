@@ -20,7 +20,7 @@
          <children>
             <AnchorPane GridPane.rowIndex="1">
                <children>
-                  <JFXButton fx:id="openVolumeDrawer" style="-fx-background-color: #62c462; -fx-text-fill: white;" styleClass="arrow-button" stylesheets="@../../../styles/bootstrap3.css" text="   Texts  &gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <JFXButton fx:id="openVolumeDrawer" style="-fx-background-color: #62c462; -fx-text-fill: white;" styleClass="arrow-button" stylesheets="@../../../styles/bootstrap3.css" text=" Texts  &gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
             <AnchorPane>
