@@ -602,7 +602,7 @@ public class HeaderExtractor {
              } 
              
              
-              List<Theader> tHeadersExistingInJob=theaderService.getTheadersFor(dbjob);
+              List<Theader> tHeadersExistingInJob=theaderService.getAllTheadersFor(dbjob);
                 for(Theader th:tHeadersExistingInJob){
                     VolumeSubsurfaceKey key=generateVolumeSubsurfaceKey(th.getVolume(), th.getSubsurface());
                     
@@ -727,10 +727,10 @@ public class HeaderExtractor {
                                     
                                     
                                     if(history){
-                                        String hist="file:"+theader.getTextFile()+" old TimeStamp: "+oldTime+" new TimeStamp: "+theader.getTimeStamp()+" ; old MD5: "+oldMd5+" new MD5: "+theader.getMd5();
+                                        String hist="\nold TimeStamp: "+oldTime+"\tnew TimeStamp: "+theader.getTimeStamp()+"\t\told MD5: "+oldMd5+"\tnew MD5: "+theader.getMd5();
                                         theader.appendToHistory(hist);
                                     }else{
-                                        String hist="file:"+theader.getTextFile()+" First recorded TimeStamp: "+theader.getTimeStamp()+" ; First recorded  MD5: "+theader.getMd5();
+                                        String hist="\nfile:"+theader.getTextFile()+" :\n\nFirst TimeStamp: "+theader.getTimeStamp()+"\t\tFirst recorded  MD5: "+theader.getMd5();
                                         theader.setHistory(hist);
                                     }
                                 
@@ -1083,7 +1083,7 @@ public class HeaderExtractor {
         
          
              String md5FileName=getMd5(th);   //calculate md5 
-             String[] parts=md5FileName.split("");      //<md5><space><filename>
+             String[] parts=md5FileName.split(" ");      //<md5><space><filename>
              String md5=parts[0];
              String fileName=parts[1];
              System.out.println("middleware.dugex.HeaderExtractor.populate(): parts : "+parts);

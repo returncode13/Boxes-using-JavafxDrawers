@@ -46,7 +46,7 @@ public class TheaderServiceImpl implements TheaderService{
     }
 
     @Override
-    public List<Theader> getTheadersFor(Job job) {
+    public List<Object[]> getTheadersFor(Job job) {
         return thDAO.getTheadersFor(job);
     }
 
@@ -58,6 +58,11 @@ public class TheaderServiceImpl implements TheaderService{
     @Override
     public void deleteTheadersFor(Volume vol) {
         thDAO.deleteTheadersFor(vol);
+    }
+
+    @Override
+    public List<Theader> getAllTheadersFor(Job job) {
+        return thDAO.getAllTheadersFor(job);
     }
     
 }

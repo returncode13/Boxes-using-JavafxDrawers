@@ -5,12 +5,17 @@
  */
 package fend.job.job4.table;
 
+import fend.job.job4.table.history.TextHistoryModel;
+import fend.job.job4.table.history.TextHistoryView;
 import java.util.List;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -66,6 +71,7 @@ public class TextLineTableController extends Stage{
                 return param.getValue().md5Property();
             }
         });
+        
         timeStamp.setCellValueFactory(p->{
             return p.getValue().timestampProperty();
             
@@ -84,6 +90,37 @@ public class TextLineTableController extends Stage{
         
         List<TextSequenceHeader> contents=model.getTextSequenceHeaders();
         textTable.getItems().addAll(contents);
+        
+        textTable.setRowFactory(r->{
+            ContextMenu contextMenu=new ContextMenu();
+            MenuItem history=new MenuItem("show history");
+            contextMenu.getItems().add(history);
+            TableRow<TextSequenceHeader> row=new TableRow<TextSequenceHeader>(){
+                
+                @Override
+                protected void updateItem(TextSequenceHeader item,boolean empty){
+                    super.updateItem(item, empty);
+                    if(item==null || empty){
+                        setText(null);
+                        setGraphic(null);
+                    }if(item!=null){
+                        ContextMenu cm=new ContextMenu();
+                        cm.getItems().add(history);
+                        setContextMenu(cm);
+                    }
+                }
+            };
+            
+            history.setOnAction(e->{
+                TextSequenceHeader selected=row.getItem();
+                   TextHistoryModel thm=new TextHistoryModel();
+                   thm.setHistory(selected.getHistoryProperty().get());
+                   TextHistoryView view=new TextHistoryView(thm);
+            });
+        
+            return row;
+        
+        });
     }
     
     

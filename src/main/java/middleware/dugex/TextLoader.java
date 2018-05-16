@@ -6,6 +6,7 @@
 package middleware.dugex;
 
 import db.model.Job;
+import db.model.Sequence;
 import db.model.Theader;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
@@ -34,17 +35,24 @@ public class TextLoader {
     
     public void retrieveHeaders(){
          Job dbjob=this.job.getDatabaseJob();
-         List<Theader> theaders=theaderService.getTheadersFor(dbjob);
+         List<Object[]> theaders=theaderService.getTheadersFor(dbjob);  //each entry is seq,textfile,timestamp,md5,noOfRuns,modified,deleted,history 
         
-        for(Theader t:theaders){
+        for(Object[] t:theaders){
             TextSequenceHeader tseq=new TextSequenceHeader();
-            tseq.setSequence(t.getSequence());
-            tseq.setTextFile(t.getTextFile());
-            tseq.setTimestamp(t.getTimeStamp());
-            tseq.setModifiedProperty(t.getModified());
-            tseq.setDeletedProperty(t.getDeleted());
-            tseq.setNumberOfRuns(t.getNumberOfRuns());
-            tseq.setMd5(t.getMd5());
+            tseq.setSequence((Sequence) t[0]);
+            
+                String nameOfFile=(String) t[1];                                //t[1] is the absolute text name
+                nameOfFile=nameOfFile.substring(nameOfFile.lastIndexOf("/")+1);
+            
+            tseq.setTextFile(nameOfFile);
+            tseq.setTimestamp((String) t[2]);
+            tseq.setMd5((String) t[3]);
+            tseq.setNumberOfRuns((Long) t[4]);
+            tseq.setModifiedProperty((Boolean) t[5]);
+            tseq.setDeletedProperty((Boolean) t[6]);
+            tseq.setHistoryProperty((String) t[7]);
+            
+            
             textSequenceHeaders.add(tseq);
         }
     }

@@ -21,10 +21,13 @@ public interface TheaderService {
     public void updateTheader(Theader n);
     public void deleteTheader(Theader t);
 
-    public List<Theader> getTheadersFor(Job job);
+    public List<Object[]> getTheadersFor(Job job);     //return unique(distinct) seq,textfile,timestamp,md5,noOfRuns,modified,deleted,history 
+
 
     public String getLatestTimeStampFor(Volume vol);
 
     public void deleteTheadersFor(Volume dbVol);
+
+    public List<Theader> getAllTheadersFor(Job dbjob);
     
 }

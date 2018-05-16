@@ -397,7 +397,14 @@ public class JobType1Controller implements JobType0Controller{
                    // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
                     model.setFinishedCheckingLogs(true);
                     dugLogManager=null;
+                        headerButton.setDisable(false);
+                         showTable.setDisable(false);
                 });
+                logExtraction.setOnRunning(e->{
+                        headerButton.setDisable(true);
+                         showTable.setDisable(true);
+                });
+                
                 
                 exec.execute(logExtraction);
             }

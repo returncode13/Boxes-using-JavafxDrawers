@@ -24,7 +24,8 @@ public class TextSequenceHeader {
      private StringProperty textFileProperty=new SimpleStringProperty();
      private BooleanProperty modifiedProperty=new SimpleBooleanProperty();
      private BooleanProperty deletedProperty=new SimpleBooleanProperty();
-
+     private StringProperty historyProperty =new SimpleStringProperty();
+     
     public Sequence getSequence() {
         return sequence;
     }
@@ -85,6 +86,15 @@ public class TextSequenceHeader {
         this.deletedProperty.set(d);
     }
 
+    public StringProperty getHistoryProperty() {
+        return historyProperty;
+    }
+
+    public void setHistoryProperty(String h) {
+        this.historyProperty.set(h);
+    }
+
+    
      
      
      

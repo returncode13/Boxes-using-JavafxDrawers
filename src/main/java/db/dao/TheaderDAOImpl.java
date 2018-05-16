@@ -122,12 +122,21 @@ public class TheaderDAOImpl implements TheaderDAO{
     }
 
     @Override
-    public List<Theader> getTheadersFor(Job job) {
+    public List<Object[]> getTheadersFor(Job job) {
         System.out.println("db.dao.TheaderDAOImpl.getTheadersFor()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
-        List<Theader> results=null;
-        String hql="Select distinct th from Theader th where th.job=:j";
+        List<Object[]> results=null;
+        String hql="Select distinct "
+                + "th.sequence,"
+                + "th.textFile,"
+                + "th.timeStamp,"
+                + "th.md5,"
+                + "th.numberOfRuns,"
+                + "th.modified,"
+                + "th.deleted,"
+                + "th.history "
+                + "from Theader th where th.job=:j";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
@@ -166,6 +175,60 @@ public class TheaderDAOImpl implements TheaderDAO{
             session.close();
         }
         return result.get(0);
+    }
+
+    @Override
+    public void deleteTheadersFor(Volume vol) {
+         System.out.println("db.dao.TheaderDAOImpl.deleteTheadersFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.tHeaderId from Theader h where h.volume =:v";
+        String hqlDelete="Delete from Theader h where h.tHeaderId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("v", vol);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.TheaderDAOImpl.deleteHeadersFor(): deleting "+idsToDelete.size()+" headers belonging to volume: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
+
+    @Override
+    public List<Theader> getAllTheadersFor(Job job) {
+         System.out.println("db.dao.TheaderDAOImpl.getTheadersFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Theader> results=null;
+        String hql="Select  th from Theader th where th.job=:j";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            results=query.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
     }
     
 }
