@@ -127,7 +127,7 @@ public class TheaderDAOImpl implements TheaderDAO{
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Theader> results=null;
-        String hql="Select th from Theader th where th.job=:j";
+        String hql="Select distinct th from Theader th where th.job=:j";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);

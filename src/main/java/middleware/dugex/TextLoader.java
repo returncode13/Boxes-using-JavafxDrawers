@@ -15,7 +15,7 @@ import fend.job.job0.JobType0Model;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import middleware.sequences.text.TextSequenceHeaders;
+import middleware.sequences.text.TextSequenceHeader;
 
 /**
  *
@@ -25,15 +25,19 @@ public class TextLoader {
     private JobType0Model job;
     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
     private TheaderService theaderService=new TheaderServiceImpl();
-    private ObservableList<TextSequenceHeaders> textSequenceHeaders=FXCollections.observableArrayList();
+    private ObservableList<TextSequenceHeader> textSequenceHeaders=FXCollections.observableArrayList();
 
     public TextLoader(JobType0Model job) {
         this.job = job;
-        Job dbjob=this.job.getDatabaseJob();
-        List<Theader> theaders=theaderService.getTheadersFor(dbjob);
+     }
+    
+    
+    public void retrieveHeaders(){
+         Job dbjob=this.job.getDatabaseJob();
+         List<Theader> theaders=theaderService.getTheadersFor(dbjob);
         
         for(Theader t:theaders){
-            TextSequenceHeaders tseq=new TextSequenceHeaders();
+            TextSequenceHeader tseq=new TextSequenceHeader();
             tseq.setSequence(t.getSequence());
             tseq.setTextFile(t.getTextFile());
             tseq.setTimestamp(t.getTimeStamp());
@@ -43,10 +47,8 @@ public class TextLoader {
             tseq.setMd5(t.getMd5());
             textSequenceHeaders.add(tseq);
         }
-        
     }
-
-    public ObservableList<TextSequenceHeaders> getTextSequenceHeaders() {
+    public ObservableList<TextSequenceHeader> getTextSequenceHeaders() {
         return textSequenceHeaders;
     }
     

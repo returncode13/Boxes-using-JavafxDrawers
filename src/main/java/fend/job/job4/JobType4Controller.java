@@ -65,6 +65,8 @@ import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
 import fend.job.job4.definitions.JobDefinitionsType4Model;
 import fend.job.job4.definitions.JobDefinitionsType4View;
+import fend.job.job4.table.TextLineTableModel;
+import fend.job.job4.table.TextLineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
@@ -79,6 +81,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import middleware.dugex.HeaderExtractor;
+import middleware.dugex.TextLoader;
 
 /**
  *
@@ -133,7 +136,8 @@ public class JobType4Controller implements JobType0Controller{
       
         model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
         model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
-         model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
+        model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
+        model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
         exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -379,9 +383,45 @@ parent.addChild(model);*/
         model.checkMultiples();
     }
     
+    private TextLineTableModel lineTableModel=null;
+    private TextLineTableView lineTableView=null;
     
     @FXML
     void showTable(ActionEvent event) {
+            final TextLoader textLoader=new TextLoader(model);
+            Task<String> textLoaderTask=new Task<String>(){
+                @Override
+                protected String call() throws Exception {
+                    textLoader.retrieveHeaders();
+                    return "Finished loading the headers for "+model.getNameproperty().get();
+                }
+                
+            };
+            
+            textLoaderTask.setOnRunning(e->{
+                showTable.setDisable(true);
+            });
+            textLoaderTask.setOnCancelled(e->{
+                showTable.setDisable(false);
+            });
+            textLoaderTask.setOnSucceeded(e->{
+                
+                if(lineTableModel==null){
+                    lineTableModel=new TextLineTableModel(model);
+                    lineTableModel.setTextSequenceHeaders(textLoader.getTextSequenceHeaders());
+                    lineTableView= new TextLineTableView(lineTableModel);
+                }
+                else{
+                    
+                }
+                showTable.setDisable(false);
+            });
+            textLoaderTask.setOnFailed(e->{
+                textLoaderTask.getException().printStackTrace();
+                showTable.setDisable(false);
+            });
+            
+            exec.execute(textLoaderTask);
             
     }
     
@@ -402,19 +442,19 @@ parent.addChild(model);*/
                     }
                 };
 
-                qctableTask.setOnFailed(e->{
-                qctableTask.getException().printStackTrace();
-                qctable.setDisable(false);
-                });
-                qctableTask.setOnSucceeded(e->{
-                QcTableView qcTableView=new QcTableView(qcTableModel);
-                qctable.setDisable(false);
+         qctableTask.setOnFailed(e -> {
+             qctableTask.getException().printStackTrace();
+             qctable.setDisable(false);
+         });
+         qctableTask.setOnSucceeded(e -> {
+             QcTableView qcTableView = new QcTableView(qcTableModel);
+             qctable.setDisable(false);
 
-                });
-                qctableTask.setOnRunning(e->{
-                System.out.println("fend.job.job1.JobType3Controller.showQctable()...loading the qctable");
-                qctable.setDisable(true);
-                });
+         });
+         qctableTask.setOnRunning(e -> {
+             System.out.println("fend.job.job1.JobType3Controller.showQctable()...loading the qctable");
+             qctable.setDisable(true);
+         });
 
                 exec.execute(qctableTask);
     }
@@ -814,10 +854,7 @@ parent.addChild(model);*/
             deleteAllDoubtsRelatedToJob();
             deleteLinksBelongingtoCurrentJob();
             
-            
-            /*deleteAllVolumesInCurrentJob();
-            deleteAllDoubtsRelatedToJob();
-            deleteAllSummariesRelatedToJob();*/
+           
             nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
             model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
             
@@ -855,7 +892,7 @@ parent.addChild(model);*/
             
             jobDeletionTask.setOnSucceeded(e->{
                 
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
+                    System.out.println("fend.job.job4.JobType4Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
                      rebuildAncestorDescendants();
                      reloadWorkspace();
             });
@@ -875,10 +912,19 @@ parent.addChild(model);*/
     private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            System.out.println("fend.job.job4.JobType4Controller.QC_CHANGED_LISTENER: will reload qcs");
             
             qcTableModel=null;
             
+        }
+    };
+    
+     private ChangeListener<Boolean> LINE_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job4.JobType4Controller.LINE_TABLE_EXITED_LISTENER.changed()");
+            lineTableView=null;
+            lineTableModel=null;
         }
     };
     

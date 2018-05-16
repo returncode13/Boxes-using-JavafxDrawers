@@ -15,6 +15,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
 import db.services.LogServiceImpl;
+import db.services.TheaderService;
+import db.services.TheaderServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import db.services.WorkflowService;
@@ -52,7 +54,7 @@ public class VolumeListType4Controller {
     private VolumeService volumeService=new VolumeServiceImpl();
     private JobService jobService=new JobServiceImpl();
     private ListFilesModel listFilesModel;
-    private HeaderService headerService=new HeaderServiceImpl();
+    private TheaderService theaderService=new TheaderServiceImpl();
     private LogService logService=new LogServiceImpl();
     private WorkflowService workflowService=new WorkflowServiceImpl();
     
@@ -173,7 +175,7 @@ public class VolumeListType4Controller {
                          logService.deleteLogsFor(dbVol);*/
 
                         System.out.println("deleting associated headers");
-                        headerService.deleteHeadersFor(dbVol);
+                        theaderService.deleteTheadersFor(dbVol);
 
 
                         /*System.out.println("deleting associated workflows");

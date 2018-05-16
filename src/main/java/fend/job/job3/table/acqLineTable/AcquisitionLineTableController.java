@@ -109,7 +109,7 @@ public class AcquisitionLineTableController extends Stage{
         
         TreeTableColumn<AcquisitionSequenceHeaders,Long>  sequenceNumber= new TreeTableColumn<>("Sequence");
         TreeTableColumn<AcquisitionSequenceHeaders,String> subsurfaceName= new TreeTableColumn<>("Sail Line");
-        subsurfaceName.setMinWidth(40);
+        subsurfaceName.setMinWidth(100);
         TreeTableColumn<AcquisitionSequenceHeaders,String>  cable=new TreeTableColumn<>("cable");
         TreeTableColumn<AcquisitionSequenceHeaders,Long>  firstChannel=new TreeTableColumn<>("first Channel");
         TreeTableColumn<AcquisitionSequenceHeaders,Long>  lastChannel=new TreeTableColumn<>("last Channel");

@@ -15,7 +15,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class TextSequenceHeaders {
+public class TextSequenceHeader {
      private Long id;
      private Sequence sequence;
      private StringProperty timestampProperty=new SimpleStringProperty();

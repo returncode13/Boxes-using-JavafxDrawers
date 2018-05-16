@@ -54,5 +54,10 @@ public class TheaderServiceImpl implements TheaderService{
     public String getLatestTimeStampFor(Volume vol) {
         return thDAO.getLatestTimeStampFor(vol);
     }
+
+    @Override
+    public void deleteTheadersFor(Volume vol) {
+        thDAO.deleteTheadersFor(vol);
+    }
     
 }

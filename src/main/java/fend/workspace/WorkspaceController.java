@@ -755,9 +755,17 @@ public class WorkspaceController {
                     xyh=mapNpv.get(key);
                 }
                 if(n.getNodeProperty().getPropertyType().getName().equalsIgnoreCase("x")){
-                    xyh.x=Double.valueOf(n.getValue());
+                    try{
+                        xyh.x=Double.valueOf(n.getValue());
+                    }catch(NumberFormatException nfe){
+                        xyh.x=0.0;
+                    }
                 }else{
-                    xyh.y=Double.valueOf(n.getValue());
+                    try{
+                        xyh.y=Double.valueOf(n.getValue());
+                    }catch(NumberFormatException nfe){
+                        xyh.y=0.0;
+                    }
                 }
             }
         

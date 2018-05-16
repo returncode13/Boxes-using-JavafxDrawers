@@ -24,5 +24,7 @@ public interface TheaderService {
     public List<Theader> getTheadersFor(Job job);
 
     public String getLatestTimeStampFor(Volume vol);
+
+    public void deleteTheadersFor(Volume dbVol);
     
 }
