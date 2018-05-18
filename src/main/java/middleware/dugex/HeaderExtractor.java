@@ -73,6 +73,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import middleware.sequences.SubsurfaceHeaders;
 import org.joda.time.DateTime;
@@ -144,7 +148,7 @@ public class HeaderExtractor {
         
         
         if(job.getType().equals(JobType0Model.PROCESS_2D)||job.getType().equals(JobType0Model.SEGD_LOAD)){
-         
+            
             List<Header> headersExistingInJob=headerService.getHeadersFor(dbjob);
                 for(Header h:headersExistingInJob){
                     VolumeSubsurfaceKey key=generateVolumeSubsurfaceKey(h.getVolume(), h.getSubsurface());
@@ -159,13 +163,16 @@ public class HeaderExtractor {
               headers.clear();
               headerHolderList.clear();
                List<Subsurface> subsExistingInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
-        
+               progress.set(0);
+               message.set("retrieving subsurfaces");
                 for(Subsurface s:subsExistingInJob){
+                    int ii=subsExistingInJob.indexOf(s);
+                    progress.set((double)(ii/subsExistingInJob.size()));
                     SubsurfaceJobKey skey=generateSubsurfaceJobKey(s, dbjob);
                     existingSubsurfaceJobs.add(skey);
                 }
                 
-               
+              
               Volume dbvol=volumeService.getVolume(vol.getId());
               System.out.println("middleware.dugex.HeaderExtractor.<init>(): calling volume "+vol.getName().get()+" id: "+dbvol.getId());
               String summaryTime=new DateTime(1986,6,6,00,00,00,DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
@@ -1396,6 +1403,23 @@ public class HeaderExtractor {
         
         
     }
+    
+    
+    private StringProperty message=new SimpleStringProperty();
+    private ReadOnlyDoubleWrapper progress=new ReadOnlyDoubleWrapper();
+    
+    public ReadOnlyDoubleProperty progressProperty(){
+        return progress.getReadOnlyProperty();
+    }  
+    
+    public final double getProgress(){
+        return   progressProperty().get();
+    }
+    
+    public StringProperty messageProperty(){
+        return message;
+    }
+    
 }
 
  

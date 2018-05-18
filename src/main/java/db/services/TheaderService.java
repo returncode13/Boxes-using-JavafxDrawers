@@ -8,6 +8,7 @@ package db.services;
 import db.model.Job;
 import db.model.Theader;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -29,5 +30,7 @@ public interface TheaderService {
     public void deleteTheadersFor(Volume dbVol);
 
     public List<Theader> getAllTheadersFor(Job dbjob);
+
+    public List<Theader> getTheadersFor(Workspace dbWorkspace);
     
 }

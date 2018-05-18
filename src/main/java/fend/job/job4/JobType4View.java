@@ -28,7 +28,7 @@ public class JobType4View extends AnchorPane implements JobType0View{
     
     public JobType4View(JobType4Model item,AnchorPane interactivePane){
         this.interactivePane=interactivePane;
-        this.location=getClass().getClassLoader().getResource("fxml/job/front/job4.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/front/job4_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

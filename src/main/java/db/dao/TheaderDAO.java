@@ -9,6 +9,7 @@ package db.dao;
 import db.model.Job;
 import db.model.Theader;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -29,4 +30,6 @@ public interface TheaderDAO {
     public void deleteTheadersFor(Volume vol);
 
     public List<Theader> getAllTheadersFor(Job job);
+
+    public List<Theader> getTheadersFor(Workspace workspace);
 }

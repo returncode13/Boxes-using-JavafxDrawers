@@ -27,6 +27,7 @@ import db.model.QcType;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.Summary;
+import db.model.Theader;
 import db.model.VariableArgument;
 import db.model.Volume;
 import db.model.Workspace;
@@ -70,6 +71,8 @@ import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
+import db.services.TheaderService;
+import db.services.TheaderServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import db.services.VolumeService;
@@ -211,6 +214,7 @@ public class WorkspaceController {
     private Map<Subsurface, Set<Link>> subsurfaceLinkMap = new HashMap<>();
     private Map<HeaderKey, Header> headerMap = new HashMap<>();
     private Map<PheaderKey, Pheader> pheaderMap = new HashMap<>();
+    private Map<TheaderKey, Theader> theaderMap = new HashMap<>();
     private Map<SummaryKey, Summary> summaryMap = new HashMap<>();                 //used to check if an entry exists in the database
     
 
@@ -2043,6 +2047,7 @@ public class WorkspaceController {
         newSummaries.clear();
         mIpVols.clear();
         jvMap.clear();
+        theaderMap.clear();
     }
 
 
@@ -2053,27 +2058,34 @@ public class WorkspaceController {
     private ResultHolder checkTimeDependency(Link l, Subsurface subb){
         Job hparent = l.getParent();
         Job hchild = l.getChild();
-        /*boolean path1=(                                                                                     //path to take if both of them are either  2D or SEGD
-        (hparent.getNodetype().equals(node2D) || hparent.getNodetype().equals(nodeSegd))
-        &&
-        (hchild.getNodetype().equals(node2D) || hchild.getNodetype().equals(nodeSegd)));
-        
-        
-        boolean path2=(                                                                                     //path to take if atleast one of them is SEGY
-        hparent.getNodetype().equals(nodeSegy)
-        ||
-        hchild.getNodetype().equals(nodeSegy)
-        );*/
-        
+       
         boolean parentIsSegy=hparent.getNodetype().equals(nodeSegy);
         boolean childIsSegy=hchild.getNodetype().equals(nodeSegy);
+        
+        
+     
+        boolean parentIsText=hparent.getNodetype().equals(nodeText);
+        boolean childIsText=hchild.getNodetype().equals(nodeText);
+        
+        
+        boolean parentIs2D=hparent.getNodetype().equals(node2D)||hparent.getNodetype().equals(nodeSegd);
+        boolean childIs2D=hchild.getNodetype().equals(node2D)||hchild.getNodetype().equals(nodeSegd);
+        
+        /*
+        boolean atleastOneIsText=parentIsText || childIsText;
+        boolean bothAreText=parentIsText && childIsText;
+        
+        
+        boolean processIs2D=!parentIsSegy && !childIsSegy &&
+        !parentIsText && !childIsText;
+        boolean atleastOneIsSegy=parentIsSegy || childIsSegy;
         boolean bothAreSegy=parentIsSegy && childIsSegy;
-        boolean processIsNotSegy=!parentIsSegy &&  !childIsSegy;
+        */
        
                     
         ResultHolder resultHolder=new ResultHolder();
         
-        if(processIsNotSegy){
+        if(parentIs2D && childIs2D){
                     HeaderKey parentKey = generateHeaderKey(hparent, subb);
                     HeaderKey childKey = generateHeaderKey(hchild, subb);
                     Header hp = headerMap.get(parentKey);
@@ -2091,67 +2103,253 @@ public class WorkspaceController {
                         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
                         return resultHolder;
                     }
-        }else{
-                   if(bothAreSegy){
+        }else if(parentIs2D && childIsSegy){
+                    HeaderKey parentKey = generateHeaderKey(hparent, subb);
+                    PheaderKey childKey = generatePheaderKey(hchild, subb);
+                    Header hp = headerMap.get(parentKey);
+                    Pheader hc = pheaderMap.get(childKey);
+                    Long hpt = Long.valueOf(hp.getTimeStamp());
+                    Long hct = Long.valueOf(hc.getTimeStamp());
+
+                    if (hpt >= hct) {    //parent header created not before child header
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        //return resultHolder;
+                    } else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        //return resultHolder;
+                    }
+        }else if(parentIs2D && childIsText){
+                    HeaderKey parentKey=generateHeaderKey(hparent, subb);
+                    TheaderKey childKey=generateTheaderKey(hchild, subb);
+
+                    Header p=headerMap.get(parentKey);
+                    Theader c=theaderMap.get(childKey);
+
+                    Long pt=Long.valueOf(p.getTimeStamp());
+                    Long ct=Long.valueOf(c.getTimeStamp());
+
+                    if(pt >= ct){
+                            resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                            resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+
+                    }else {
+                            resultHolder.result = DEPENDENCY_PASS;
+                            resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+
+                    }
+            
+        }else if(parentIsSegy && childIsSegy){
+                    PheaderKey parentKey = generatePheaderKey(hparent, subb);
+                    PheaderKey childKey = generatePheaderKey(hchild, subb);
+                    Pheader hp = pheaderMap.get(parentKey);
+                    Pheader hc = pheaderMap.get(childKey);
+                    Long hpt = Long.valueOf(hp.getTimeStamp());
+                    Long hct = Long.valueOf(hc.getTimeStamp());
+
+                    if (hpt >= hct) {    //parent header created not before child header
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        // return resultHolder;
+                    } else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        //return resultHolder;
+                    }
+            
+        }else if(parentIsSegy && childIs2D){
+                    PheaderKey parentKey = generatePheaderKey(hparent, subb);
+                    HeaderKey childKey = generateHeaderKey(hchild, subb);
+                    Pheader hp = pheaderMap.get(parentKey);
+                    Header hc = headerMap.get(childKey);
+                    Long hpt = Long.valueOf(hp.getTimeStamp());
+                    Long hct = Long.valueOf(hc.getTimeStamp());
+
+                    if (hpt >= hct) {    //parent header created not before child header
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        //return resultHolder;
+                    } else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        // return resultHolder;
+                    }
+            
+        }else if(parentIsSegy && childIsText){
+                PheaderKey parentKey=generatePheaderKey(hparent, subb);
+                TheaderKey childKey=generateTheaderKey(hchild, subb);
+                
+                Pheader p=pheaderMap.get(parentKey);
+                Theader c=theaderMap.get(childKey);
+                
+                Long pt=Long.valueOf(p.getTimeStamp());
+                Long ct=Long.valueOf(c.getTimeStamp());
+                
+                if(pt >= ct){
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
                         
-                        PheaderKey parentKey = generatePheaderKey(hparent, subb);
-                        PheaderKey childKey = generatePheaderKey(hchild, subb);
-                        Pheader hp = pheaderMap.get(parentKey);
-                        Pheader hc = pheaderMap.get(childKey);
-                        Long hpt = Long.valueOf(hp.getTimeStamp());
-                        Long hct = Long.valueOf(hc.getTimeStamp());
-
-
-                        if(hpt >= hct) {    //parent header created not before child header
-                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
-                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                           // return resultHolder;
-                        }else{
-                            resultHolder.result=DEPENDENCY_PASS;
-                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                            //return resultHolder;
-                        }
-                          
-                   }else if(parentIsSegy){
-                       
-                        PheaderKey parentKey = generatePheaderKey(hparent, subb);
-                        HeaderKey childKey = generateHeaderKey(hchild, subb);
-                        Pheader hp = pheaderMap.get(parentKey);
-                        Header hc = headerMap.get(childKey);
-                        Long hpt = Long.valueOf(hp.getTimeStamp());
-                        Long hct = Long.valueOf(hc.getTimeStamp());
-
-
-                        if(hpt >= hct) {    //parent header created not before child header
-                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
-                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                            //return resultHolder;
-                        }else{
-                            resultHolder.result=DEPENDENCY_PASS;
-                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                           // return resultHolder;
-                        }
-                       
-                   }else if(childIsSegy){
-                        HeaderKey parentKey = generateHeaderKey(hparent, subb);
-                        PheaderKey childKey = generatePheaderKey(hchild, subb);
-                        Header hp = headerMap.get(parentKey);
-                        Pheader hc = pheaderMap.get(childKey);
-                        Long hpt = Long.valueOf(hp.getTimeStamp());
-                        Long hct = Long.valueOf(hc.getTimeStamp());
-
-
-                        if(hpt >= hct) {    //parent header created not before child header
-                            resultHolder.result=DEPENDENCY_FAIL_ERROR;
-                            resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                            //return resultHolder;
-                        }else{
-                            resultHolder.result=DEPENDENCY_PASS;
-                            resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                            //return resultHolder;
-                        }
-                   }
+                }else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }
+            
+            
+        }else if(parentIsText && childIsText){
+                TheaderKey parentKey=generateTheaderKey(hparent, subb);
+                TheaderKey childKey=generateTheaderKey(hchild, subb);
+                
+                Theader p=theaderMap.get(parentKey);
+                Theader c=theaderMap.get(childKey);
+                
+                Long pt=Long.valueOf(p.getTimeStamp());
+                Long ct=Long.valueOf(c.getTimeStamp());
+                
+                if(pt >= ct){
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }
+            
+        }else if(parentIsText && childIs2D){
+                TheaderKey parentKey=generateTheaderKey(hparent, subb);
+                HeaderKey childKey=generateHeaderKey(hchild, subb);
+                
+                Theader p=theaderMap.get(parentKey);
+                Header c=headerMap.get(childKey);
+                
+                Long pt=Long.valueOf(p.getTimeStamp());
+                Long ct=Long.valueOf(c.getTimeStamp());
+                
+                if(pt >= ct){
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }
+                
+            
+        }else if(parentIsText && childIsSegy){
+                TheaderKey parentKey=generateTheaderKey(hparent, subb);
+                PheaderKey childKey=generatePheaderKey(hchild, subb);
+                
+                Theader p=theaderMap.get(parentKey);
+                Pheader c=pheaderMap.get(childKey);
+                
+                Long pt=Long.valueOf(p.getTimeStamp());
+                Long ct=Long.valueOf(c.getTimeStamp());
+                
+                if(pt >= ct){
+                        resultHolder.result = DEPENDENCY_FAIL_ERROR;
+                        resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }else {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        
+                }
+                
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        /*
+        
+        if(processIs2D){
+        HeaderKey parentKey = generateHeaderKey(hparent, subb);
+        HeaderKey childKey = generateHeaderKey(hchild, subb);
+        Header hp = headerMap.get(parentKey);
+        Header hc = headerMap.get(childKey);
+        Long hpt = Long.valueOf(hp.getTimeStamp());
+        Long hct = Long.valueOf(hc.getTimeStamp());
+        
+        
+        if(hpt >= hct) {    //parent header created not before child header
+        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        return resultHolder;
+        }else{
+        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        return resultHolder;
+        }
+        }else if(atleastOneIsSegy){
+        if(bothAreSegy){
+        
+        PheaderKey parentKey = generatePheaderKey(hparent, subb);
+        PheaderKey childKey = generatePheaderKey(hchild, subb);
+        Pheader hp = pheaderMap.get(parentKey);
+        Pheader hc = pheaderMap.get(childKey);
+        Long hpt = Long.valueOf(hp.getTimeStamp());
+        Long hct = Long.valueOf(hc.getTimeStamp());
+        
+        
+        if(hpt >= hct) {    //parent header created not before child header
+        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        // return resultHolder;
+        }else{
+        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        //return resultHolder;
+        }
+        
+        }else if(parentIsSegy){
+        
+        PheaderKey parentKey = generatePheaderKey(hparent, subb);
+        HeaderKey childKey = generateHeaderKey(hchild, subb);
+        Pheader hp = pheaderMap.get(parentKey);
+        Header hc = headerMap.get(childKey);
+        Long hpt = Long.valueOf(hp.getTimeStamp());
+        Long hct = Long.valueOf(hc.getTimeStamp());
+        
+        
+        if(hpt >= hct) {    //parent header created not before child header
+        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        //return resultHolder;
+        }else{
+        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        // return resultHolder;
+        }
+        
+        }else if(childIsSegy){
+        HeaderKey parentKey = generateHeaderKey(hparent, subb);
+        PheaderKey childKey = generatePheaderKey(hchild, subb);
+        Header hp = headerMap.get(parentKey);
+        Pheader hc = pheaderMap.get(childKey);
+        Long hpt = Long.valueOf(hp.getTimeStamp());
+        Long hct = Long.valueOf(hc.getTimeStamp());
+        
+        
+        if(hpt >= hct) {    //parent header created not before child header
+        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        //return resultHolder;
+        }else{
+        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        //return resultHolder;
+        }
+        }
+        }else if(){
+        
+        }*/
       return resultHolder;
     }
     
@@ -2180,18 +2378,12 @@ public class WorkspaceController {
             Job arg = va.getArgument();
             Double tracesArg;
             
-            /*Header ph = headerService.getChosenHeaderFor(arg, subb);          //O-2*/
+           
              boolean argIsSegy=arg.getNodetype().equals(nodeSegy);
-             if(!argIsSegy){
-                 HeaderKey hkey = generateHeaderKey(arg, subb);
-                 Header h = headerMap.get(hkey);
-                    if (h == null) {
-                        tracesArg = 0.0;
-                    } else {
-                        tracesArg = Double.valueOf(h.getTraceCount() + "");
-                    }
-
-             }else{
+             boolean argIsText=arg.getNodetype().equals(nodeText);
+             boolean argIs2D=!argIsSegy  && !argIsText;
+             
+             if(argIsSegy){
                  PheaderKey hkey=generatePheaderKey(arg, subb);
                  Pheader ph = pheaderMap.get(hkey);
                     if (ph == null) {
@@ -2200,9 +2392,21 @@ public class WorkspaceController {
                         tracesArg = Double.valueOf(ph.getTraceCount() + "");
                     }
 
+             }/*else if(argIsText){
+                        Left this in here in case we decide to do something with files that contain numbers (ads files)
+             }*/
+             else{
+                 HeaderKey hkey = generateHeaderKey(arg, subb);
+                 Header h = headerMap.get(hkey);
+                    if (h == null) {
+                        tracesArg = 0.0;
+                    } else {
+                        tracesArg = Double.valueOf(h.getTraceCount() + "");
+                    }
+
              }
                     
-            mapForVariableSetting.put(var, tracesArg);
+            mapForVariableSetting.put(var, tracesArg);   
             if (!var.equals("y0")) {                      //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
                 variableSet.add(var);
                 argumentSet.add(arg);
@@ -2628,7 +2832,37 @@ public class WorkspaceController {
                                 }
                                 
                         }
-                        
+                        if(textType){
+                             boolean forLeaf=true; 
+                                ResultHolder timestatus=checkTimeDependency(link, subb);
+                                setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf); 
+
+
+                                ResultHolder tracestatus=new ResultHolder();
+                                tracestatus.result=DEPENDENCY_PASS;                                                     //force good. change later if the files contain any trace info( viz ads)
+                                setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
+                                
+                                ResultHolder qcstatus=checkQcDependency(link, subb);
+                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+                               
+                                
+                                 ResultHolder insightStatus=new ResultHolder();
+                                insightStatus.result=DEPENDENCY_PASS;                                                  // force good
+                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
+                                
+                                ResultHolder ioStatus=new ResultHolder();                                             // force good
+                                ioStatus.result=DEPENDENCY_PASS;
+                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);            
+                                
+                                if(link.getChild().isLeaf()){     //for doubts that arise on the nodes themselves (unchecked qcs , insight versions)
+                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                    
+                                    ResultHolder insightStatusForLeaf=new ResultHolder();
+                                    insightStatusForLeaf.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                                }
+                        }
                         /*   if(segyType){
                         boolean forLeaf=true;
                         ResultHolder timestatus=checkTimeDependency(link, subb);
@@ -2727,9 +2961,21 @@ public class WorkspaceController {
     private Map<SubsurfaceJobKey,List<String>> mIpVols=new HashMap<>();
     private Map<Job,List<String>> jvMap=new HashMap<>();                  // lookup map for job and the paths of the volumes it contains. for summary
     
+    
+    private TheaderService theaderService=new TheaderServiceImpl();
+    
     private void loadAllMaps(){
         
+        /***
+         * Get all Theaders and put them in a lookup map.
+         * 
+         **/
         
+        List<Theader> theaders=theaderService.getTheadersFor(dbWorkspace);
+        for(Theader th:theaders){
+            TheaderKey key=generateTheaderKey(th.getJob(), th.getSubsurface());
+            theaderMap.put(key, th);
+        }
         /**
          * load all the input volumes from the latest log assigned for a particular sub-job combination.
          * place them into a map <SubsurfaceJobKey,List<String> namesOfIpVols>
@@ -4156,6 +4402,42 @@ public class WorkspaceController {
         }
 
     }
+      
+    private class TheaderKey{
+        Subsurface subsurface;
+        Job job;
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 29 * hash + Objects.hashCode(this.subsurface);
+            hash = 29 * hash + Objects.hashCode(this.job);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final TheaderKey other = (TheaderKey) obj;
+            if (!Objects.equals(this.subsurface, other.subsurface)) {
+                return false;
+            }
+            if (!Objects.equals(this.job, other.job)) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+    }  
 
     private class SubsurfaceJobKey {
 
@@ -4340,6 +4622,16 @@ public class WorkspaceController {
         return key;
     }
 
+     private TheaderKey generateTheaderKey(Job job, Subsurface sub) {
+        TheaderKey key = new TheaderKey();
+        key.job = job;
+        key.subsurface = sub;
+
+        return key;
+    }
+
+    
+    
     private SubsurfaceJobKey generateSubsurfaceJobKey(Job job, Subsurface sub) {
         SubsurfaceJobKey key = new SubsurfaceJobKey();
         key.subsurface = sub;

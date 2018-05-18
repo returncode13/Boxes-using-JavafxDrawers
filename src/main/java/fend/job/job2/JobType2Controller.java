@@ -11,6 +11,7 @@ import fend.dot.anchor.AnchorView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
@@ -80,6 +81,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
@@ -135,6 +137,13 @@ public class JobType2Controller implements JobType0Controller{
     
     @FXML
     private JFXButton openDrawer;
+    
+     @FXML
+    private JFXProgressBar progressBar;
+
+    @FXML
+    private Label message;
+
 
     void setModel(JobType2Model item) {
         model=item;
@@ -352,7 +361,38 @@ public class JobType2Controller implements JobType0Controller{
     
      @FXML
     void extractHeadersForJob(ActionEvent event) {
-              if(dugLogManager==null){
+        /*if(dugLogManager==null){
+        headerButton.setDisable(true);
+        showTable.setDisable(true);
+        qctable.setDisable(true);
+        
+        Task<Void> logExtraction=new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+        dugLogManager=new DugLogManager(model);
+        return null;
+        }
+        };
+        
+        logExtraction.setOnFailed(e->{
+        logExtraction.getException().printStackTrace();
+        headerButton.setDisable(false);
+        showTable.setDisable(false);
+        model.setFinishedCheckingLogs(false);
+        dugLogManager=null;
+        });
+        
+        logExtraction.setOnSucceeded(e->{
+        // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
+        model.setFinishedCheckingLogs(true);
+        dugLogManager=null;
+        });
+        
+        exec.execute(logExtraction);
+        }*/
+            
+              
+               if(dugLogManager==null){
                 headerButton.setDisable(true);
                  showTable.setDisable(true);
                  qctable.setDisable(true);
@@ -361,7 +401,14 @@ public class JobType2Controller implements JobType0Controller{
                     @Override
                     protected Void call() throws Exception {
                        dugLogManager=new DugLogManager(model);
-                       return null;
+                       dugLogManager.messageProperty().addListener((obs,o,n)->{
+                            updateMessage(n);
+                       });
+                        dugLogManager.progressProperty().addListener((obs,o,n)->{
+                            updateProgress(n.doubleValue(), 1);
+                        });
+                        dugLogManager.work();
+                        return null;
                     }
                 };
                 
@@ -369,19 +416,40 @@ public class JobType2Controller implements JobType0Controller{
                         logExtraction.getException().printStackTrace();
                         headerButton.setDisable(false);
                          showTable.setDisable(false);
+                         openDrawer.setDisable(false);
                         model.setFinishedCheckingLogs(false);
                         dugLogManager=null;
+                        progressBar.progressProperty().unbind();
+                        progressBar.setProgress(0);
+                        message.textProperty().unbind();
+                        message.setText("failed logs");
                 });
                 
                 logExtraction.setOnSucceeded(e->{
-                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
                     model.setFinishedCheckingLogs(true);
                     dugLogManager=null;
+                        headerButton.setDisable(false);
+                         showTable.setDisable(false);
+                         openDrawer.setDisable(false);
+                         progressBar.progressProperty().unbind();
+                         progressBar.setProgress(0);
+                         message.textProperty().unbind();
+                         message.setText("completed logs");
+                });
+                logExtraction.setOnRunning(e->{
+                        headerButton.setDisable(true);
+                        showTable.setDisable(true);
+                        openDrawer.setDisable(true);
+                        
                 });
                 
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(logExtraction.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(logExtraction.messageProperty());
+               
                 exec.execute(logExtraction);
             }
-            
            //model.extractLogs();
             
     }

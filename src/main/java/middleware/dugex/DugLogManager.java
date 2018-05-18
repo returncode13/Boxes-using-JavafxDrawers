@@ -52,6 +52,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -84,7 +88,9 @@ public class DugLogManager {
         System.out.println("middleware.dugex.DugLogManager.<init>()..getting dbjob: "+job.getId());
        // this.dbJob=jobService.getJob(this.job.getId());
        this.dbJob=this.job.getDatabaseJob();
-      
+    }
+    
+    public void work(){
         System.out.println("middleware.dugex.DugLogManager.<init>(): got job .now querying for volumes ");
         
         List<Volume0> vols=job.getVolumes();
@@ -126,6 +132,7 @@ public class DugLogManager {
             }
             
             System.out.println("middleware.dugex.LogManager.<init>(): Listing the files that are to be considered for commit");
+            totalNumberOfLogs=filesToCommit.size();
             for(FileWrapper fw:filesToCommit){
                 System.out.println("file: "+fw.fwrap.getName());
             }
@@ -137,9 +144,10 @@ public class DugLogManager {
             List<Subsurface> subsurfacesInCurrentFolder=new ArrayList<>();
             Map<String,List<LogInformation>> mapofLogs=null;
             int recursionCounter=AppProperties.LOG_RECURSION_COUNTER;
+            workflowsToBeCreated.clear();
             Set<LogInformation> listWithLogInformation=extractInformation(dbVol,filesToCommit,vol.getType(),mapofLogs,recursionCounter);
             
-            System.out.println("middleware.dugex.DugLogManager.<init>(): Creating workflows");
+            System.out.println("middleware.dugex.DugLogManager.<init>(): Creating "+workflowsToBeCreated.size()+" workflows");
             
             exec=Executors.newFixedThreadPool(5);
             List<Callable<String>> workflowTasks=new ArrayList<>();
@@ -148,6 +156,7 @@ public class DugLogManager {
                         @Override
                         public String call() throws Exception {
                                workflowService.createWorkFlow(w);
+                               message.set("creating workflows");
                                return "Created workflow: "+w.getId();
                         }
                     };
@@ -170,11 +179,11 @@ public class DugLogManager {
             
             
             
-            System.out.println("middleware.dugex.DugLogManager.<init>(): creating log entries");
+            System.out.println("middleware.dugex.DugLogManager.<init>(): creating "+listWithLogInformation.size()+" log entries");
             List<Callable<String>> tasks=new ArrayList<>();
             exec=Executors.newFixedThreadPool(5);
             
-            
+            message.set("commiting logs");
             for(LogInformation li:listWithLogInformation){
                 
                  Callable<String> task= new Callable<String>(){
@@ -197,7 +206,8 @@ public class DugLogManager {
                         }
                         log.setInputVolumeNames(concat);
                         logsService.createLogs(log);
-                        
+                        ++commitedLogs;
+                        progress.set((double)commitedLogs/totalNumberOfLogs);
                             if(latestLogSet.contains(li)){
                                 System.out.println(".call(): for "+li.linename.getSubsurface()+" latestLog: "+log.getIdLogs()+" version: "+li.version);
                                 latestLogForSub.put(li.linename, log);
@@ -236,7 +246,7 @@ public class DugLogManager {
         List<Callable<String>> tasks=new ArrayList<>();
         exec=Executors.newFixedThreadPool(5);
         
-        
+        message.set("extracting logs");
         
          if(volumeType.equals(JobType0Model.PROCESS_2D)){
              
@@ -248,15 +258,15 @@ public class DugLogManager {
              }
              Set<String> allSubs=new HashSet<>();                //list of all logs 
             
-             
-            for(FileWrapper fw:filesToCommit){
-             
+            for(int ii=0;ii<filesToCommit.size();ii++){
+          //  for(FileWrapper fw:filesToCommit){
+                FileWrapper fw=filesToCommit.get(ii);
             
-            
+                final int iii=ii;
                     Callable<String> task= new Callable<String>(){
                         @Override
                         public String call() throws Exception {
-                            
+                            final int fwc=iii+1;
                     
                     // if files are still running, skip those files,start a new thread , sleep and create a new instance of DugLogManager <<TO DO
                     
@@ -270,8 +280,11 @@ public class DugLogManager {
                     int lenCharLinename="lineName=".length();
                     int lenCharInsight="Insight=".length();
                     String inputFile="Input_File=";
+                     message.set("reading logs");
                     while((value=br.readLine())!=null){
-                            System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value);    //
+                            
+                            progress.set((double)fwc/filesToCommit.size());
+                            System.out.println("middleware.dugex.LogManager.extractInformation(): value: for file: "+fw.fwrap.getName()+"  :  "+value+" file# "+fwc+" total "+filesToCommit.size()+" Progress: "+(double)fwc/filesToCommit.size());    //
                                                                                                                                                            //value = lineName=<><space>Insight=<><space>Input_File=file_1<space>Input_File=file_2<space>...Input_File=<file_n> 
                             String linename=value.substring(9,value.indexOf(" "));
                             int insightSearchBegin = lenCharLinename+linename.length()+1+lenCharInsight;
@@ -289,21 +302,31 @@ public class DugLogManager {
                            
                             
                             //System.out.println("middleware.dugex.LogManager.extractInformation(): linename= "+linename+" Insight: "+insight);
-
+                            
                             LogInformation li=new LogInformation();
                             li.volume=dbVol;
                             li.log=fw.fwrap;
-                            li.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
-                            li.insightVersion=insight;
-                            li.timestamp=hackTimeStamp(fw.fwrap);
-                            if(indexOfFirstINPUT_FILE>0){
-                                 String inputFiles=value.substring(indexOfFirstINPUT_FILE);
-                                String[] volumeNames=inputFiles.split(inputFile);
-                                li.inputVolumeNames=Arrays.asList(volumeNames);
+                            try{
+                                Subsurface sbb=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                                sbb.getSubsurface();
+                                li.linename=sbb;
+                                li.insightVersion=insight;
+                                li.timestamp=hackTimeStamp(fw.fwrap);
+                                if(indexOfFirstINPUT_FILE>0){
+                                     String inputFiles=value.substring(indexOfFirstINPUT_FILE);
+                                    String[] volumeNames=inputFiles.split(inputFile);
+                                    li.inputVolumeNames=Arrays.asList(volumeNames);
+                                }
+                            String sub=li.linename.getSubsurface();
+                           // logInformation.add(li);
+                          
+                            }
+                            catch(NullPointerException npe){
+                                System.out.println("middleware.dugex.DugLogManager.extractInformation(): COULD NOT ASSOCIATE A SUBSURFACE FOR LOG FILE: "+li.log.getAbsolutePath());
+                                continue;
                             }
                             
-                           // logInformation.add(li);
-                            allSubs.add(li.linename.getSubsurface());
+                              allSubs.add(li.linename.getSubsurface());
                             System.out.println("middleware.dugex.DugLogManager.extractInformation():: looking for "+li.linename.getSubsurface()+" insight: "+li.insightVersion+" input volume(s): "+li.inputVolumeNames.toString());
                              if(!mapOfSubsurfaceLogs.containsKey(li.linename.getSubsurface())){
                                                 mapOfSubsurfaceLogs.put(li.linename.getSubsurface(), new ArrayList<>());
@@ -354,8 +377,10 @@ public class DugLogManager {
                 }
           
             try {
-                System.out.println("middleware.dugex.DugLogManager.extractInformation(): getWorkFlowInformationFor2D..for logInformation.size() : "+logInformation.size()+" dbVol.name = "+dbVol.getNameVolume());
-                workflowsToBeCreated=getWorkFlowInformationFor2D(logInformation,dbVol);
+                System.out.println("middleware.dugex.DugLogManager.extractInformation(): getWorkFlowInformationFor2D..for logInformation.size() : "+logInformation.size()+" dbVol.name = "+dbVol.getNameVolume()+" files To Commit size : "+filesToCommit.size());
+                message.set("fetching workflow info");
+                progress.set(0);
+                workflowsToBeCreated.addAll(getWorkFlowInformationFor2D(logInformation,dbVol));
             } catch (IOException ex) {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NoSuchAlgorithmException ex) {
@@ -363,14 +388,16 @@ public class DugLogManager {
             }
          
              if(logInformation.size()!=filesToCommit.size()){
-                 
+                 List<FileWrapper> filesPending=calculatePendingFiles(logInformation,filesToCommit);
+                 message.set("recursing due to log mismatch");
+                 progress.set(0);
                  recursionCounter=--recursionCounter;
                  if(recursionCounter>0){
                      int attemptNo=AppProperties.LOG_RECURSION_COUNTER-recursionCounter;
                      System.out.println("middleware.dugex.DugLogManager.extractInformation(): Mismatch of log count. logInformationList.size(" +logInformation.size()+")  "
                              + "while filesToCommit.size("+filesToCommit.size()+"). attempt # "+attemptNo+" Recursion will halt at the "+AppProperties.LOG_RECURSION_COUNTER+"th attempt");
-                     Set<LogInformation> logI=extractInformation(dbVol, filesToCommit, volumeType, mapOfSubsurfaceLogs,recursionCounter);
-                     logInformation.clear();
+                     Set<LogInformation> logI=extractInformation(dbVol, filesPending, volumeType, mapOfSubsurfaceLogs,recursionCounter);
+                     //logInformation.clear();
                      logInformation.addAll(logI);
                  }
                  
@@ -390,11 +417,17 @@ public class DugLogManager {
         
         if(volumeType.equals(JobType0Model.SEGD_LOAD)){
             
-            for(FileWrapper fw:filesToCommit){
-                
+          
+                  for(int ii=0;ii<filesToCommit.size();ii++){
+          //  for(FileWrapper fw:filesToCommit){
+                FileWrapper fw=filesToCommit.get(ii);
+            
+                final int iii=ii;
                 Callable<String> task= new Callable<String>(){
                     @Override
                     public String call() throws Exception {
+                        final int fwc=iii+1;
+                        progress.set((double)(fwc/filesToCommit.size()));
                          //Assume that all logs are completed. Need to code work for logs that are still building    ..Use the checkIfSegDLogIsDone(File f) function
                                             List<LogInformation> modifiedList=getModifiedContents(dbVol,fw.fwrap); 
                                             //getInsightVersionsFromLog(fw.fwrap,modifiedList);
@@ -426,6 +459,8 @@ public class DugLogManager {
             System.out.println("middleware.dugex.DugLogManager.extractInformation(): Attaching Insight Versions to Saillines");
             getInsightVersionsFromLog(filesToCommit.get(0).fwrap, logInformation);                          //all gcfiles have the same information about insight and sailline.
             try {
+                message.set("fetching workflow info");
+                progress.set(0);
                 workflowsToBeCreated=getWorkFlowforSegD(logInformation,dbVol);
             } catch (IOException ex) {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -586,16 +621,7 @@ public class DugLogManager {
                                         System.out.println("middleware.dugex.DugLogManager.getModifiedContents(): Adding highest "+highest+" ==> "+listOfLogsForSub.get(highest).log.getName()+" as latest version "+listOfLogsForSub.get(highest).version+" for "+listOfLogsForSub.get(highest).linename.getSubsurface()+" : ");
                                         latestLogSet.add(listOfLogsForSub.get(listOfLogsForSub.size()-1));         // the highest version in the sorted equals value (size-1) of the list
                                        
-                                        
-                                    
-                                    
-                                        /*Log log=logsService.getLogsFor(l.volume, l.linename, l.timestamp, l.log.getAbsolutePath());
-                                        if(log==null){              //if the database doesn't contain any log for the above params, then add to the list of modified.
-                                        modifiedContents.add(l);
-                                        
-                                        
-                                        }*/             // no files are been considered which are created after the maxTimestamp in the database
-                                        
+                                   
                                         modifiedContents.add(l);
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
@@ -700,6 +726,7 @@ public class DugLogManager {
    private Set<Workflow> getWorkFlowforSegD(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException{
         Set<Workflow> workflows=new HashSet<>();
         MessageDigest md;
+        message.set("extract workflow info");
                 Process process=new ProcessBuilder(dugioScripts.getSegdLoadNotesTxtTimeWorkflowExtractor().getAbsolutePath(),volume.getPathOfVolume()).start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr=new InputStreamReader(is);
@@ -756,10 +783,13 @@ public class DugLogManager {
         System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): logInformation.size "+logInformation.size()+" dbVol.name: "+volume.getNameVolume());
          Map<String,List<LogInformation>> md5MapForWorkflow=new HashMap<>();   //map of md5 of workflows and their logs.
         Set<Workflow> workflows=new HashSet<>();
-         
-         
+         int totall=logInformation.size();
+         message.set("extract workflow info");
          MessageDigest md;
+         int c=0;
          for (LogInformation log : logInformation) {
+             c++;
+             progress.set((double)c/totall);
                 Process process=new ProcessBuilder(dugioScripts.getWorkflowExtractor().getAbsolutePath(),log.log.getAbsolutePath()).start();
                 InputStream is = process.getInputStream();
                 InputStreamReader isr=new InputStreamReader(is);
@@ -819,6 +849,30 @@ public class DugLogManager {
             
         }
          return workflows;
+    }
+
+    /**
+     * return  a list of filewrapper, files of which are present in filesToCommit but not in loginformation
+     */
+    
+    private List<FileWrapper> calculatePendingFiles(Set<LogInformation> logInformation, List<FileWrapper> filesToCommit) {
+        List<FileWrapper> filesPending=new ArrayList<>();
+        Map<String,LogInformation> mL=new HashMap<>();
+        Map<String,FileWrapper> mF=new HashMap<>();
+        for(FileWrapper f:filesToCommit){
+          mF.put(f.fwrap.getAbsolutePath(), f);
+        }
+        for(LogInformation l:logInformation){
+            mL.put(l.log.getAbsolutePath(), l);
+        }
+        
+        for (Map.Entry<String, FileWrapper> entry : mF.entrySet()) {
+            String fileName = entry.getKey();
+            FileWrapper value = entry.getValue();
+            if(!mL.containsKey(fileName))filesPending.add(value);
+            
+        }
+        return filesPending;
     }
     
     private class FileWrapper{
@@ -945,4 +999,36 @@ public class DugLogManager {
         
         
     }
+    
+    private StringProperty message=new SimpleStringProperty();
+    private ReadOnlyDoubleWrapper progress=new ReadOnlyDoubleWrapper();
+    
+    public ReadOnlyDoubleProperty progressProperty(){
+        return progress.getReadOnlyProperty();
+    }  
+    
+    public final double getProgress(){
+        return   progressProperty().get();
+    }
+    
+    public StringProperty messageProperty(){
+        return message;
+    }
+    
+    
+    private long totalNumberOfLogs=Long.MAX_VALUE;
+    private long commitedLogs=0L;
+    
+
+    public long getTotalNumberOfLogs() {
+        return totalNumberOfLogs;
+    }
+
+    public long getCommitedLogs() {
+        return commitedLogs;
+    }
+    
+    
+    
+    
 }

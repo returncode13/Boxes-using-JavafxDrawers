@@ -10,6 +10,7 @@ import app.properties.AppProperties;
 import db.model.Job;
 import db.model.Theader;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -220,6 +221,28 @@ public class TheaderDAOImpl implements TheaderDAO{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
             query.setParameter("j", job);
+            results=query.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+    @Override
+    public List<Theader> getTheadersFor(Workspace workspace) {
+         System.out.println("db.dao.TheaderDAOImpl.getTheadersFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Theader> results=null;
+        String hql="Select  th from Theader th inner join th.job j where j.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
             results=query.list();
             transaction.commit();
             

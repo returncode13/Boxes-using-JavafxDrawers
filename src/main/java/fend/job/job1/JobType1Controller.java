@@ -12,6 +12,7 @@ import fend.dot.anchor.AnchorView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
@@ -82,6 +83,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
@@ -136,7 +139,11 @@ public class JobType1Controller implements JobType0Controller{
     @FXML
     private JFXButton openDrawer;
 
-    
+     @FXML
+    private JFXProgressBar progressBar;
+
+    @FXML
+    private Label message;
     
     
     void setModel(JobType1Model item) {
@@ -167,6 +174,7 @@ public class JobType1Controller implements JobType0Controller{
     void setView(JobType1View vw,AnchorPane interactivePane) {
         node=vw;
         this.interactivePane=interactivePane;
+        
         drawer.setId("LEFT");
         JobDefinitionsType1Model bdmodel=new JobDefinitionsType1Model();
         JobDefinitionsType1View bdview=new JobDefinitionsType1View(bdmodel,this.model);
@@ -381,31 +389,52 @@ public class JobType1Controller implements JobType0Controller{
                     @Override
                     protected Void call() throws Exception {
                        dugLogManager=new DugLogManager(model);
-                       return null;
+                       dugLogManager.messageProperty().addListener((obs,o,n)->{
+                            updateMessage(n);
+                       });
+                        dugLogManager.progressProperty().addListener((obs,o,n)->{
+                            updateProgress(n.doubleValue(), 1);
+                        });
+                        dugLogManager.work();
+                        return null;
                     }
                 };
                 
                 logExtraction.setOnFailed(e->{
                         logExtraction.getException().printStackTrace();
                         headerButton.setDisable(false);
-                         showTable.setDisable(false);
+                        showTable.setDisable(false);
+                        openDrawer.setDisable(false);
                         model.setFinishedCheckingLogs(false);
                         dugLogManager=null;
+                        progressBar.progressProperty().unbind();
+                        progressBar.setProgress(0);
+                        message.textProperty().unbind();
+                        message.setText("failed logs");
                 });
                 
                 logExtraction.setOnSucceeded(e->{
-                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
                     model.setFinishedCheckingLogs(true);
                     dugLogManager=null;
                         headerButton.setDisable(false);
                          showTable.setDisable(false);
+                         openDrawer.setDisable(false);
+                         progressBar.progressProperty().unbind();
+                         progressBar.setProgress(0);
+                         message.textProperty().unbind();
+                         message.setText("completed logs");
                 });
                 logExtraction.setOnRunning(e->{
                         headerButton.setDisable(true);
-                         showTable.setDisable(true);
+                        showTable.setDisable(true);
+                        openDrawer.setDisable(true); 
                 });
                 
-                
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(logExtraction.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(logExtraction.messageProperty());
+               
                 exec.execute(logExtraction);
             }
             
@@ -561,19 +590,21 @@ public class JobType1Controller implements JobType0Controller{
           
         }
     };
-    
+    /**
+     * Return depth of a node
+     */
      private long depth(Job job) {
            if(job.isRoot()){
                return 0;
            }
            
            else{
-               List<Link> linksWithJobAsChild=linkService.getChildLinksForJob(job);
+               List<Link> linksWithJobAsChild=linkService.getChildLinksForJob(job);    //links where job is child
                long currentJobDepth=0;
                for(Link l:linksWithJobAsChild){
                    Job parent=l.getParent();
-                   long val=1+depth(parent);
-                   if(currentJobDepth < val) {
+                   long val=1+depth(parent);      // depth of current node = 1+ depth of the parent
+                   if(currentJobDepth < val) {   //if a job is at different depths, choose the maximum depth ( due to different links e.g. A->B->C->D  and A->D then D.depth=4;)
                         currentJobDepth=val;
                    }
                    
@@ -621,6 +652,13 @@ public class JobType1Controller implements JobType0Controller{
                       model.setFinishedCheckingLogs(false);
                   });
                   
+                  headerExtractionTask.setOnRunning(e->{
+                      headerButton.setDisable(true);
+                      qctable.setDisable(true);
+                      showTable.setDisable(true);
+                  });
+                  
+                //  s
                   exec.execute(headerExtractionTask);
               }
           }

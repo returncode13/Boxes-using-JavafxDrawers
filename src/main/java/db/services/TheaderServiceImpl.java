@@ -10,6 +10,7 @@ import db.dao.TheaderDAOImpl;
 import db.model.Job;
 import db.model.Theader;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -63,6 +64,11 @@ public class TheaderServiceImpl implements TheaderService{
     @Override
     public List<Theader> getAllTheadersFor(Job job) {
         return thDAO.getAllTheadersFor(job);
+    }
+
+    @Override
+    public List<Theader> getTheadersFor(Workspace workspace) {
+        return thDAO.getTheadersFor(workspace);
     }
     
 }

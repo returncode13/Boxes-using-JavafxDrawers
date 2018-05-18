@@ -17,10 +17,6 @@ import db.services.JobServiceImpl;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTypeService;
 import db.services.QcTypeServiceImpl;
-//import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
-
-//import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeModel;
-//import fend.job.definitions.qcmatrix.qctype.addQcType.AddQcTypeNode;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

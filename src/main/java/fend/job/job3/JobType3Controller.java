@@ -11,6 +11,7 @@ import fend.dot.anchor.AnchorView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
@@ -80,6 +81,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
 
@@ -124,6 +126,12 @@ public class JobType3Controller implements JobType0Controller{
     
     @FXML
     private JFXButton openDrawer;
+
+     @FXML
+    private JFXProgressBar progressBar;
+
+    @FXML
+    private Label message;
 
     void setModel(JobType3Model item) {
         model=item;

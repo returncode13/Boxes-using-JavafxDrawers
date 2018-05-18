@@ -11,6 +11,7 @@ import fend.dot.anchor.AnchorView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
@@ -80,6 +81,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.TextLoader;
 
@@ -125,6 +127,12 @@ public class JobType4Controller implements JobType0Controller{
     private JFXButton openDrawer;
 
     private Executor exec;
+    
+     @FXML
+    private JFXProgressBar progressBar;
+
+    @FXML
+    private Label message;
     
     void setModel(JobType4Model item) {
         model=item;
@@ -476,6 +484,18 @@ parent.addChild(model);*/
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             System.out.println("workspace.WorkspaceController.NameChangeListener.changed(): from "+oldValue+" to "+newValue);
             model.setNameproperty(newValue);
+             Task<Void> task=new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    /*dbjob=jobService.getJob(model.getId());
+                    dbjob.setNameJobStep(model.getNameproperty().get());
+                    jobService.updateJob(dbjob.getId(), dbjob);*/
+                    jobService.updateName(dbjob,model.getNameproperty().get());
+                    return null;
+                }
+            };
+            
+            exec.execute(task);
            
         }
     };
