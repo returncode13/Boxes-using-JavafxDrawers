@@ -359,6 +359,14 @@ parent.addChild(model);*/
                 @Override
                 protected Void call() throws Exception {
                     headerExtractor=new HeaderExtractor(model);
+                    headerExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                    headerExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
                     return null;
                 }
                 
@@ -368,6 +376,10 @@ parent.addChild(model);*/
                 showTable.setDisable(false);
                 qctable.setDisable(false);
                 headerButton.setDisable(false);
+                progressBar.progressProperty().unbind();
+                progressBar.setProgress(0);
+                message.textProperty().unbind();
+                message.setText("");
             });
             
             timeStampAndMd5ExtractionTask.setOnRunning(e->{
@@ -380,7 +392,15 @@ parent.addChild(model);*/
                 showTable.setDisable(false);
                 qctable.setDisable(false);
                 headerButton.setDisable(false);
+                progressBar.progressProperty().unbind();
+                progressBar.setProgress(0);
+                message.textProperty().unbind();
+                message.setText("");
             });
+                    progressBar.progressProperty().unbind();
+                    progressBar.progressProperty().bind(timeStampAndMd5ExtractionTask.progressProperty()); 
+                    message.textProperty().unbind();
+                    message.textProperty().bind(timeStampAndMd5ExtractionTask.messageProperty());
            
             exec.execute(timeStampAndMd5ExtractionTask);
             

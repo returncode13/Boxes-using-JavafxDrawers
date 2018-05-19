@@ -157,7 +157,7 @@ public class JobType1Controller implements JobType0Controller{
         //model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       //  model.getDepth().addListener(DEPTH_CHANGE_LISTENER);
-      model.finishedCheckingLogs().addListener(checkLogsListener);
+      model.finishedCheckingLogs().addListener(LOGS_COMPLETED_LISTENER);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
@@ -414,8 +414,8 @@ public class JobType1Controller implements JobType0Controller{
                 });
                 
                 logExtraction.setOnSucceeded(e->{
-                    model.setFinishedCheckingLogs(true);
-                    dugLogManager=null;
+                        
+                    
                         headerButton.setDisable(false);
                          showTable.setDisable(false);
                          openDrawer.setDisable(false);
@@ -423,6 +423,10 @@ public class JobType1Controller implements JobType0Controller{
                          progressBar.setProgress(0);
                          message.textProperty().unbind();
                          message.setText("completed logs");
+                         model.setFinishedCheckingLogs(true);
+                        dugLogManager=null;
+                         /*message.textProperty().unbind();
+                         message.setText("completed logs");*/
                 });
                 logExtraction.setOnRunning(e->{
                         headerButton.setDisable(true);
@@ -620,7 +624,7 @@ public class JobType1Controller implements JobType0Controller{
   * Used to extract headers after the logs are extracted.
   **/
     
-    private  ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+    private  ChangeListener<Boolean> LOGS_COMPLETED_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           //  if(newValue){
@@ -631,6 +635,15 @@ public class JobType1Controller implements JobType0Controller{
                       @Override
                       protected Void call() throws Exception {
                           headerExtractor=new HeaderExtractor(model);
+                          headerExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                          headerExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
+                          headerExtractor.work();
                           return null;
                       }
                   };
@@ -641,6 +654,10 @@ public class JobType1Controller implements JobType0Controller{
                        showTable.setDisable(false);
                        qctable.setDisable(false);
                        model.setFinishedCheckingLogs(false);
+                       progressBar.progressProperty().unbind();
+                       progressBar.setProgress(0);
+                       message.textProperty().unbind();
+                       message.setText("");
                        headerExtractionTask.getException().printStackTrace();
                   });
                   
@@ -650,14 +667,24 @@ public class JobType1Controller implements JobType0Controller{
                       qctable.setDisable(false);
                       showTable.setDisable(false);
                       model.setFinishedCheckingLogs(false);
+                      openDrawer.setDisable(false);
+                      progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
                   });
                   
                   headerExtractionTask.setOnRunning(e->{
                       headerButton.setDisable(true);
                       qctable.setDisable(true);
                       showTable.setDisable(true);
+                      openDrawer.setDisable(true);
                   });
                   
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(headerExtractionTask.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(headerExtractionTask.messageProperty());
                 //  s
                   exec.execute(headerExtractionTask);
               }

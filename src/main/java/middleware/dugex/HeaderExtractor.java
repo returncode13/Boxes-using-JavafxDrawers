@@ -136,6 +136,11 @@ public class HeaderExtractor {
         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Entered ");
         job=j;
         dbjob=job.getDatabaseJob();
+    }
+    
+    public void work() throws Exception{
+        
+        
         List<Volume0> volumes=job.getVolumes();
         Set<Header> setOfHeadersInJob=new HashSet<>();
         Set<Subsurface> setOfSubsurfacesInJob=new HashSet<>();
@@ -164,10 +169,9 @@ public class HeaderExtractor {
               headerHolderList.clear();
                List<Subsurface> subsExistingInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
                progress.set(0);
-               message.set("retrieving subsurfaces");
+               message.set("extracting headers");
                 for(Subsurface s:subsExistingInJob){
-                    int ii=subsExistingInJob.indexOf(s);
-                    progress.set((double)(ii/subsExistingInJob.size()));
+                    
                     SubsurfaceJobKey skey=generateSubsurfaceJobKey(s, dbjob);
                     existingSubsurfaceJobs.add(skey);
                 }
@@ -189,16 +193,19 @@ public class HeaderExtractor {
               
               
               
-              for(SubsurfaceHeaders sub:subsInVol){
-                  subsurfacesOnDisk.add(sub.getSubsurfaceName());
-                
+              //for(SubsurfaceHeaders sub:subsInVol){//
+              for(int ii=0;ii<subsInVol.size();ii++){
+                    SubsurfaceHeaders sub=subsInVol.get(ii);
+                    subsurfacesOnDisk.add(sub.getSubsurfaceName());
+                    
+                    final int iii=ii;
                             System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
 
                             Callable<String> task= new Callable<String>(){
                                 @Override
                                 public String call() throws Exception {
                                    
-                           
+                                   
                             String latestTimestamp=sub.getTimeStamp();
                             BigInteger latestTimeStampForSub=new BigInteger(latestTimestamp);
                             System.out.println(".call(): is latestTimeStampForVol ("+latestTimeStampForVol+") < latestTimeStampInFile ("+latestTimeStampForSub+"):  "+latestTimeStampForVol.compareTo(latestTimeStampForSub));
@@ -207,7 +214,8 @@ public class HeaderExtractor {
                       
                                 if(latestTimeStampForVol.compareTo(latestTimeStampForSub)<0){  //i.e. this sub was created after the latesttime present for any sub in that volume
                                     
-                                    
+                                    final int currentInd=iii+1;
+                                     //System.out.println("middleware.dugex.HeaderExtractor.<init>(): progress is "+(double)currentInd/subsInVol.size()+" current index: "+iii+" total: "+subsInVol.size());
                                     Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                                     String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
 
@@ -247,10 +255,14 @@ public class HeaderExtractor {
                                 headerHolder.header=header;
                                 headerHolder.subjob=header.getSubsurfaceJob();
                                 headerHolderList.add(headerHolder);
-
-                              System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                                   
+                                progress.set((double)currentInd/subsInVol.size());
+                                
+                             
                                  // headerService.getMultipleInstances(dbjob, dbsub);
                             }else{
+                                final int currentInd=iii+1;
+                                progress.set((double)currentInd/subsInVol.size());
                                 System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
                             }
                             
@@ -285,7 +297,7 @@ public class HeaderExtractor {
                     */
                     
                   
-                   
+                   message.set("committing headers");
                    for(HeaderHolder hh:headerHolderList){
                        SubsurfaceJobKey skey=generateSubsurfaceJobKey(hh.subjob.getSubsurface(), hh.subjob.getJob());
                        if(!existingSubsurfaceJobs.contains(skey)){
@@ -295,28 +307,39 @@ public class HeaderExtractor {
                        headers.add(hh.header);
                    }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
-                    
+                    progress.set(-1);
                     subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+subsurfaceJobs.size()+" subsurfaceJob entries");
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Committing "+headers.size()+" headers");
                     headerService.createBulkHeaders(headers);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+headers.size()+" headers");
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Bulk update of logs for headers");
-                    for(Header h:headers){
-                        logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface());
-                    }
+                    message.set("linking logs");
+                    progress.set(0);
+                    //for(Header h:headers){
+                        for(int kk=0;kk<headers.size();kk++){
+                            Header h=headers.get(kk);
+                            logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface());
+                            progress.set((double)(kk+1)/headers.size());
+                        }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
                     job.setDatabaseJob(dbjob);
                          System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating delete flags for volume: "+vol.getName());
+                         message.set("updating delete flags");
+                         progress.set(-1);
                          headerService.updateDeleteFlagsFor(dbvol,subsurfacesOnDisk);
                    
                     
           }
-                   
+                        
                         System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for any subsurfaces that might have been repeated in the job");
+                        message.set("checking for duplicates");
+                        progress.set(-1);
                         headerService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
                    
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
+                    message.set("");
+                    progress.set(0);
        
           
         }

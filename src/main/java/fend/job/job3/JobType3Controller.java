@@ -360,6 +360,14 @@ parent.addChild(model);*/
                       @Override
                       protected Void call() throws Exception {
                           headerExtractor=new HeaderExtractor(model);
+                          headerExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                          headerExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
                           return null;
                       }
                   };
@@ -370,6 +378,10 @@ parent.addChild(model);*/
                        showTable.setDisable(false);
                        qctable.setDisable(false);
                        //model.setFinishedCheckingLogs(false);
+                       progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
                        headerExtractionTask.getException().printStackTrace();
                   });
                   
@@ -378,6 +390,10 @@ parent.addChild(model);*/
                       headerButton.setDisable(false);
                       qctable.setDisable(false);
                       showTable.setDisable(false);
+                      progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
                      // model.setFinishedCheckingLogs(false);
                   });
                   
@@ -385,6 +401,11 @@ parent.addChild(model);*/
                       showTable.setDisable(true);
                       qctable.setDisable(true);
                   });
+                  
+                    progressBar.progressProperty().unbind();
+                    progressBar.progressProperty().bind(headerExtractionTask.progressProperty()); 
+                    message.textProperty().unbind();
+                    message.textProperty().bind(headerExtractionTask.messageProperty());
                   exec.execute(headerExtractionTask);
               }
             
