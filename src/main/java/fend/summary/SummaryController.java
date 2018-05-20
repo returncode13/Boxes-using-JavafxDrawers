@@ -39,7 +39,9 @@ import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummaryCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell.TimeCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.TraceCell;
+import fend.summary.SequenceSummary.SequenceCell.SequenceCell;
 import fend.summary.SequenceSummary.SequenceSummary;
+import fend.summary.SequenceSummary.SubsurfaceCell.SubsurfaceCell;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,12 +66,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -100,6 +104,7 @@ public class SummaryController extends Stage{
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
     private Executor exec;
+    private BooleanProperty mouseWhirlProperty=new SimpleBooleanProperty(false);
     // @FXML
    // private TableView<SequenceSummary> table;
     
@@ -116,6 +121,8 @@ public class SummaryController extends Stage{
          System.out.println("fend.summary.SummaryController.setModel(): table sorting!" );
          treetable.refresh();
          });*/
+         
+       mouseWhirlProperty.addListener(MOUSE_WHIRL_LISTENER);
          
           exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
@@ -251,16 +258,19 @@ public class SummaryController extends Stage{
                             
                             if(seqSummaryMap.containsKey(sub.getSequence())){
                                 subSeqSummary.setSubsurface(sub);
+                                subSeqSummary.setIsChild(true);
                                 seqSummaryMap.get(sub.getSequence()).addToChildren(subSeqSummary);
                                 System.out.println("fend.summary.SummaryController.setModel(): added child subsurface: "+sub.getSubsurface());
                             }else{
                                 System.out.println("fend.summary.SummaryController.setModel(): added root sequence:    "+sub.getSequence().getSequenceno());
                                 SequenceSummary seqRootSummary=new SequenceSummary();
+                                seqRootSummary.setIsParent(true);
                                 seqRootSummary.setSequence(sub.getSequence());
                                 seqRootSummary.setDepthMap(depthMapForSequenceRoot);
                                         
                             seqSummaryMap.put(sub.getSequence(), seqRootSummary);
                             subSeqSummary.setSubsurface(sub);
+                            subSeqSummary.setIsChild(true);
                             seqSummaryMap.get(sub.getSequence()).addToChildren(subSeqSummary);
                                 System.out.println("fend.summary.SummaryController.setModel(): added child subsurface: "+sub.getSubsurface());
                             }
@@ -513,6 +523,8 @@ public class SummaryController extends Stage{
             }
         });
         
+        seqTableColumn.setCellFactory(p->new SequenceCell(p));
+        seqTableColumn.setMinWidth(100);
        
         subsurfaceTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, String>, ObservableValue<String>>() {
             @Override
@@ -524,6 +536,8 @@ public class SummaryController extends Stage{
             }
         });
         
+        subsurfaceTableColumn.setCellFactory(e->new SubsurfaceCell(e));
+        subsurfaceTableColumn.setMinWidth(300);
         
         
         
@@ -532,8 +546,9 @@ public class SummaryController extends Stage{
              SequenceSummary seqSummaryRoot = entry.getValue();
              
              TreeItem<SequenceSummary> seqItem=new TreeItem<>(seqSummaryRoot);
-             seqItem.expandedProperty().addListener(REFRESH_TABLE_LISTENER);
-                Map<Subsurface,SequenceSummary> children=seqSummaryRoot.getChildren();
+             seqItem.expandedProperty().addListener(REFRESH_TABLE_LISTENER);                       //fix for the updateItem bug. (multiple doubts opening  unrelated to the user click)
+             
+             Map<Subsurface,SequenceSummary> children=seqSummaryRoot.getChildren();
                 for (Map.Entry<Subsurface, SequenceSummary> entry1 : children.entrySet()) {
                  Subsurface key = entry1.getKey();
                  SequenceSummary subSummaryChild = entry1.getValue();
@@ -575,7 +590,7 @@ public class SummaryController extends Stage{
         
         treetable.setRoot(root);
         treetable.setShowRoot(false);
-        treetable.getSelectionModel().setCellSelectionEnabled(true);
+        //treetable.getSelectionModel().setCellSelectionEnabled(true);
         treetable.setOnSort(ee->{treetable.refresh();});
         
           // treetable.refresh();
@@ -596,11 +611,12 @@ public class SummaryController extends Stage{
      }
      };*/
      
-     
+     private Scene scene;
      
     void setView(SummaryView vw) {
         this.view=vw;
-        this.setScene(new Scene(this.view));
+        scene=new Scene(this.view);
+        this.setScene(scene);
         show();
     }
     
@@ -609,14 +625,58 @@ public class SummaryController extends Stage{
      * Listener to refresh table
      **/
     
+    
+    
+    
     private ChangeListener<Boolean> REFRESH_TABLE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-           treetable.refresh();
+           //if(newValue){
+              // System.out.println(".changed(): Summary table expanding ..newv: "+newValue);
+               mouseWhirlProperty.set(!mouseWhirlProperty.get());
+               treetable.refresh();
+           
+               //mouseWhirlProperty.set(false);
+               
+               /*}else{
+               // System.out.println(".changed(): Summary table collapsing ..newv: "+newValue);
+               mouseWhirlProperty.set(false);
+               }*/
+              
+           
+           
+           
+           
+           
         }
     };
     
-  
+    
+    private ChangeListener<Boolean> MOUSE_WHIRL_LISTENER=new ChangeListener<Boolean>(){
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+           
+            scene.setCursor(Cursor.WAIT);
+            Task<Void> mouseWTask=new Task<Void>() {
+                      @Override
+                      protected Void call() throws Exception {
+                          
+                           for(int i=0;i<10000;i++){};
+                           //scene.setCursor(Cursor.DEFAULT);
+                          return null;
+                      }
+                  };
+            mouseWTask.setOnRunning(e->{scene.setCursor(Cursor.WAIT);});
+            mouseWTask.setOnSucceeded(e->{scene.setCursor(Cursor.DEFAULT);});
+            mouseWTask.setOnFailed(e->{scene.setCursor(Cursor.DEFAULT);});
+            mouseWTask.setOnCancelled(e->{scene.setCursor(Cursor.DEFAULT);});
+           exec.execute(mouseWTask);
+            
+            
+        }
+        
+        
+    };
      private String timeNow(){
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }

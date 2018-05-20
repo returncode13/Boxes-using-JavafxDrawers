@@ -367,6 +367,7 @@ parent.addChild(model);*/
                               //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
                               updateMessage(n);
                           });
+                    headerExtractor.work();
                     return null;
                 }
                 
@@ -376,6 +377,7 @@ parent.addChild(model);*/
                 showTable.setDisable(false);
                 qctable.setDisable(false);
                 headerButton.setDisable(false);
+                openDrawer.setDisable(false);
                 progressBar.progressProperty().unbind();
                 progressBar.setProgress(0);
                 message.textProperty().unbind();
@@ -386,12 +388,14 @@ parent.addChild(model);*/
                 showTable.setDisable(true);
                 qctable.setDisable(true);
                 headerButton.setDisable(true);
+                openDrawer.setDisable(true);
             });
             
             timeStampAndMd5ExtractionTask.setOnSucceeded(e->{
                 showTable.setDisable(false);
                 qctable.setDisable(false);
                 headerButton.setDisable(false);
+                openDrawer.setDisable(false);
                 progressBar.progressProperty().unbind();
                 progressBar.setProgress(0);
                 message.textProperty().unbind();

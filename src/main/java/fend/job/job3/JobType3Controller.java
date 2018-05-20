@@ -368,6 +368,7 @@ parent.addChild(model);*/
                               //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
                               updateMessage(n);
                           });
+                          headerExtractor.work();
                           return null;
                       }
                   };

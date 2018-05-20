@@ -21,10 +21,29 @@ import java.util.Objects;
 public class SequenceSummary {
     Sequence sequence;        //sequence that this summary row will represent
     Subsurface subsurface;
-    //private List<Depth> depths=new ArrayList<>();         //the table column is ordered by depths.
-    ///private List<SequenceSummary> children=new ArrayList<>();
+    
     private Map<Long,Depth> depthMap=new HashMap<>();
     private Map<Subsurface,SequenceSummary> children=new HashMap<>();
+    boolean isParent=false;
+    boolean isChild=false;
+
+    public boolean isParent() {
+        return isParent;
+    }
+
+    public void setIsParent(boolean isParent) {
+        this.isParent = isParent;
+    }
+
+    public boolean isChild() {
+        return isChild;
+    }
+
+    public void setIsChild(boolean isChild) {
+        this.isChild = isChild;
+    }
+    
+    
     
     public Sequence getSequence() {
         return sequence;

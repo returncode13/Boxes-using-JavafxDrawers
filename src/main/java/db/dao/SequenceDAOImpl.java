@@ -111,7 +111,11 @@ public class SequenceDAOImpl implements SequenceDAO {
         }
         if(result.size()!=0){
              return result.get(0);
-        }else
+        }if(result.isEmpty()){
+            return null;
+        }
+        
+        else
             return null;
        
     }

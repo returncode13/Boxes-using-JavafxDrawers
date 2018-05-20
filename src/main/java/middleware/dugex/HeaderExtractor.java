@@ -676,12 +676,19 @@ public class HeaderExtractor {
               List<Callable<String>> tasks = new ArrayList<>();
               exec = Executors.newFixedThreadPool(processorsUsed());
             
+              int count=0;
+              final int total=fhMap.entrySet().size();
+               message.set("extracting text info");
               for (Map.Entry<Sequence, FileHolder> entry : fhMap.entrySet()) {
+                  
+                  count++;
+                  final int prog=count;
                   
                    Callable<String> task= new Callable<String>(){
                                 @Override
                                 public String call() throws Exception {
                   
+                                   
                   Sequence seq = entry.getKey();
                   FileHolder fh = entry.getValue();
                   filesOnDisk.add(fh.fileName);
@@ -689,6 +696,7 @@ public class HeaderExtractor {
                   BigInteger fhTimeStampInt=new BigInteger(fhTimeStampOfFile);
                   if(latestTimeStampForVol.compareTo(fhTimeStampInt) < 0){   //a new file was either added or an existing file was modified after the last query
                       System.out.println("middleware.dugex.HeaderExtractor.<init>(): looking for seq: "+seq.getSequenceno());
+                      progress.set((double)prog/total);
                       List<Subsurface> subs=sequenceSubLUM.get(seq);
                      // System.out.println("middleware.dugex.HeaderExtractor.<init>(): found "+subs.size()+" subsurfaces in seq: "+seq.getSequenceno());
                       Theader seqTh=new Theader();
@@ -731,7 +739,7 @@ public class HeaderExtractor {
                                     history=true;
                                     
                                 }else{
-                                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Text Header");
+                                   // System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Text Header");
                                     theader=new Theader();
                                     theader.setJob(dbjob);
                                     theader.setSubsurfaceJob(dbSubjob);
@@ -778,6 +786,9 @@ public class HeaderExtractor {
                   
                                 
                                 }
+                  
+                  
+                   
                    return "Finished header extraction for seq: "+seq.getSequenceno();
                                 }
                           };
@@ -804,16 +815,23 @@ public class HeaderExtractor {
                     /***
                      Database ops
                      **/
-                     for(TheaderHolder th:theaderHolderList){
+                     message.set("consolidate headers");
+                     progress.set(0);
+                    // for(TheaderHolder th:theaderHolderList){
+                         for(int i=0;i<theaderHolderList.size();i++){
+                             
+                         TheaderHolder th=theaderHolderList.get(i);
                        SubsurfaceJobKey skey=generateSubsurfaceJobKey(th.subjob.getSubsurface(), th.subjob.getJob());
                        if(!existingSubsurfaceJobs.contains(skey)){
                                     subsurfaceJobs.add(th.subjob);
                                     existingSubsurfaceJobs.add(skey);
                         }
                        theaders.add(th.theader);
+                       progress.set((double)(i+1)/theaderHolderList.size());
                    }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
-                    
+                    message.set("committing headers");
+                    progress.set(-1);
                     subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+subsurfaceJobs.size()+" subsurfaceJob entries");
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Committing "+theaders.size()+" headers");
@@ -825,7 +843,7 @@ public class HeaderExtractor {
                     job.setDatabaseJob(dbjob);
                      System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating delete flags for volume: "+vol.getName()+" PENDING ");
                     //theaderService.updateDeleteFlagsFor(dbvol,filesOnDisk);
-                  
+                   progress.set(0);
               
               
               
@@ -1265,6 +1283,7 @@ public class HeaderExtractor {
                seqInt=Integer.valueOf(seqStr);
                System.out.println("middleware.dugex.HeaderExtractor.getFileHolderListFrom(): seq from file "+f.getName()+" --> (from,to): ("+from+","+to+")=="+seqStr);
                Sequence seq=sequenceService.getSequenceObjByseqno(Long.valueOf(seqInt));
+               if(seq==null) continue;
                FileHolder fh=new FileHolder();
                fh.file=f;
                fh.fileName=f.getName();
