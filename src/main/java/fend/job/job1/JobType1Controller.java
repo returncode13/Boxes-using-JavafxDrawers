@@ -6,6 +6,7 @@
 package fend.job.job1;
 
 
+import app.properties.AppProperties;
 import fend.dot.anchor.AnchorView;
 //import fend.job.definitions.JobDefinitionsType1Model;
 //import fend.job.definitions.JobDefinitionsType1View;
@@ -37,6 +38,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
@@ -88,6 +91,8 @@ import javafx.scene.control.ProgressBar;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -294,6 +299,7 @@ public class JobType1Controller implements JobType0Controller{
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
               
               
@@ -344,6 +350,7 @@ public class JobType1Controller implements JobType0Controller{
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
              
          });
@@ -933,6 +940,8 @@ public class JobType1Controller implements JobType0Controller{
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             dbjob=jobService.getJob(dbjob.getId());
             model.setDatabaseJob(dbjob);
+            model.setNameproperty(dbjob.getNameJobStep());
+            model.setDepth(dbjob.getDepth());
         }
     };
     
@@ -945,6 +954,7 @@ public class JobType1Controller implements JobType0Controller{
     private SummaryService summaryService=new SummaryServiceImpl();
     private QcTableService qcTableService=new QcTableServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     
       private void deleteLinksBelongingtoCurrentJob() {
            List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
@@ -952,7 +962,15 @@ public class JobType1Controller implements JobType0Controller{
           for(Dot dot:dotsForJob){
           variableArgumentService.deleteVariableArgumentFor(dot);
           }
-           
+            List<Link> links1=linkService.getChildLinksForJob(dbjob);       //get links where job is child and update the links parents
+            for(Link l:links1){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getParent(), now());
+            }
+            
+            List<Link> links2=linkService.getParentLinksFor(dbjob);         //get links where job is parent and update the links children
+            for(Link l:links2){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getChild(), now());
+            }
             linkService.deleteLinksForJob(dbjob);
               for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());
@@ -1120,4 +1138,8 @@ public class JobType1Controller implements JobType0Controller{
             lineTableModel=null;
         }
     };
+   
+   private String now() {
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
 }

@@ -6,6 +6,7 @@
 package fend.job.job5;
 
 
+import app.properties.AppProperties;
 import fend.dot.anchor.AnchorView;
 //import fend.job.definitions.JobDefinitionsModel;
 //import fend.job.definitions.JobDefinitionsView;
@@ -36,6 +37,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
@@ -87,6 +90,8 @@ import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
 import middleware.dugex.PheaderLoader;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -285,6 +290,7 @@ public class JobType5Controller implements JobType0Controller{
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
               
               
@@ -335,6 +341,7 @@ public class JobType5Controller implements JobType0Controller{
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
              
          });
@@ -874,13 +881,28 @@ public class JobType5Controller implements JobType0Controller{
     private SummaryService summaryService=new SummaryServiceImpl();
     private QcTableService qcTableService=new QcTableServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     
+     private String now() {
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
+     
       private void deleteLinksBelongingtoCurrentJob() {
            List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
           System.out.println("fend.job.job5.JobType5Controller.deleteLinksBelongingtoCurrentJob(): deleting the variable arguments ");
           for(Dot dot:dotsForJob){
           variableArgumentService.deleteVariableArgumentFor(dot);
           }
+          
+          List<Link> links1=linkService.getChildLinksForJob(dbjob);       //get links where job is child and update the links parents
+            for(Link l:links1){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getParent(), now());
+            }
+            
+            List<Link> links2=linkService.getParentLinksFor(dbjob);         //get links where job is parent and update the links children
+            for(Link l:links2){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getChild(), now());
+            }
            
             linkService.deleteLinksForJob(dbjob);
               for(Dot dot:dotsForJob){

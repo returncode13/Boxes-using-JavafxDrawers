@@ -25,7 +25,7 @@ public class TimeCellView extends AnchorPane{
     
     public TimeCellView(TimeCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/time/timeCellView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/time/timeCellView_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

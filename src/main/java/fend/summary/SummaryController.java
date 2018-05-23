@@ -66,8 +66,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -75,6 +78,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import middleware.doubt.DoubtStatusModel;
@@ -425,7 +429,41 @@ public class SummaryController extends Stage{
                  
               //   List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
                  
+             
+              
         for(Depth depth: depthForColumns){
+            
+              Label timeL=new Label("Time");
+              VBox vboxtime=new VBox(timeL);
+              vboxtime.setRotate(-90);
+              vboxtime.setPadding(new Insets(5,5,5,5));
+              Group grptime=new Group(vboxtime);
+              
+              Label traceL=new Label("Trace");
+              VBox vboxtrace=new VBox(traceL);
+              vboxtrace.setRotate(-90);
+              vboxtrace.setPadding(new Insets(5,5,5,5));
+              Group grptrace=new Group(vboxtrace);
+              
+              Label qL=new Label("Qc");
+              VBox vboxq=new VBox(qL);
+              vboxq.setRotate(-90);
+              vboxq.setPadding(new Insets(5,5,5,5));
+              Group grpq=new Group(vboxq);
+              
+              Label insL=new Label("Insight");
+              VBox vboxIns=new VBox(insL);
+              vboxIns.setRotate(-90);
+              vboxIns.setPadding(new Insets(5,5,5,5));
+              Group grpIns=new Group(vboxIns);
+              
+              Label ioL=new Label("IO");
+              VBox vboxIO=new VBox(ioL);
+              vboxIO.setRotate(-90);
+              vboxIO.setPadding(new Insets(5,5,5,5));
+              Group grpIO=new Group(vboxIO);
+            
+            
             TreeTableColumn<SequenceSummary,Depth> depthColumn = new TreeTableColumn<>("Depth: "+depth.getDepth()+"");
             //for(int jobId=0;jobId<depth.getJobSummaries().size();jobId++){
             Map<Job,JobSummaryModel> jobsummaryModelMap=depth.getJobSummaryMap();
@@ -444,7 +482,11 @@ public class SummaryController extends Stage{
                 
                  
                  //Beginning Time Column ==>
-                TreeTableColumn<SequenceSummary,Boolean> timeColumn=new TreeTableColumn<>("Time"); 
+                TreeTableColumn<SequenceSummary,Boolean> timeColumn=new TreeTableColumn<>("");
+                timeColumn.setGraphic(grptime);
+                /*timeColumn.setMaxWidth(20);
+                timeColumn.setMinWidth(20);*/
+                
                 timeColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                     @Override
                     public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
@@ -452,12 +494,16 @@ public class SummaryController extends Stage{
                     }
                 });
                  timeColumn.setCellFactory(param->new TimeCell(depthId,jobkey,timeDoubtType));
+                
+                 //timeColumn.setStyle("-fx-padding: 0 0 0 0;");
+               //  timeColumn.setStyle("-fx-margin: 0 0 0 0;");
                  jobcolumn.getColumns().add(timeColumn);
                   //<==End of Time column
                   
                   
                   //Beginning Trace Column ==>
-                  TreeTableColumn<SequenceSummary,Boolean> traceColumn=new TreeTableColumn<>("Trace"); 
+                  TreeTableColumn<SequenceSummary,Boolean> traceColumn=new TreeTableColumn<>(""); 
+                  traceColumn.setGraphic(grptrace);
                 traceColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                     @Override
                     public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
@@ -469,7 +515,8 @@ public class SummaryController extends Stage{
                 //<==End of Trace column
                  
                  //Beginning Qc Column ==> 
-                 TreeTableColumn<SequenceSummary,Boolean> qcColumn=new TreeTableColumn<>("Qc"); 
+                 TreeTableColumn<SequenceSummary,Boolean> qcColumn=new TreeTableColumn<>("");
+                 qcColumn.setGraphic(grpq);
                 qcColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                     @Override
                     public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
@@ -481,7 +528,8 @@ public class SummaryController extends Stage{
                 //<==End of Qc column
                  
                  //<==Start of Insight column
-                    TreeTableColumn<SequenceSummary,Boolean> insightColumn=new TreeTableColumn<>("Insight"); 
+                    TreeTableColumn<SequenceSummary,Boolean> insightColumn=new TreeTableColumn<>(""); 
+                    insightColumn.setGraphic(grpIns);
                     insightColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
@@ -494,7 +542,8 @@ public class SummaryController extends Stage{
                  
                  
                  //<==Start of IO column
-                    TreeTableColumn<SequenceSummary,Boolean> ioColumn=new TreeTableColumn<>("IO"); 
+                    TreeTableColumn<SequenceSummary,Boolean> ioColumn=new TreeTableColumn<>("");
+                    ioColumn.setGraphic(grpIO);
                     ioColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
                         @Override
                         public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
@@ -505,8 +554,10 @@ public class SummaryController extends Stage{
                      jobcolumn.getColumns().add(ioColumn);
                  
                  //<==End of IO column
-                 
+                // jobcolumn.setStyle("-fx-padding: 0 0 0 0;");
+                // jobcolumn.setStyle("-fx-margin:");
                 depthColumn.getColumns().add(jobcolumn);
+               // depthColumn.setStyle("-fx-padding: 0 0 0 0;");
                 
             }
            
@@ -525,7 +576,7 @@ public class SummaryController extends Stage{
         
         seqTableColumn.setCellFactory(p->new SequenceCell(p));
         seqTableColumn.setMinWidth(100);
-       
+        
         subsurfaceTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceSummary, String> param) {
@@ -661,7 +712,7 @@ public class SummaryController extends Stage{
                       @Override
                       protected Void call() throws Exception {
                           
-                           for(int i=0;i<10000;i++){};
+                           for(int i=0;i<10;i++){};
                            //scene.setCursor(Cursor.DEFAULT);
                           return null;
                       }

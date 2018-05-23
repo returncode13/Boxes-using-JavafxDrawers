@@ -52,25 +52,7 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
             view.getController().setModel(model);
-            /*if(jsm.getSubsurface()==null){
             
-            }else{
-            
-            System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
-            }*/
-            
-            /* model.setCellProperty(jsm.getTimeCellModel().cellHasDoubt());
-            // model.setActive(true);
-            model.setInheritance(jsm.getTimeCellModel().isInheritance());
-            model.setOverride(jsm.getTimeCellModel().isOverride());
-            model.setQuery(jsm.getTimeCellModel().isQuery());
-            model.setShowOverride(jsm.getTimeCellModel().isShowOverride());
-            model.setState(jsm.getTimeCellModel().getState());
-            
-            if(jsm.getSubsurface()!=null){
-            model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
-            }
-            */
             if(!t){
                // model.setActive(true);
             model.setActive(false);
@@ -102,6 +84,7 @@ public class TimeCell  extends TreeTableCell<SequenceSummary, Boolean>{
             setContextMenu(contextMenu);
             
             setGraphic(view);
+            setStyle("-fx-padding: 0 0 0 0;");
         }
     }
     

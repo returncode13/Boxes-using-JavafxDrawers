@@ -518,7 +518,7 @@ public class AppController extends Stage implements Initializable{
         WorkspaceView frontEndWorkspaceView=new WorkspaceView(frontEndWorkspaceModel);
         currentWorkspaceController=frontEndWorkspaceView.getController();
         frontEndWorkspaceView.getController().setLoading(true);
-       
+        frontEndWorkspaceView.getController().recalculateDepth();
         
         
         basePane.getChildren().add(frontEndWorkspaceView);

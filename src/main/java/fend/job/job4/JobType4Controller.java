@@ -6,6 +6,7 @@
 package fend.job.job4;
 
 
+import app.properties.AppProperties;
 import fend.dot.anchor.AnchorView;
 
 import com.jfoenix.controls.JFXButton;
@@ -36,6 +37,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
@@ -84,6 +87,8 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.TextLoader;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -275,6 +280,7 @@ parent.addChild(model);*/
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
               
               
@@ -320,6 +326,7 @@ parent.addChild(model);*/
                     droppedAnchor.centerXProperty().bind(Bindings.add(node.layoutXProperty(),node.getBoundsInLocal().getMaxX()/2.0));
                     droppedAnchor.centerYProperty().bind(Bindings.add(node.layoutYProperty(),node.getBoundsInLocal().getMinY()));
                     model.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, now());
                 }
              
          });
@@ -827,6 +834,11 @@ parent.addChild(model);*/
     private SummaryService summaryService=new SummaryServiceImpl();
     private QcTableService qcTableService=new QcTableServiceImpl();
     private QcMatrixRowService qcMatrixRowService=new QcMatrixRowServiceImpl();
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
+    
+     private String now() {
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
     
       private void deleteLinksBelongingtoCurrentJob() {
            List<Dot> dotsForJob=linkService.getDotsForJob(dbjob);            //list of dots where link.parent=job OR link.child=job
@@ -835,6 +847,15 @@ parent.addChild(model);*/
           variableArgumentService.deleteVariableArgumentFor(dot);
           }
            
+          List<Link> links1=linkService.getChildLinksForJob(dbjob);       //get links where job is child and update the links parents
+            for(Link l:links1){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getParent(), now());
+            }
+            
+            List<Link> links2=linkService.getParentLinksFor(dbjob);         //get links where job is parent and update the links children
+            for(Link l:links2){
+                subsurfaceJobService.updateTimeWhereJobEquals(l.getChild(), now());
+            }
             linkService.deleteLinksForJob(dbjob);
               for(Dot dot:dotsForJob){
             dot=dotService.getDot(dot.getId());

@@ -25,7 +25,7 @@ public class OverrideView extends AnchorPane{
     
     public OverrideView(OverrideModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/override/override.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/override/override_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

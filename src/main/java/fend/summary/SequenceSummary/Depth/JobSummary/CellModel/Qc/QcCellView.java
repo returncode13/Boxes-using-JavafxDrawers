@@ -25,7 +25,7 @@ public class QcCellView extends AnchorPane{
     
     public QcCellView(QcCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/qc/qcCellView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/qc/qcCellView_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

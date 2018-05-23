@@ -17,6 +17,8 @@ import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryImages;
+import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
 import java.net.URL;
@@ -26,9 +28,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -46,7 +51,14 @@ public class TimeCellController {
     DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     DoubtService doubtService=new DoubtServiceImpl();
     DoubtType timeDoubtType;
-    
+    private JobSummaryImages jobSummaryImages;
+     private Image doubtImage;
+     private Image inheritedDoubtImage;
+     private Image overridenDoubtImage;
+     private Image inheritedOverridenDoubtImage;
+     private Image warningImage;
+     private Image goodImage;
+     private Image noSeqPresImage;
     @FXML
     private Label timeLabel;
 
@@ -71,18 +83,34 @@ public class TimeCellController {
 
     
     public void setModel(TimeCellModel item) {
-        
+       
         model=item;
+        /*String color=new String("");
+        
+        timeLabel.setStyle("-fx-background-color: "+color); */
        //timeDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
        timeDoubtType=model.getCellDoubtType();
        
          if(model.isActive()){
         timeLabel.setDisable(false);
-         //   model.getJobSummaryModel().toggleQuery();                 //This call has only been left ON HERE . in the Time Cell controller. toggling the job Summary model requires the summaries for all doubttypes (time.trace.qc.insight.io) resulting in multiple db queries for the same object
-        }else{
+        
+         }else{
         timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
         timeLabel.setDisable(true);
         }
+         try{
+            jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
+        }catch(NullPointerException npe){
+            jobSummaryImages=new JobSummaryImages();
+        }
+         doubtImage=jobSummaryImages.getTIME_DOUBT();
+         inheritedDoubtImage=jobSummaryImages.getTIME_INHERITED_DOUBT();
+         overridenDoubtImage=jobSummaryImages.getTIME_OVERRIDE();
+         inheritedOverridenDoubtImage=jobSummaryImages.getTIME_INHERITED_OVERRIDE();
+         warningImage=jobSummaryImages.getTIME_WARNING();
+         goodImage=jobSummaryImages.getTIME_GOOD();
+         noSeqPresImage=jobSummaryImages.getTIME_NO_SEQ_PRESENT();
+         
         
         //    applyColor();
         labelColorForSub();
@@ -97,6 +125,7 @@ public class TimeCellController {
 
     void setView(TimeCellView vw) {
         view=vw;
+       
         
     }
     
@@ -299,26 +328,55 @@ public class TimeCellController {
       **/
    
      
+     
      private void labelColorForSub(){
          
         
          
-          String color=new String();
+         /* DONT DELETE
+         String color=new String();
+         
+         if(model.isActive()){
+         //  model.calculateCellState();
+         if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
+         else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+         else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+         else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+         else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+         else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+         }else{
+         color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
+         }
+         timeLabel.setStyle("-fx-background-color: "+color);*/
+         
           
+        
+           Image image=noSeqPresImage;
+           String color=new String();
            if(model.isActive()){
-             //  model.calculateCellState();
-               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
-               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
-               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
-               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
-               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
-               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+               if(model.getCellState() == CellState.FAILED) image=doubtImage;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) image=inheritedDoubtImage;
+               else if(model.getCellState() == CellState.OVERRIDE) image=overridenDoubtImage;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) image=inheritedOverridenDoubtImage;
+               else if(model.getCellState() == CellState.WARNING) image=warningImage;
+               else if(model.getCellState() == CellState.GOOD) image=goodImage;
            }else{
-           color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
+           image=noSeqPresImage;
            }
+          timeLabel.setGraphic(new ImageView(image));
+           
+           try{
+                    if(model.getJobSummaryModel().isParent()){
+                    color=SequenceSummaryColors.SEQUENCE;
+                    }
+                    else{
+                        color=SequenceSummaryColors.SUBSURFACE;
+                    }
+               }catch(NullPointerException npe){
+                   
+               }
            timeLabel.setStyle("-fx-background-color: "+color);
-         
-         
+            
             
      }
      
@@ -327,21 +385,47 @@ public class TimeCellController {
          
          
          
-          String color=new String();
-         
+           /* String color=new String();
+           
            if(model.isActive()){
-               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
-               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
-               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
-               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
-               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
-               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
+           if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.TIME_DOUBT;
+           else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.TIME_INHERITED_DOUBT;
+           else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.TIME_OVERRRIDE;
+           else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.TIME_INHERITED_OVERRRIDE;
+           else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.TIME_WARNING;
+           else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.TIME_GOOD;
            }else{
            color=JobSummaryColors.TIME_NO_SEQ_PRESENT;
            }
            timeLabel.setStyle("-fx-background-color: "+color);
+           */
          
-         
+           
+           Image image=noSeqPresImage;
+           String color=new String();
+           if(model.isActive()){
+               if(model.getCellState() == CellState.FAILED) image=doubtImage;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) image=inheritedDoubtImage;
+               else if(model.getCellState() == CellState.OVERRIDE) image=overridenDoubtImage;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) image=inheritedOverridenDoubtImage;
+               else if(model.getCellState() == CellState.WARNING) image=warningImage;
+               else if(model.getCellState() == CellState.GOOD) image=goodImage;
+           }else{
+           image=noSeqPresImage;
+           }
+          timeLabel.setGraphic(new ImageView(image));
+           
+           try{
+                    if(model.getJobSummaryModel().isParent()){
+                    color=SequenceSummaryColors.SEQUENCE;
+                    }
+                    else{
+                        color=SequenceSummaryColors.SUBSURFACE;
+                    }
+               }catch(NullPointerException npe){
+                   
+               }
+           timeLabel.setStyle("-fx-background-color: "+color);
             
      }
 }

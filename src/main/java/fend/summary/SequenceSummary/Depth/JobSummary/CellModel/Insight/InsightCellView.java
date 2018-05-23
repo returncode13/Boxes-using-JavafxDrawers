@@ -25,7 +25,7 @@ public class InsightCellView extends AnchorPane{
     
     public InsightCellView(InsightCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/insight/insightCellView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/insight/insightCellView_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

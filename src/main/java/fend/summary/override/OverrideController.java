@@ -32,6 +32,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import middleware.doubt.DoubtStatusModel;
@@ -76,6 +77,11 @@ public class OverrideController extends Stage{
     private Button cancelBtn;
 
     @FXML
+    private Label statusLabel;
+
+    
+    
+    @FXML
     void onCancel(ActionEvent event) {
         close();
     }
@@ -104,7 +110,7 @@ public class OverrideController extends Stage{
         
         statusComboBox.getItems().addAll(DoubtStatusModel.OVERRIDE,DoubtStatusModel.YES);
         statusComboBox.setValue(model.getStatus());
-        
+        statusLabel.setText(model.getStatus());
         statusComboBox.valueProperty().addListener(STATUS_CHANGE_LISTENER);
        
     }

@@ -233,6 +233,7 @@ public class DotController extends Stage{
                     droppedAnchor.centerXProperty().bind(node.centerXProperty());
                     droppedAnchor.centerYProperty().bind(node.centerYProperty());
                     childFromDot.toggleDepthChange();
+                    subsurfaceJobService.updateTimeWhereJobEquals(childFromDot.getDatabaseJob(), now());
                 }
             }else{
                 System.out.println("dot.DotController.setView(): Join Operation disallowed");
@@ -326,6 +327,7 @@ public class DotController extends Stage{
             if(model.getStatus().get().equals(DotModel.SPLIT))node.setFill(Color.NAVY);
     }
     
+    
     private void deleteDotAndLinks() {
          /*   Set<JobType0Model> parents=model.getParents();
          Set<JobType0Model> children=model.getChildren();*/
@@ -334,6 +336,8 @@ public class DotController extends Stage{
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting  "+linksBelongingToDot.size()+" link(s) belonging to the dot: "+dbDot.getId());
          for(Link l:linksBelongingToDot){
              doubtService.deleteAllDoubtsRelatedTo(l);
+             subsurfaceJobService.updateTimeWhereJobEquals(l.getParent(), now());
+             subsurfaceJobService.updateTimeWhereJobEquals(l.getChild(), now());
              linkService.deleteLink(l.getId());
          }
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting variable and arguments related to the dot "+dbDot.getId());
@@ -348,6 +352,7 @@ public class DotController extends Stage{
     private DoubtService doubtService=new DoubtServiceImpl();
     
     private void deleteDoubtsRelatedToThisDot(){
+        
         doubtService.deleteAllDoubtsRelatedTo(dbDot);
          
     }
@@ -814,5 +819,9 @@ public class DotController extends Stage{
             formulaFieldNode=null;
         }
     };
+    
+    private String now() {
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
     
 }

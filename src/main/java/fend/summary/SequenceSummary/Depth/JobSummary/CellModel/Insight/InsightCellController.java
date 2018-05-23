@@ -17,6 +17,8 @@ import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
+import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryImages;
+import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import middleware.doubt.DoubtStatusModel;
@@ -43,6 +47,16 @@ public class InsightCellController {
     DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     DoubtService doubtService=new DoubtServiceImpl();
     DoubtType insightDoubtType;
+    
+    
+     private JobSummaryImages jobSummaryImages;
+     private Image doubtImage;
+     private Image inheritedDoubtImage;
+     private Image overridenDoubtImage;
+     private Image inheritedOverridenDoubtImage;
+     private Image warningImage;
+     private Image goodImage;
+     private Image noSeqPresImage;
     
     @FXML
     private Label insightLabel;
@@ -85,6 +99,18 @@ public class InsightCellController {
              insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
             insightLabel.setDisable(true);
         }
+        try{
+            jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
+        }catch(NullPointerException npe){
+            jobSummaryImages=new JobSummaryImages();
+        }
+        doubtImage = jobSummaryImages.getINSIGHT_DOUBT();
+        inheritedDoubtImage = jobSummaryImages.getINSIGHT_INHERITED_DOUBT();
+        overridenDoubtImage = jobSummaryImages.getINSIGHT_OVERRIDE();
+        inheritedOverridenDoubtImage = jobSummaryImages.getINSIGHT_INHERITED_OVERRIDE();
+        warningImage = jobSummaryImages.getINSIGHT_WARNING();
+        goodImage = jobSummaryImages.getINSIGHT_GOOD();
+        noSeqPresImage = jobSummaryImages.getINSIGHT_NO_SEQ_PRESENT();
         
           //  applyColor();
         labelColorForSub();
@@ -335,64 +361,104 @@ public class InsightCellController {
      
        private void labelColorForSub(){
            
-           /*String color=new String();
-           if (model.isActive()) {
+        
            
-           if (model.hasFailedInsightDependency() && !model.hasOverridenInsightFail()) {
-           color = JobSummaryColors.INSIGHT_DOUBT;
-           } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail() && model.hasInheritedInsightFail()) {
-           color = JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-           } else if (model.hasFailedInsightDependency() && model.hasOverridenInsightFail()) {
-           color = JobSummaryColors.INSIGHT_OVERRRIDE;
-           } else if (model.hasInheritedInsightOverride()) {
-           color = JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-           } else if (model.hasWarningForInsight()) {
-           color = JobSummaryColors.INSIGHT_WARNING;
-           } else {
-           color = JobSummaryColors.INSIGHT_GOOD;
-           }
+           /*
+           String color=new String();
            
+           if(model.isActive()){
+           model.calculateCellState();
+           if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
+           else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+           else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+           else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+           else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+           else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
            }else{
            color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
            }
            insightLabel.setStyle("-fx-background-color: "+color);*/
-           
-           
-            String color=new String();
-          
+             Image image=noSeqPresImage;
+           String color=new String();
            if(model.isActive()){
-               model.calculateCellState();
-               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
-               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
-               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
-               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+               
+               
+               
+               
+               if(model.getCellState() == CellState.FAILED) image=doubtImage;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) image=inheritedDoubtImage;
+               else if(model.getCellState() == CellState.OVERRIDE) image=overridenDoubtImage;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) image=inheritedOverridenDoubtImage;
+               else if(model.getCellState() == CellState.WARNING) image=warningImage;
+               else if(model.getCellState() == CellState.GOOD) image=goodImage;
            }else{
-           color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
+           image=noSeqPresImage;
            }
+          insightLabel.setGraphic(new ImageView(image));
+           
+           try{
+                    if(model.getJobSummaryModel().isParent()){
+                    color=SequenceSummaryColors.SEQUENCE;
+                    }
+                    else{
+                        color=SequenceSummaryColors.SUBSURFACE;
+                    }
+               }catch(NullPointerException npe){
+                   
+               }
+           
            insightLabel.setStyle("-fx-background-color: "+color);
+            
      
         }
        
        private void labelColorForSeq(){
            
-          String color=new String();
-          
+           /*String color=new String();
+           
            if(model.isActive()){
-             
-               if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
-               else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
-               else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
-               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
-               else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
-               else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
+           
+           if(model.getCellState()== CellState.FAILED) color= JobSummaryColors.INSIGHT_DOUBT;
+           else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.INSIGHT_INHERITED_DOUBT;
+           else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.INSIGHT_OVERRRIDE;
+           else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.INSIGHT_INHERITED_OVERRRIDE;
+           else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.INSIGHT_WARNING;
+           else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.INSIGHT_GOOD;
            }else{
            color=JobSummaryColors.INSIGHT_NO_SEQ_PRESENT;
            }
            insightLabel.setStyle("-fx-background-color: "+color);
-     
-        }
+           
+           }*/
+           
+            Image image=noSeqPresImage;
+           String color=new String();
+           if(model.isActive()){
+               if(model.getCellState() == CellState.FAILED) image=doubtImage;
+               else if(model.getCellState() == CellState.INHERITED_FAIL) image=inheritedDoubtImage;
+               else if(model.getCellState() == CellState.OVERRIDE) image=overridenDoubtImage;
+               else if(model.getCellState() == CellState.INHERITED_OVERRIDE) image=inheritedOverridenDoubtImage;
+               else if(model.getCellState() == CellState.WARNING) image=warningImage;
+               else if(model.getCellState() == CellState.GOOD) image=goodImage;
+           }else{
+           image=noSeqPresImage;
+           }
+          insightLabel.setGraphic(new ImageView(image));
+           
+           try{
+                    if(model.getJobSummaryModel().isParent()){
+                    color=SequenceSummaryColors.SEQUENCE;
+                    }
+                    else{
+                        color=SequenceSummaryColors.SUBSURFACE;
+                    }
+               }catch(NullPointerException npe){
+                   
+               }
+           
+           insightLabel.setStyle("-fx-background-color: "+color);
+            
+       }
 
    
     

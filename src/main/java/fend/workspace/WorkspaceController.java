@@ -1835,6 +1835,12 @@ public class WorkspaceController {
                            
                         }
      }
+
+    public void recalculateDepth() {
+            for(JobType0Model job:model.getObservableJobs()){
+                job.getListenToDepthChangeProperty().set(!job.getListenToDepthChangeProperty().get());
+            }
+    }
     
     private class XYHolder{
         double x;
@@ -2735,6 +2741,11 @@ public class WorkspaceController {
         execService = Executors.newFixedThreadPool(processorsUsed());
 
         String latestSummaryTime = subsurfaceJobService.getLatestSummaryTime();
+        
+        if(subsurfaceLinkMap.isEmpty()){
+            System.out.println("fend.workspace.WorkspaceController.summarizeOne(): No change detected on the DAG.");
+            return;
+        }
         for (Map.Entry<Subsurface, Set<Link>> entry : subsurfaceLinkMap.entrySet()) {
             Subsurface subb = entry.getKey();
             Set<Link> links = entry.getValue();
@@ -2965,6 +2976,33 @@ public class WorkspaceController {
     private TheaderService theaderService=new TheaderServiceImpl();
     
     private void loadAllMaps(){
+        /**
+         * Retrieve all links that need to be summarized
+         * if no links are found( due to no change to the DAG) then return
+         **/
+        
+        List<Object[]> elementsToSummarize = linkService.getSubsurfaceAndLinksForSummary(dbWorkspace);
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Retrieved " + elementsToSummarize.size() + " elements to summarize");
+        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Building the elements map");
+
+        for (Object[] element : elementsToSummarize) {
+            SubsurfaceJob sjc = (SubsurfaceJob) element[2];     //child job of the link
+            SubsurfaceJob sjp = (SubsurfaceJob) element[1];     //parent job of the link
+            Link value = (Link) element[0];
+            
+            Subsurface ckey = sjc.getSubsurface();
+            if (!subsurfaceLinkMap.containsKey(ckey)) {
+                subsurfaceLinkMap.put(ckey, new HashSet<>());
+                subsurfaceLinkMap.get(ckey).add(value);
+            } else {
+                subsurfaceLinkMap.get(ckey).add(value);
+            }
+            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjp.getJob(), sjp.getSubsurface()), sjp);
+            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjc.getJob(), sjc.getSubsurface()), sjc);
+
+        }
+        
+        if(subsurfaceLinkMap.isEmpty()) return;
         
         /***
          * Get all Theaders and put them in a lookup map.
@@ -3120,31 +3158,7 @@ public class WorkspaceController {
        //  }
          
         
-        /**
-         * Retrieve all links that need to be summarized
-         * 
-         **/
         
-        List<Object[]> elementsToSummarize = linkService.getSubsurfaceAndLinksForSummary(dbWorkspace);
-        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Retrieved " + elementsToSummarize.size() + " elements to summarize");
-        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Building the elements map");
-
-        for (Object[] element : elementsToSummarize) {
-            SubsurfaceJob sjc = (SubsurfaceJob) element[2];     //child job of the link
-            SubsurfaceJob sjp = (SubsurfaceJob) element[1];     //parent job of the link
-            Link value = (Link) element[0];
-            
-            Subsurface ckey = sjc.getSubsurface();
-            if (!subsurfaceLinkMap.containsKey(ckey)) {
-                subsurfaceLinkMap.put(ckey, new HashSet<>());
-                subsurfaceLinkMap.get(ckey).add(value);
-            } else {
-                subsurfaceLinkMap.get(ckey).add(value);
-            }
-            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjp.getJob(), sjp.getSubsurface()), sjp);
-            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjc.getJob(), sjc.getSubsurface()), sjc);
-
-        }
         
         /**
          * subsurfaceLinkMap<Subsurface,Set<Link>> is a map of the links containing the subsurface
@@ -4947,10 +4961,5 @@ public class WorkspaceController {
    
    private Map<Job,AncestorDescendantHolder> adLum=new HashMap<>();
    
-   /*private ChangeListener<Boolean> RELOAD_LISTENER=new ChangeListener<Boolean>() {
-   @Override
-   public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-   System.out.println(".changed(): Auto-RELOAD of workspace implementation pending. Manually reload the workspace "+dbWorkspace.getName());
-   }
-   };*/
+   
 }

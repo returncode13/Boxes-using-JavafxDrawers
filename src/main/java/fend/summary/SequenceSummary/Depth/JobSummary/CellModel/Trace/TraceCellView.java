@@ -25,7 +25,7 @@ public class TraceCellView extends AnchorPane{
     
     public TraceCellView(TraceCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/trace/traceCellView.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/trace/traceCellView_1.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

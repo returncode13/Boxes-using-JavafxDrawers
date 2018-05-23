@@ -82,6 +82,7 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
             setContextMenu(contextMenu);
             
             setGraphic(view);
+            setStyle("-fx-padding: 0 0 0 0;");
         }
     }
 }

@@ -14,8 +14,8 @@ import java.util.List;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class DoubtStatusModel {
-    public static final String YES="Y";
-    public static final String OVERRIDE="O";
+    public static final String YES="DOUBT";
+    public static final String OVERRIDE="OVERRIDE";
     
     public static final String GOOD="GOOD";
     public static final String ERROR="ERROR";

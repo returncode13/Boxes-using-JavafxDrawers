@@ -110,9 +110,13 @@ public class FormulaFieldController extends Stage{
     void onFunctionKeyReleased(KeyEvent event) {
          //System.out.println("fend.dot.formulaField.FormulaFieldController.onKeyReleased(): error checking...");
          String text=function.getText();
-         if(text.length()>0){
+         try{
+             if(text.length()>0){
              boolean pass=checkFunction(function.getText());
              model.setFunctionValidity(pass);
+         }
+         }catch(NullPointerException npe){
+             function.setPromptText("start typing ");
          }
     }
     
