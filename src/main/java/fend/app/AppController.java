@@ -94,6 +94,8 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.fxml.Initializable;
@@ -135,37 +137,37 @@ public class AppController extends Stage implements Initializable{
     private UserWorkspaceService userWorkspaceService=new UserWorkspaceServiceImpl();
     private Scene appScene;
     
-     @FXML
+    /*  @FXML
     private MenuBar menubar;
-
+    
     
     @FXML
     private MenuItem startWorkspace;
-
+    
     @FXML
     private MenuItem saveCurrentWorkspace;
-
+    
     @FXML
     private MenuItem saveSessionAs;
-
+    
     @FXML
     private MenuItem loadWorkspace;
-
-
+    
+    
     @FXML
     private MenuItem exit;
-
+    
     @FXML
     private MenuItem settings;
-
+    
     @FXML
     private MenuItem dbsettings;
-
+    
     @FXML
     private MenuItem idAbout;
-
+    
     @FXML
-    private Button bugReport;
+    private Button bugReport;*/
 
     @FXML
     private Button userBtn;
@@ -193,18 +195,24 @@ public class AppController extends Stage implements Initializable{
     
      @FXML
     private JFXTextArea smallerLog;
+     /*
+     @FXML
+     private Label projectLabel;*/
+    
+   
+     StringProperty project=new SimpleStringProperty(""); 
 
-    @FXML
-    private Label projectLabel;
+    /*@FXML
+    private Label workspaceLabel;*/
+    StringProperty workspaceName=new SimpleStringProperty("");
 
-    @FXML
-    private Label workspaceLabel;
+    /* @FXML
+    private Label ownerLabel;*/
+    StringProperty ownerInitials=new SimpleStringProperty("");
 
-    @FXML
-    private Label ownerLabel;
-
-    @FXML
-    private ListView<String> guestList;
+    /*@FXML
+    private ListView<String> guestList;*/                                 //<---- use this to show the guests lists
+    //ObservableList<String> guests=FXCollections.observableArrayList();
     
     
     
@@ -500,9 +508,10 @@ public class AppController extends Stage implements Initializable{
         previousUser=currentUser;
         logout();
         currentWorkspace=workspaceToBeLoaded;
+        workspaceName.set(currentWorkspace.getName());
         enableButtons.set(true);
         login();
-        this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        //this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         
         refreshGuestList();
         
@@ -527,7 +536,7 @@ public class AppController extends Stage implements Initializable{
         currentWorkspace=workspaceToBeLoaded;
         enableButtons.set(true);
         login();
-        this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        //this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         
         refreshGuestList();
     }
@@ -794,12 +803,14 @@ public class AppController extends Stage implements Initializable{
                        currentWorkspace=dbWorkspace;
                       enableButtons.set(true);
 //                    System.out.println("fend.app.AppController.startNewWorkspace(): "+currentWorkspace.getName()+" has "+currentWorkspace.getUsers().size()+" users");
-                    AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+                    //AppController.this.setTitle(AppController.this.titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
                    // }
                     
                     refreshGuestList();
-                    ownerLabel.setText(currentWorkspace.getOwner().getInitials());
-                    workspaceLabel.setText(currentWorkspace.getName());
+                    //ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+                    ownerInitials.set(currentWorkspace.getOwner().getInitials());
+                    //workspaceLabel.setText(currentWorkspace.getName());
+                    workspaceName.set(currentWorkspace.getName());
                     
                     checkForJobPropertiesForJobType(JobType0Model.PROCESS_2D);
                     checkForJobPropertiesForJobType(JobType0Model.SEGD_LOAD);
@@ -958,9 +969,17 @@ public class AppController extends Stage implements Initializable{
                 segybutton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
+                newWorkspace.setDisable(true);
+                loadExistingWorkspace.setDisable(true);
                 
-         projectLabel.setText(AppProperties.getProject());
-         ownerLabel.setText("");
+         project.addListener(TITLE_INFO_CHANGED);
+         workspaceName.addListener(TITLE_INFO_CHANGED);
+         ownerInitials.addListener(TITLE_INFO_CHANGED);
+                
+         //projectLabel.setText(AppProperties.getProject());
+         project.set(AppProperties.getProject());
+         //ownerLabel.setText("");
+         ownerInitials.set("");
          model.reloadProperty().addListener(WORKSPACE_RELOAD_LISTENER);
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
@@ -972,8 +991,9 @@ public class AppController extends Stage implements Initializable{
             guestService.setOnSucceeded(e->{
               //  System.out.println("fend.app.AppController.startGuestService(): updating the guest List");
                 //AppController.this.setGuestChangedProperty(!AppController.this.getGuestChanged());
-                guestList.getItems().clear();
-                guestList.getItems().addAll(AppController.this.observableGuestList);
+                //guestList.getItems().clear();
+                //guestList.getItems().addAll(AppController.this.observableGuestList);
+                
             });
             guestService.setOnRunning(e->{
                // System.out.println("fend.app.AppController.startGuestService(): service is up and running");
@@ -1020,6 +1040,8 @@ public class AppController extends Stage implements Initializable{
         currentUser=userModel.getUser();
         userBtn.setText(currentUser.getInitials());
             System.out.println("fend.app.AppController.logUser(): finished retrieving User ");
+            newWorkspace.setDisable(false);
+            loadExistingWorkspace.setDisable(false);
         
         }else{
         if(currentUser!=null)System.out.println("fend.app.AppController.logUser(): retaining the old user: "+currentUser.getInitials());
@@ -1099,10 +1121,12 @@ public class AppController extends Stage implements Initializable{
       //  System.out.println("fend.app.AppController.login(): after addition sizeOfWorkspaceList "+u.getWorkspaces().size());
         workspaceService.updateWorkspace(w.getId(), w);
         currentWorkspace=w;
-        this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
+        //this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
         AppProperties.setCurrentUser(u);
-        ownerLabel.setText(currentWorkspace.getOwner().getInitials());
-        workspaceLabel.setText(currentWorkspace.getName());
+        //ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+        ownerInitials.set(currentWorkspace.getOwner().getInitials());
+        //workspaceLabel.setText(currentWorkspace.getName());
+        workspaceName.set(currentWorkspace.getName());
         refreshGuestList();
     }
 
@@ -1136,14 +1160,17 @@ public class AppController extends Stage implements Initializable{
                 w.setOwner(null);
                 workspaceService.updateWorkspace(w.getId(), w);
                 currentWorkspace=w;
-                this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" No more owners");
-                ownerLabel.setText("");
+                //this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" No more owners");
+                //ownerLabel.setText("");
+                ownerInitials.set("");
             }else{
                 currentWorkspace=w;
-                this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
-                ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+               // this.setTitle(titleHeader+" : "+currentWorkspace.getName()+" owner: "+currentWorkspace.getOwner().getInitials());
                 //ownerLabel.setText(currentWorkspace.getOwner().getInitials());
-                workspaceLabel.setText(currentWorkspace.getName());
+                ownerInitials.set(currentWorkspace.getOwner().getInitials());
+                //ownerLabel.setText(currentWorkspace.getOwner().getInitials());
+                //workspaceLabel.setText(currentWorkspace.getName());
+                workspaceName.set(currentWorkspace.getName());
                 refreshGuestList();
             }
                 
@@ -1228,6 +1255,7 @@ public class AppController extends Stage implements Initializable{
                 segybutton.setDisable(false);
                 summaryButton.setDisable(false);
                 chartButton.setDisable(false);
+                
             }else{
                 acqButton.setDisable(true);
                 segdButton.setDisable(true);
@@ -1236,6 +1264,7 @@ public class AppController extends Stage implements Initializable{
                 segybutton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
+                
             }
         }
     };
@@ -1329,7 +1358,8 @@ public class AppController extends Stage implements Initializable{
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 System.out.println("fend.app.AppController.guestChangeListener: invoked");
-                guestList.getItems().clear();
+                //guestList.getItems().clear();
+                //guests.clear();
                 
         }
     };
@@ -1341,4 +1371,27 @@ public class AppController extends Stage implements Initializable{
                 
         }
     };
+    
+    private ChangeListener<String> TITLE_INFO_CHANGED=new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            calculateTitleHeader();
+            System.out.println(".changed(): changing title to : "+titleHeader);
+            //AppController.this.setTitle(titleHeader);
+            AppController.this.titleProperty().set(titleHeader);
+            
+        }
+
+        
+    };
+    
+    private void calculateTitleHeader() {
+            String pqman="PQMan-";
+            String version=AppProperties.VERSION;
+            String project=this.project.get();
+            String worksp=this.workspaceName.get() == null ?"":this.workspaceName.get();
+            String owString="Owner: "+(this.ownerInitials.get() ==null ? "":this.ownerInitials.get());
+            String space=" ";
+            titleHeader=worksp+space+space+space+project+space+space+space+owString+space+space+space+pqman+version;
+    }
 }

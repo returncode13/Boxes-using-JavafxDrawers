@@ -642,7 +642,10 @@ public class SummaryController extends Stage{
         treetable.setRoot(root);
         treetable.setShowRoot(false);
         //treetable.getSelectionModel().setCellSelectionEnabled(true);
-        treetable.setOnSort(ee->{treetable.refresh();});
+        treetable.setOnSort(ee->{
+            mouseWhirlProperty.set(!mouseWhirlProperty.get());
+           // treetable.refresh();
+        });
         
           // treetable.refresh();
 
@@ -684,9 +687,9 @@ public class SummaryController extends Stage{
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            //if(newValue){
               // System.out.println(".changed(): Summary table expanding ..newv: "+newValue);
+               
+               //treetable.refresh();
                mouseWhirlProperty.set(!mouseWhirlProperty.get());
-               treetable.refresh();
-           
                //mouseWhirlProperty.set(false);
                
                /*}else{
@@ -712,13 +715,17 @@ public class SummaryController extends Stage{
                       @Override
                       protected Void call() throws Exception {
                           
-                           for(int i=0;i<10;i++){};
+                           for(int i=0;i<100;i++){};
                            //scene.setCursor(Cursor.DEFAULT);
                           return null;
                       }
                   };
-            mouseWTask.setOnRunning(e->{scene.setCursor(Cursor.WAIT);});
-            mouseWTask.setOnSucceeded(e->{scene.setCursor(Cursor.DEFAULT);});
+            mouseWTask.setOnRunning(e->{scene.setCursor(Cursor.WAIT);
+                
+            });
+            mouseWTask.setOnSucceeded(e->{
+                treetable.refresh();
+                scene.setCursor(Cursor.DEFAULT);});
             mouseWTask.setOnFailed(e->{scene.setCursor(Cursor.DEFAULT);});
             mouseWTask.setOnCancelled(e->{scene.setCursor(Cursor.DEFAULT);});
            exec.execute(mouseWTask);

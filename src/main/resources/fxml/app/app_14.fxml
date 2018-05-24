@@ -57,7 +57,7 @@
                                              <children>
                                                 <AnchorPane>
                                                    <children>
-                                                      <Button fx:id="userBtn" mnemonicParsing="false" onAction="#loginAsUser" prefHeight="121.0" style="-fx-background-color: #004d97; -fx-text-fill: white; -fx-min-width: 100; -fx-max-width: 100; -fx-font-size: 13;" stylesheets="@../../css/user-button.css" text="USER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <Button fx:id="userBtn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#loginAsUser" prefHeight="121.0" style="-fx-background-color: #004d97; -fx-text-fill: white; -fx-min-width: 100; -fx-max-width: 100; -fx-font-size: 13;" stylesheets="@../../css/user-button.css" text="USER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <padding>
                                                             <Insets right="2.0" />
                                                          </padding>

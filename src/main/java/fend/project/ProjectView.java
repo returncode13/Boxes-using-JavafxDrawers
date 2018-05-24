@@ -24,7 +24,7 @@ public class ProjectView extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/project/project.fxml");
+        this.location=getClass().getClassLoader().getResource("fxml/project/project_1.fxml");
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

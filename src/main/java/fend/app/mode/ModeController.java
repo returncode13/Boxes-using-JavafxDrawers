@@ -10,10 +10,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -59,15 +62,36 @@ public class ModeController extends Stage{
     
     
     
+     @FXML
+    void highlightWithToolTipDev(MouseEvent event) {
+            vesselButton.setEffect(null);
+            officeBtn.setEffect(null);
+            developerBtn.setEffect(new Bloom(0.5));
+    }
+    
+     @FXML
+    void highlightWithToolTipOffice(MouseEvent event) {
+            vesselButton.setEffect(null);
+            officeBtn.setEffect(new Bloom(0.5));
+            developerBtn.setEffect(null);
+    }
+    
+     @FXML
+    void highlightWithToolTipVessel(MouseEvent event) {
+            vesselButton.setEffect(new Bloom(0.5));
+            officeBtn.setEffect(null);
+            developerBtn.setEffect(null);
+
+    }
     void setModel(ModeModel mod) {
        model=mod;
-       Image vesselImage=new Image(getClass().getResourceAsStream("/icons/vessel.png"));
+       Image vesselImage=new Image(getClass().getResourceAsStream("/icons/mode/paper_boat.png"));
        vesselButton.setGraphic(new ImageView(vesselImage));
        
-       Image officeImage=new Image(getClass().getResourceAsStream("/icons/office.png"));
+       Image officeImage=new Image(getClass().getResourceAsStream("/icons/mode/burj_khalifa.png"));
        officeBtn.setGraphic(new ImageView(officeImage));
        
-       Image devImage=new Image(getClass().getResourceAsStream("/icons/dev.png"));
+       Image devImage=new Image(getClass().getResourceAsStream("/icons/mode/dev_1.png"));
        developerBtn.setGraphic(new ImageView(devImage));
        
     }

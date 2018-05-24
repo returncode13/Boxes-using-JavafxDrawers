@@ -35,6 +35,8 @@ import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -73,6 +75,7 @@ public class Main extends Application{
     public static void main(String[] args) {
         launch(args);
     }
+   
     
     
 
@@ -80,7 +83,7 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
         
         this.primaryStage=primaryStage;
-        
+        pqTitleProperty.addListener(TITLE_CHANGE_LISTENER);
         ModeModel modeModel=new ModeModel();
         modeModel.chooseModeProperty().addListener(MODE_LISTENER);
         modeView=new ModeView(modeModel);
@@ -258,6 +261,9 @@ public class Main extends Application{
         System.out.println("fend.app.Main.stop(): stage is closing");
     }
     
+    private StringProperty pqTitleProperty=new SimpleStringProperty();
+    
+    
     private ChangeListener<Boolean> DATABASE_SELECTION_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -265,8 +271,8 @@ public class Main extends Application{
                 AppModel appmodel=new AppModel();
                 AppView appview=new AppView(appmodel);
                 Scene scene=appview.getController().getAppScene();
-                String title=appview.getController().getTitle();
-                primaryStage.setTitle(title);
+                pqTitleProperty.bind(appview.getController().titleProperty());
+                primaryStage.setTitle(pqTitleProperty.get());
                 primaryStage.setScene(scene);
                 primaryStage.show();
                 primaryStage.setOnCloseRequest(e->{
@@ -293,6 +299,13 @@ public class Main extends Application{
                 }
 
             }
+        }
+    };
+    
+     private ChangeListener<String> TITLE_CHANGE_LISTENER=new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            primaryStage.setTitle(newValue);
         }
     };
 }
