@@ -8,6 +8,7 @@ package fend.app.mode;
 import app.properties.AppProperties;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.Bloom;
@@ -96,6 +97,12 @@ public class ModeController extends Stage{
        
     }
 
+     
+            double xoffset=0;
+            double yoffset=0;
+            boolean drag=false;
+            
+    
     void setView(ModeView vw) {
         view=vw;
         scene=new Scene(view);
@@ -106,7 +113,58 @@ public class ModeController extends Stage{
                     close();
                 }
             });
-        
+            
+           scene.addEventFilter(MouseEvent.MOUSE_PRESSED, e->{
+                xoffset=e.getSceneX();
+               yoffset=e.getSceneY();
+           });
+            
+          scene.addEventFilter(MouseEvent.MOUSE_DRAGGED, e->{
+              scene.setCursor(Cursor.HAND);
+               this.setX(e.getScreenX()-xoffset);
+               this.setY(e.getScreenY()-yoffset);
+               drag=true;
+               e.consume();
+          });
+          
+          /*scene.addEventFilter(MouseEvent., eventFilter);*/
+          
+          scene.addEventFilter(MouseEvent.MOUSE_RELEASED, e->{
+          scene.setCursor(Cursor.DEFAULT);
+          if(drag){
+              e.consume();
+              drag=false;
+          }
+          
+          });
+          
+          scene.addEventFilter(MouseEvent.MOUSE_ENTERED, e->{
+              scene.setCursor(Cursor.HAND);
+          });
+          
+          scene.addEventFilter(MouseEvent.MOUSE_CLICKED, e->{
+              scene.setCursor(Cursor.HAND);
+          });
+           
+          scene.addEventFilter(MouseEvent.MOUSE_EXITED, e->{
+              scene.setCursor(Cursor.DEFAULT);
+          });
+          /*scene.setOnMousePressed(e->{
+          xoffset=e.getSceneX();
+          yoffset=e.getSceneY();
+          });
+          
+          scene.setOnMouseDragged(e->{
+          scene.setCursor(Cursor.HAND);
+          this.setX(e.getScreenX()-xoffset);
+          this.setY(e.getScreenY()-yoffset);
+          
+          });*/
+           
+          /*scene.setOnMouseReleased(e->{
+          scene.setCursor(Cursor.DEFAULT);
+          });
+          */
         this.initStyle(StageStyle.TRANSPARENT);
         this.setTitle("Choose your team");
         this.show();

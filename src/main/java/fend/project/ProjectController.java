@@ -161,7 +161,7 @@ public class ProjectController extends Stage{
     void setView(ProjectView vw) {
         view=vw;
         this.setScene(new Scene(view));
-       this.showAndWait();
+       this.show();
     }
     
 }

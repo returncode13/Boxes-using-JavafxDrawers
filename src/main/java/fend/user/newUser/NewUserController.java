@@ -5,7 +5,6 @@
  */
 package fend.user.newUser;
 
-import com.jfoenix.controls.JFXTextField;
 import db.model.User;
 import db.services.UserServiceImpl;
 import javafx.event.ActionEvent;
@@ -14,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import db.services.UserService;
+import javafx.scene.control.TextField;
 
 /**
  *
@@ -25,10 +25,10 @@ public class NewUserController extends Stage{
     NewUserView view;
     
     @FXML
-    private JFXTextField fullnameTextField;
+    private TextField fullnameTextField;
 
     @FXML
-    private JFXTextField initialsTextField;
+    private TextField initialsTextField;
 
     @FXML
     private Button addBtn;

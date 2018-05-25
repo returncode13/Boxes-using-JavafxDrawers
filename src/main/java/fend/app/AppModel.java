@@ -32,4 +32,19 @@ public class AppModel {
         Boolean val=reloadProperty.get();
         this.reloadProperty.set(!val);
     }
+
+    BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    public void unblock(){
+        blockProperty.set(false);
+    }
 }

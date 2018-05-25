@@ -37,9 +37,13 @@ import java.util.Random;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -79,6 +83,8 @@ public class DotJobEdgeController implements EdgeController {
    
     private Arrow arrowEnd;
     private Arrow arrowStart;
+    private final ContextMenu menu=new ContextMenu();
+    
     
     void setModel(DotJobEdgeModel item) {
         model=item;
@@ -122,6 +128,25 @@ public class DotJobEdgeController implements EdgeController {
         
         curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
         curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
+        
+        
+         MenuItem deleteThisLink=new MenuItem("-delete this link");
+        node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
+            @Override
+            public void handle(ContextMenuEvent event) {
+              if(!model.dropSuccessFul.get()){
+                  menu.show(node, event.getScreenX(), event.getScreenY());
+              }
+            }
+        });
+        deleteThisLink.setOnAction(e->{
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            node.setVisible(false);
+            
+        });
+        menu.getItems().add(deleteThisLink);
+        //curve.setOnContextMenuRequested(value);
+        
         
         node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,arrowEnd);
@@ -302,6 +327,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGD_LOAD)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -311,6 +337,8 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            
         }
          if(type.equals(JobType0Model.ACQUISITION)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -320,6 +348,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.TEXT)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -329,6 +358,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGY)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -338,6 +368,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          this.node.toBack();
          this.dotnode.toFront();
@@ -371,6 +402,7 @@ public class DotJobEdgeController implements EdgeController {
                     parent.setDatabaseJob(dbparent);
                 }
                 model.setDropSuccessFul(false);
+                node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
             }
             
         }

@@ -13,6 +13,8 @@ import app.settings.database.DataBaseSettingsNode;
 import app.settings.ssh.SShSettings;
 import app.settings.ssh.SShSettingsController;
 import app.settings.ssh.SShSettingsNode;
+import com.jfoenix.controls.JFXProgressBar;
+import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTextArea;
 import db.model.DoubtType;
 import db.model.Job;
@@ -100,6 +102,7 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.control.ContentDisplay;
@@ -984,7 +987,7 @@ public class AppController extends Stage implements Initializable{
         //createNewWorkspaceButton();
         //createLoadWorkspaceButton();
         //createUserButton();
-        
+        model.blockProperty().addListener(BLOCK_UNBLOCK_LISTENER);
         
             guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
             
@@ -1394,4 +1397,34 @@ public class AppController extends Stage implements Initializable{
             String space=" ";
             titleHeader=worksp+space+space+space+project+space+space+space+owString+space+space+space+pqman+version;
     }
+    
+    private JFXProgressBar progressBarForBlock=new JFXProgressBar();
+    private JFXSpinner spinner=new JFXSpinner();
+     private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() { 
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                
+                /*progressBarForBlock.setProgress(-1);
+                progressBarForBlock.setMinWidth(1000);
+                basePane.getChildren().add(progressBarForBlock);
+                basePane.setAlignment(progressBarForBlock,Pos.CENTER);*/
+              spinner.setProgress(-1);
+              spinner.setMaxWidth(100);
+              spinner.setMaxHeight(100);
+              basePane.getChildren().add(spinner);
+              basePane.setAlignment(spinner,Pos.CENTER);
+              
+              
+                
+            }else{
+                
+                /*progressBarForBlock.setProgress(0);
+                basePane.getChildren().remove(progressBarForBlock);*/
+              spinner.setProgress(0);
+              basePane.getChildren().remove(spinner);
+              
+            }
+        }
+    };
 }

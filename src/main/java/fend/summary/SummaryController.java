@@ -42,6 +42,7 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.T
 import fend.summary.SequenceSummary.SequenceCell.SequenceCell;
 import fend.summary.SequenceSummary.SequenceSummary;
 import fend.summary.SequenceSummary.SubsurfaceCell.SubsurfaceCell;
+import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,6 +80,7 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import middleware.doubt.DoubtStatusModel;
@@ -170,6 +172,43 @@ public class SummaryController extends Stage{
 //         List<DoubtStatus> doubtstatusForWorkspace=doubtStatusService.getAllDoubtStatusInWorkspace(workspace);
       //   System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" fetched "+doubtstatusForWorkspace.size()+" doubtstatus entries for workspace");
         // System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the doubtstatus map");
+        
+        
+        treetable.setRowFactory(new Callback<TreeTableView<SequenceSummary>, TreeTableRow<SequenceSummary>>() {
+            
+            SequenceSummary selectedItem;
+             @Override
+             public TreeTableRow<SequenceSummary> call(TreeTableView<SequenceSummary> param) {
+                 TreeTableRow<SequenceSummary> row=new TreeTableRow<SequenceSummary>(){
+                     @Override
+                     protected void updateItem(SequenceSummary item,boolean empty){
+                         super.updateItem(item, empty);
+                         if((item==null)||empty){
+                             setStyle("");
+                             setText("");
+                             setGraphic(null);
+                         }else{
+                             int sel=getIndex();
+                             selectedItem = getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
+                             boolean isSub = selectedItem.isChild();
+
+                             if (isSub) {
+                                 setStyle("-fx-background-color: " + SequenceSummaryColors.SUBSURFACE);
+                                 setTextFill(Color.LIGHTGREY);
+
+                             } else {
+                                 setStyle("-fx-background-color: " + SequenceSummaryColors.SEQUENCE);
+                                 setTextFill(Color.WHITE);
+                             }
+                             
+                         }
+                     }
+                 };
+                 
+                row.getStylesheets().add("css/treeTableCell.css");
+                 return row;
+             } 
+         }); 
         
                    
                     Workspace dbWorkspace=workspaceService.getWorkspace(mod.getWorkspaceController().getModel().getId());
@@ -429,10 +468,12 @@ public class SummaryController extends Stage{
                  
               //   List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
                  
-             
+             depthForColumns.sort((o1, o2) -> {
+                 return o1.getDepth().compareTo(o2.getDepth()); //To change body of generated lambdas, choose Tools | Templates.
+             });
               
         for(Depth depth: depthForColumns){
-            
+            System.out.println("fend.summary.SummaryController.setModel():  Adding Depth : "+depth.getDepth());
               Label timeL=new Label("Time");
               VBox vboxtime=new VBox(timeL);
               vboxtime.setRotate(-90);
@@ -576,7 +617,7 @@ public class SummaryController extends Stage{
         
         seqTableColumn.setCellFactory(p->new SequenceCell(p));
         seqTableColumn.setMinWidth(100);
-        
+        //seqTableColumn.setStyle("-fx-text-fill: white;");
         subsurfaceTableColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceSummary, String> param) {
@@ -589,6 +630,7 @@ public class SummaryController extends Stage{
         
         subsurfaceTableColumn.setCellFactory(e->new SubsurfaceCell(e));
         subsurfaceTableColumn.setMinWidth(300);
+        //subsurfaceTableColumn.setStyle("-fx-text-fill: white;");
         
         
         
@@ -611,8 +653,13 @@ public class SummaryController extends Stage{
              
          }
         
-       
+       treeSeq.sort((o1, o2) -> {
+           return o1.getValue().getSequence().getSequenceno().compareTo(o2.getValue().getSequence().getSequenceno()); //To change body of generated lambdas, choose Tools | Templates.
+       });
         
+      
+      
+       
         model.setSequenceSummaryMap(seqSummaryMap);
         
         
@@ -621,7 +668,7 @@ public class SummaryController extends Stage{
                 
             }
         };
-
+        
         summaryTask.setOnFailed(e -> {
             summaryTask.getException().printStackTrace();
         });
@@ -642,6 +689,7 @@ public class SummaryController extends Stage{
         treetable.setRoot(root);
         treetable.setShowRoot(false);
         //treetable.getSelectionModel().setCellSelectionEnabled(true);
+        
         treetable.setOnSort(ee->{
             mouseWhirlProperty.set(!mouseWhirlProperty.get());
            // treetable.refresh();

@@ -9,6 +9,7 @@ import fend.summary.SequenceSummary.SequenceSummary;
 import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -36,9 +37,11 @@ public class SequenceCell  extends TreeTableCell<SequenceSummary, Long> {
            
             if(isSub){
                 setStyle("-fx-background-color: "+SequenceSummaryColors.SUBSURFACE);
+                setTextFill(Color.LIGHTGREY);
                 
             }else{
                 setStyle("-fx-background-color: "+SequenceSummaryColors.SEQUENCE);
+                setTextFill(Color.WHITE);
             }
             setText(""+seq);
         }

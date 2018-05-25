@@ -24,7 +24,7 @@ public class FormulaFieldView extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/dot/formulafield/formulafield.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/dot/formulafield/formulafield_1.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

@@ -42,7 +42,10 @@ import java.util.Set;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -89,7 +92,8 @@ public class ParentChildEdgeController implements EdgeController{
     private Arrow arrowAfterDot;
     
     private DotView dotview;
-
+    private final ContextMenu menu=new ContextMenu();    //in case the user decides that the link they asked for is not necessary. the handler is removed once the drop is made
+    
     void setModel(ParentChildEdgeModel item) {
         model=item;
         childAnchorModel=model.getChildAnchorModel();
@@ -151,6 +155,22 @@ public class ParentChildEdgeController implements EdgeController{
         arrowStart=new Arrow(curve, 0.20f, arrowShape);
         curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
         curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
+        
+        
+         MenuItem deleteThisLink=new MenuItem("-delete this link");
+        node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
+            @Override
+            public void handle(ContextMenuEvent event) {
+              if(!node.getDropReceived())menu.show(node, event.getScreenX(), event.getScreenY());
+            }
+        });
+        deleteThisLink.setOnAction(e->{
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            node.setVisible(false);
+            
+        });
+        menu.getItems().add(deleteThisLink);
+        
         
         node.getChildren().add(0,arrowEnd);
         node.getChildren().add(0,arrowBeforeDot);
@@ -244,6 +264,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGD_LOAD)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType2View)childJobView).getHeight()+" , Width: "+((JobType2View)childJobView).getWidth());
@@ -252,6 +273,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.ACQUISITION)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
@@ -260,6 +282,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.TEXT)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType4View)childJobView).getHeight()+" , Width: "+((JobType4View)childJobView).getWidth());
@@ -268,6 +291,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGY)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType5View)childJobView).getHeight()+" , Width: "+((JobType5View)childJobView).getWidth());
@@ -276,6 +300,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
           this.interactivePane.getChildren().add(dotview);
           }
@@ -286,6 +311,7 @@ public class ParentChildEdgeController implements EdgeController{
             this.dotview=dotnode;
             childAnchor.centerXProperty().bind(this.dotview.centerXProperty());
             childAnchor.centerYProperty().bind(this.dotview.centerYProperty());
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
 //            this.interactivePane.getChildren().add(dotview);
             
         }
@@ -407,6 +433,7 @@ public class ParentChildEdgeController implements EdgeController{
                //reduce the childanchors radius to zero once it's dropped on a node
                
                childAnchor.setRadius(5);
+                node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
            }
            
         });

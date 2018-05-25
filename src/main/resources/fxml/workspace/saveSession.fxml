@@ -15,20 +15,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root hgap="14.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" type="GridPane" vgap="20.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.workspace.saveworkspace.SaveWorkspaceController">
+<fx:root hgap="14.0" maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #181A1E;" type="GridPane" vgap="20.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.workspace.saveworkspace.SaveWorkspaceController">
   <children>
-    <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="TOP">
-      <image>
-        <Image url="@AlertDialog.png" />
-      </image>
-    </ImageView>
     <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="7.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
       <children>
-        <Label fx:id="messageLabel" alignment="TOP_CENTER" text="Save Session As" textAlignment="LEFT" wrapText="true">
-          <font>
-            <Font name="System Bold" size="13.0" />
-          </font>
-        </Label>
+            <HBox spacing="10.0">
+               <children>
+                <ImageView pickOnBounds="true" preserveRatio="true">
+                  <image>
+                    <Image url="@../../icons/user/pirate-head.png" />
+                  </image>
+                </ImageView>
+              <Label fx:id="messageLabel" alignment="TOP_CENTER" style="-fx-text-fill: white;" text="Enter a name for the new workspace" textAlignment="LEFT" wrapText="true">
+                <font>
+                  <Font name="System Bold" size="13.0" />
+                </font>
+              </Label>
+               </children>
+            </HBox>
             <TextField fx:id="saveText" />
       </children>
     </VBox>
@@ -40,14 +44,14 @@
           </HBox.margin>
         </HBox>
         <Pane maxWidth="+Infinity" HBox.hgrow="ALWAYS" />
-        <Button fx:id="saveButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleSaveButtonClicked" text="save" HBox.hgrow="NEVER">
+        <Button fx:id="saveButton" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#handleSaveButtonClicked" style="-fx-background-color: #272B30; -fx-text-fill: white;" text="save" HBox.hgrow="NEVER">
           <HBox.margin>
             <Insets />
           </HBox.margin>
         </Button>
         <HBox fx:id="okParent" alignment="CENTER">
           <children>
-            <Button fx:id="cancelButton" minWidth="80.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" HBox.hgrow="NEVER">
+            <Button fx:id="cancelButton" minWidth="80.0" mnemonicParsing="false" onAction="#handleCancelButton" style="-fx-background-color: #272B30; -fx-text-fill: white;" text="Cancel" HBox.hgrow="NEVER">
               <HBox.margin>
                 <Insets left="14.0" />
               </HBox.margin>

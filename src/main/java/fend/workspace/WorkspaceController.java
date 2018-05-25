@@ -6,6 +6,7 @@
 package fend.workspace;
 
 import app.properties.AppProperties;
+import com.jfoenix.controls.JFXProgressBar;
 import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
@@ -134,11 +135,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;
@@ -716,7 +720,7 @@ public class WorkspaceController {
         model.setInsightVersions(insightVersionStrings);
         model.rebuildGraphOrderProperty().addListener(REBUILD_GRAPH_LISTENER);
         model.prepareToRebuildProperty().addListener(CLEAR_ANCESTOR_LISTENER);
-       
+        model.blockProperty().addListener(BLOCK_UNBLOCK_LISTENER);
        
         exec = Executors.newCachedThreadPool((r) -> {
             Thread t = new Thread(r);
@@ -724,6 +728,9 @@ public class WorkspaceController {
             return t;
         });
 
+        
+        
+                
     }
 
     public WorkspaceModel getModel() {
@@ -4790,6 +4797,23 @@ public class WorkspaceController {
     };
    
    
+  
+   private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() { 
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                interactivePane.setDisable(true);
+                
+                model.getAppmodel().block(); 
+               
+                
+            }else{
+                
+                model.getAppmodel().unblock(); 
+                interactivePane.setDisable(false);
+            }
+        }
+    };
    
    private void rebuildGraph(Link l){
        
@@ -4846,6 +4870,7 @@ public class WorkspaceController {
        
    }
    
+   /*
    private void rebuild(Link l){
       System.out.println("checking link "+l.getId()+" "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());
       Set<Ancestor> ancestorsInParent;  
@@ -4880,20 +4905,7 @@ public class WorkspaceController {
               ancestorLUM.get(l.getChild()).add(childAncestor);
           }
       
-        /*  if(l.getChild().isLeaf()){
-        Descendant parentDescendant=new Descendant();
-        parentDescendant.setJob(l.getParent());
-        parentDescendant.setDescendant(l.getChild());
-        if(!descendantLUM.containsKey(l.getParent())){
-        descendantLUM.put(l.getParent(), new HashSet<>());
-        descendantLUM.get(l.getParent()).add(parentDescendant);
-        }else{
-        descendantLUM.get(l.getParent()).add(parentDescendant);
-        }
         
-        return;
-        
-        }*/
       
       List<Link> linksWhereChildIsParent=linkService.getParentLinksFor(l.getChild());
       if(linksWhereChildIsParent.isEmpty()){
@@ -4950,7 +4962,7 @@ public class WorkspaceController {
               descendantLUM.get(l.getParent()).add(parentDescendant);
           }
       
-   }
+   }*/
    
    
    private class AncestorDescendantHolder{

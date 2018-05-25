@@ -56,6 +56,10 @@ public class WorkspaceModel {
     public void reload() {
        appmodel.reload();
     }
+
+    public AppModel getAppmodel() {
+        return appmodel;
+    }
    
     
     
@@ -160,6 +164,21 @@ public class WorkspaceModel {
 
     public void setInsightVersions(List<String> insightVersions) {
         this.insightVersions = insightVersions;
+    }
+
+    BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    public void unblock(){
+        blockProperty.set(false);
     }
     
     

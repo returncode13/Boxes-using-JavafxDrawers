@@ -17,8 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import db.services.UserService;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 
 /**
  *
@@ -38,17 +41,20 @@ public class UserController extends Stage{
     @FXML
     private Button cancelBtn;
 
-    @FXML
-    private Button addAUserBtn;
+    /*@FXML
+    private Button addAUserBtn;*/
     
-      @FXML
-    private Button viewUsersButton;
-
     @FXML
+    private Label addAUserLabel;
+    
+    /*   @FXML
+    private Button viewUsersButton;*/
+    /*@FXML
     void addANewUser(ActionEvent event) {
-        NewUserModel newUserModel=new NewUserModel();
-        NewUserView newUserView=new NewUserView(newUserModel);
-    }
+    getScene().setCursor(Cursor.DEFAULT);
+    NewUserModel newUserModel=new NewUserModel();
+    NewUserView newUserView=new NewUserView(newUserModel);
+    }*/
 
     @FXML
     void cancel(ActionEvent event) {
@@ -73,19 +79,38 @@ public class UserController extends Stage{
         close();
     }
 
-    @FXML
+    
+     @FXML
+    void addANewUserOnLabel(MouseEvent event) {
+         getScene().setCursor(Cursor.DEFAULT);
+        NewUserModel newUserModel=new NewUserModel();
+        NewUserView newUserView=new NewUserView(newUserModel);
+    }
+    /*@FXML
     void viewUsers(ActionEvent event) {
-        System.out.println("fend.user.UserController.viewUsers(): Pending implementation");
+    System.out.println("fend.user.UserController.viewUsers(): Pending implementation");
+    }*/
+    
+     @FXML
+    void changeMouseToHand(MouseEvent  event) {
+        getScene().setCursor(Cursor.HAND);
+    }
+    
+    
+    @FXML
+    void changeMouseToDefault(MouseEvent event) {
+        getScene().setCursor(Cursor.DEFAULT);
     }
     
     void setModel(UserModel userModel) {
         model=userModel;
-        Image viewUserImage=new Image(getClass().getResourceAsStream("/icons/login.png"));
-        viewUsersButton.setGraphic(new ImageView(viewUserImage));
+        /* Image viewUserImage=new Image(getClass().getResourceAsStream("/icons/login.png"));
+        viewUsersButton.setGraphic(new ImageView(viewUserImage));*/
     }
 
     void setView(UserView vw) {
         view=vw;
+        this.setOnCloseRequest(e->{model.setLoginSucceeded(false);});
         this.setScene(new Scene(view));
         this.showAndWait();
     }

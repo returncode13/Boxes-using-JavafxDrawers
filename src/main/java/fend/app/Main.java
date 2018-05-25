@@ -256,11 +256,11 @@ public class Main extends Application{
         
     }
     
-    @Override
+    /*@Override
     public void stop(){
-        System.out.println("fend.app.Main.stop(): stage is closing");
+    System.out.println("fend.app.Main.stop(): stage is closing");
     }
-    
+    */
     private StringProperty pqTitleProperty=new SimpleStringProperty();
     
     
