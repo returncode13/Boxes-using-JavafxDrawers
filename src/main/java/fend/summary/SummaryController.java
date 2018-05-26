@@ -43,6 +43,7 @@ import fend.summary.SequenceSummary.SequenceCell.SequenceCell;
 import fend.summary.SequenceSummary.SequenceSummary;
 import fend.summary.SequenceSummary.SubsurfaceCell.SubsurfaceCell;
 import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
+import fend.summary.SummaryTableRow.SummaryTableRow;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -174,48 +175,55 @@ public class SummaryController extends Stage{
         // System.out.println("fend.summary.SummaryController.setModel(): "+timeNow()+" building the doubtstatus map");
         
         
-        treetable.setRowFactory(new Callback<TreeTableView<SequenceSummary>, TreeTableRow<SequenceSummary>>() {
-            
-            SequenceSummary selectedItem;
-             final BooleanProperty isSelected=new SimpleBooleanProperty(false);
-             
-             @Override
-             public TreeTableRow<SequenceSummary> call(TreeTableView<SequenceSummary> param) {
-                 TreeTableRow<SequenceSummary> row=new TreeTableRow<SequenceSummary>(){
-                     
-                     @Override
-                     protected void updateItem(SequenceSummary item,boolean empty){
-                         super.updateItem(item, empty);
-                         if((item==null)||empty){
-                             setStyle("");
-                             setText("");
-                             setGraphic(null);
-                         }else{
-                             int sel=getIndex();
-                             selectedItem = getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
-                             boolean isSub = selectedItem.isChild();
-                            
-                             if (isSub) {
-                                   // if (!itemIsSelected) {
-                                     setStyle("-fx-background-color: " + SequenceSummaryColors.SUBSURFACE);
-                                      setTextFill(SequenceSummaryColors.SUBSURFACE_TEXT);
-                                
-
-                             } else {
-                                 setStyle("-fx-background-color: " + SequenceSummaryColors.SEQUENCE);
-                                 setTextFill(SequenceSummaryColors.SEQUENCE_TEXT);
-                             }
-                             
-                         }
-                     }
-                 };
-                 
-                //row.getStylesheets().add("css/treeTableCell.css");
-                
-                 return row;
-             } 
-         }); 
+        /*  treetable.setRowFactory(new Callback<TreeTableView<SequenceSummary>, TreeTableRow<SequenceSummary>>() {
         
+        private SequenceSummary selectedItem=null;
+        final BooleanProperty isSelected=new SimpleBooleanProperty(false);
+        
+        @Override
+        public TreeTableRow<SequenceSummary> call(TreeTableView<SequenceSummary> param) {
+        TreeTableRow<SequenceSummary> row=new TreeTableRow<SequenceSummary>(){
+        
+        
+        
+        
+        
+        
+        @Override
+        protected void updateItem(SequenceSummary item,boolean empty){
+        super.updateItem(item, empty);
+        if((item==null)||empty){
+        setStyle("");
+        setText("");
+        setGraphic(null);
+        }else{
+        int sel=getIndex();
+        selectedItem = getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
+        boolean isSub = selectedItem.isChild();
+        
+        if (isSub) {
+        // if (!itemIsSelected) {
+        setStyle("-fx-background-color: " + SequenceSummaryColors.SUBSURFACE);
+        setTextFill(SequenceSummaryColors.SUBSURFACE_TEXT);
+        
+        
+        } else {
+        setStyle("-fx-background-color: " + SequenceSummaryColors.SEQUENCE);
+        setTextFill(SequenceSummaryColors.SEQUENCE_TEXT);
+        }
+        
+        }
+        }
+        };
+        
+        //row.getStylesheets().add("css/treeTableCell.css");
+        
+        return row;
+        }
+        });
+        */
+        
+        treetable.setRowFactory(r->new SummaryTableRow());
                    
                     Workspace dbWorkspace=workspaceService.getWorkspace(mod.getWorkspaceController().getModel().getId());
                     List<Long> depths=jobService.getDepthOfGraph(dbWorkspace);

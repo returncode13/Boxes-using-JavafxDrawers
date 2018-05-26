@@ -370,7 +370,8 @@ public class IOCellController {
                }catch(NullPointerException npe){
                    
                }
-           ioLabel.setStyle("-fx-background-color: "+color);
+           //ioLabel.setStyle("-fx-background-color: "+color);
+           ioLabel.setStyle("-fx-background-color: transparent;");
      
         }
        
@@ -414,7 +415,8 @@ public class IOCellController {
                }catch(NullPointerException npe){
                    
                }
-           ioLabel.setStyle("-fx-background-color: "+color);
+           //ioLabel.setStyle("-fx-background-color: "+color);
+           ioLabel.setStyle("-fx-background-color: transparent;");
             
             
         }

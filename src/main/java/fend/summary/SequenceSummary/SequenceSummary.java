@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
@@ -21,6 +22,27 @@ import java.util.Objects;
 public class SequenceSummary {
     Sequence sequence;        //sequence that this summary row will represent
     Subsurface subsurface;
+    
+    private final SimpleBooleanProperty sequenceSummaryIsActive=new SimpleBooleanProperty(true);
+
+    public SequenceSummary() {
+        this.sequenceSummaryIsActive.set(true);
+    }
+    
+    public SimpleBooleanProperty sequenceSummaryIsActiveProperty(){
+        return this.sequenceSummaryIsActive;
+    }
+    
+    public void setSequenceSummaryIsActive(boolean n){
+        sequenceSummaryIsActive.set(n);
+    }
+    
+    public boolean isSequenceSummaryActive(){
+        return sequenceSummaryIsActive.get();
+    }
+    
+    
+    
     
     private Map<Long,Depth> depthMap=new HashMap<>();
     private Map<Subsurface,SequenceSummary> children=new HashMap<>();

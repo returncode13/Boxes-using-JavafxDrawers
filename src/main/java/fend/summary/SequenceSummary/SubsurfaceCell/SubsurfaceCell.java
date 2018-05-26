@@ -41,14 +41,17 @@ public class SubsurfaceCell extends TreeTableCell<SequenceSummary,String>{
                 subOrSail=selectedItem.getSubsurface().getSubsurface();
             }
             if(isSub){
-                setStyle("-fx-background-color: "+SequenceSummaryColors.SUBSURFACE);
-                setTextFill(Color.LIGHTGREY);
+                /*setStyle("-fx-background-color: "+SequenceSummaryColors.SUBSURFACE);
+                setTextFill(Color.LIGHTGREY);*/
+                setTextFill(SequenceSummaryColors.SUBSURFACE_TEXT);
                 setText(subOrSail);
             }else{
-                setStyle("-fx-background-color: "+SequenceSummaryColors.SEQUENCE);
-                setTextFill(Color.WHITE);
+                /* setStyle("-fx-background-color: "+SequenceSummaryColors.SEQUENCE);*/
+                setTextFill(SequenceSummaryColors.SEQUENCE_TEXT);
                 setText(subOrSail);
             }
+             setStyle("-fx-background-color: transparent;");
+             
         }
     }
 }

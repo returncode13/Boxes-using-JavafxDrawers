@@ -403,7 +403,8 @@ public class TraceCellController {
                }catch(NullPointerException npe){
                    
                }
-           traceLabel.setStyle("-fx-background-color: "+color);
+           //traceLabel.setStyle("-fx-background-color: "+color);
+           traceLabel.setStyle("-fx-background-color: transparent;"); 
         }
        
        
@@ -446,7 +447,8 @@ public class TraceCellController {
                }catch(NullPointerException npe){
                    
                }
-           traceLabel.setStyle("-fx-background-color: "+color);
+           //traceLabel.setStyle("-fx-background-color: "+color);
+           traceLabel.setStyle("-fx-background-color: transparent;"); 
      
         }
 

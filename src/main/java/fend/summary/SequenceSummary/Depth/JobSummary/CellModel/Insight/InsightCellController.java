@@ -407,7 +407,8 @@ public class InsightCellController {
                    
                }
            
-           insightLabel.setStyle("-fx-background-color: "+color);
+          // insightLabel.setStyle("-fx-background-color: "+color);
+          insightLabel.setStyle("-fx-background-color: transparent;");
             
      
         }
@@ -456,7 +457,8 @@ public class InsightCellController {
                    
                }
            
-           insightLabel.setStyle("-fx-background-color: "+color);
+          // insightLabel.setStyle("-fx-background-color: "+color);
+          insightLabel.setStyle("-fx-background-color: transparent;");
             
        }
 

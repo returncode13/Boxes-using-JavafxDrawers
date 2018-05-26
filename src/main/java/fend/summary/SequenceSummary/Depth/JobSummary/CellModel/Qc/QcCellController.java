@@ -362,7 +362,8 @@ public class QcCellController {
                }catch(NullPointerException npe){
                    
                }
-           qcLabel.setStyle("-fx-background-color: "+color);
+           //qcLabel.setStyle("-fx-background-color: "+color);
+           qcLabel.setStyle("-fx-background-color: transparent;");
      
      }
      
@@ -409,7 +410,8 @@ public class QcCellController {
                }catch(NullPointerException npe){
                    
                }
-           qcLabel.setStyle("-fx-background-color: "+color);
+           //qcLabel.setStyle("-fx-background-color: "+color);
+           qcLabel.setStyle("-fx-background-color: transparent;");
      
      }
     

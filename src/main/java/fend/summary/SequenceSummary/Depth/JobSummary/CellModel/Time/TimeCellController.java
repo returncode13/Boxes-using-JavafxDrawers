@@ -375,8 +375,8 @@ public class TimeCellController {
                }catch(NullPointerException npe){
                    
                }
-           timeLabel.setStyle("-fx-background-color: "+color);
-            
+           //timeLabel.setStyle("-fx-background-color: "+color);
+           timeLabel.setStyle("-fx-background-color: transparent;"); 
             
      }
      
@@ -425,7 +425,8 @@ public class TimeCellController {
                }catch(NullPointerException npe){
                    
                }
-           timeLabel.setStyle("-fx-background-color: "+color);
+           //timeLabel.setStyle("-fx-background-color: "+color);
+           timeLabel.setStyle("-fx-background-color: transparent;"); 
             
      }
 }
