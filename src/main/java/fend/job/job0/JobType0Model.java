@@ -106,6 +106,10 @@ public interface JobType0Model {
     public BooleanProperty exitLineTableProperty();
     public void exitedLineTable();
 
+    public void block();
+
+    public void unblock();
+
    
     
 }

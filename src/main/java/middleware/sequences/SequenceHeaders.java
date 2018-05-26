@@ -85,6 +85,8 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private Sequence sequence;
     private Subsurface subsurface;
 
+    
+    
     public Boolean getDeleted() {
         return deleted;
     }
@@ -93,6 +95,13 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
         this.deleted = deleted;
     }
 
+    public boolean isParent(){
+        return true;
+    }
+    
+    public boolean isChild(){
+        return false;
+    }
     
     
     

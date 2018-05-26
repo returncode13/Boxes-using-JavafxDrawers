@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -39,17 +40,34 @@
                   <HBox GridPane.rowIndex="3">
                      <children>
                         <JFXTextField editable="false" style="-fx-text-fill: white;" text="     y =" />
-                        <JFXTextField fx:id="function" alignment="BOTTOM_LEFT" onKeyReleased="#onFunctionKeyReleased" prefHeight="26.0" prefWidth="389.0" promptText="f(x1,x2,..,xn)" style="-fx-text-fill: white;" />
+                        <JFXTextField fx:id="function" alignment="BOTTOM_LEFT" onKeyReleased="#onFunctionKeyReleased" prefHeight="26.0" prefWidth="389.0" promptText="f(x0,x1,..,xn)" style="-fx-text-fill: white;" />
                      </children>
                   </HBox>
-                  <JFXTextArea fx:id="textArea" editable="false" style="-fx-text-fill: white;" text="fsdfddsadsa" />
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label text="list of variables that can be used to define the function" textFill="WHITE" underline="true" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <JFXTextArea fx:id="textArea" editable="false" style="-fx-text-fill: white;" text=" y = job_y&#10;x0 = job_x_0&#10;x1 = job_x_1&#10;x2 = job_x_2&#10;   .&#10;   .&#10;   .&#10;xn = job_x_n" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets left="10.0" top="10.0" />
+                           </padding>
+                        </JFXTextArea>
+                     </children>
+                  </VBox>
                   <JFXButton fx:id="cancel" buttonType="RAISED" layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" onAction="#cancel" style="-fx-background-color: #272B30; -fx-text-fill: WHITE;" text="Cancel" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                  <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onToleranceKeyReleased" promptText="tolerance %" style="-fx-text-fill: white;" text="dadas" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                  <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onToleranceKeyReleased" promptText="tolerance %" style="-fx-text-fill: white;" text="t" GridPane.columnIndex="2" GridPane.rowIndex="3">
                      <font>
                         <Font size="12.0" />
                      </font>
                   </JFXTextField>
-                  <JFXTextField fx:id="error" alignment="CENTER" layoutX="466.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onErrorKeyReleased" promptText="error %" style="-fx-text-fill: white;" text="da" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <JFXTextField fx:id="error" alignment="CENTER" layoutX="466.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onErrorKeyReleased" promptText="error %" style="-fx-text-fill: white;" text="e" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
                         <Label style="-fx-text-fill: yellow;" text="tolerance" />

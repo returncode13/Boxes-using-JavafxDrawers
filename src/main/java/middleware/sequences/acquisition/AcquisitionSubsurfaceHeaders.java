@@ -67,6 +67,15 @@ public class AcquisitionSubsurfaceHeaders extends AcquisitionSequenceHeaders{
         this.subsurfaceName = subsurfaceName;
     }
     
+     @Override
+     public boolean isParent(){
+        return false;
+    }
+    
+     @Override
+    public boolean isChild(){
+        return true;
+    }
     
            
      @Override

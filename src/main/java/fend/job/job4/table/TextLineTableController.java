@@ -5,6 +5,7 @@
  */
 package fend.job.job4.table;
 
+import db.model.Sequence;
 import fend.job.job4.table.history.TextHistoryModel;
 import fend.job.job4.table.history.TextHistoryView;
 import java.util.List;
@@ -86,10 +87,18 @@ public class TextLineTableController extends Stage{
             return p.getValue().deletedProperty();
         });
         
+        sequenceNumber.setMinWidth(100);
+        
+        
+        
         textTable.getColumns().addAll(sequenceNumber,file,timeStamp,md5,numberOfRuns,modified,deleted);
         
         List<TextSequenceHeader> contents=model.getTextSequenceHeaders();
         textTable.getItems().addAll(contents);
+        
+        textTable.getItems().sort((o1,o2)->{
+            return ((Sequence)o1.getSequence()).getSequenceno().compareTo(((Sequence)o2.getSequence()).getSequenceno());
+        });
         
         textTable.setRowFactory(r->{
             ContextMenu contextMenu=new ContextMenu();

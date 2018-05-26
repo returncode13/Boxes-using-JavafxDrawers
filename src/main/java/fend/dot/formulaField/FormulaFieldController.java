@@ -68,7 +68,7 @@ public class FormulaFieldController extends Stage{
         for (Map.Entry<String, Job> entry : vamap.entrySet()) {
             String var = entry.getKey();
             Job arg = entry.getValue();
-            if(!var.equals("y0")){
+            if(!var.equals("y")){
                 allowedVariables.add(var);
             }
             

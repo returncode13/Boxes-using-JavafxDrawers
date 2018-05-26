@@ -136,7 +136,7 @@ public class VolumeListType2Controller {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if(newValue){
-            
+                parentjob.block();
                 List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
                 for(Volume0 vols:parentjob.getVolumes()){
                     volTobeParentDeepCopy.add(vols);
@@ -175,6 +175,7 @@ public class VolumeListType2Controller {
                         
                     }
                 }
+                parentjob.unblock();
         }
             
         }

@@ -1379,7 +1379,7 @@ public class AppController extends Stage implements Initializable{
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             calculateTitleHeader();
-            System.out.println(".changed(): changing title to : "+titleHeader);
+            System.out.println("fend.app.AppController.changed(): changing title to : "+titleHeader);
             //AppController.this.setTitle(titleHeader);
             AppController.this.titleProperty().set(titleHeader);
             
@@ -1409,6 +1409,7 @@ public class AppController extends Stage implements Initializable{
                 progressBarForBlock.setMinWidth(1000);
                 basePane.getChildren().add(progressBarForBlock);
                 basePane.setAlignment(progressBarForBlock,Pos.CENTER);*/
+                 System.out.println("fend.app.AppController.BLK_UBLK_LISTENER().blocking");
               spinner.setProgress(-1);
               spinner.setMaxWidth(100);
               spinner.setMaxHeight(100);
@@ -1421,6 +1422,7 @@ public class AppController extends Stage implements Initializable{
                 
                 /*progressBarForBlock.setProgress(0);
                 basePane.getChildren().remove(progressBarForBlock);*/
+                System.out.println("fend.app.AppController.BLK_UBLK_LISTENER().unblocking");
               spinner.setProgress(0);
               basePane.getChildren().remove(spinner);
               

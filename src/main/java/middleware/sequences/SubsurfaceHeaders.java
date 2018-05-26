@@ -73,7 +73,13 @@ public class SubsurfaceHeaders extends SequenceHeaders{
 
     
     
+    public boolean isParent(){
+        return false;
+    }
     
+    public boolean isChild(){
+        return true;
+    }
     
     
     @Override

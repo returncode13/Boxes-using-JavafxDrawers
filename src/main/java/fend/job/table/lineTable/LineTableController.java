@@ -305,7 +305,15 @@ public class LineTableController extends Stage{
         subsurfaceName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceHeaders, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<SequenceHeaders, String> param) {
-                return new SimpleStringProperty(param.getValue().getValue().getSubsurfaceName());
+                
+                String sub=new String();
+                SequenceHeaders val=param.getValue().getValue();
+                if(val.isParent()){
+                    sub=val.getSequence().getRealLineName();
+                }else{
+                    sub=val.getSubsurfaceName();
+                }
+                return new SimpleStringProperty(sub);
             }
         });
         timeStamp.setCellValueFactory(new TreeItemPropertyValueFactory<>("timeStamp"));
@@ -382,8 +390,8 @@ public class LineTableController extends Stage{
         
         
         
-        
-        
+        sequenceNumber.setMinWidth(100);
+        subsurfaceName.setMinWidth(250);
         
         
         
@@ -399,6 +407,13 @@ public class LineTableController extends Stage{
             }
             treeSeq.add(seqroot);
         }
+        
+        treeSeq.sort((o1, o2) -> {
+           
+            
+            return ((SequenceHeaders)o1.getValue()).getSequence().getSequenceno().compareTo(((SequenceHeaders)o2.getValue()).getSequence().getSequenceno());
+        });
+        
         
         if(!multipleSubsPresent){
                 treetableView.getColumns().addAll(sequenceNumber,subsurfaceName,

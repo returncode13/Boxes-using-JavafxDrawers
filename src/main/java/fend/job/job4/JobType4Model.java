@@ -93,6 +93,24 @@ public class JobType4Model implements JobType0Model {
     private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
     private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
     
+    
+     BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    @Override
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    @Override
+    public void unblock(){
+        blockProperty.set(false);
+    }
+    
     @Override
     public BooleanProperty exitLineTableProperty(){
         return exitedLineTableProperty;

@@ -6,10 +6,12 @@
 package fend.dot.variableArgument;
 
 import db.model.Job;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
@@ -24,7 +26,9 @@ public class VariableArgumentModel {
    private Set<String> rhsVariables=new HashSet<>();            //strings of form x0->x99999..
    private ObservableSet<Job> observableLhsArgs=FXCollections.observableSet(lhsArgs);
    private ObservableSet<Job> observableRhsArgs=FXCollections.observableSet(rhsArgs);
-   private Map<String,Job> variableArgumentMap=new HashMap<>();
+   private Map<String,Job> variableArgumentMap=new TreeMap<>((o1, o2) -> {
+       return o1.contains("x") && o2.contains("x") ? o1.compareTo(o2) : o2.compareTo(o1);     //need the terms in the order y -> x0 -> x1 -> x2
+   });
    private String info=new String(); 
     
     
@@ -53,10 +57,17 @@ public class VariableArgumentModel {
     
     public String getInfo() {
         info=new String();
+        
         for (Map.Entry<String, Job> entry : variableArgumentMap.entrySet()) {
             String variable = entry.getKey();
             Job argument = entry.getValue();
-            info+=variable+" = "+argument.getNameJobStep()+"\n";
+            String space=" ";
+            if(!variable.equals("y")){
+                info+=variable+" = "+argument.getNameJobStep()+"\n";
+            }else{
+                info+=space+variable+" = "+argument.getNameJobStep()+"\n";
+            }
+            
         }
         return info;
     }

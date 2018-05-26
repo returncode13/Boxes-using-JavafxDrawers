@@ -173,6 +173,8 @@ public class JobType1Controller implements JobType0Controller{
           t.setDaemon(true);
           return t;
       });
+      
+      model.blockProperty.addListener(BLOCK_UNBLOCK_LISTENER);
         
     }
 
@@ -1102,6 +1104,16 @@ public class JobType1Controller implements JobType0Controller{
         }
     };
    
+    private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                model.getWorkspaceModel().block();
+            }else{
+                model.getWorkspaceModel().unblock();
+            }
+        }
+    };
    
    /**
     * Used by the LineTableController to reflect changes back to it when someone changes the chosen status on a subline

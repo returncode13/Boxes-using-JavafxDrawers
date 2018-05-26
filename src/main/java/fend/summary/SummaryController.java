@@ -177,9 +177,12 @@ public class SummaryController extends Stage{
         treetable.setRowFactory(new Callback<TreeTableView<SequenceSummary>, TreeTableRow<SequenceSummary>>() {
             
             SequenceSummary selectedItem;
+             final BooleanProperty isSelected=new SimpleBooleanProperty(false);
+             
              @Override
              public TreeTableRow<SequenceSummary> call(TreeTableView<SequenceSummary> param) {
                  TreeTableRow<SequenceSummary> row=new TreeTableRow<SequenceSummary>(){
+                     
                      @Override
                      protected void updateItem(SequenceSummary item,boolean empty){
                          super.updateItem(item, empty);
@@ -191,21 +194,24 @@ public class SummaryController extends Stage{
                              int sel=getIndex();
                              selectedItem = getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
                              boolean isSub = selectedItem.isChild();
-
+                            
                              if (isSub) {
-                                 setStyle("-fx-background-color: " + SequenceSummaryColors.SUBSURFACE);
-                                 setTextFill(Color.LIGHTGREY);
+                                   // if (!itemIsSelected) {
+                                     setStyle("-fx-background-color: " + SequenceSummaryColors.SUBSURFACE);
+                                      setTextFill(SequenceSummaryColors.SUBSURFACE_TEXT);
+                                
 
                              } else {
                                  setStyle("-fx-background-color: " + SequenceSummaryColors.SEQUENCE);
-                                 setTextFill(Color.WHITE);
+                                 setTextFill(SequenceSummaryColors.SEQUENCE_TEXT);
                              }
                              
                          }
                      }
                  };
                  
-                row.getStylesheets().add("css/treeTableCell.css");
+                //row.getStylesheets().add("css/treeTableCell.css");
+                
                  return row;
              } 
          }); 

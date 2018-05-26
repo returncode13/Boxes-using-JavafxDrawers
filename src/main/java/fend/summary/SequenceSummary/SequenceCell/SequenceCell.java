@@ -7,6 +7,10 @@ package fend.summary.SequenceSummary.SequenceCell;
 
 import fend.summary.SequenceSummary.SequenceSummary;
 import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.paint.Color;
@@ -18,10 +22,16 @@ import javafx.scene.paint.Color;
 public class SequenceCell  extends TreeTableCell<SequenceSummary, Long> {
     TreeTableColumn<SequenceSummary,Long> param;
     SequenceSummary selectedItem;
+    final BooleanProperty isSelected=new SimpleBooleanProperty(false);
     
     public SequenceCell(TreeTableColumn<SequenceSummary, Long> p) {
         param=p;
+        
     }
+  
+    
+    
+    
     
     @Override
     protected void updateItem(Long seq,boolean empty){
@@ -34,16 +44,25 @@ public class SequenceCell  extends TreeTableCell<SequenceSummary, Long> {
             int sel=getTreeTableRow().getIndex();
             selectedItem=getTreeTableView().getSelectionModel().getModelItem(sel).getValue();
             boolean isSub=selectedItem.isChild();
-           
+            
+            
             if(isSub){
-                setStyle("-fx-background-color: "+SequenceSummaryColors.SUBSURFACE);
-                setTextFill(Color.LIGHTGREY);
+                
+                    setStyle("-fx-background-color: "+SequenceSummaryColors.SUBSURFACE);
+                    setTextFill(SequenceSummaryColors.SUBSURFACE_TEXT);
+                
+                
                 
             }else{
-                setStyle("-fx-background-color: "+SequenceSummaryColors.SEQUENCE);
-                setTextFill(Color.WHITE);
+                
+                    setStyle("-fx-background-color: "+SequenceSummaryColors.SEQUENCE);
+                    setTextFill(SequenceSummaryColors.SEQUENCE_TEXT);
+               
+                
             }
+            
             setText(""+seq);
+            //getStylesheets().add("css/treeTableCell.css");
         }
     }
 }

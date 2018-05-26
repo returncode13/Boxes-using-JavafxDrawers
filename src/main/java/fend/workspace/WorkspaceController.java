@@ -683,7 +683,7 @@ public class WorkspaceController {
         interactivePane.prefWidthProperty().bind(scrollpane.widthProperty());
         interactivePane.prefHeightProperty().bind(scrollpane.heightProperty());
         interactivePane.getChildren().addListener(jobLinkChangeListener);
-        loadingProperty.addListener(loadingListener);
+        loadingProperty.addListener(LOAD_RELOAD_LISTENER);
         
         //   createGraphAndChartsButton();
         //   createSummaryButton();
@@ -692,7 +692,7 @@ public class WorkspaceController {
         model = item;
         //dbWorkspace = workspaceService.getWorkspace(model.getId());
         dbWorkspace = model.getWorkspace();
-        model.reloadProperty().addListener(loadingListener);
+       // model.reloadProperty().addListener(LOAD_RELOAD_LISTENER);
         doubtTypeQc = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC);
         doubtTypeTraces = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TRACES);
         doubtTypeTime = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.TIME);
@@ -1976,7 +1976,7 @@ public class WorkspaceController {
         }
     };
 
-    private ChangeListener<Boolean> loadingListener = new ChangeListener<Boolean>() {
+    private ChangeListener<Boolean> LOAD_RELOAD_LISTENER = new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if (newValue) {
@@ -2420,7 +2420,7 @@ public class WorkspaceController {
              }
                     
             mapForVariableSetting.put(var, tracesArg);   
-            if (!var.equals("y0")) {                      //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
+            if (!var.equals("y")) {                      //y0 is the lhs which is fixed, the rhs needs to be evaluated. Do not include the y-term
                 variableSet.add(var);
                 argumentSet.add(arg);
             }
@@ -2441,7 +2441,7 @@ public class WorkspaceController {
                 .setVariables(mapForVariableSetting);
         Double result = e.evaluate();
 
-        Double y = mapForVariableSetting.get("y0");
+        Double y = mapForVariableSetting.get("y");
         System.out.println("fend.workspace.WorkspaceController.checkForDependencyDoubts(): check for y = " + y
                 + "evaluated.result = " + result);
         Double evaluated = Math.abs(y - result) / y;
@@ -4802,13 +4802,14 @@ public class WorkspaceController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
+                System.out.println("fend.workspace.WorkspaceController.BLK_UBLK_LISTENER().blocking");
                 interactivePane.setDisable(true);
                 
                 model.getAppmodel().block(); 
                
                 
             }else{
-                
+                 System.out.println("fend.workspace.WorkspaceController.BLK_UBLK_LISTENER().unblocking");
                 model.getAppmodel().unblock(); 
                 interactivePane.setDisable(false);
             }

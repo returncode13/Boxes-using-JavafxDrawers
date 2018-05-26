@@ -51,9 +51,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableSet;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -143,19 +146,28 @@ public class DotController extends Stage{
            
     //   model.dotClickedProperty().addListener(DOT_CLICKED_LISTENER);
        model.exitedFormulaFieldProperty().addListener(FORMULA_FIELD_EXITED);
+        model.getDelete().addListener(DOT_DELETE_LISTENER);
+        /*model.getDelete().addListener(new ChangeListener<Boolean>(){
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue){
         
-        model.getDelete().addListener(new ChangeListener<Boolean>(){
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(newValue){
-                    deleteDotAndLinks();
-                }
-            }
-
-           
-        });
+        deleteDotAndLinks();
+        }
+        }
+        
+        
+        });*/
+        
+        exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
         
     }
+    
+    private Executor exec;
     
     public DotModel getModel(){
         return model;
@@ -331,6 +343,8 @@ public class DotController extends Stage{
     private void deleteDotAndLinks() {
          /*   Set<JobType0Model> parents=model.getParents();
          Set<JobType0Model> children=model.getChildren();*/
+         System.out.println("fend.dot.DotController.deleteDotAndLinks(): calling block on workspace: "+model.getWorkspaceModel().getName().get()+" ("+model.getWorkspaceModel().getId()+")");
+        // model.getWorkspaceModel().block();
          deleteDoubtsRelatedToThisDot();
          List<Link> linksBelongingToDot=linkService.getLinksForDot(dbDot);
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting  "+linksBelongingToDot.size()+" link(s) belonging to the dot: "+dbDot.getId());
@@ -345,7 +359,10 @@ public class DotController extends Stage{
          System.out.println("fend.dot.DotController.deleteNodeAndLinks(): deleting the dot: "+dbDot.getId());
          dotService.deleteDot(dbDot.getId());
          
-         model.getWorkspaceModel().reload();
+        
+         System.out.println("fend.dot.DotController.deleteDotAndLinks(): calling unblock on workspace: "+model.getWorkspaceModel().getName().get()+" ("+model.getWorkspaceModel().getId()+")");
+        // model.getWorkspaceModel().unblock();
+         
             
     }
      
@@ -477,7 +494,7 @@ public class DotController extends Stage{
         Integer lhsIndex=0;
         String lhsVariable="y";
         for(Job lhs:observableLhsArgs){ //of size 1 
-           String lhsVariableM=lhsVariable+lhsIndex.toString();    //y0,y1...yn
+           String lhsVariableM=lhsVariable;//+lhsIndex.toString();    //y0,y1...yn   . May 25th disabled terms like y0. keeping just the term 'y'
             System.out.println("LHS "+lhsVariableM+" = "+lhs.getNameJobStep());
            variableArgumentMap.put(lhsVariableM, lhs);
            lhsIndex++;
@@ -823,5 +840,30 @@ public class DotController extends Stage{
     private String now() {
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }
+    
+    private ChangeListener<Boolean> DOT_DELETE_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                model.getWorkspaceModel().block();
+                Task<Void> deleteTask=new Task<Void>(){
+                    @Override
+                    protected Void call() throws Exception {
+                        deleteDotAndLinks();
+                        return null;
+                    }
+                    
+                };
+                
+                deleteTask.setOnRunning(e->{System.out.println("deleting dot..");});
+                deleteTask.setOnSucceeded(e->{
+                     model.getWorkspaceModel().reload();
+                        model.getWorkspaceModel().unblock();
+                });
+                
+                exec.execute(deleteTask);
+            }
+        }
+    };
     
 }

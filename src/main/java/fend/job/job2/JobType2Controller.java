@@ -171,6 +171,7 @@ public class JobType2Controller implements JobType0Controller{
           t.setDaemon(true);
           return t;
       });
+      model.blockProperty.addListener(BLOCK_UNBLOCK_LISTENER);
     }
 
     void setView(JobType2View vw,AnchorPane interactivePane) {
@@ -1003,6 +1004,7 @@ public class JobType2Controller implements JobType0Controller{
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            model.getWorkspaceModel().block();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting all qcs related to this job");
             deleteAllQcsRelatedToJob();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
@@ -1053,6 +1055,7 @@ public class JobType2Controller implements JobType0Controller{
                     System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
                      rebuildAncestorDescendants();
                      reloadWorkspace();
+                     model.getWorkspaceModel().unblock();
             });
             exec.execute(jobDeletionTask);
            
@@ -1074,6 +1077,16 @@ public class JobType2Controller implements JobType0Controller{
         }
     };
     
+      private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                model.getWorkspaceModel().block();
+            }else{
+                model.getWorkspaceModel().unblock();
+            }
+        }
+    };
     
        /**
     * Used by the LineTableController to reflect changes back to it when someone changes the chosen status on a subline

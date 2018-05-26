@@ -135,7 +135,15 @@ public class AcquisitionLineTableController extends Stage{
         subsurfaceName.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<AcquisitionSequenceHeaders, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<AcquisitionSequenceHeaders, String> param) {
-                return new SimpleStringProperty(param.getValue().getValue().getSubsurfaceName());
+               // return new SimpleStringProperty(param.getValue().getValue().getSubsurfaceName());
+               String sub=new String();
+                SequenceHeaders val=param.getValue().getValue();
+                if(val.isParent()){
+                    sub=val.getSequence().getRealLineName();
+                }else{
+                    sub=val.getSubsurfaceName();
+                }
+                return new SimpleStringProperty(sub);
             }
         });
         cable.setCellValueFactory(new TreeItemPropertyValueFactory<>("cable"));
@@ -162,7 +170,8 @@ public class AcquisitionLineTableController extends Stage{
         
         
         
-        
+        sequenceNumber.setMinWidth(100);
+        subsurfaceName.setMinWidth(250);
         
         
         
@@ -186,7 +195,9 @@ public class AcquisitionLineTableController extends Stage{
      
         
         
-        
+        treeSeq.sort((o1, o2) -> {
+            return ((SequenceHeaders)o1.getValue()).getSequence().getSequenceno().compareTo(((SequenceHeaders)o2.getValue()).getSequence().getSequenceno());
+        });
         
         
         

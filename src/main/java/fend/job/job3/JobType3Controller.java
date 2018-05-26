@@ -157,6 +157,7 @@ public class JobType3Controller implements JobType0Controller{
           t.setDaemon(true);
           return t;
       });
+      model.blockProperty.addListener(BLOCK_UNBLOCK_LISTENER);
         
     }
 
@@ -882,6 +883,7 @@ parent.addChild(model);*/
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            model.getWorkspaceModel().block();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting all qcs related to this job");
             deleteAllQcsRelatedToJob();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
@@ -932,6 +934,7 @@ parent.addChild(model);*/
                     System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: Rebuilding ancestors and descendants");
                      rebuildAncestorDescendants();
                      reloadWorkspace();
+                     model.getWorkspaceModel().unblock();
             });
             exec.execute(jobDeletionTask);
            
@@ -954,5 +957,14 @@ parent.addChild(model);*/
         }
     };
      
-   
+    private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                model.getWorkspaceModel().block();
+            }else{
+                model.getWorkspaceModel().unblock();
+            }
+        }
+    };
 }
