@@ -58,8 +58,10 @@ public class InsightCellController {
      private Image goodImage;
      private Image noSeqPresImage;
     
-    @FXML
-    private Label insightLabel;
+     /* @FXML
+     private Label insightLabel;*/
+      @FXML
+    private ImageView insightCellImage;
 
     @FXML
     void insightClicked(MouseEvent event) {
@@ -93,11 +95,14 @@ public class InsightCellController {
         insightDoubtType=model.getCellDoubtType();
         
         if(model.isActive()){
-            insightLabel.setDisable(false);
+           // insightLabel.setDisable(false);
+           insightCellImage.setDisable(false);
             // model.getJobSummaryModel().toggleQuery();
         }else{
-             insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
-            insightLabel.setDisable(true);
+            /* insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
+            insightLabel.setDisable(true);*/
+            insightCellImage.setStyle("-fx-background-color: "+JobSummaryColors.INSIGHT_NO_SEQ_PRESENT);
+             insightCellImage.setDisable(true);
         }
         try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
@@ -211,7 +216,8 @@ public class InsightCellController {
                 " active: "+newValue);
                 }
                 */
-                insightLabel.setDisable(false);
+                //insightLabel.setDisable(false);
+                insightCellImage.setDisable(false);                
                // applyColor();
                // model.getJobSummaryModel().toggleQuery();
                if(model.getJobSummaryModel().isChild()){
@@ -225,8 +231,10 @@ public class InsightCellController {
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
                 System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
                 }*/
-                insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
-                insightLabel.setDisable(true);
+                /* insightLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+                insightLabel.setDisable(true);*/
+                insightCellImage.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+                insightCellImage.setDisable(true);
             }
         }
      };
@@ -394,21 +402,23 @@ public class InsightCellController {
            }else{
            image=noSeqPresImage;
            }
-          insightLabel.setGraphic(new ImageView(image));
-           
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
-           
+          //insightLabel.setGraphic(new ImageView(image));
+          insightCellImage.setImage(image);
+          /*
+          try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }
+          */
           // insightLabel.setStyle("-fx-background-color: "+color);
-          insightLabel.setStyle("-fx-background-color: transparent;");
+          //insightLabel.setStyle("-fx-background-color: transparent;");
+          insightCellImage.setStyle("-fx-background-color: transparent;");
             
      
         }
@@ -444,21 +454,23 @@ public class InsightCellController {
            }else{
            image=noSeqPresImage;
            }
-          insightLabel.setGraphic(new ImageView(image));
-           
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
-           
+          //insightLabel.setGraphic(new ImageView(image));
+          insightCellImage.setImage(image);
+          /*
+          try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }
+          */
           // insightLabel.setStyle("-fx-background-color: "+color);
-          insightLabel.setStyle("-fx-background-color: transparent;");
+          //insightLabel.setStyle("-fx-background-color: transparent;");
+          insightCellImage.setStyle("-fx-background-color: transparent;"); 
             
        }
 

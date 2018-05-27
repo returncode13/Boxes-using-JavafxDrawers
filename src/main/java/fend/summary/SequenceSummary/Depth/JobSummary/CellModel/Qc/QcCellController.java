@@ -58,8 +58,10 @@ public class QcCellController {
      private Image warningImage;
      private Image goodImage;
      private Image noSeqPresImage;
-    @FXML
-    private Label qcLabel;
+     /* @FXML
+     private Label qcLabel;*/
+     @FXML
+    private ImageView qcCellImage;
 
     @FXML
     void qcClicked(MouseEvent event) {
@@ -87,11 +89,14 @@ public class QcCellController {
        
        
          if(model.isActive()){
-        qcLabel.setDisable(false);
+        //qcLabel.setDisable(false);
+        qcCellImage.setDisable(false);
         // model.getJobSummaryModel().toggleQuery();
         }else{
-        qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-        qcLabel.setDisable(true);
+             /* qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
+             qcLabel.setDisable(true);*/
+             qcCellImage.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
+             qcCellImage.setDisable(true);
         }
          try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
@@ -194,17 +199,9 @@ public class QcCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                /*if(model.getJobSummaryModel().getSubsurface()!=null){
-                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel()
-                .getJob()
-                .getNameJobStep()+" for "+
-                model.getJobSummaryModel()
-                .getSubsurface()
-                .getSubsurface()+
-                " active: "+newValue);
-                }
-                */
-                qcLabel.setDisable(false);
+                
+               // qcLabel.setDisable(false);
+               qcCellImage.setDisable(false);
               //  applyColor();
               // model.getJobSummaryModel().toggleQuery();
                 if(model.getJobSummaryModel().isChild()){
@@ -214,11 +211,11 @@ public class QcCellController {
                 }
                 
             }if(!newValue){
-                /* if(model.getJobSummaryModel().getSubsurface()!=null){
-                System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
-                }*/
-                qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-                qcLabel.setDisable(true);
+                
+                /* qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
+                qcLabel.setDisable(true);*/
+                qcCellImage.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
+                qcCellImage.setDisable(true);
             }
         }
      };
@@ -350,20 +347,22 @@ public class QcCellController {
            }else{
            image=noSeqPresImage;
            }
-          qcLabel.setGraphic(new ImageView(image));
+          //qcLabel.setGraphic(new ImageView(image));
+          qcCellImage.setImage(image);
            
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+          /* try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }*/
            //qcLabel.setStyle("-fx-background-color: "+color);
-           qcLabel.setStyle("-fx-background-color: transparent;");
+           //qcLabel.setStyle("-fx-background-color: transparent;");
+           qcCellImage.setStyle("-fx-background-color: transparent;");
      
      }
      
@@ -398,20 +397,21 @@ public class QcCellController {
            }else{
            image=noSeqPresImage;
            }
-          qcLabel.setGraphic(new ImageView(image));
+          //qcLabel.setGraphic(new ImageView(image));
+           qcCellImage.setImage(image); 
+           /*try{
+           if(model.getJobSummaryModel().isParent()){
+           color=SequenceSummaryColors.SEQUENCE;
+           }
+           else{
+           color=SequenceSummaryColors.SUBSURFACE;
+           }
+           }catch(NullPointerException npe){
            
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+           }*/
            //qcLabel.setStyle("-fx-background-color: "+color);
-           qcLabel.setStyle("-fx-background-color: transparent;");
+           //qcLabel.setStyle("-fx-background-color: transparent;");
+           qcCellImage.setStyle("-fx-background-color: transparent;");
      
      }
     

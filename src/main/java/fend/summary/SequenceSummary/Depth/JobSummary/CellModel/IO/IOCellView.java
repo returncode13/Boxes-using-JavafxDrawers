@@ -25,7 +25,7 @@ public class IOCellView extends AnchorPane{
     
     public IOCellView(IOCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/io/ioCellView_1.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/io/ioCellView_2.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

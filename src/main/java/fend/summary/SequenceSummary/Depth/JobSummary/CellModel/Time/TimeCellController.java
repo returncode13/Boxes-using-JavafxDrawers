@@ -59,8 +59,12 @@ public class TimeCellController {
      private Image warningImage;
      private Image goodImage;
      private Image noSeqPresImage;
-    @FXML
-    private Label timeLabel;
+     /* @FXML
+     private Label timeLabel;
+     */
+     @FXML
+    private ImageView timeCellImage;
+
 
     @FXML
     void timeClicked(MouseEvent event) {
@@ -92,11 +96,14 @@ public class TimeCellController {
        timeDoubtType=model.getCellDoubtType();
        
          if(model.isActive()){
-        timeLabel.setDisable(false);
+        //timeLabel.setDisable(false);
+        timeCellImage.setDisable(false);
         
          }else{
-        timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
-        timeLabel.setDisable(true);
+             /*timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
+             timeLabel.setDisable(true);*/
+             timeCellImage.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
+             timeCellImage.setDisable(true);
         }
          try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
@@ -211,7 +218,8 @@ public class TimeCellController {
                 " active: "+newValue);
                 }
                 */
-                timeLabel.setDisable(false);
+               // timeLabel.setDisable(false);
+               timeCellImage.setDisable(false);
               //  applyColor();
              //  model.getJobSummaryModel().toggleQuery();
                 if (model.getJobSummaryModel().isChild()) {
@@ -224,8 +232,10 @@ public class TimeCellController {
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
                 System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
                 }*/
-                timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
-                timeLabel.setDisable(true);
+                /*timeLabel.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
+                timeLabel.setDisable(true);*/
+                timeCellImage.setStyle("-fx-background-color: "+JobSummaryColors.TIME_NO_SEQ_PRESENT);
+             timeCellImage.setDisable(true);
             }
         }
      };
@@ -363,20 +373,22 @@ public class TimeCellController {
            }else{
            image=noSeqPresImage;
            }
-          timeLabel.setGraphic(new ImageView(image));
+          //timeLabel.setGraphic(new ImageView(image));
+          timeCellImage.setImage(image);
            
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+          /* try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }*/
            //timeLabel.setStyle("-fx-background-color: "+color);
-           timeLabel.setStyle("-fx-background-color: transparent;"); 
+           //timeLabel.setStyle("-fx-background-color: transparent;"); 
+           timeCellImage.setStyle("-fx-background-color: transparent;");
             
      }
      
@@ -413,20 +425,22 @@ public class TimeCellController {
            }else{
            image=noSeqPresImage;
            }
-          timeLabel.setGraphic(new ImageView(image));
+          //timeLabel.setGraphic(new ImageView(image));
+          timeCellImage.setImage(image);
            
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+          /* try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }*/
            //timeLabel.setStyle("-fx-background-color: "+color);
-           timeLabel.setStyle("-fx-background-color: transparent;"); 
+          // timeLabel.setStyle("-fx-background-color: transparent;"); 
+           timeCellImage.setStyle("-fx-background-color: transparent;");
             
      }
 }

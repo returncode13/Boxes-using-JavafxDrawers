@@ -58,9 +58,12 @@ public class IOCellController {
      private Image noSeqPresImage;
      
     
-    @FXML
-    private Label ioLabel;
+     /*@FXML
+     private Label ioLabel;*/
 
+     @FXML
+    private ImageView ioCellImage;
+    
     @FXML
     void ioClicked(MouseEvent event) {
         if(model.getJobSummaryModel().getSubsurface()!=null){
@@ -88,11 +91,14 @@ public class IOCellController {
         model.activeProperty().addListener(ACTIVE_LISTENER);
         
         if(model.isActive()){
-            ioLabel.setDisable(false);
-            // model.getJobSummaryModel().toggleQuery();
+            //ioLabel.setDisable(false);
+            ioCellImage.setDisable(false);
+           // model.getJobSummaryModel().toggleQuery();
         }else{
-             ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
-            ioLabel.setDisable(true);
+            // ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
+            //ioLabel.setDisable(true);
+            ioCellImage.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT+";");
+            ioCellImage.setDisable(true);
         }
         try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
@@ -201,7 +207,8 @@ public class IOCellController {
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
                
-                ioLabel.setDisable(false);
+               // ioLabel.setDisable(false);
+               ioCellImage.setDisable(false);
                // applyColor();
               //  model.getJobSummaryModel().toggleQuery();
                if(model.getJobSummaryModel().isChild()){
@@ -214,8 +221,10 @@ public class IOCellController {
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
                 System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
                 }*/
-                ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
-                ioLabel.setDisable(true);
+                /*ioLabel.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT);
+                ioLabel.setDisable(true);*/
+                 ioCellImage.setStyle("-fx-background-color: "+JobSummaryColors.IO_NO_SEQ_PRESENT+";");
+                 ioCellImage.setDisable(true);
             }
         }
      };
@@ -358,20 +367,24 @@ public class IOCellController {
            }else{
            image=noSeqPresImage;
            }
-          ioLabel.setGraphic(new ImageView(image));
+         // ioLabel.setGraphic(new ImageView(image));
+         ioCellImage.setImage(image);
            
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+         /* try{
+         if(model.getJobSummaryModel().isParent()){
+         color=SequenceSummaryColors.SEQUENCE;
+         }
+         else{
+         color=SequenceSummaryColors.SUBSURFACE;
+         }
+         }catch(NullPointerException npe){
+         
+         }*/
+           
+            
            //ioLabel.setStyle("-fx-background-color: "+color);
-           ioLabel.setStyle("-fx-background-color: transparent;");
+          // ioLabel.setStyle("-fx-background-color: transparent;");
+           ioCellImage.setStyle("-fx-background-color: transparent;");
      
         }
        
@@ -403,20 +416,22 @@ public class IOCellController {
            }else{
            image=noSeqPresImage;
            }
-          ioLabel.setGraphic(new ImageView(image));
-           
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+          //ioLabel.setGraphic(new ImageView(image));
+           ioCellImage.setImage(image);
+          /*
+          try{
+          if(model.getJobSummaryModel().isParent()){
+          color=SequenceSummaryColors.SEQUENCE;
+          }
+          else{
+          color=SequenceSummaryColors.SUBSURFACE;
+          }
+          }catch(NullPointerException npe){
+          
+          }*/
            //ioLabel.setStyle("-fx-background-color: "+color);
-           ioLabel.setStyle("-fx-background-color: transparent;");
+           //ioLabel.setStyle("-fx-background-color: transparent;");
+            ioCellImage.setStyle("-fx-background-color: transparent;");
             
             
         }

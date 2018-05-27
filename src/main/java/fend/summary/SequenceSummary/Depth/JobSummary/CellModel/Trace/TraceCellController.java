@@ -56,8 +56,10 @@ public class TraceCellController {
      private Image warningImage;
      private Image goodImage;
      private Image noSeqPresImage;
-    @FXML
-    private Label traceLabel;
+     /* @FXML
+     private Label traceLabel;*/
+      @FXML
+    private ImageView traceCellImage;
 
     @FXML
     void traceClicked(MouseEvent event) {
@@ -131,11 +133,14 @@ public class TraceCellController {
         traceDoubtType=model.getCellDoubtType();
         
         if(model.isActive()){
-            traceLabel.setDisable(false);
+            //traceLabel.setDisable(false);
+            traceCellImage.setDisable(false);
             //model.getJobSummaryModel().toggleQuery();
         }else{
-             traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
-            traceLabel.setDisable(true);
+            /* traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+            traceLabel.setDisable(true);*/
+            traceCellImage.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+             traceCellImage.setDisable(true);
         }
         try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
@@ -247,7 +252,8 @@ public class TraceCellController {
                 }
                 */
                // model.getJobSummaryModel().toggleQuery();
-                traceLabel.setDisable(false);
+                //traceLabel.setDisable(false);
+                traceCellImage.setDisable(false);
                // applyColor();
                if (model.getJobSummaryModel().isChild()) {
                 labelColorForSub();
@@ -259,8 +265,8 @@ public class TraceCellController {
                 /* if(model.getJobSummaryModel().getSubsurface()!=null){
                 System.out.println(".changed(): calling activeProperty Listener on "+model.getJobSummaryModel().getJob().getNameJobStep()+" for "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" active: "+!newValue);
                 }*/
-                traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
-                traceLabel.setDisable(true);
+                /*traceLabel.setStyle("-fx-background-color: "+JobSummaryColors.TRACES_NO_SEQ_PRESENT);
+                traceLabel.setDisable(true);*/
             }
         }
      };
@@ -391,20 +397,21 @@ public class TraceCellController {
            }else{
            image=noSeqPresImage;
            }
-           traceLabel.setGraphic(new ImageView(image));
-           
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+           //traceLabel.setGraphic(new ImageView(image));
+            traceCellImage.setImage(image); 
+            /* try{
+            if(model.getJobSummaryModel().isParent()){
+            color=SequenceSummaryColors.SEQUENCE;
+            }
+            else{
+            color=SequenceSummaryColors.SUBSURFACE;
+            }
+            }catch(NullPointerException npe){
+            
+            }*/
            //traceLabel.setStyle("-fx-background-color: "+color);
-           traceLabel.setStyle("-fx-background-color: transparent;"); 
+           //traceLabel.setStyle("-fx-background-color: transparent;"); 
+           traceCellImage.setStyle("-fx-background-color: transparent;");
         }
        
        
@@ -435,20 +442,21 @@ public class TraceCellController {
            }else{
            image=noSeqPresImage;
            }
-           traceLabel.setGraphic(new ImageView(image));
-           
-           try{
-                    if(model.getJobSummaryModel().isParent()){
-                    color=SequenceSummaryColors.SEQUENCE;
-                    }
-                    else{
-                        color=SequenceSummaryColors.SUBSURFACE;
-                    }
-               }catch(NullPointerException npe){
-                   
-               }
+           //traceLabel.setGraphic(new ImageView(image));
+           traceCellImage.setImage(image); 
+            /* try{
+            if(model.getJobSummaryModel().isParent()){
+            color=SequenceSummaryColors.SEQUENCE;
+            }
+            else{
+            color=SequenceSummaryColors.SUBSURFACE;
+            }
+            }catch(NullPointerException npe){
+            
+            }*/
            //traceLabel.setStyle("-fx-background-color: "+color);
-           traceLabel.setStyle("-fx-background-color: transparent;"); 
+           //traceLabel.setStyle("-fx-background-color: transparent;"); 
+           traceCellImage.setStyle("-fx-background-color: transparent;");
      
         }
 
