@@ -12,6 +12,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc.QcCellView;
 
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.SequenceSummary;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableCell;
@@ -28,6 +30,9 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
     Job job;
     //String type=DoubtTypeModel.QC;
     DoubtType type;
+    final ContextMenu contextMenu=new ContextMenu();
+    private BooleanProperty setupProperty=new SimpleBooleanProperty(true);
+    
     public QcCell(int depthId, Job jobkey,DoubtType qcType) {
         
        this.depthId=depthId;
@@ -35,7 +40,39 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
        model=new QcCellModel();
        model.setCellDoubtType(qcType);
        type=qcType;
-       view=new QcCellView(model);
+       //view=new QcCellView(model);
+       setupProperty.addListener((observable, oldValue, newValue) -> {
+                //if(newValue){
+                    int index=getIndex();
+            
+                    QcCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(this.depthId+"")).getJobSummaryModel(job).getQcCellModel();
+                  // InsightCellModel tcm=getTreeTableRow().getItem().getDepth(Long.valueOf(this.depthId+"")).getJobSummaryModel(job).getInsightCellModel();
+       
+                    JobSummaryModel jsm=tcm.getJobSummaryModel();
+                    if(model!=tcm){
+                        model=tcm;
+                        model.setJobSummaryModel(jsm);
+                        model.setCellDoubtType(type);
+                        view=new QcCellView(model);
+
+                         if(model.cellHasFailedDependency()&& model.getJobSummaryModel().isChild()){     //only enabled for subsurfaces and NOT for sequences.
+                                final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+                                overrideMenuItem.setOnAction(e->{
+                                System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");
+
+
+
+                                model.setShowOverride(true);
+
+                                });
+                                contextMenu.getItems().add(overrideMenuItem);
+                        }
+                        setContextMenu(contextMenu);
+                    }
+
+                    
+               // }
+            });
         
     }
     
@@ -43,7 +80,7 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
         super.updateItem(t, empty);
         if(!empty){
            
-            int index=getIndex();
+            /* int index=getIndex();
             QcCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getQcCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
             
@@ -51,26 +88,9 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             model=tcm;
             model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
-            view.getController().setModel(model);
-            /*if(jsm.getSubsurface()==null){
+            view.getController().setModel(model);*/
             
-            }else{
-            
-            System.out.println("fend.summary.SequenceSummary.Depth.TimeCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface()+" with tcm.active= "+tcm.isActive() +" T: "+t +" TJ:"+jsm.isActive());
-            }*/
-            
-            /* model.setCellProperty(jsm.getQcCellModel().cellHasDoubt());
-            // model.setActive(true);
-            model.setInheritance(jsm.getQcCellModel().isInheritance());
-            model.setOverride(jsm.getQcCellModel().isOverride());
-            model.setQuery(jsm.getQcCellModel().isQuery());
-            model.setShowOverride(jsm.getQcCellModel().isShowOverride());
-            model.setState(jsm.getQcCellModel().getState());
-            
-            if(jsm.getSubsurface()!=null){
-            model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
-            }
-            */
+             setupProperty.set(!setupProperty.get());
             if(!t){
                // model.setActive(true);
             model.setActive(false);
@@ -85,7 +105,7 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             }
             //jsm.setFeModelQcCellModel(model);
             
-            
+            /*
             final ContextMenu contextMenu=new ContextMenu();
             if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
@@ -100,7 +120,7 @@ public class QcCell  extends TreeTableCell<SequenceSummary, Boolean>{
             contextMenu.getItems().add(overrideMenuItem);
             }
             setContextMenu(contextMenu);
-            
+            */
             setGraphic(view);
             setStyle("-fx-padding: 0 0 0 0;");
         }

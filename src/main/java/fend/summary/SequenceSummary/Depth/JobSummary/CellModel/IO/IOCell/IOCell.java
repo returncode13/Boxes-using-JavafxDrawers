@@ -11,6 +11,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellModel;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellView;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.SequenceSummary;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableCell;
@@ -26,6 +28,8 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
     Job job;
     //String type=DoubtTypeModel.QC;
     DoubtType type;
+    final ContextMenu contextMenu=new ContextMenu();
+    private BooleanProperty setupProperty=new SimpleBooleanProperty(true);
     public IOCell(int depthId, Job jobkey,DoubtType ioType) {
         
        this.depthId=depthId;
@@ -33,7 +37,39 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
        model=new IOCellModel();
        model.setCellDoubtType(ioType);
        type=ioType;
-       view=new IOCellView(model);
+       //view=new IOCellView(model);
+       setupProperty.addListener((observable, oldValue, newValue) -> {
+                //if(newValue){
+                    int index=getIndex();
+            
+                    IOCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getIoCellModel();
+                  // InsightCellModel tcm=getTreeTableRow().getItem().getDepth(Long.valueOf(this.depthId+"")).getJobSummaryModel(job).getInsightCellModel();
+       
+                    JobSummaryModel jsm=tcm.getJobSummaryModel();
+                    if(model!=tcm){
+                        model=tcm;
+                        model.setJobSummaryModel(jsm);
+                        model.setCellDoubtType(type);
+                        view=new IOCellView(model);
+
+                         if(model.cellHasFailedDependency()&& model.getJobSummaryModel().isChild()){     //only enabled for subsurfaces and NOT for sequences.
+                                final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+                                overrideMenuItem.setOnAction(e->{
+                                System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");
+
+
+
+                                model.setShowOverride(true);
+
+                                });
+                                contextMenu.getItems().add(overrideMenuItem);
+                        }
+                        setContextMenu(contextMenu);
+                    }
+
+                    
+               // }
+            });
         
     }
     
@@ -41,7 +77,8 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
         super.updateItem(t, empty);
         if(!empty){
            
-            int index=getIndex();
+           
+            /*int index=getIndex();
             IOCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getIoCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
             
@@ -50,6 +87,8 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
             model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
             view.getController().setModel(model);
+            */
+            setupProperty.set(!setupProperty.get());
            
             if(!t){
                // model.setActive(true);
@@ -65,7 +104,7 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
             }
             //jsm.setFeModelQcCellModel(model);
             
-            
+            /*
             final ContextMenu contextMenu=new ContextMenu();
             if(model.cellHasFailedDependency()&& model.getJobSummaryModel().getSubsurface()!=null){     //only enabled for subsurfaces and NOT for sequences.
             final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
@@ -80,7 +119,7 @@ public class IOCell extends TreeTableCell<SequenceSummary, Boolean> {
             contextMenu.getItems().add(overrideMenuItem);
             }
             setContextMenu(contextMenu);
-            
+            */
             setGraphic(view);
             setStyle("-fx-padding: 0 0 0 0;");
         }

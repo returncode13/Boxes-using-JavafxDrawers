@@ -12,6 +12,8 @@ import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCellVi
 
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.SequenceSummary;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableCell;
@@ -28,7 +30,8 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
     Job job;
    // String type=DoubtTypeModel.TRACES;
     DoubtType type;
-
+    final ContextMenu contextMenu=new ContextMenu();
+    private BooleanProperty setupProperty=new SimpleBooleanProperty(true);
     public TraceCell(int depthId, Job jobkey,DoubtType traceType) {
         
        this.depthId=depthId;
@@ -36,7 +39,39 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
        model=new TraceCellModel();
        model.setCellDoubtType(traceType);
        type=traceType;
-       view=new TraceCellView(model);
+       //view=new TraceCellView(model);
+        setupProperty.addListener((observable, oldValue, newValue) -> {
+                //if(newValue){
+                    int index=getIndex();
+            
+                    TraceCellModel tcm=getTreeTableView().getSelectionModel().getModelItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
+                  // InsightCellModel tcm=getTreeTableRow().getItem().getDepth(Long.valueOf(this.depthId+"")).getJobSummaryModel(job).getInsightCellModel();
+       
+                    JobSummaryModel jsm=tcm.getJobSummaryModel();
+                    if(model!=tcm){
+                        model=tcm;
+                        model.setJobSummaryModel(jsm);
+                        model.setCellDoubtType(type);
+                        view=new TraceCellView(model);
+
+                         if(model.cellHasFailedDependency()&& model.getJobSummaryModel().isChild()){     //only enabled for subsurfaces and NOT for sequences.
+                                final MenuItem overrideMenuItem=new MenuItem("Manage Doubt");
+                                overrideMenuItem.setOnAction(e->{
+                                System.out.println("Fetching doubt information for Subsurface: "+model.getJobSummaryModel().getSubsurface().getSubsurface()+" job: ");
+
+
+
+                                model.setShowOverride(true);
+
+                                });
+                                contextMenu.getItems().add(overrideMenuItem);
+                        }
+                        setContextMenu(contextMenu);
+                    }
+
+                    
+               // }
+            });
         
     }
     
@@ -48,35 +83,18 @@ public class TraceCell  extends TreeTableCell<SequenceSummary, Boolean>{
             /*
             }
             if(!empty){*/
-           
+            /*
             int index=getIndex();
             TraceCellModel tcm=getTreeTableView().getSelectionModel().getModelItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
-           // TraceCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
+            // TraceCellModel tcm=getTreeTableView().getTreeItem(index).getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(job).getTraceCellModel();
             JobSummaryModel jsm=tcm.getJobSummaryModel();
             
             model=tcm;
             model.setJobSummaryModel(jsm);
             model.setCellDoubtType(type);
-             view.getController().setModel(model);
-             /*if(jsm.getSubsurface()==null){
-             
-             }else{
-             
-             System.out.println("fend.summary.SequenceSummary.Depth.TraceCell.updateItem(): Setting subsurface to "+jsm.getSubsurface().getSubsurface());
-             }
-             */
-            /* model.setCellProperty(jsm.getTraceCellModel().cellHasDoubt());
-            // model.setActive(true);
-            model.setInheritance(jsm.getTraceCellModel().isInheritance());
-            model.setOverride(jsm.getTraceCellModel().isOverride());
-            model.setQuery(jsm.getTraceCellModel().isQuery());
-            model.setShowOverride(jsm.getTraceCellModel().isShowOverride());
-            model.setState(jsm.getTraceCellModel().getState());
+            view.getController().setModel(model);*/
             
-            if(jsm.getSubsurface()!=null){
-            model.getJobSummaryModel().setSubsurface(jsm.getSubsurface());
-            }*/
-            
+             setupProperty.set(!setupProperty.get());
              if(!t){
             model.setActive(false);
             //  System.out.println("fend.summary.SequenceSummary.Depth.JobSummaryCell.updateItem(): index is : "+index+" item is "+getTableView().getItems().get(index).getSequence().getSequenceno());
