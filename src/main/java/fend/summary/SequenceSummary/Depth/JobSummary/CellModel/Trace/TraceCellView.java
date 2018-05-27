@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class TraceCellView extends AnchorPane{
+public class TraceCellView extends StackPane{
      private  TraceCellModel model;
     private TraceCellController  controller;
     
@@ -25,7 +25,7 @@ public class TraceCellView extends AnchorPane{
     
     public TraceCellView(TraceCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/trace/traceCellView_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/trace/traceCellView_3.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

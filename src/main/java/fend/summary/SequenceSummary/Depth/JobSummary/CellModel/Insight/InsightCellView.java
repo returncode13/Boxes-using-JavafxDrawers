@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class InsightCellView extends AnchorPane{
+public class InsightCellView extends StackPane{
      private  InsightCellModel model;
     private InsightCellController  controller;
     
@@ -25,7 +25,7 @@ public class InsightCellView extends AnchorPane{
     
     public InsightCellView(InsightCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/insight/insightCellView_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/insight/insightCellView_3.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

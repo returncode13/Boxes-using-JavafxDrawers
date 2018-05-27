@@ -254,4 +254,35 @@ public class TheaderDAOImpl implements TheaderDAO{
         return results;
     }
     
+     @Override
+    public void deleteTheadersFor(Job job) {
+        System.out.println("db.dao.TheaderDAOImpl.deleteHeadersFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.tHeaderId from Theader h where h.job =:j";
+        String hqlDelete="Delete from Theader h where h.tHeaderId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("j", job);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.TheaderDAOImpl.deleteHeadersFor(job): deleting "+idsToDelete.size()+" t-headers belonging to job: "+job.getNameJobStep()+" ("+job.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
 }

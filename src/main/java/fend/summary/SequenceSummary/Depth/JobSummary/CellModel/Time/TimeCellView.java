@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class TimeCellView extends AnchorPane{
+public class TimeCellView extends StackPane{
      private  TimeCellModel model;
     private TimeCellController  controller;
     
@@ -25,7 +25,7 @@ public class TimeCellView extends AnchorPane{
     
     public TimeCellView(TimeCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/time/timeCellView_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/time/timeCellView_3.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class IOCellView extends AnchorPane{
+public class IOCellView extends StackPane{
      private  IOCellModel model;
     private IOCellController  controller;
     
@@ -25,7 +25,7 @@ public class IOCellView extends AnchorPane{
     
     public IOCellView(IOCellModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/io/ioCellView_2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/summary/jobSummary/cellModel/io/ioCellView_3.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
