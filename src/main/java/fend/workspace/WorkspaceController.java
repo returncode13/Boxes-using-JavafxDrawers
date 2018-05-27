@@ -3313,6 +3313,10 @@ public class WorkspaceController {
         
     }
     
+    /***
+     * dot belongs to the link
+     **/
+    
     private void setDoubt(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link,Boolean forLeaf) {
         if(result.result == DEPENDENCY_FAIL_ERROR){
             /**
@@ -3351,15 +3355,27 @@ public class WorkspaceController {
                                     }
                                 }
                                 
-                                
-                                
-                                if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                               if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
                                     
                                
                                 
@@ -3381,15 +3397,28 @@ public class WorkspaceController {
                                     }
                                 }
                                 
-                                
-                                
-                                if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                              if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
+                                    
                                     
                 
                 
@@ -3487,13 +3516,28 @@ public class WorkspaceController {
                                 }
                                 
 
-                                if (djMap.containsKey(jobWithDoubt)) {
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
+                                    
 
                                 
                                 
@@ -3514,15 +3558,27 @@ public class WorkspaceController {
                                     }
                                 }
                                 
-                                
-                                
-                                if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
                                     
                 
                 
@@ -3600,13 +3656,29 @@ public class WorkspaceController {
                                         djMap.get(jobWithDoubt).add(dot);
                                     }
                                 }
-                                if (djMap.containsKey(jobWithDoubt)) {
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                                
+                                
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
 
                                 
                                 
@@ -3628,14 +3700,27 @@ public class WorkspaceController {
                                 }
                                 
                                 
-                                
-                                if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
-                                    List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
-                                    for (Dot dp : dotsParent) {
-                                        DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
-                                        keys.add(key);
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
                                     }
-                                } 
+                                }
+                                /* if (djMap.containsKey(jobWithDoubt)) {                              //remaining cases where the parent is not a root.
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                keys.add(key);
+                                }
+                                } */
                                     
                 
                 
@@ -3743,7 +3828,8 @@ public class WorkspaceController {
                 summary.setAll(false);
                 continue;
             }
-            List<Dot> dots=djMap.get(job);
+            List<Dot> dots=dotService.getDotsInWorkspace(dbWorkspace);
+            //List<Dot> dots=djMap.get(job);
             
             for(Dot dot:dots){
                     DoubtKey timeKey=generateDoubtKey(sub, job, dot, doubtTypeTime);
@@ -3915,6 +4001,7 @@ public class WorkspaceController {
                         }
                         //io end
                         
+            }
                         //are there any inherited doubts on this job,sub?
                         SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(job, sub);
                         List<Doubt> inheritedDoubts=new ArrayList<>();
@@ -4009,7 +4096,7 @@ public class WorkspaceController {
                             summary.setInheritedIoOverride(false);
                            
                         }
-            }
+          //  }
             
             /*System.out.println("fend.workspace.WorkspaceController.populateSummaries(): for sub: "+sub.getSubsurface()+" job: "+job.getNameJobStep());
             System.out.println("failedTimeDependency:     "+summary.hasFailedTimeDependency());
