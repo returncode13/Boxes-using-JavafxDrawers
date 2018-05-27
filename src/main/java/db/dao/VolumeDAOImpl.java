@@ -270,7 +270,7 @@ public class VolumeDAOImpl implements VolumeDAO {
                 Query delq=session.createQuery(hqlDelete);
                 delq.setParameterList("ids", idsToBeDeleted);
                 System.out.println("db.dao.VolumeDAOImpl.deleteAllVolumesFor(): deleting "+idsToBeDeleted.size()+" volumes belonging to job: "+job.getNameJobStep());
-                int d=query.executeUpdate();
+                int d=delq.executeUpdate();
             }
                 transaction.commit();
             
