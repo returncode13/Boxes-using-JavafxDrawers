@@ -6,7 +6,6 @@
 package fend.workspace;
 
 import app.properties.AppProperties;
-import com.jfoenix.controls.JFXProgressBar;
 import db.model.Ancestor;
 import db.model.Descendant;
 import db.model.Dot;
@@ -135,14 +134,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 import middleware.doubt.DoubtStatusModel;
 import middleware.doubt.DoubtTypeModel;

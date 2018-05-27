@@ -250,6 +250,40 @@ public class VolumeDAOImpl implements VolumeDAO {
         return results;
     }
 
+    @Override
+    public void deleteAllVolumesFor(Job job) {
+        System.out.println("db.dao.VolumeDAOImpl.deleteAllVolumesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+       
+        String hqlSelect="select v.id from Volume v where v.job =:j";
+        String hqlDelete="delete  from Volume v where  v.id in (:ids)";
+        try{
+            List<Long> idsToBeDeleted=null;
+            transaction=session.beginTransaction();
+           
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", job);
+            idsToBeDeleted=query.list();
+            if(!idsToBeDeleted.isEmpty()){
+                Query delq=session.createQuery(hqlDelete);
+                delq.setParameterList("ids", idsToBeDeleted);
+                System.out.println("db.dao.VolumeDAOImpl.deleteAllVolumesFor(): deleting "+idsToBeDeleted.size()+" volumes belonging to job: "+job.getNameJobStep());
+                int d=delq.executeUpdate();
+            }
+                transaction.commit();
+            
+            
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        
+    }
+
     
     
 }

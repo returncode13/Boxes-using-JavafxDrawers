@@ -70,5 +70,10 @@ public class TheaderServiceImpl implements TheaderService{
     public List<Theader> getTheadersFor(Workspace workspace) {
         return thDAO.getTheadersFor(workspace);
     }
+
+    @Override
+    public void deleteTheadersFor(Job job) {
+        thDAO.deleteTheadersFor(job);
+    }
     
 }

@@ -5,6 +5,7 @@
  */
 package db.services;
 
+import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface WorkflowService {
     public Long getHighestWorkFlowVersionFor(Volume v);            //highest workflow version for the given volume
 
     public void deleteWorkFlowsFor(Volume vol);
+
+    public void deleteWorkFlowsFor(Job job);
 }

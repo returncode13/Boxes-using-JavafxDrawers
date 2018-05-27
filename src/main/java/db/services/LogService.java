@@ -53,4 +53,6 @@ public interface LogService {
     public void deleteLogsFor(Volume dbVol);
 
     public List<Log> getLogsWithInputVolumes(Workspace dbWorkspace);
+
+    public void deleteLogsFor(Job job);
 }

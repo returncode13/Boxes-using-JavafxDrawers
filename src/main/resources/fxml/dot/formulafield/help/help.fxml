@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root prefHeight="309.0" prefWidth="688.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="306.0" prefWidth="1330.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
             <VBox alignment="CENTER" style="-fx-background-color: #181A1E;">
                <children>
-                  <JFXTextArea fx:id="textArea" editable="false" style="-fx-text-fill: white;" text="The function" VBox.vgrow="ALWAYS" />
+                  <JFXTextArea fx:id="textArea" editable="false" prefHeight="307.0" prefWidth="1008.0" style="-fx-text-fill: white;" text="&#10;This is an interface where the user gets to define the dependency between jobs that are connected through the selected dot.&#10;The dependency can be expressed in the form y=f(x0,x1,..xn) where each of the variables y,x0,x1..xn represent nodes&#10;The dependency  is calculated for each subsurface line that exist on BOTH sides of the dot. &#10;The result is evaluated as &#10;                                          |(y-f(x0,x1,..xn))| &#10;                             result = r = -------------------&#10;                                                  y&#10;There are two controls that determine the &quot;strictness&quot; of the dependency check. They are called &quot;tolerance (t) &quot; and &quot;error (e)&quot;  where 0 &lt;= t &lt; e&#10;&#10;A subsurface its dependency marked as a GOOD iff           |r| &lt; |t|          i.e. 0 &lt;= r &lt; t           (result is less than the tolerance)&#10;A subsurface has its dependency marked as a WARNING iff    |t| &lt; |r| &lt; |e|    i.e. 0 &lt; t &lt; r &lt; e        (result lies between tolerance and error)&#10;A subsurface has its dependency marked as an ERROR iff     |r| &gt; |e|          i.e. r &gt; e                (result lies outside the mentioned error)&#10;&#10;The following is the allowed list of operators and functions that can be used while defining the function f&#10;&#10;&#10;    Addition: 2 + 2&#10;    Subtraction: 2 - 2&#10;    Multiplication: 2 * 2&#10;    Division: 2 / 2&#10;    Exponentation: 2 ^ 2&#10;    Unary Minus,Plus (Sign Operators): +2 - (-2)&#10;    Modulo: 2 % 2&#10;&#10;&#10;    abs: absolute value&#10;    acos: arc cosine&#10;    asin: arc sine&#10;    atan: arc tangent&#10;    cbrt: cubic root&#10;    ceil: nearest upper integer&#10;    cos: cosine&#10;    cosh: hyperbolic cosine&#10;    exp: euler's number raised to the power (e^x)&#10;    floor: nearest lower integer&#10;    log: logarithmus naturalis (base e)&#10;    log10: logarithm (base 10)&#10;    log2: logarithm (base 2)&#10;    sin: sine&#10;    sinh: hyperbolic sine&#10;    sqrt: square root&#10;    tan: tangent&#10;    tanh: hyperbolic tangent&#10;    signum: signum function&#10;&#10;    &#10;&#10;NOTE: the dependency check in the current release only accounts for tracecounts. &#10;Future releases will check for other available headers in the volumes" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="5.0" />
+                     </VBox.margin>
+                  </JFXTextArea>
                </children>
             </VBox>
          </content>

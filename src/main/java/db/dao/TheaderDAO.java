@@ -32,4 +32,6 @@ public interface TheaderDAO {
     public List<Theader> getAllTheadersFor(Job job);
 
     public List<Theader> getTheadersFor(Workspace workspace);
+
+    public void deleteTheadersFor(Job job);
 }

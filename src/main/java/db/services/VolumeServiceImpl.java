@@ -72,6 +72,11 @@ public class VolumeServiceImpl implements VolumeService{
         return volDao.getAllVolumesIn(workspace);
     }
 
+    @Override
+    public void deleteAllVolumesFor(Job job) {
+        volDao.deleteAllVolumesFor(job);
+    }
+
     
     
 }

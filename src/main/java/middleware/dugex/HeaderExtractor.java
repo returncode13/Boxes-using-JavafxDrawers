@@ -1134,7 +1134,7 @@ public class HeaderExtractor {
              String[] parts=md5FileName.split(" ");      //<md5><space><filename>
              String md5=parts[0];
              String fileName=parts[1];
-             System.out.println("middleware.dugex.HeaderExtractor.populate(): parts : "+parts);
+             System.out.println("middleware.dugex.HeaderExtractor.populate(): parts : "+parts[0]+" "+parts[1]);
              System.out.println("middleware.dugex.HeaderExtractor.populate(): md5: "+md5+" filename: "+fileName);
              th.setMd5(md5);
              th.setTimeStamp(timestamp);

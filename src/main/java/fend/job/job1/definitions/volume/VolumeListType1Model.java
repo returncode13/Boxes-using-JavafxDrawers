@@ -48,7 +48,8 @@ public class VolumeListType1Model {
                         if (WorkspaceModel.DEBUG) {
                             System.out.println("fend.job.definitions.volume.VolumeListModel.removed(): " + vol.getName());
                         }
-                        removeVolumeFromParentJob(vol);
+                        vol.delete(true);
+                   //     removeVolumeFromParentJob(vol);
                        
                       
                     }

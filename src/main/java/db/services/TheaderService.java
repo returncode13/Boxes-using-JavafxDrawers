@@ -32,5 +32,7 @@ public interface TheaderService {
     public List<Theader> getAllTheadersFor(Job dbjob);
 
     public List<Theader> getTheadersFor(Workspace dbWorkspace);
+
+    public void deleteTheadersFor(Job dbjob);
     
 }
