@@ -144,6 +144,11 @@ public class LogServiceImpl implements LogService{
         ldao.bulkUpdateOnLogs(volume, phdr,sub);
     }
 
+    @Override
+    public void deleteLogsFor(Job job) {
+        ldao.deleteLogsFor(job);
+    }
+
    
     
 }

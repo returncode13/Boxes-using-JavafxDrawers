@@ -41,8 +41,12 @@ import db.services.SubsurfaceJobService;
 import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
+import db.services.TheaderService;
+import db.services.TheaderServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -910,6 +914,10 @@ parent.addChild(model);*/
 
 
     private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
+    private TheaderService theaderService=new TheaderServiceImpl();
+    private VolumeService volumeService=new VolumeServiceImpl();
+    
+    
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -920,6 +928,9 @@ parent.addChild(model);*/
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
             deleteAllDoubtsRelatedToJob();
             deleteLinksBelongingtoCurrentJob();
+            theaderService.deleteTheadersFor(dbjob);
+            //delete all volumes related to this job
+            volumeService.deleteAllVolumesFor(dbjob);
             
            
             nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
@@ -929,17 +940,17 @@ parent.addChild(model);*/
              Task<Void> jobDeletionTask=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                    List<Volume0> volsInJobDc=new ArrayList<>();
-                    for(Volume0 v:model.getVolumes()){
-                        volsInJobDc.add(v);
-                    }
-                    
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
-                    for(Volume0 vol:volsInJobDc){
-                        System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
-                        vol.delete(true);
-                        model.removeVolume(vol);
-                    }
+                /* List<Volume0> volsInJobDc=new ArrayList<>();
+                for(Volume0 v:model.getVolumes()){
+                volsInJobDc.add(v);
+                }
+                
+                System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                for(Volume0 vol:volsInJobDc){
+                System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                vol.delete(true);
+                model.removeVolume(vol);
+                }*/
                    
                     
                     

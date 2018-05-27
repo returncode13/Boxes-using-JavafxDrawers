@@ -36,8 +36,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 
 
 /**
@@ -139,6 +142,12 @@ public class VolumeListType4Controller {
      
         }
         
+        
+          exec=Executors.newCachedThreadPool(runnable->{
+          Thread t=new Thread(runnable);
+          t.setDaemon(true);
+          return t;
+      });
     }
 
     void setView(VolumeListType4View view) {
@@ -148,11 +157,19 @@ public class VolumeListType4Controller {
         volumeListView.setItems(model.getObservableListOfVolumes());
     }
     
+    private Executor exec;
+    
+    
     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if(newValue){
             parentjob.block();
+            
+              
+                Task<Void> deleteTask=new Task<Void>(){
+                    @Override
+                    protected Void call() throws Exception {
                 List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
                 for(Volume0 vols:parentjob.getVolumes()){
                     volTobeParentDeepCopy.add(vols);
@@ -191,7 +208,16 @@ public class VolumeListType4Controller {
                         
                     }
                 }
-                parentjob.unblock();
+                return null;
+                    }
+                }; 
+                
+                deleteTask.setOnRunning(e->{System.out.println("deleting volume from the irdb database..");});
+                deleteTask.setOnSucceeded(e->{
+                     parentjob.unblock();
+                });
+                
+                 exec.execute(deleteTask);
         }
             
         }

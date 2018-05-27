@@ -54,4 +54,6 @@ public interface LogDAO {
     public List<Log> getLogsWithInputVolumes(Workspace workspace);
 
     public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub);
+
+    public void deleteLogsFor(Job job);
 }

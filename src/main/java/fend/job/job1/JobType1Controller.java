@@ -28,10 +28,14 @@ import db.services.DotService;
 import db.services.DotServiceImpl;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
+import db.services.HeaderService;
+import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.LogService;
+import db.services.LogServiceImpl;
 import db.services.NodePropertyValueService;
 import db.services.NodePropertyValueServiceImpl;
 import db.services.QcMatrixRowService;
@@ -44,6 +48,10 @@ import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
+import db.services.WorkflowService;
+import db.services.WorkflowServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -1024,7 +1032,10 @@ public class JobType1Controller implements JobType0Controller{
              qcMatrixRowService.deleteAllQcMatrixRowsForJob(dbjob);
         }
 
-
+private HeaderService headerService=new HeaderServiceImpl();
+private VolumeService volumeService=new VolumeServiceImpl();
+private LogService logService=new LogServiceImpl();
+private WorkflowService workflowService=new WorkflowServiceImpl();
    
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
@@ -1045,23 +1056,31 @@ public class JobType1Controller implements JobType0Controller{
             deleteAllSummariesRelatedToJob();*/
             nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
             model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
+             //delete all logs related to this job
+            logService.deleteLogsFor(dbjob);
+            //delete all headers related to this job
+            headerService.deleteHeadersFor(dbjob);
+            //delete all workflows related to this job
+            workflowService.deleteWorkFlowsFor(dbjob);
+            //delete all volumes related to this job
+            volumeService.deleteAllVolumesFor(dbjob);
             
             
              Task<Void> jobDeletionTask=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                    List<Volume0> volsInJobDc=new ArrayList<>();
-                    for(Volume0 v:model.getVolumes()){
-                        volsInJobDc.add(v);
-                    }
-                    
-                    System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
-                    for(Volume0 vol:volsInJobDc){
-                        System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
-                        vol.delete(true);
-                       
-                    }
-                   
+                /* List<Volume0> volsInJobDc=new ArrayList<>();
+                for(Volume0 v:model.getVolumes()){
+                volsInJobDc.add(v);
+                }
+                
+                System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                for(Volume0 vol:volsInJobDc){
+                System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                vol.delete(true);
+                
+                }
+                */
                     
                     
                     System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");

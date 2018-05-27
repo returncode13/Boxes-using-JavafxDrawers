@@ -7,6 +7,7 @@ package db.services;
 
 import db.dao.WorkflowDAO;
 import db.dao.WorkflowDAOImpl;
+import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
 import java.util.List;
@@ -67,6 +68,11 @@ public class WorkflowServiceImpl implements WorkflowService{
     @Override
     public void deleteWorkFlowsFor(Volume vol) {
         wdao.deleteWorkFlowsFor(vol) ;
+    }
+
+    @Override
+    public void deleteWorkFlowsFor(Job job) {
+        wdao.deleteWorkFlowsFor(job);
     }
     
 }

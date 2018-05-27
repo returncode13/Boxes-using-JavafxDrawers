@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Job;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -206,4 +207,35 @@ public class WorkflowDAOImpl implements WorkflowDAO {
         }
     }
     
+    
+     @Override
+    public void deleteWorkFlowsFor(Job job) {
+         System.out.println("db.dao.WorkflowDAOImpl.deleteWorkFlowsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select w.id from Workflow w inner join w.volume v inner join v.job j where j =:jj";
+        String hqlDelete="Delete from Workflow w where w.id in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("jj", job);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.WorkflowDAOImpl.deleteWorkFlowsFor(): deleting "+idsToDelete.size()+" workflows belonging to volume: "+job.getNameJobStep()+" ("+job.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
 }

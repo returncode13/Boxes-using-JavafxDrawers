@@ -27,6 +27,7 @@ public interface VolumeDAO {
     public List<Volume> getVolumesForJob(Job job);
 
     public List<Volume> getAllVolumesIn(Workspace workspace);
+    public void deleteAllVolumesFor(Job job);
 
    
     

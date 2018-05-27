@@ -29,5 +29,7 @@ public interface VolumeService {
     public List<Volume> getVolumesForJob(Job dbjob);
 
     public List<Volume> getAllVolumesIn(Workspace dbWorkspace);
+
+    public void deleteAllVolumesFor(Job dbjob);
     
 }
