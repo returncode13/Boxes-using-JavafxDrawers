@@ -133,6 +133,26 @@ public class LogDAOImpl implements LogDAO{
         }
         return result;
     }
+    
+     @Override
+    public List<Log> getLogsFor(Pheader h) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Log> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Log.class);
+            criteria.add(Restrictions.eq("pheader", h));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
 
     @Override
     public List<Log> getLogsFor(Volume v) {

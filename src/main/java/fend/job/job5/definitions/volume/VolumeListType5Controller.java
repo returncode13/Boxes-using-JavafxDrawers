@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 
 
 /**
@@ -133,50 +135,66 @@ public class VolumeListType5Controller {
     }
     
     
+  private Executor exec;
+    
+    
     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if(newValue){
-            parentjob.block();
-                List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
-                for(Volume0 vols:parentjob.getVolumes()){
-                    volTobeParentDeepCopy.add(vols);
-                }
+                parentjob.block();
                 
-                for(Volume0 vols:volTobeParentDeepCopy){
-                    boolean volIsToBeDeleted=vols.deleteProperty().get();
-                    if(volIsToBeDeleted){
-                        System.out.println(" "+vols.getId()+" : "+vols.getName()+" will be deleted  from the irdb database");
-                        
-                        /**
-                         * 
-                         * delete logs
-                         * delete headers
-                         * delete workflows
-                         **/
-                        Volume dbVol=vols.getDbVolume();
-                        System.out.println("Database volume: "+dbVol.getId());
-                        System.out.println("deleting associated logs");
-                        logService.deleteLogsFor(dbVol);
+                Task<Void> deleteTask=new Task<Void>(){
+                    @Override
+                    protected Void call() throws Exception {
+                        List<Volume0> volTobeParentDeepCopy=new ArrayList<>();
+                        for (Volume0 vols : parentjob.getVolumes()) {
+                            volTobeParentDeepCopy.add(vols);
+                        }
 
-                        System.out.println("deleting associated headers");
-                        pheaderService.deleteHeadersFor(dbVol);
+                        for (Volume0 vols : volTobeParentDeepCopy) {
+                            boolean volIsToBeDeleted = vols.deleteProperty().get();
+                            if (volIsToBeDeleted) {
+                                System.out.println(" " + vols.getId() + " : " + vols.getName() + " will be deleted  from the irdb database");
 
+                                /**
+                                 *
+                                 * delete logs delete headers delete workflows
+                                 *
+                                 */
+                                Volume dbVol = vols.getDbVolume();
 
-                        System.out.println("deleting associated workflows");
-                        workflowService.deleteWorkFlowsFor(dbVol);
+                                System.out.println("deleting associated logs");
+                                logService.deleteLogsFor(dbVol);
 
-                        System.out.println("deleting volume "+dbVol.getNameVolume()+" from the irdb database");
-                        volumeService.deleteVolume(dbVol.getId());
+                                System.out.println("deleting associated headers");
+                                pheaderService.deleteHeadersFor(dbVol);
 
-                        
-                        parentjob.removeVolume(vols);
+                                System.out.println("deleting associated workflows");
+                                workflowService.deleteWorkFlowsFor(dbVol);
 
-                       
-                        
+                                System.out.println("deleting volume " + dbVol.getId() + " from the irdb database");
+                                volumeService.deleteVolume(dbVol.getId());
+
+                                parentjob.removeVolume(vols);
+
+                            }
+
+                        }
+                        return null;
                     }
-                }
-                parentjob.unblock();
+                }; 
+                
+                deleteTask.setOnRunning(e->{System.out.println("deleting volume from the irdb database..");});
+                deleteTask.setOnSucceeded(e->{
+                     parentjob.unblock();
+                });
+                
+                 exec.execute(deleteTask);
+                
+                
+                
+               
         }
             
         }

@@ -34,7 +34,7 @@ public class PheaderServiceImpl implements PheaderService {
     }
 
     @Override
-    public Pheader getHeader(Long hid) {
+    public Pheader getPheader(Long hid) {
         return phDao.getHeader(hid);
     }
 

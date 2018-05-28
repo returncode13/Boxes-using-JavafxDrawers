@@ -48,6 +48,11 @@ public class LogServiceImpl implements LogService{
     public List<Log> getLogsFor(Header h) {
         return ldao.getLogsFor(h);
     }
+    
+    @Override
+    public List<Log> getLogsFor(Pheader h) {
+        return ldao.getLogsFor(h);
+    }
 
     @Override
     public List<Log> getLogsFor(Volume v) {

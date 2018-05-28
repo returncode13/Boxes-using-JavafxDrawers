@@ -26,6 +26,7 @@ public interface LogService {
     public void deleteLogs(Long lid);
     
     public List<Log> getLogsFor(Header h);  //get the logs for which the foreign key=h.id
+    public List<Log> getLogsFor(Pheader h); 
     public List<Log> getLogsFor(Volume v);
     public List<Log> getLogsFor(Volume v,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public List<Log> getLogsFor(Volume v,Subsurface subline);

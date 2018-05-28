@@ -240,7 +240,33 @@ public class PheaderDAOImpl implements PheaderDAO{
 
     @Override
     public void deleteHeadersFor(Job job) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+          System.out.println("db.dao.PheaderDAOImpl.deleteHeadersFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.pHeaderId from Pheader h where h.job =:j";
+        String hqlDelete="Delete from Pheader h where h.pHeaderId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("j", job);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.PheaderDAOImpl.deleteHeadersFor(job): deleting "+idsToDelete.size()+" p-headers belonging to job: "+job.getNameJobStep()+" ("+job.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
      @Override
@@ -553,9 +579,9 @@ selectQuery.setParameter("subid", sub);
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         String hqlSelectSubsNotInDiskVolume="select s from Subsurface s where s.subsurface not in (:names)";
-        String hqlSelectHeadersThatContainDeletedSubs="select h.headerId from Pheader h where h.volume =:v and h.subsurface in (:subs)";
+        String hqlSelectHeadersThatContainDeletedSubs="select h.pHeaderId from Pheader h where h.volume =:v and h.subsurface in (:subs)";
         String hqlUpdateDeleteFalse="update Pheader h set h.deleted=false where h.volume =:v";
-        String hqlUpdateDeleteTrue="update Pheader h set h.deleted=true where h.headerId in (:ids)";
+        String hqlUpdateDeleteTrue="update Pheader h set h.deleted=true where h.pHeaderId in (:ids)";
         try{
             transaction =session.beginTransaction();
             Query selectSubsNotInDisk=session.createQuery(hqlSelectSubsNotInDiskVolume);

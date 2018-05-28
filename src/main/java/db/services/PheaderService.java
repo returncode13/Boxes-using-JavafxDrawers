@@ -20,7 +20,7 @@ import java.util.Set;
 public interface PheaderService {
     public void createHeader(Pheader h);
     public void createBulkHeaders(List<Pheader> headers);
-    public Pheader getHeader(Long hid);
+    public Pheader getPheader(Long hid);
     public void updateHeader(Long hid,Pheader newH);
     public void deleteHeader(Long hid);
     

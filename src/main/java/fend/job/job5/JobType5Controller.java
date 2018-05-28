@@ -13,6 +13,7 @@ import fend.dot.anchor.AnchorView;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXDrawersStack;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import db.model.Ancestor;
 import db.model.Descendant;
@@ -27,12 +28,18 @@ import db.services.DotService;
 import db.services.DotServiceImpl;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
+import db.services.HeaderService;
+import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LinkService;
 import db.services.LinkServiceImpl;
+import db.services.LogService;
+import db.services.LogServiceImpl;
 import db.services.NodePropertyValueService;
 import db.services.NodePropertyValueServiceImpl;
+import db.services.PheaderService;
+import db.services.PheaderServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
@@ -43,6 +50,10 @@ import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
+import db.services.VolumeService;
+import db.services.VolumeServiceImpl;
+import db.services.WorkflowService;
+import db.services.WorkflowServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
 import fend.dot.LinkModel;
@@ -86,6 +97,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
@@ -142,6 +154,11 @@ public class JobType5Controller implements JobType0Controller{
     @FXML
     private JFXButton openDrawer;
 
+     @FXML
+    private JFXProgressBar progressBar;
+
+    @FXML
+    private Label message;
     
     
     
@@ -156,7 +173,7 @@ public class JobType5Controller implements JobType0Controller{
         //model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       //  model.getDepth().addListener(DEPTH_CHANGE_LISTENER);
-      model.finishedCheckingLogs().addListener(checkLogsListener);
+      model.finishedCheckingLogs().addListener(LOGS_COMPLETED_LISTENER);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
@@ -401,7 +418,7 @@ public class JobType5Controller implements JobType0Controller{
                 });
                 
                 logExtraction.setOnSucceeded(e->{
-                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener checkLogsListener
+                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener LOGS_COMPLETED_LISTENER
                     model.setFinishedCheckingLogs(true);
                     dugLogManager=null;
                 });
@@ -425,18 +442,18 @@ public class JobType5Controller implements JobType0Controller{
         
     @FXML
     void showTable(ActionEvent event) {
-        final HeaderLoader headerloader=new HeaderLoader(model);
+        final PheaderLoader pheaderloader=new PheaderLoader(model);
             Task<String> headerLoaderTask=new Task<String>(){
                 @Override
                 protected String call() throws Exception {
-                    headerloader.retrieveHeaders();
+                    pheaderloader.retrieveHeaders();
                     
                     return "Finished loading of headers for "+model.getNameproperty().get();
                 }
                 
             };
             headerLoaderTask.setOnSucceeded(e->{
-                    model.setSequenceHeaders(headerloader.getSequenceHeaders());
+                    model.setSequenceHeaders(pheaderloader.getSequenceHeaders());
                     
                     
                     if(lineTableView==null){
@@ -591,7 +608,7 @@ public class JobType5Controller implements JobType0Controller{
   * Used to extract headers after the logs are extracted.
   **/
     
-    private  ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+    private  ChangeListener<Boolean> LOGS_COMPLETED_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           //  if(newValue){
@@ -602,6 +619,15 @@ public class JobType5Controller implements JobType0Controller{
                       @Override
                       protected Void call() throws Exception {
                           headerExtractor=new HeaderExtractor(model);
+                          headerExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                          headerExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
+                          headerExtractor.work();
                           return null;
                       }
                   };
@@ -612,6 +638,10 @@ public class JobType5Controller implements JobType0Controller{
                        showTable.setDisable(false);
                        qctable.setDisable(false);
                        model.setFinishedCheckingLogs(false);
+                       progressBar.progressProperty().unbind();
+                       progressBar.setProgress(0);
+                       message.textProperty().unbind();
+                       message.setText("");
                        headerExtractionTask.getException().printStackTrace();
                   });
                   
@@ -621,8 +651,25 @@ public class JobType5Controller implements JobType0Controller{
                       qctable.setDisable(false);
                       showTable.setDisable(false);
                       model.setFinishedCheckingLogs(false);
+                      openDrawer.setDisable(false);
+                      progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
                   });
                   
+                  headerExtractionTask.setOnRunning(e->{
+                      headerButton.setDisable(true);
+                      qctable.setDisable(true);
+                      showTable.setDisable(true);
+                      openDrawer.setDisable(true);
+                  });
+                  
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(headerExtractionTask.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(headerExtractionTask.messageProperty());
+                //  s
                   exec.execute(headerExtractionTask);
               }
           }
@@ -958,7 +1005,11 @@ public class JobType5Controller implements JobType0Controller{
 
 
     private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
-    
+    private PheaderService pheaderService=new PheaderServiceImpl();
+    private VolumeService volumeService=new VolumeServiceImpl();
+    private LogService logService=new LogServiceImpl();
+    private WorkflowService workflowService=new WorkflowServiceImpl();
+
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -975,7 +1026,14 @@ public class JobType5Controller implements JobType0Controller{
             deleteAllSummariesRelatedToJob();*/
             nodePropertyValueService.removeAllNodePropertyValuesFor(dbjob);
             model.getWorkspaceModel().prepareToRebuild();                 //clear all ancestors before deleting
-            
+             //delete all logs related to this job
+            logService.deleteLogsFor(dbjob);
+            //delete all headers related to this job
+            pheaderService.deleteHeadersFor(dbjob);
+            //delete all workflows related to this job
+            workflowService.deleteWorkFlowsFor(dbjob);
+            //delete all volumes related to this job
+            volumeService.deleteAllVolumesFor(dbjob);
             
              Task<Void> jobDeletionTask=new Task<Void>() {
             @Override

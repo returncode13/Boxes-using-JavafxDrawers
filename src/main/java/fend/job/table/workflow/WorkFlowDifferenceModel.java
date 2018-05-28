@@ -6,6 +6,7 @@
 package fend.job.table.workflow;
 
 import db.model.Header;
+import db.model.Pheader;
 import db.model.Workflow;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,13 +33,23 @@ public class WorkFlowDifferenceModel {
     Workflow lhsWorkflow;
     Map<Long,Workflow> mapOfVersionsVersusWorkflows;
     Header chosenHdr;
-
+    Pheader chosenPHdr;
+    
+    
     public Header getChosenHdr() {
         return chosenHdr;
     }
 
     public void setChosenHdr(Header chosenHdr) {
         this.chosenHdr = chosenHdr;
+    }
+
+    public Pheader getChosenPHdr() {
+        return chosenPHdr;
+    }
+
+    public void setChosenPHdr(Pheader chosenPHdr) {
+        this.chosenPHdr = chosenPHdr;
     }
     
     
