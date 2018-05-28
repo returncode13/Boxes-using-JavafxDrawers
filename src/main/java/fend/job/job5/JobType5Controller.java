@@ -180,6 +180,7 @@ public class JobType5Controller implements JobType0Controller{
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
+       model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
