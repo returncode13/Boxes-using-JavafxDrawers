@@ -980,18 +980,18 @@ public class JobType5Controller implements JobType0Controller{
              Task<Void> jobDeletionTask=new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                    List<Volume0> volsInJobDc=new ArrayList<>();
-                    for(Volume0 v:model.getVolumes()){
-                        volsInJobDc.add(v);
-                    }
-                    
-                    System.out.println("fend.job.job5.JobType5Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
-                    for(Volume0 vol:volsInJobDc){
-                        System.out.println("fend.job.job5.JobType5Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
-                        vol.delete(true);
-                       // model.removeVolume(vol);
-                    }
-                   
+                /*  List<Volume0> volsInJobDc=new ArrayList<>();
+                for(Volume0 v:model.getVolumes()){
+                volsInJobDc.add(v);
+                }
+                
+                System.out.println("fend.job.job5.JobType5Controller.CURRENT_JOB_DELETE_LISTENER: no of volumes in the job: "+volsInJobDc.size());
+                for(Volume0 vol:volsInJobDc){
+                System.out.println("fend.job.job5.JobType5Controller.CURRENT_JOB_DELETE_LISTENER: deleting volume "+vol.getName().get()+" id: "+vol.getId());
+                vol.delete(true);
+                // model.removeVolume(vol);
+                }
+                */
                     
                     
                     System.out.println("fend.job.job5.JobType5Controller.CURRENT_JOB_DELETE_LISTENER: deleting summaries related to this job");

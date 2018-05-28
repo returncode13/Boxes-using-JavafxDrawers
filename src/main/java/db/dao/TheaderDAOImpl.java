@@ -79,7 +79,7 @@ public class TheaderDAOImpl implements TheaderDAO{
         try{
             transaction=session.beginTransaction();
            for(int ii=0;ii<list.size();ii++){
-               session.save(list.get(ii));
+               session.saveOrUpdate(list.get(ii));
                if(ii%batchsize ==0){
                    session.flush();
                    session.clear();

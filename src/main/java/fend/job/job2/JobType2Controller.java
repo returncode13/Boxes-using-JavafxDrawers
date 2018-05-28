@@ -659,12 +659,54 @@ public class JobType2Controller implements JobType0Controller{
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           //  if(newValue){
           //      new HeaderExtractor(model);
-          if(newValue){
+          /*if(newValue){
+          if(headerExtractor==null){
+          Task<Void> headerExtractionTask=new Task<Void>() {
+          @Override
+          protected Void call() throws Exception {
+          headerExtractor=new HeaderExtractor(model);
+          return null;
+          }
+          };
+          
+          headerExtractionTask.setOnFailed(e->{
+          headerExtractor=null;
+          headerButton.setDisable(false);
+          showTable.setDisable(false);
+          qctable.setDisable(false);
+          model.setFinishedCheckingLogs(false);
+          });
+          
+          headerExtractionTask.setOnSucceeded(e->{
+          headerExtractor=null;
+          headerButton.setDisable(false);
+          qctable.setDisable(false);
+          showTable.setDisable(false);
+          model.setFinishedCheckingLogs(false);
+          });
+          
+          exec.execute(headerExtractionTask);
+          }
+          }*/
+          
+          
+           // }
+           
+           if(newValue){
               if(headerExtractor==null){
                   Task<Void> headerExtractionTask=new Task<Void>() {
                       @Override
                       protected Void call() throws Exception {
                           headerExtractor=new HeaderExtractor(model);
+                          headerExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                          headerExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
+                          headerExtractor.work();
                           return null;
                       }
                   };
@@ -675,6 +717,11 @@ public class JobType2Controller implements JobType0Controller{
                        showTable.setDisable(false);
                        qctable.setDisable(false);
                        model.setFinishedCheckingLogs(false);
+                       progressBar.progressProperty().unbind();
+                       progressBar.setProgress(0);
+                       message.textProperty().unbind();
+                       message.setText("");
+                       headerExtractionTask.getException().printStackTrace();
                   });
                   
                   headerExtractionTask.setOnSucceeded(e->{
@@ -683,12 +730,28 @@ public class JobType2Controller implements JobType0Controller{
                       qctable.setDisable(false);
                       showTable.setDisable(false);
                       model.setFinishedCheckingLogs(false);
+                      openDrawer.setDisable(false);
+                      progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
                   });
                   
+                  headerExtractionTask.setOnRunning(e->{
+                      headerButton.setDisable(true);
+                      qctable.setDisable(true);
+                      showTable.setDisable(true);
+                      openDrawer.setDisable(true);
+                  });
+                  
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(headerExtractionTask.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(headerExtractionTask.messageProperty());
+                //  s
                   exec.execute(headerExtractionTask);
               }
           }
-           // }
         }
     };
     
