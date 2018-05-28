@@ -34,7 +34,8 @@ public class WorkFlowDifferenceModel {
     Map<Long,Workflow> mapOfVersionsVersusWorkflows;
     Header chosenHdr;
     Pheader chosenPHdr;
-    
+    Boolean ptype=false;
+    Boolean htype=false;
     
     public Header getChosenHdr() {
         return chosenHdr;
@@ -42,6 +43,7 @@ public class WorkFlowDifferenceModel {
 
     public void setChosenHdr(Header chosenHdr) {
         this.chosenHdr = chosenHdr;
+        htype=true;
     }
 
     public Pheader getChosenPHdr() {
@@ -50,6 +52,7 @@ public class WorkFlowDifferenceModel {
 
     public void setChosenPHdr(Pheader chosenPHdr) {
         this.chosenPHdr = chosenPHdr;
+        ptype=true;
     }
     
     

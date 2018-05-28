@@ -83,6 +83,8 @@ import fend.job.job5.definitions.JobDefinitionsType5View;
 
 import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
+import fend.job.table.lineTable.job5.PlineTableModel;
+import fend.job.table.lineTable.job5.PlineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
 import fend.volume.volume0.Volume0;
@@ -127,8 +129,8 @@ public class JobType5Controller implements JobType0Controller{
     private Executor exec;
     private QcTableModel  qcTableModel;
     
-    private LineTableModel lineTableModel;
-    private LineTableView lineTableView;
+    private PlineTableModel lineTableModel;
+    private PlineTableView lineTableView;
     
     private BooleanProperty checkForHeaders;
     
@@ -457,8 +459,8 @@ public class JobType5Controller implements JobType0Controller{
                     
                     
                     if(lineTableView==null){
-                        lineTableModel=new LineTableModel(model);
-                        lineTableView=new LineTableView(lineTableModel);
+                        lineTableModel=new PlineTableModel(model);
+                        lineTableView=new PlineTableView(lineTableModel);
                     }
                     else{
                         lineTableModel.reloadTable();

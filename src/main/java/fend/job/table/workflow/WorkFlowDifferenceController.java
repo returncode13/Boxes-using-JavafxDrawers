@@ -72,13 +72,25 @@ public class WorkFlowDifferenceController extends Stage{
         rhsVersionComboBox.getItems().addAll(rhsvalues);
         
         Workflow currentHdrWf=model.getLhsWorkflow();
-        String currentVHT="version used for "+model.
+        String currentVHT=new String();
+        if(model.htype){
+            currentVHT="version used for "+model.
                 getChosenHdr().
                 getSubsurface().
                 getSubsurface()+
                 " is : "+
                 currentHdrWf.
                         getWfversion();
+        }else{
+            currentVHT="version used for "+model.
+                getChosenPHdr().
+                getSubsurface().
+                getSubsurface()+
+                " is : "+
+                currentHdrWf.
+                        getWfversion();
+        }
+        
         currentHeaderWfVersionLabel.setText(currentVHT);
         
         

@@ -248,7 +248,7 @@ public class DugLogManager {
         
         message.set("extracting logs");
         
-         if(volumeType.equals(JobType0Model.PROCESS_2D)){
+         if(volumeType.equals(Volume0.PROCESS_2D) ||volumeType.equals(Volume0.SEGY)){
              
              Map<String,List<LogInformation>> mapOfSubsurfaceLogs;
              if(mapofLogs==null) {

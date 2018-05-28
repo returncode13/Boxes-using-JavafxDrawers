@@ -160,9 +160,6 @@ public class PlineTableController extends Stage{
                     setContextMenu(cm);
                 }
                 else if(item!=null && item.getChosen()){
-                    /*if(contextMenu.getItems().contains(chooseThisHeader)){
-                    contextMenu.getItems().remove(chooseThisHeader);
-                    }*/
                     setContextMenu(contextMenu);
                 }
                 
@@ -288,8 +285,8 @@ public class PlineTableController extends Stage{
                 exec.execute(workflowTask);
          });
          
-         
-         
+                    
+                            
          
          return row;
         });
