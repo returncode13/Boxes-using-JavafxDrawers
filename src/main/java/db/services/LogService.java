@@ -5,6 +5,7 @@
  */
 package db.services;
 
+import db.model.Fheader;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
@@ -56,4 +57,6 @@ public interface LogService {
     public List<Log> getLogsWithInputVolumes(Workspace dbWorkspace);
 
     public void deleteLogsFor(Job dbjob);
+
+    public void bulkUpdateOnLogs(Volume dbvol, Fheader h, Subsurface subsurface);
 }

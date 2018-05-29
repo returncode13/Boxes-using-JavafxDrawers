@@ -96,15 +96,18 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "job")
     private Set<Log> logs;
     
-    
-    @OneToMany(mappedBy = "job")
+        
+    @OneToMany(mappedBy = "job")                                    //2D headers . metas
     private Set<Header> headers=new HashSet<>();
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job")                                   //p-headers. obpd headers .metas
     private Set<Pheader> pheaders=new HashSet<>();
     
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job")                                   //t-headers. text headers. md5. timestamp
     private Set<Theader> theaders=new HashSet<>();
+    
+    @OneToMany(mappedBy = "job")                                    //full-headers.
+    private Set<Theader> fheaders=new HashSet<>();
     
     @OneToMany(mappedBy = "parent")
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links

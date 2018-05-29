@@ -38,6 +38,8 @@ public class DugioScripts implements Serializable{
     private File parentVolumesFrom2Dlogs;
     private File md5SumCheckforText;
     
+    private File dugioFullHeaderExtractor;
+    
     
     
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
@@ -181,6 +183,12 @@ public class DugioScripts implements Serializable{
        
        private String md5SumCheckforTextContents="#!/bin/bash\n" +
 "md5sum $1";
+       
+       /**
+        * following script returns values in the format header_name=value
+        */
+       private String dugioFullHeaderExtractorContents="#!/bin/bash\n" +
+       "dugio read file=$1 line=$2 query=time:0 full_headers | durange raw=true output=bash";
        
      public DugioScripts()
     {
@@ -431,6 +439,16 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+         try{
+             dugioFullHeaderExtractor=File.createTempFile("dugioFullHeaderExtractor", ".sh");
+             BufferedWriter bw=new BufferedWriter(new FileWriter(dugioFullHeaderExtractor));
+             bw.write(dugioFullHeaderExtractorContents);
+             bw.close();
+             dugioFullHeaderExtractor.setExecutable(true,false);
+             dugioFullHeaderExtractor.deleteOnExit();
+         }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     
@@ -507,6 +525,10 @@ public class DugioScripts implements Serializable{
 
     public File getMd5SumCheckforText() {
         return md5SumCheckforText;
+    }
+
+    public File getDugioFullHeaderExtractor() {
+        return dugioFullHeaderExtractor;
     }
     
     

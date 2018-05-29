@@ -742,6 +742,17 @@ public class JobType5Model implements JobType0Model {
         this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
     }
 
+    private BooleanProperty extractFullHeaderProperty=new SimpleBooleanProperty(true);
+
+    public BooleanProperty extractFullHeaderProperty() {
+        return extractFullHeaderProperty;
+    }
+    
+    
+    void extractFullHeaders() {
+        extractFullHeaderProperty.set(!extractFullHeaderProperty.get());
+    }
+
     
     
 

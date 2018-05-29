@@ -10,6 +10,7 @@ import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import db.model.Fheader;
 import db.model.Job;
 import db.model.Pheader;
 import db.model.Subsurface;
@@ -601,6 +602,30 @@ public class LogDAOImpl implements LogDAO{
             Query query=session.createQuery(sql);
             query.setParameter("v", volume);
             query.setParameter("hd", phdr);
+            query.setParameter("sub", sub);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub) {
+    System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set fheader = :hd where volume =:v and subsurface =:sub and fheader is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", volume);
+            query.setParameter("hd", fhdr);
             query.setParameter("sub", sub);
             result=query.executeUpdate();
             

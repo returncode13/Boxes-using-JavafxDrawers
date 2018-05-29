@@ -101,6 +101,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import middleware.dugex.DugLogManager;
+import middleware.dugex.FullHeaderExtractor;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
 import middleware.dugex.PheaderLoader;
@@ -163,6 +164,12 @@ public class JobType5Controller implements JobType0Controller{
     private Label message;
     
     
+    @FXML
+    private JFXButton fullHeaderTableButton;
+
+    @FXML
+    private JFXButton fullHeaderButton;
+
     
     void setModel(JobType5Model item) {
         model=item;
@@ -181,6 +188,7 @@ public class JobType5Controller implements JobType0Controller{
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
        model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
+       model.extractFullHeaderProperty().addListener(EXTRACT_FULL_HEADER_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -436,6 +444,46 @@ public class JobType5Controller implements JobType0Controller{
             
     }
     
+    
+    /**
+     * Extract full headers
+     **/
+    @FXML
+    void extractFullHeaders(ActionEvent event) {
+        
+            if(dugLogManager==null){
+                headerButton.setDisable(true);
+                 showTable.setDisable(true);
+                 qctable.setDisable(true);
+                 
+                Task<Void> logExtraction=new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                       dugLogManager=new DugLogManager(model);
+                       return null;
+                    }
+                };
+                
+                logExtraction.setOnFailed(e->{
+                        logExtraction.getException().printStackTrace();
+                        headerButton.setDisable(false);
+                         showTable.setDisable(false);
+                       //model.setFullHeaderExtraction(false);
+                        dugLogManager=null;
+                });
+                
+                logExtraction.setOnSucceeded(e->{
+                   // headerButton.setDisable(false);               this has to be enabled  AFTER the header extraction takes place. See Listener LOGS_COMPLETED_LISTENER
+                    model.extractFullHeaders();
+                    dugLogManager=null;
+                });
+                
+                exec.execute(logExtraction);
+            }
+            
+    }
+    
+    
     @FXML
     void checkMultiples(ActionEvent event) {
         model.checkMultiples();
@@ -479,6 +527,15 @@ public class JobType5Controller implements JobType0Controller{
             
     }
     
+    
+    /**
+     * Show full headers
+     **/
+    
+    @FXML
+    void showFullHeaderTable(ActionEvent event) {
+
+    }
     
      @FXML
     void showQctable(ActionEvent event) {
@@ -680,6 +737,79 @@ public class JobType5Controller implements JobType0Controller{
         }
     };
     
+    private FullHeaderExtractor fullHeaderExtractor=null;
+    
+    private ChangeListener<Boolean> EXTRACT_FULL_HEADER_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+           
+              if(fullHeaderExtractor==null){
+                  Task<Void> headerExtractionTask=new Task<Void>() {
+                      @Override
+                      protected Void call() throws Exception {
+                          fullHeaderExtractor=new FullHeaderExtractor(model);
+                          fullHeaderExtractor.progressProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): progress is : "+n.doubleValue());
+                              updateProgress(n.doubleValue(), 1);
+                          });
+                          fullHeaderExtractor.messageProperty().addListener((obs,o,n)->{
+                              //System.out.println("JobType1Controller.checkLogsListener.call(): message is : "+n);
+                              updateMessage(n);
+                          });
+                          fullHeaderExtractor.work();
+                          return null;
+                      }
+                  };
+                  
+                  headerExtractionTask.setOnFailed(e->{
+                      fullHeaderExtractor=null;
+                      headerButton.setDisable(false);
+                       showTable.setDisable(false);
+                       qctable.setDisable(false);
+                       model.setFinishedCheckingLogs(false);
+                       fullHeaderButton.setDisable(false);
+                       fullHeaderTableButton.setDisable(false);
+                       progressBar.progressProperty().unbind();
+                       progressBar.setProgress(0);
+                       message.textProperty().unbind();
+                       message.setText("");
+                       headerExtractionTask.getException().printStackTrace();
+                  });
+                  
+                  headerExtractionTask.setOnSucceeded(e->{
+                      headerExtractor=null;
+                      headerButton.setDisable(false);
+                      qctable.setDisable(false);
+                      showTable.setDisable(false);
+                      model.setFinishedCheckingLogs(false);
+                      openDrawer.setDisable(false);
+                      fullHeaderButton.setDisable(false);
+                       fullHeaderTableButton.setDisable(false);
+                      progressBar.progressProperty().unbind();
+                      progressBar.setProgress(0);
+                      message.textProperty().unbind();
+                      message.setText("");
+                  });
+                  
+                  headerExtractionTask.setOnRunning(e->{
+                      headerButton.setDisable(true);
+                      qctable.setDisable(true);
+                      showTable.setDisable(true);
+                      openDrawer.setDisable(true);
+                      fullHeaderButton.setDisable(true);
+                      fullHeaderTableButton.setDisable(true);
+                  });
+                  
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(headerExtractionTask.progressProperty()); 
+                message.textProperty().unbind();
+                message.textProperty().bind(headerExtractionTask.messageProperty());
+                //  s
+                  exec.execute(headerExtractionTask);
+              }
+         
+        }
+    };
     
     /***
      * private Implementation

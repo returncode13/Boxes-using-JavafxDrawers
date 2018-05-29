@@ -55,6 +55,12 @@ public class Subsurface implements Serializable {
     private Set<Pheader> pheaders;
     
     @OneToMany(mappedBy = "subsurface")
+    private Set<Theader> theaders;
+    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Fheader> fheaders;
+    
+    @OneToMany(mappedBy = "subsurface")
     private Set<QcTable> qctables;
     
     @OneToMany(mappedBy = "subsurface")

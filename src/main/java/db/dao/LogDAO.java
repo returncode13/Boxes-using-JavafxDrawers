@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.Fheader;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
@@ -55,6 +56,7 @@ public interface LogDAO {
     public List<Log> getLogsWithInputVolumes(Workspace workspace);
 
     public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub);
+    public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub);
 
     public void deleteLogsFor(Job job);
 }

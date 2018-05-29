@@ -64,6 +64,9 @@ public class Volume implements Serializable {
     @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Theader> theaders;
    
+     @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Fheader> fheaders;
+    
     @ManyToOne
     @JoinColumn(name= "job_fk",nullable = false)
     private Job job;

@@ -44,6 +44,11 @@ public class Log implements Serializable{
     private Pheader pheader;
     
     @ManyToOne
+    @JoinColumn(name="full_headers_fk",nullable = true)
+    private Fheader fheader;
+    
+    
+    @ManyToOne
     @JoinColumn(name="volume_headers_fk",nullable = false)
     private Volume volume;
     
@@ -276,6 +281,14 @@ public class Log implements Serializable{
 
     public void setInputVolumeNames(String inputVolumeNames) {
         this.inputVolumeNames = inputVolumeNames;
+    }
+
+    public Fheader getFheader() {
+        return fheader;
+    }
+
+    public void setFheader(Fheader fheader) {
+        this.fheader = fheader;
     }
     
     

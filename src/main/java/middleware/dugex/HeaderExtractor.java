@@ -984,7 +984,7 @@ public class HeaderExtractor {
                     
                     //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
                     
-                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing headers for : "+hdr.getSubsurface().getSubsurface());
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished extracting headers for : "+hdr.getSubsurface().getSubsurface());
                   //  headerService.createHeader(hdr);
                     
                 
@@ -1117,7 +1117,7 @@ public class HeaderExtractor {
                     
                     //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
                     
-                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished storing public headers for : "+hdr.getSubsurface().getSubsurface());
+                    System.out.println("middleware.dugex.HeaderExtractor.populate(): finished extracting public headers for : "+hdr.getSubsurface().getSubsurface());
                   //  headerService.createHeader(hdr);
                     
                 

@@ -12,6 +12,7 @@ import db.model.Volume;
 import db.model.Workflow;
 import java.util.List;
 import db.dao.LogDAO;
+import db.model.Fheader;
 import db.model.Job;
 import db.model.Pheader;
 import db.model.Subsurface;
@@ -152,6 +153,11 @@ public class LogServiceImpl implements LogService{
     @Override
     public void deleteLogsFor(Job job) {
         ldao.deleteLogsFor(job);
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume dbvol, Fheader h, Subsurface subsurface) {
+        ldao.bulkUpdateOnLogs(dbvol, h, subsurface);
     }
 
    
