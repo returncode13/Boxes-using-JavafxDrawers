@@ -30,6 +30,15 @@ public class FullSubsurfaceHeaders extends FullSequenceHeaders{
     }
 
   
+    @Override
+     public boolean isSequence() {
+        return isSequence;
+    }
+
+    @Override
+    public boolean isSubsurface() {
+        return isSubsurface;
+    }
 
     public Subsurface getSubsurface() {
         return subsurface;

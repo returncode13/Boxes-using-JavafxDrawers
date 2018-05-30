@@ -117,7 +117,8 @@ public class FullHeaderExtractor {
               fheaders.clear();
               fheaderHolderList.clear();
                List<Subsurface> subsExistingInJob=subsurfaceJobService.getSubsurfacesForJob(dbjob);
-        
+        progress.set(0);
+               message.set("extracting headers");
                 for(Subsurface s:subsExistingInJob){
                     SubsurfaceJobKey skey=generateSubsurfaceJobKey(s, dbjob);
                     existingSubsurfaceJobs.add(skey);
@@ -151,9 +152,10 @@ public class FullHeaderExtractor {
               
               
               
-              for(SubsurfaceHeaders sub:subsInVol){
+             for(int ii=0;ii<subsInVol.size();ii++){
+                    SubsurfaceHeaders sub=subsInVol.get(ii);
                             subsurfacesOnDisk.add(sub.getSubsurfaceName());
-                
+                final int iii=ii;
                             System.out.println("middleware.dugex.HeaderExtractor.<init>(): subsurfacename:  from file: "+sub.getSubsurfaceName());
 
                             Callable<String> task= new Callable<String>(){
@@ -168,7 +170,7 @@ public class FullHeaderExtractor {
                             
                       
                                 if(latestTimeStampForVol.compareTo(latestTimeStampForSub)<0){  //i.e. this sub was created after the latesttime present for any sub in that volume
-                                    
+                                    final int currentInd=iii+1;
                                     
                                     Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
                                     String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
@@ -225,10 +227,11 @@ public class FullHeaderExtractor {
                              // dbjob.setSequences(setOfSequencesInJob);
                               
                               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                              progress.set((double)currentInd/subsInVol.size());
                                  // headerService.getMultipleInstances(dbjob, dbsub);
                             }else{
                                 System.out.println("middleware.dugex.HeaderExtractor.<init>(): Headers with same timestamp already exists in the database");
-                               System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
+                               //System.out.println("middleware.dugex.HeaderExtractor.<init>(): Checking for multiple instances");
                                  // headerService.getMultipleInstances(dbjob, dbsub);
                             }
                             
@@ -265,7 +268,7 @@ public class FullHeaderExtractor {
                     */
                     
                   
-                  
+                  message.set("committing headers");
                    for(FheaderHolder fh:fheaderHolderList){
                        SubsurfaceJobKey skey=generateSubsurfaceJobKey(fh.subjob.getSubsurface(), fh.subjob.getJob());
                        if(!existingSubsurfaceJobs.contains(skey)){
@@ -275,13 +278,15 @@ public class FullHeaderExtractor {
                        fheaders.add(fh.fheader);
                    }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Creating "+subsurfaceJobs.size()+" subsurfaceJob entries");
-                    
+                    progress.set(-1);
                     subsurfaceJobService.createBulkSubsurfaceJob(subsurfaceJobs);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+subsurfaceJobs.size()+" subsurfaceJob entries");
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Committing "+fheaders.size()+" headers");
                     fheaderService.createBulkHeaders(fheaders);
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Created "+fheaders.size()+" headers");
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Bulk update of logs for headers");
+                     message.set("linking logs");
+                    progress.set(0);
                     for(Fheader h:fheaders){
                         logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface()); 
                     }
@@ -290,6 +295,8 @@ public class FullHeaderExtractor {
                     job.setDatabaseJob(dbjob);
               
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating delete flags for volume: "+vol.getName());
+                     message.set("updating delete flags");
+                         progress.set(-1);
                     fheaderService.updateDeleteFlagsFor(dbvol,subsurfacesOnDisk);
           }
                   
@@ -297,6 +304,8 @@ public class FullHeaderExtractor {
                         fheaderService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
                 
                    System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
+                   message.set("");
+                    progress.set(0);
     }
 
     
@@ -703,7 +712,7 @@ public class FullHeaderExtractor {
                         while((value=br.readLine())!=null){   //script returns string of the form lastGwdep=276634
                             
                             String[] parts=value.split("=");
-                            System.out.println("middleware.dugex.FullHeaderExtractor.extractFullHeaders(): "+value+" ==> "+parts[0]+" = "+parts[1]);
+                          //  System.out.println("middleware.dugex.FullHeaderExtractor.extractFullHeaders(): "+value+" ==> "+parts[0]+" = "+parts[1]);
                             Long val=0L;
                             try{
                                 val=Long.valueOf(parts[1]);

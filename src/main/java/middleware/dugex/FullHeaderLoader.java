@@ -80,6 +80,7 @@ public class FullHeaderLoader {
             */ 
             sub.setSequence(h.getSubsurface().getSequence());
             sub.setSubsurface(h.getSubsurface());
+            sub.setSubsurfaceName(h.getSubsurface().getSubsurface());
             sub.setTotalTraces(h.getTotalTraces());
             sub.setMinTracr(h.getMinTracr());
             sub.setMaxTracr(h.getMaxTracr());
