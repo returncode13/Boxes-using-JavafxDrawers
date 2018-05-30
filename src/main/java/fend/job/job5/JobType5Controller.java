@@ -28,6 +28,8 @@ import db.services.DotService;
 import db.services.DotServiceImpl;
 import db.services.DoubtService;
 import db.services.DoubtServiceImpl;
+import db.services.FheaderServiceImpl;
+import db.services.FheaderService;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
@@ -80,6 +82,8 @@ import fend.job.job0.JobType0Controller;
 import fend.job.job0.JobType0Model;
 import fend.job.job5.definitions.JobDefinitionsType5Model;
 import fend.job.job5.definitions.JobDefinitionsType5View;
+import fend.job.table.fullLineTable.FullHeaderLineTableModel;
+import fend.job.table.fullLineTable.FullHeaderLineTableView;
 
 import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
@@ -102,6 +106,7 @@ import javafx.concurrent.Task;
 import javafx.scene.control.Label;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.FullHeaderExtractor;
+import middleware.dugex.FullHeaderLoader;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.HeaderLoader;
 import middleware.dugex.PheaderLoader;
@@ -132,6 +137,11 @@ public class JobType5Controller implements JobType0Controller{
     
     private PlineTableModel lineTableModel;
     private PlineTableView lineTableView;
+    
+    
+    private FullHeaderLineTableModel fullHeaderLineTableModel;
+    private FullHeaderLineTableView fullHeaderLineTableView;
+    
     
     private BooleanProperty checkForHeaders;
     
@@ -187,6 +197,9 @@ public class JobType5Controller implements JobType0Controller{
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
+      
+      
+      
        model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
        model.extractFullHeaderProperty().addListener(EXTRACT_FULL_HEADER_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
@@ -195,7 +208,8 @@ public class JobType5Controller implements JobType0Controller{
           return t;
       });
       model.blockProperty.addListener(BLOCK_UNBLOCK_LISTENER);
-        
+      model.reloadFullHeadersProperty().addListener(RELOAD_FULL_SEQUENCE_HEADERS_LISTENER);
+      model.exitFullHeaderLineTableProperty().addListener(FULL_HEADER_LINE_TABLE_EXITED_LISTENER);
     }
 
     void setView(JobType5View vw,AnchorPane interactivePane) {
@@ -534,7 +548,35 @@ public class JobType5Controller implements JobType0Controller{
     
     @FXML
     void showFullHeaderTable(ActionEvent event) {
-
+        final FullHeaderLoader pheaderloader=new FullHeaderLoader(model);
+            Task<String> headerLoaderTask=new Task<String>(){
+                @Override
+                protected String call() throws Exception {
+                    pheaderloader.retrieveHeaders();
+                    
+                    return "Finished loading of headers for "+model.getNameproperty().get();
+                }
+                
+            };
+            headerLoaderTask.setOnSucceeded(e->{
+                    model.setFullSequenceHeaders(pheaderloader.getFullSequenceHeaders());
+                    
+                    if(fullHeaderLineTableView==null){
+                        fullHeaderLineTableModel=new FullHeaderLineTableModel(model);
+                        fullHeaderLineTableView=new FullHeaderLineTableView(fullHeaderLineTableModel);
+                    }else{
+                        fullHeaderLineTableModel.reloadTable();
+                    }
+                    
+            });
+         
+        
+            headerLoaderTask.setOnRunning(e->{});
+            headerLoaderTask.setOnFailed(e->{
+                headerLoaderTask.getException().printStackTrace();
+            });
+        
+            exec.execute(headerLoaderTask);
     }
     
      @FXML
@@ -1142,6 +1184,7 @@ public class JobType5Controller implements JobType0Controller{
     private VolumeService volumeService=new VolumeServiceImpl();
     private LogService logService=new LogServiceImpl();
     private WorkflowService workflowService=new WorkflowServiceImpl();
+    private FheaderService fHeaderService=new FheaderServiceImpl();
 
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -1163,6 +1206,8 @@ public class JobType5Controller implements JobType0Controller{
             logService.deleteLogsFor(dbjob);
             //delete all headers related to this job
             pheaderService.deleteHeadersFor(dbjob);
+            //delete all full headers related to this job
+            fHeaderService.deleteHeadersFor(dbjob);
             //delete all workflows related to this job
             workflowService.deleteWorkFlowsFor(dbjob);
             //delete all volumes related to this job
@@ -1268,11 +1313,54 @@ public class JobType5Controller implements JobType0Controller{
         }
     };
    
+   
+   
+   /**
+    * Used by the FullLineTableController reflect changes back to it when someone changes the chosen status on a subline
+    **/
+   private ChangeListener<Boolean> RELOAD_FULL_SEQUENCE_HEADERS_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            final FullHeaderLoader headerloader=new FullHeaderLoader(model);
+            Task<String> headerLoaderTask=new Task<String>(){
+                @Override
+                protected String call() throws Exception {
+                    headerloader.retrieveHeaders();
+                    
+                    return "Finished loading Full headers for "+model.getNameproperty().get();
+                }
+                
+            };
+            headerLoaderTask.setOnSucceeded(e->{
+                    model.setFullSequenceHeaders(headerloader.getFullSequenceHeaders());
+                    
+                    fullHeaderLineTableModel.reloadTable();
+            });
+         
+        
+            headerLoaderTask.setOnRunning(e->{});
+            headerLoaderTask.setOnFailed(e->{
+                headerLoaderTask.getException().printStackTrace();
+            });
+        
+            exec.execute(headerLoaderTask);
+        }
+    };
+   
+   
     private ChangeListener<Boolean> LINE_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             lineTableView=null;
             lineTableModel=null;
+        }
+    };
+    
+    private ChangeListener<Boolean> FULL_HEADER_LINE_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            fullHeaderLineTableModel=null;
+            fullHeaderLineTableView=null;
         }
     };
 }

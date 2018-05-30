@@ -38,6 +38,7 @@ import fend.volume.volume0.Volume0;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 import middleware.sequences.SequenceHeaders;
+import middleware.sequences.fullHeaders.FullSequenceHeaders;
 
 /**
  *
@@ -80,9 +81,17 @@ public class JobType5Model implements JobType0Model {
     private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
     private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
     private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty reloadFullSequenceHeadersProperty=new SimpleBooleanProperty(false);
     
+    BooleanProperty blockProperty=new SimpleBooleanProperty(false);
     
-     BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+    public void reloadFullHeaders(){
+        reloadFullSequenceHeadersProperty.set(!reloadFullSequenceHeadersProperty.get());
+    }
+    
+    public BooleanProperty reloadFullHeadersProperty(){
+        return this.reloadFullSequenceHeadersProperty;
+    }
 
     public BooleanProperty blockProperty() {
         return blockProperty;
@@ -754,7 +763,26 @@ public class JobType5Model implements JobType0Model {
     }
 
     
+    private ObservableList<FullSequenceHeaders> fullSequenceHeaders=FXCollections.observableArrayList();
+    void setFullSequenceHeaders(ObservableList<FullSequenceHeaders> fullSequenceHeaders) {
+        this.fullSequenceHeaders=fullSequenceHeaders;
+    }
+
+    public ObservableList<FullSequenceHeaders> getFullSequenceHeaders() {
+        return fullSequenceHeaders;
+    }
+
     
+    private BooleanProperty exitFullHeaderLineTableProperty=new SimpleBooleanProperty(true);
+    
+    public BooleanProperty exitFullHeaderLineTableProperty() {
+        return exitFullHeaderLineTableProperty;
+    }
+
+    
+    public void exitedFullHeaderLineTable(){
+        exitFullHeaderLineTableProperty.set(!exitFullHeaderLineTableProperty.get());
+    }
 
     
     

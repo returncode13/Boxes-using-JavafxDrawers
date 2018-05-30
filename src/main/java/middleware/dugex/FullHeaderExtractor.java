@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -303,10 +305,13 @@ public class FullHeaderExtractor {
     
     private final DugioScripts dugioScripts=new DugioScripts();
             
-    private void populate(Fheader fheader) throws IOException {
-       Map<String,Long> headerValueMap=extractFullHeaders(fheader);
-       for(String header:headerNames){
-           fheader.setTotalTraces(headerValueMap.get(dugioFullHeaders.getTotalTraces()));
+    private void populate(Fheader fheader) throws  IllegalAccessException, IllegalArgumentException,IOException, InvocationTargetException{
+         Map<String,Long> headerValueMap=new HashMap<>();
+         
+       headerValueMap=extractFullHeaders(fheader);
+      // for(String header:headerNames){
+      fheader.setAll(0L);
+ fheader.setTotalTraces(headerValueMap.get(dugioFullHeaders.getTotalTraces()));
  fheader.setMinTracr(headerValueMap.get(dugioFullHeaders.getMinTracr()));
  fheader.setMaxTracr(headerValueMap.get(dugioFullHeaders.getMaxTracr()));
  fheader.setIncTracr(headerValueMap.get(dugioFullHeaders.getIncTracr()));
@@ -532,7 +537,7 @@ public class FullHeaderExtractor {
  fheader.setFirstDay(headerValueMap.get(dugioFullHeaders.getFirstDay()));
  fheader.setLastDay(headerValueMap.get(dugioFullHeaders.getLastDay()));
  fheader.setDay(headerValueMap.get(dugioFullHeaders.getDay()));
-fheader.setMinHour(headerValueMap.get(dugioFullHeaders.getMinHour()));
+ fheader.setMinHour(headerValueMap.get(dugioFullHeaders.getMinHour()));
  fheader.setMaxHour(headerValueMap.get(dugioFullHeaders.getMaxHour()));
  fheader.setIncHour(headerValueMap.get(dugioFullHeaders.getIncHour()));
  fheader.setFirstHour(headerValueMap.get(dugioFullHeaders.getFirstHour()));
@@ -674,15 +679,21 @@ fheader.setMinHour(headerValueMap.get(dugioFullHeaders.getMinHour()));
                     }
            
            System.out.println("middleware.dugex.HeaderExtractor.populate(): finished extracting headers for : "+fheader.getSubsurface().getSubsurface());
-       }
+     //  }
     }
     
-    private Map<String, Long> extractFullHeaders(Fheader fheader) throws IOException {
+    private Map<String, Long> extractFullHeaders(Fheader fheader) throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Volume v=fheader.getVolume();
         String volumePath=v.getPathOfVolume();
         String subsurfaceName=fheader.getSubsurface().getSubsurface();
         Map<String,Long> fheaderMap=new HashMap<>();
-        
+        Class handler=DugioFullHeaders.class;
+        Method[] methods=handler.getDeclaredMethods();
+         for(Method m:methods){
+             if(m.getName().startsWith("get") && m.getName().length()>3)
+                //m.invoke(dugioFullHeaders);
+             fheaderMap.put((String) m.invoke(dugioFullHeaders),0L);
+         }
          Process process=new ProcessBuilder(dugioScripts.getDugioFullHeaderExtractor().getAbsolutePath(),volumePath,subsurfaceName).start();
                         InputStream is = process.getInputStream();
                         InputStreamReader isr=new InputStreamReader(is);
@@ -707,6 +718,7 @@ fheader.setMinHour(headerValueMap.get(dugioFullHeaders.getMinHour()));
                             fheaderMap.put(parts[0], val);
                            
                         }
+                        System.out.println("middleware.dugex.FullHeaderExtractor.extractFullHeaders(): finished loop for "+subsurfaceName);
                         return fheaderMap;
     }
     

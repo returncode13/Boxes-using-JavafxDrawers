@@ -9,6 +9,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import db.model.Job;
 import db.model.Volume;
+import db.services.FheaderService;
+import db.services.FheaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.LogService;
@@ -136,7 +138,7 @@ public class VolumeListType5Controller {
     
     
   private Executor exec;
-    
+  private FheaderService fHeaderService=new FheaderServiceImpl();  
     
     private ChangeListener<Boolean> VOLUME_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -169,7 +171,10 @@ public class VolumeListType5Controller {
 
                                 System.out.println("deleting associated headers");
                                 pheaderService.deleteHeadersFor(dbVol);
-
+                                
+                                System.out.println("deleting any associated full headers");
+                                fHeaderService.deleteHeadersFor(dbVol);
+                                
                                 System.out.println("deleting associated workflows");
                                 workflowService.deleteWorkFlowsFor(dbVol);
 
