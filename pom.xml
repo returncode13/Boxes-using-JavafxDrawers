@@ -4,7 +4,7 @@
 
     <groupId>com.polarcus</groupId>
     <artifactId>PQman</artifactId>
-    <version>Internal-35.0.1</version>
+    <version>Internal-35.0.2</version>
     <packaging>jar</packaging>
 
     <name>Box</name>
@@ -179,15 +179,14 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-util</artifactId>
-            <version>RELEASE802</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>net.objecthunter</groupId>
             <artifactId>exp4j</artifactId>
             <version>0.4.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
         </dependency>
     </dependencies>
 </project>

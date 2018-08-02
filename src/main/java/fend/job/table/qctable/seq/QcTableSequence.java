@@ -5,7 +5,7 @@
  */
 package fend.job.table.qctable.seq;
 
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import db.model.Comment;
 import db.model.QcMatrixRow;
 import db.model.Sequence;
 import db.model.Subsurface;
@@ -29,6 +29,7 @@ import javafx.collections.ObservableList;
 public class QcTableSequence  {
     private Sequence sequence;
     private Subsurface subsurface;
+    private Comment qcComment;
     List<QcMatrixRowModelParent> qcmatrix=new ArrayList<>();
     ObservableList<QcMatrixRowModelParent> observableQcMatrix;
     ObservableList<QcTableSequence> children;
@@ -41,6 +42,44 @@ public class QcTableSequence  {
     public boolean updateParent=false;
     
     private BooleanProperty updateParentStatusProperty=new SimpleBooleanProperty(false);
+    
+    private StringProperty commentProperty=new SimpleStringProperty("");
+
+    public StringProperty commentProperty(){
+        return this.commentProperty;
+    }
+    
+    public String getComment() {
+        return commentProperty.get();
+    }
+
+    /* public void setComment(String comment) {
+    this.commentProperty.set(comment);
+    }
+    
+    public void addToComment(String comment) {
+    String newcomment=comment+"\n"+this.getComment();
+    this.commentProperty.set(newcomment);
+    }*/
+    
+    
+     public Comment getQcComment() {
+        return qcComment;
+    }
+
+    public void setQcComment(Comment seqQcComment) {
+        this.qcComment = seqQcComment;
+        //show the latest comment.
+        if(!seqQcComment.getComments().isEmpty()){
+            String usertimeComment=seqQcComment.getComments().split("\n")[0];
+            int start=usertimeComment.indexOf(">",usertimeComment.indexOf(">")+1);
+        String latestComment=usertimeComment.substring(start+1);
+        commentProperty.set(latestComment);
+        }else{
+            commentProperty.set("");
+        }
+    }
+    
     
     public Sequence getSequence() {
         return sequence;

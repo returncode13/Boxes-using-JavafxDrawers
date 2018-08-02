@@ -5,6 +5,8 @@
  */
 package fend.job.table.qctable.seq.sub;
 
+import app.properties.AppProperties;
+import db.model.Comment;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Sequence;
@@ -33,8 +35,12 @@ import javafx.collections.ObservableList;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class QcTableSubsurface extends QcTableSequence{
+    
+   
      private Sequence sequence;
     private Subsurface subsurface;
+    private Comment qcComment;
+    
     List<QcMatrixRowModelParent> qcmatrix=new ArrayList<>();
     ObservableList<QcMatrixRowModelParent> observableQcMatrix;
     QcTableSequence parent;
@@ -49,6 +55,55 @@ public class QcTableSubsurface extends QcTableSequence{
     public boolean updateChildren=false;
     public boolean updateParent=false;
    
+    private StringProperty commentProperty=new SimpleStringProperty("");
+
+     @Override
+    public StringProperty commentProperty(){
+        return this.commentProperty;
+    }
+    
+     @Override
+    public String getComment() {
+        return commentProperty.get();
+    }
+
+    /*  @Override
+    public void setComment(String comment) {
+    this.commentProperty.set(comment);
+    }
+    
+    @Override
+    public void addToComment(String comment) {
+    String newcomment=comment+"\n"+this.getComment();
+    this.commentProperty.set(newcomment);
+    }
+    */
+
+     @Override
+    public Comment getQcComment() {
+        return qcComment;
+    }
+
+     @Override
+    public void setQcComment(Comment subQcComment) {
+        this.qcComment = subQcComment;
+        //show the latest comment.
+        if(!subQcComment.getComments().isEmpty()){
+         String usertimeComment=subQcComment.getComments().split("\n")[0];
+            int start=usertimeComment.indexOf(">",usertimeComment.indexOf(">")+1);
+        String latestComment=usertimeComment.substring(start+1);
+        commentProperty.set(latestComment);
+        }else{
+            commentProperty.set("");
+        }
+    }
+    
+    
+    
+     
+     
+     
+     
      @Override
      public Boolean isChild() {
         return isChild;
@@ -116,6 +171,9 @@ public class QcTableSubsurface extends QcTableSequence{
           
             nq.setQctype(q.getQctype());
             
+            
+            
+            
             StringProperty changed=new SimpleStringProperty();
             changed.bind(nq.passQcProperty());
             changed.addListener(qcTableSelectionChangedListener);
@@ -168,7 +226,7 @@ public class QcTableSubsurface extends QcTableSequence{
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
             
-            System.out.println("fend.job.table.qctable.seq.sub.QcTableSubsurface.changed(): from "+oldValue+" to "+newValue);
+            //System.out.println("fend.job.table.qctable.seq.sub.QcTableSubsurface.changed(): from "+oldValue+" to "+newValue);
         }
     };
     

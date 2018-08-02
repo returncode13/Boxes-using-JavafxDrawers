@@ -36,6 +36,7 @@ public class QcMatrixRowModelParent {
     BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
     
     
+    
     public QcMatrixRowModelParent() {
         
         checkedByUser.addListener(new ChangeListener<Boolean>(){
@@ -74,6 +75,12 @@ public class QcMatrixRowModelParent {
         this.checkedByUser.set(checked);
     }
 
+   
+
+    
+    
+    
+    
     @Override
     public String toString() {
         return name.get();

@@ -65,7 +65,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public QcMatrixRow getQcMatrixRow(Long qid) {
-        System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRow()");
+       // System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             QcMatrixRow h= (QcMatrixRow) session.get(QcMatrixRow.class, qid);

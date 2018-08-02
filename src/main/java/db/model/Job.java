@@ -128,6 +128,9 @@ public class Job implements Serializable{
     @OneToMany(mappedBy = "job")
     private Set<Summary> summaries;
     
+    @OneToMany(mappedBy = "job")
+    private Set<Comment> qcComments;
+    
     
     @OneToMany(mappedBy = "childJob")
     private Set<Doubt> doubts;

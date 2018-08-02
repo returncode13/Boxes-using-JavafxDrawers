@@ -108,7 +108,7 @@ public class Volume1 implements Volume0{
     @Override
     public void setVolume(File f) {
        this.volume=f;
-        if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
+//        if(WorkspaceModel.DEBUG)System.out.println("volume.volume1.Volume1.setVolume(): found "+f.listFiles(getSubsurfaceTimeStampFilter).length+ " files");
        
         
         
