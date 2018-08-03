@@ -60,6 +60,11 @@ public class CommentServiceImpl implements CommentService {
         qccDao.addToCommentStackFor(sequence,sub, job, comment, type);
     }
 
+    @Override
+    public void deleteAllCommentsRelatedToJob(Job job) {
+        qccDao.deleteAllCommentsRelatedToJob(job);
+    }
+
    
     
 }

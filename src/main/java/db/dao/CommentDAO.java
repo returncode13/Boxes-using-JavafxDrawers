@@ -28,4 +28,6 @@ public interface CommentDAO {
 
     public Comment getCommentFor(String TYPE, Job job, Sequence sequence, Subsurface subsurface) throws Exception;
 
+    public void deleteAllCommentsRelatedToJob(Job job);
+
 }

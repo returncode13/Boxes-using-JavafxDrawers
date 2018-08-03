@@ -22,6 +22,8 @@ import db.model.Job;
 import db.model.Link;
 import db.services.AncestorService;
 import db.services.AncestorServiceImpl;
+import db.services.CommentService;
+import db.services.CommentServiceImpl;
 import db.services.DescendantService;
 import db.services.DescendantServiceImpl;
 import db.services.DotService;
@@ -46,6 +48,8 @@ import db.services.SubsurfaceJobService;
 import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
 import db.services.SummaryServiceImpl;
+import db.services.UserPreferenceService;
+import db.services.UserPreferenceServiceImpl;
 import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import db.services.VolumeService;
@@ -1031,19 +1035,29 @@ public class JobType1Controller implements JobType0Controller{
              System.out.println("fend.job.job1.JobType1Controller.deleteAllQcsRelatedToJob(): deleting all the qc definitions related to this job");
              qcMatrixRowService.deleteAllQcMatrixRowsForJob(dbjob);
         }
+         private void deleteAllCommentsRelatedToJob() {
+           commentService.deleteAllCommentsRelatedToJob(dbjob);
+        }
+         private void deleteAllUserPreferencesRelatedToJob(){
+             userPreferenceService.deleteAllUserPreferencesFor(dbjob);
+         }
 
 private HeaderService headerService=new HeaderServiceImpl();
 private VolumeService volumeService=new VolumeServiceImpl();
 private LogService logService=new LogServiceImpl();
 private WorkflowService workflowService=new WorkflowServiceImpl();
-   
+private CommentService commentService=new CommentServiceImpl();
+private UserPreferenceService userPreferenceService=new UserPreferenceServiceImpl();
     
     private ChangeListener<Boolean> CURRENT_JOB_DELETE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
             model.getWorkspaceModel().block();
-            
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting  all qc comments related to this job");
+            deleteAllCommentsRelatedToJob();
+            System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting  all user preferences related to this job");
+            deleteAllUserPreferencesRelatedToJob();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting all qcs related to this job");
             deleteAllQcsRelatedToJob();
             System.out.println("fend.job.job1.JobType1Controller.CURRENT_JOB_DELETE_LISTENER: deleting doubts related to this job");
@@ -1108,6 +1122,7 @@ private WorkflowService workflowService=new WorkflowServiceImpl();
            
         }
 
+        
        
        
       

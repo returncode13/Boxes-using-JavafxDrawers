@@ -27,4 +27,6 @@ public interface CommentService {
     public void addToCommentStackFor(Sequence sequence,Subsurface sub,Job job, String comment,String type);
 
     public Comment getCommentFor(String TYPE, Job job, Sequence sequence, Subsurface subsurface) throws Exception;
+
+    public void deleteAllCommentsRelatedToJob(Job dbjob);
 }

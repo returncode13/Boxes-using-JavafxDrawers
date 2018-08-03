@@ -296,5 +296,40 @@ public class CommentDAOImpl implements CommentDAO{
                 return results.get(0);
         
     }
+
+    @Override
+    public void deleteAllCommentsRelatedToJob(Job j) {
+        
+        System.out.println("db.dao.CommentDAOImpl.deleteAllCommentsRelatedToJob()");
+       Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select q.id from  Comment q INNER JOIN q.job j where j =:j";
+       String hqlDelete = "Delete from Comment q where q.id in (:ids)";
+       
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", j);
+           List<Long> idsToDelete=selectQuery.list();
+           
+           
+           if(idsToDelete.isEmpty()){
+               transaction.commit();
+               System.out.println("db.dao.CommentDAOImpl.deleteAllCommentsRelatedToJob(): no qctable entries found for job: "+j.getNameJobStep());
+           }else{
+               System.out.println("db.dao.CommentDAOImpl.deleteAllCommentsRelatedToJob(): deleting "+idsToDelete.size()+" qctable entries for job: "+j.getNameJobStep());
+               Query deleteQuery=session.createQuery(hqlDelete);
+               deleteQuery.setParameterList("ids", idsToDelete);
+               int del=deleteQuery.executeUpdate();
+               transaction.commit();
+               
+           }
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+    }
+    
     
 }
