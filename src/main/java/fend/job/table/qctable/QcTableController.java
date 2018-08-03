@@ -377,49 +377,7 @@ public class QcTableController extends Stage{
             
           
       }
-        /*
-        File jsonfile= new File(filename);
-        BufferedReader br;
-        try {
-            br = new BufferedReader(new FileReader(jsonfile));
-             String jsonContents=new String("");
-             String val;
-            while((val=br.readLine())!=null){
-                jsonContents+=val;
-            };
-            System.out.println("fend.job.table.qctable.QcTableController.setModel(): Read user pref: "+jsonContents);
-          //  JSONObject jsnLoad=new JSONObject(jsonContents);
-            
-          
-            
-            
-             for(int ii=0;ii<totalColumnCount;ii++){                           // the order is always 0,1,2,3...,
-                    if(jsnLoad.has(""+ii)){
-                        if(namesOfcols.contains(jsnLoad.get(""+ii))){
-                            allcols.add(userPrefColumnArrangement.get(jsnLoad.get(""+ii)));
-                            namesOfcols.remove(jsnLoad.get(""+ii));
-                        }
-                    }
-                    
-                    
-                }
-                
-                if(!namesOfcols.isEmpty()){          //any new qctypes NOT common to the json file  
-                        for(String s:namesOfcols){
-                            allcols.add(userPrefColumnArrangement.get(s));      //the new ones are appended to the end and sorted by default
-                        }
-                }
-            
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(QcTableController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(QcTableController.class.getName()).log(Level.SEVERE, null, ex);
-        }
        
-        */
-        
-        
         
         
        
@@ -496,7 +454,7 @@ public class QcTableController extends Stage{
     public void setView(QcTableView vw){
          this.view=vw;
         
-        this.setTitle("qcTable");
+        this.setTitle("qcTable for "+model.getParentJob().getNameJobStep());
         this.setScene(new Scene(this.view));
         this.show();
         
