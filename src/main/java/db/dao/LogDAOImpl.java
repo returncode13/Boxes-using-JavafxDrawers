@@ -87,7 +87,7 @@ public class LogDAOImpl implements LogDAO{
             ll.setUpdateTime(newL.getUpdateTime());
             ll.setSummaryTime(newL.getSummaryTime());
             ll.setJob(newL.getJob());
-            ll.setVersion(newL.getVersion());
+            //ll.setVersion(newL.getVersion());
             session.update(ll);
             
             
@@ -464,7 +464,7 @@ public class LogDAOImpl implements LogDAO{
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         int result=13;
-        String sql="update Log set workflow = :wk where volume =:v and workflow is null ";
+        String sql="update Log set workflow =:wk where volume =:v and workflow is null ";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(sql);
@@ -489,7 +489,7 @@ public class LogDAOImpl implements LogDAO{
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         int result=13;
-        String sql="update Log set header = :hd where volume =:v and subsurface =:sub and header is null ";
+        String sql="update Log set header =:hd where volume =:v and subsurface =:sub and header is null ";
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(sql);

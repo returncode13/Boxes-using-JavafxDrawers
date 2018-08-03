@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -133,14 +134,32 @@ public class Header implements Serializable{
     @Column(name="Deleted")
     private Boolean deleted=false; 
     
-    @Column(name="NumberOfRuns")
+    
+    @Formula("(select count(*) from obpmanager.log L where L.job_fk=job_fk and L.subsurface_fk=subsurface_fk)")
+   // @Column(name="NumberOfRuns")
     private Long numberOfRuns=0L;                                               //number of times the subsurface was run
     
-        
-    @Column(name="InsightVersion")
+    @Formula("(select l.insightversion from obpmanager.log l where l.timestamp in "
+                + "("
+                    + "select max(ll.timestamp) from obpmanager.log ll where ll.job_fk=job_fk and ll.subsurface_fk=subsurface_fk"
+                + ")"
+                + "AND l.job_fk=job_fk AND l.subsurface_fk=subsurface_fk"
+            + ")"
+            + "")    
+  //  @Column(name="InsightVersion")
     private String insightVersion;                                        //version of insight as derived from the latest log.
     
-    @Column(name="workflowVersion")                                       //version of workflow
+    @Formula("("
+            + "select W.wfversion from  obpmanager.workflow W where W.id in "
+                    + "("
+                        +"select l.workflow_fk from obpmanager.log l where l.timestamp in "
+                        + "("
+                            + "select max(ll.timestamp) from obpmanager.log ll where ll.job_fk=job_fk and ll.subsurface_fk=subsurface_fk"
+                        + ")"
+                        + "AND l.job_fk=job_fk AND l.subsurface_fk=subsurface_fk"
+                    + ")"
+            + ")")
+   // @Column(name="workflowVersion")                                       //version of workflow from latest log
     private Long workflowVersion;
     
     
@@ -338,9 +357,9 @@ public class Header implements Serializable{
         return headerId;
     }
 
-    public void setHeaderId(Long headerId) {
-        this.headerId = headerId;
-    }
+    /* public void setHeaderId(Long headerId) {
+    this.headerId = headerId;
+    }*/
 
     public Volume getVolume() {
         return volume;

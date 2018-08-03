@@ -122,9 +122,9 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setOffsetMin(newH.getOffsetMin());
             
             h.setTraceCount(newH.getTraceCount());
-            h.setNumberOfRuns(newH.getNumberOfRuns());
+            //h.setNumberOfRuns(newH.getNumberOfRuns());
             h.setModified(newH.getModified());
-            h.setWorkflowVersion(newH.getWorkflowVersion());
+            //h.setWorkflowVersion(newH.getWorkflowVersion());
             h.setUpdateTime(newH.getUpdateTime());
             h.setSummaryTime(newH.getSummaryTime());
             h.setTextfilepath(newH.getTextfilepath());

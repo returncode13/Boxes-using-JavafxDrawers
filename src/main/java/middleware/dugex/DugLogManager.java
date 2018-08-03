@@ -196,7 +196,7 @@ public class DugLogManager {
                         subsurfacesInCurrentFolder.add(li.linename);
                         log.setLogpath(li.log.getAbsolutePath());
                         log.setInsightVersion(li.insightVersion);
-                        log.setVersion(li.version);
+                       // log.setVersion(li.version);
                         log.setTimestamp(li.timestamp);
                         log.setWorkflow(li.workflowHolder.workflow);
                         List<String> inputVolumes=li.inputVolumeNames;

@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -92,7 +93,9 @@ public class Log implements Serializable{
     @Column(name="SummaryTime")
     private String summaryTime;
     
-    @Column(name="version")
+    
+    @Formula("(select count(*) from obpmanager.log l where l.job_fk=job_fk AND l.volume_headers_fk=volume_headers_fk AND l.subsurface_fk=subsurface_fk)")
+   // @Column(name="version")
     private Long version;
 
     

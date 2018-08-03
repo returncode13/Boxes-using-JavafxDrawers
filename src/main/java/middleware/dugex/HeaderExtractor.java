@@ -964,22 +964,22 @@ public class HeaderExtractor {
                     hdr.setOffsetInc(offsetInc);
                     
                    // System.out.println("middleware.dugex.HeaderExtractor.populate(): Assign Latest insight and workflow versions from logs");
-                    Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
+                    //Log latestLog=this.job.getLatestLogForSubsurfaceMap().get(hdr.getSubsurface());              // the log table should be commited by now.
                     
                    // Log latestLog=logService.getLatestLogFor(hdr.getVolume(), hdr.getSubsurface());
                    /*  System.out.println("middleware.dugex.HeaderExtractor.populate(): for pheader "+
                    hdr.getHeaderId()+" Latest Log: "+
                    latestLog.getIdLogs());*/
-                    if(latestLog!=null){
-                    hdr.setInsightVersion(latestLog.getInsightVersion());
-                    hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
-                    hdr.setNumberOfRuns(latestLog.getVersion()+1);
-                    }
-                    else{
-                       hdr.setInsightVersion("ERROR");
-                       hdr.setWorkflowVersion(-1L);
-                       hdr.setNumberOfRuns(-1L);
-                    }
+                    //if(latestLog!=null){
+                   // hdr.setInsightVersion(latestLog.getInsightVersion());
+                    //hdr.setWorkflowVersion(latestLog.getWorkflow().getWfversion());
+                   // hdr.setNumberOfRuns(latestLog.getVersion()+1);
+                   // }
+                   // else{
+                       //hdr.setInsightVersion("ERROR");
+                       //hdr.setWorkflowVersion(-1L);
+                      // hdr.setNumberOfRuns(-1L);
+                  //  }
                     
                     
                     //System.out.println("middleware.dugex.HeaderExtractor.populate(): Updating logs with the corresponding headers");
