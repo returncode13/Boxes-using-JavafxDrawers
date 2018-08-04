@@ -13,6 +13,7 @@ import db.dao.QcTableDAO;
 import db.model.Job;
 import db.model.QcMatrixRow;
 import db.model.Subsurface;
+import java.util.Map;
 
 /**
  *
@@ -77,6 +78,11 @@ public class QcTableServiceImpl implements QcTableService{
     @Override
     public void deleteAllQcTablesForJob(Job job) {
         qcmDAO.deleteAllQcTablesForJob(job);
+    }
+
+    @Override
+    public void getQcTablesFor(Job parentJob, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
+        qcmDAO.getQcTablesFor(parentJob,qcmatrixRowSubQcTableMap);
     }
     
     

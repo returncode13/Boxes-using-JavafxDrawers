@@ -109,6 +109,10 @@ public interface JobType0Model {
     public void block();
 
     public void unblock();
+    
+    
+    public BooleanProperty exitQcTableProperty();
+    public void exitedQcTable();
 
    
     

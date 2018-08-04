@@ -214,6 +214,7 @@ public class JobType5Controller implements JobType0Controller{
       model.blockProperty.addListener(BLOCK_UNBLOCK_LISTENER);
       model.reloadFullHeadersProperty().addListener(RELOAD_FULL_SEQUENCE_HEADERS_LISTENER);
       model.exitFullHeaderLineTableProperty().addListener(FULL_HEADER_LINE_TABLE_EXITED_LISTENER);
+       model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
     }
 
     void setView(JobType5View vw,AnchorPane interactivePane) {
@@ -583,6 +584,10 @@ public class JobType5Controller implements JobType0Controller{
             exec.execute(headerLoaderTask);
     }
     
+    
+    private QcTableView qcTableView;
+    
+    
      @FXML
     void showQctable(ActionEvent event) {
         Task<Void> qctableTask=new Task<Void>() {
@@ -603,7 +608,7 @@ public class JobType5Controller implements JobType0Controller{
                 qctable.setDisable(false);
             });
             qctableTask.setOnSucceeded(e->{
-                QcTableView qcTableView=new QcTableView(qcTableModel);
+                qcTableView=new QcTableView(qcTableModel);
                 qctable.setDisable(false);
             
             });
@@ -1379,4 +1384,12 @@ public class JobType5Controller implements JobType0Controller{
             fullHeaderLineTableView=null;
         }
     };
+    
+     private ChangeListener<Boolean> QC_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            qcTableView=null;
+            qcTableModel=null;
+        }
+    };   
 }

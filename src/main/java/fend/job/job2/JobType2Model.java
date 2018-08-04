@@ -93,7 +93,17 @@ public class JobType2Model implements JobType0Model {
     private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
     private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
     private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
     
+     @Override
+    public BooleanProperty exitQcTableProperty() {
+        return exitedQcTableProperty;
+    }
+
+    @Override
+    public void exitedQcTable() {
+        exitedQcTableProperty.set(!exitedQcTableProperty.get());
+    }
     
      BooleanProperty blockProperty=new SimpleBooleanProperty(false);
 

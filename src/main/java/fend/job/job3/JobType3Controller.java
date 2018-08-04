@@ -154,6 +154,7 @@ public class JobType3Controller implements JobType0Controller{
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
       model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
+       model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
       //qcTableModel.qcSelectionChangedProperty().addListener(QC_CHANGED_LISTENER);
       
       exec=Executors.newCachedThreadPool(runnable->{
@@ -437,6 +438,9 @@ parent.addChild(model);*/
             AcqLineTableView lineTableView=new AcqLineTableView(lineTableModel);
     }
     
+    
+    private QcTableView qcTableView;
+    
      @FXML
     void showQctable(ActionEvent event) {
         
@@ -459,7 +463,7 @@ parent.addChild(model);*/
                 qctable.setDisable(false);
                 });
                 qctableTask.setOnSucceeded(e->{
-                QcTableView qcTableView=new QcTableView(qcTableModel);
+                qcTableView=new QcTableView(qcTableModel);
                 qctable.setDisable(false);
 
                 });
@@ -984,4 +988,12 @@ parent.addChild(model);*/
             }
         }
     };
+    
+     private ChangeListener<Boolean> QC_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            qcTableView=null;
+            qcTableModel=null;
+        }
+    };   
 }

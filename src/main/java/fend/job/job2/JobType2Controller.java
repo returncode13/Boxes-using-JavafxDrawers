@@ -178,6 +178,7 @@ public class JobType2Controller implements JobType0Controller{
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
       model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
+       model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -519,7 +520,7 @@ public class JobType2Controller implements JobType0Controller{
             
             
     }
-    
+    private QcTableView qcTableView;
     
         @FXML
     void showQctable(ActionEvent event) {
@@ -541,7 +542,7 @@ public class JobType2Controller implements JobType0Controller{
                 qctable.setDisable(false);
             });
             qctableTask.setOnSucceeded(e->{
-                QcTableView qcTableView=new QcTableView(qcTableModel);
+                 qcTableView=new QcTableView(qcTableModel);
                 qctable.setDisable(false);
             
             });
@@ -1226,4 +1227,12 @@ public class JobType2Controller implements JobType0Controller{
             lineTableModel=null;
         }
     };
+    
+     private ChangeListener<Boolean> QC_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            qcTableView=null;
+            qcTableModel=null;
+        }
+    };   
 }

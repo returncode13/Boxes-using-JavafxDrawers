@@ -14,8 +14,10 @@ import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -317,6 +319,39 @@ public class QcTableDAOImpl implements QcTableDAO{
        }finally{
            session.close();
        }
+    }
+
+    @Override
+    public void getQcTablesFor(Job j, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
+        System.out.println("db.dao.QcTableDAOImpl.getQcTablesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<QcTable> results=null;
+        String hql="Select q from  QcTable q INNER JOIN q.qcMatrixRow qmr where qmr.job =:j";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("j", j);
+            results=query.list();
+            
+            transaction.commit();
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        for(QcTable qct:results){
+            if(qcmatrixRowSubQcTableMap.containsKey(qct.getQcMatrixRow().getId())){
+                qcmatrixRowSubQcTableMap.get(qct.getQcMatrixRow().getId()).put(qct.getSubsurface(), qct);
+            }else{
+                qcmatrixRowSubQcTableMap.put(qct.getQcMatrixRow().getId(), new HashMap<>());
+                qcmatrixRowSubQcTableMap.get(qct.getQcMatrixRow().getId()).put(qct.getSubsurface(), qct);
+            }
+        }
     }
     
     

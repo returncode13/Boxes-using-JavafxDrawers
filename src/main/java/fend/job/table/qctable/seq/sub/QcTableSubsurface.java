@@ -17,6 +17,7 @@ import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -136,7 +137,7 @@ public class QcTableSubsurface extends QcTableSequence{
     }
 
      @Override
-    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix) {
+    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix,Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
         changedList.clear();
         changedListProperty.clear();
         changedListProperty.unbind();
@@ -146,7 +147,8 @@ public class QcTableSubsurface extends QcTableSequence{
             nq.setId(q.getId());
              //System.out.println("loading result for QMid: "+nq.getId()+" Subid: "+subsurface.getId()+" - "+subsurface.getSubsurface());
              try{
-                 QcTable qcTableFromDb=qcTableService.getQcTableFor(nq.getId(), subsurface);
+                 //QcTable qcTableFromDb=qcTableService.getQcTableFor(nq.getId(), subsurface);
+                 QcTable qcTableFromDb=qcmatrixRowSubQcTableMap.get(nq.getId()).get(subsurface);
                  
                  if(qcTableFromDb==null){
                      nq.setPassQc(q.isPassQc());

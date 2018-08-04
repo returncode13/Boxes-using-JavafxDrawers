@@ -25,7 +25,7 @@ public class QcTableView extends AnchorPane{
     
     public QcTableView(QcTableModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/qctable/qctable-1.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/qctable/qctable-2.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();
@@ -52,4 +52,13 @@ public class QcTableView extends AnchorPane{
                 throw new RuntimeException(e);
             }
     }
+
+    public QcTableController getController() {
+        return controller;
+    }
+    
+    
+    
+    
 }
+

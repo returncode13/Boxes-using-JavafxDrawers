@@ -8,6 +8,7 @@ package fend.job.table.qctable;
 import db.model.Comment;
 import db.model.Job;
 import db.model.QcMatrixRow;
+import db.model.QcTable;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.services.CommentService;
@@ -16,6 +17,8 @@ import db.services.JobService;
 import db.services.JobServiceImpl;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.QcTableService;
+import db.services.QcTableServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import fend.comments.CommentTypeModel;
@@ -46,7 +49,7 @@ public class QcTableModel {
     
     
     
-    private Job parentJob;
+    private Job dbJob;
     private JobType0Model fejob;
      private ObservableList<QcTableSequence> qctableSequences;
     private JobService jobService=new JobServiceImpl();
@@ -56,6 +59,20 @@ public class QcTableModel {
     private BooleanProperty qcSelectionChanged=new SimpleBooleanProperty(false);
     private Map<Sequence,List<Comment>> sequenceComments=new HashMap<>();
     private Map<Subsurface,List<Comment>> subsurfaceComments=new HashMap<>();
+    private Map<Long,Map<Subsurface,QcTable>> qcmatrixRowSubQcTableMap=new HashMap<>();
+    private QcTableService qcTableService=new QcTableServiceImpl();
+    private BooleanProperty reloadSequencesProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty reloadSequencesProperty() {
+        return reloadSequencesProperty;
+    }
+    
+    
+    
+    
+    public void reloadSequences(){
+        reloadSequencesProperty.set(!reloadSequencesProperty.get());
+    }
     /*public BooleanProperty qcSelectionChangedProperty(){
     return qcSelectionChanged;
     }
@@ -68,14 +85,14 @@ public class QcTableModel {
     
     public QcTableModel(JobType0Model fejob) {
         this.fejob = fejob;
-        parentJob=jobService.getJob(this.fejob.getId());
+        dbJob=jobService.getJob(this.fejob.getId());
         qctableSequences=FXCollections.observableArrayList();
-        List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(parentJob, true);
-       // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+parentJob.getId()+" is "+qcmatrixForJob.size());
+        List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(dbJob, true);
+       // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+dbJob.getId()+" is "+qcmatrixForJob.size());
         List<QcMatrixRowModelParent> feqcmr=new ArrayList<>();
         
-        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Loading all comments for the job: "+parentJob.getNameJobStep());
-        commentService.getCommentsFor(parentJob,CommentTypeModel.TYPE_QC,sequenceComments, subsurfaceComments);
+        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Loading all comments for the job: "+dbJob.getNameJobStep());
+        commentService.getCommentsFor(dbJob,CommentTypeModel.TYPE_QC,sequenceComments, subsurfaceComments);
         Map<Sequence,List<QcTableSequence>> lookupmap=new HashMap<>();  //all subsurfaces grouped under the sequence key
         
         for(QcMatrixRow qcmrow:qcmatrixForJob){
@@ -88,10 +105,15 @@ public class QcTableModel {
          //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModelParent with id: "+femod.getId()+" name: "+femod.getName().get());
         }
         
-        //Set<Subsurface> subsinJob=parentJob.getSubsurfaces();
-        Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(parentJob));
+        
+        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): loading the qctable for the job");
+        qcTableService.getQcTablesFor(dbJob,qcmatrixRowSubQcTableMap);
+        
+        
+        //Set<Subsurface> subsinJob=dbJob.getSubsurfaces();
+        Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbJob));
         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): starting to build the lookup map");
-     //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+parentJob.getId()+" size: "+subsinJob.size());
+     //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+dbJob.getId()+" size: "+subsinJob.size());
         for(Subsurface s:subsinJob){
             Sequence seq=s.getSequence();
             
@@ -117,6 +139,10 @@ public class QcTableModel {
             }
         }
         
+        
+        
+        
+        
         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): finished building the lookup map");
         for (Map.Entry<Sequence, List<QcTableSequence>> entry : lookupmap.entrySet()) {
             Sequence seq = entry.getKey();
@@ -125,7 +151,7 @@ public class QcTableModel {
            // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): new Sequence root added: ");
             QcTableSequence seqtreeroot=new QcTableSequence();
             seqtreeroot.setChildren(obssubs);
-            seqtreeroot.setQcmatrix(feqcmr);      //the qc matrix are set for the subs in this call
+            seqtreeroot.setQcmatrix(feqcmr,qcmatrixRowSubQcTableMap);      //the qc matrix are set for the subs in this call
             seqtreeroot.setSequence(seq);
             if(sequenceComments.containsKey(seq)){
                 seqtreeroot.setQcComment(sequenceComments.get(seq).get(0));
@@ -159,8 +185,12 @@ public class QcTableModel {
         this.qctableSequences=FXCollections.observableArrayList(qctableSequences);
     }
 
-    public Job getParentJob() {
-        return parentJob;
+    public Job getDbJob() {
+        return dbJob;
+    }
+
+    public JobType0Model getJob() {
+        return fejob;
     }
     
     

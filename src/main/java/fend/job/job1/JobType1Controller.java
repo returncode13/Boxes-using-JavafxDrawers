@@ -130,6 +130,7 @@ public class JobType1Controller implements JobType0Controller{
     
     private LineTableModel lineTableModel;
     private LineTableView lineTableView;
+    private QcTableView qcTableView;
     
     private BooleanProperty checkForHeaders;
     private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
@@ -180,6 +181,8 @@ public class JobType1Controller implements JobType0Controller{
       model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
       model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
+      model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
+      
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -512,6 +515,8 @@ public class JobType1Controller implements JobType0Controller{
             
     }
     
+   
+    
      @FXML
     void showQctable(ActionEvent event) {
         Task<Void> qctableTask=new Task<Void>() {
@@ -532,7 +537,9 @@ public class JobType1Controller implements JobType0Controller{
                 qctable.setDisable(false);
             });
             qctableTask.setOnSucceeded(e->{
-                QcTableView qcTableView=new QcTableView(qcTableModel);
+               
+                   qcTableView=new QcTableView(qcTableModel);
+             
                 qctable.setDisable(false);
             
             });
@@ -1189,6 +1196,15 @@ private UserPreferenceService userPreferenceService=new UserPreferenceServiceImp
         }
     };
    
+           
+    private ChangeListener<Boolean> QC_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            qcTableView=null;
+            qcTableModel=null;
+        }
+    };        
+           
    private String now() {
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }

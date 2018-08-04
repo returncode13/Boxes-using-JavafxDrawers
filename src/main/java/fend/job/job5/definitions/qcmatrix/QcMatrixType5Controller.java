@@ -113,6 +113,7 @@ public class QcMatrixType5Controller {
                 qcrw.setId(qcmatrixRow.getId());
                 qcrw.setName(qcmatrixRow.getQctype().getName());
                 qcrw.setParentJob(qcMatrixModel.getParentjob());
+                qcrw.setSelectionModel(qcMatrixModel.getSelectedModel());
                 System.out.println("fend.job.job2.definitions.qcmatrix.QcMatrixController.setModel(): "+qcmatrixRow.getQctype().getName()+":"+qcmatrixRow.getPresent());
                 qcrw.setCheckedByUser(qcmatrixRow.getPresent());
                 

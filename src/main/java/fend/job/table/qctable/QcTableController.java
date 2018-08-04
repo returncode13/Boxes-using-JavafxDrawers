@@ -45,10 +45,12 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -63,6 +65,7 @@ import javafx.util.Callback;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -74,7 +77,7 @@ public class QcTableController extends Stage{
     final private String COMMENTS="Comments";
     final private String SEQUENCE="Sequence";
     final private String SUBSURFACE="Subsurface";
-    private String filename="/d/home/asima0150/prop.json";
+    
     
     QcTableModel model;
     QcTableView view;
@@ -85,7 +88,7 @@ public class QcTableController extends Stage{
     CommentType qcCommentType;
     User currentUser;
     Executor exec;
-    Map<String,TreeTableColumn> userPrefColumnArrangement=new HashMap<>();
+    Map<String,TreeTableColumn> userPrefColumnArrangement;
     UserPreference up=null;
     /*@FXML
     private JFXTreeTableView<QcTableSequence> treeTableView;*/
@@ -97,7 +100,7 @@ public class QcTableController extends Stage{
     public void setModel(QcTableModel item){
         model=item;
         qcCommentType=commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC);
-       
+       userPrefColumnArrangement=new HashMap<>();
         
         exec=Executors.newCachedThreadPool(runnable->{
                 Thread t=new Thread(runnable);
@@ -105,8 +108,7 @@ public class QcTableController extends Stage{
                 return t;
         });
         
-        
-        
+        model.reloadSequencesProperty().addListener(REFRESH_TABLE_LISTENER);
        
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
         
@@ -272,12 +274,12 @@ public class QcTableController extends Stage{
                             try {
                                 System.out.println("end.job.table.qctable.QcTableController.setModel().changed(): will commit: "+e.getNewValue()+" for "+qseq.getSequence().getSequenceno());
                                 Comment seqcomment=null;
-                                    if((seqcomment=commentService.getCommentFor(CommentTypeModel.TYPE_QC,model.getParentJob(),qseq.getSequence(),null)) == null){
+                                    if((seqcomment=commentService.getCommentFor(CommentTypeModel.TYPE_QC,model.getDbJob(),qseq.getSequence(),null)) == null){
                                         seqcomment=new Comment();
                                         seqcomment.setSequence(qseq.getSequence());
                                         seqcomment.setSubsurface(null);
                                         seqcomment.setCommentType(qcCommentType);
-                                        seqcomment.setJob(model.getParentJob());
+                                        seqcomment.setJob(model.getDbJob());
                                         seqcomment.setComments(userTimeStamp+e.getNewValue());
 
                                         commentService.createComment(seqcomment);
@@ -298,12 +300,12 @@ public class QcTableController extends Stage{
                             System.out.println("end.job.table.qctable.QcTableController.setModel().changed(): will commit: "+e.getNewValue()+" for "+qseq.getSequence().getSequenceno()+" "+qseq.getSubsurface().getSubsurface());
                             try {
                             Comment subcomment=null;
-                                    if((subcomment=commentService.getCommentFor(CommentTypeModel.TYPE_QC,model.getParentJob(),qseq.getSequence(),qseq.getSubsurface())) == null){
+                                    if((subcomment=commentService.getCommentFor(CommentTypeModel.TYPE_QC,model.getDbJob(),qseq.getSequence(),qseq.getSubsurface())) == null){
                                         subcomment=new Comment();
                                         subcomment.setSequence(qseq.getSequence());
                                         subcomment.setSubsurface(qseq.getSubsurface());
                                         subcomment.setCommentType(qcCommentType);
-                                        subcomment.setJob(model.getParentJob());
+                                        subcomment.setJob(model.getDbJob());
                                         subcomment.setComments(userTimeStamp+e.getNewValue());
 
                                         commentService.createComment(subcomment);
@@ -342,9 +344,9 @@ public class QcTableController extends Stage{
         
         
          
-      if((up=userPreferenceService.getUserPreferenceFor(model.getParentJob(), qcCommentType))==null){
+      if((up=userPreferenceService.getUserPreferenceFor(model.getDbJob(), qcCommentType))==null){
           up=new UserPreference();
-          up.setJob(model.getParentJob());
+          up.setJob(model.getDbJob());
           up.setCommentType(qcCommentType);
           userPreferenceService.createUserPreference(up);
           
@@ -357,8 +359,10 @@ public class QcTableController extends Stage{
           
       }else{
           String jsonContents=up.getJsonProperty();
-          jsnLoad=new JSONObject(jsonContents);
-            for(int ii=0;ii<totalColumnCount;ii++){                           // the order is always 0,1,2,3...,
+          try{
+              jsnLoad=new JSONObject(jsonContents);
+              
+               for(int ii=0;ii<totalColumnCount;ii++){                           // the order is always 0,1,2,3...,
                     if(jsnLoad.has(""+ii)){
                         if(namesOfcols.contains(jsnLoad.get(""+ii))){
                             allcols.add(userPrefColumnArrangement.get(jsnLoad.get(""+ii)));
@@ -375,6 +379,19 @@ public class QcTableController extends Stage{
                         }
                 }
             
+              
+              
+          }catch(JSONException e){
+              
+              
+              System.out.println("fend.job.table.qctable.QcTableController.setModel(): JSON EXCEPTION: could not read the json object: contents: "+jsonContents);
+              for (Map.Entry<String, TreeTableColumn> entry : userPrefColumnArrangement.entrySet()) {
+                  String key = entry.getKey();
+                  TreeTableColumn value = entry.getValue();
+                  allcols.add(value);
+              }
+          }
+           
           
       }
        
@@ -425,25 +442,18 @@ public class QcTableController extends Stage{
                   
             }System.out.println("");
             jsn.put(JSON_ORDER, order);
-          /*  
-            BufferedWriter writer;
-        try {
-            writer = new BufferedWriter(new FileWriter(filename));
-            jsn.write(writer);
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(QcTableController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
+        
           String newPref=jsn.toString();
           up.setJsonProperty(newPref);
           userPreferenceService.updateUserPreference(up);
           
-            
+          model.getJob().exitedQcTable();
             
             
         });
         
+        
+       
         
         
         
@@ -452,9 +462,9 @@ public class QcTableController extends Stage{
     }
     
     public void setView(QcTableView vw){
-         this.view=vw;
+        this.view=vw;
         
-        this.setTitle("qcTable for "+model.getParentJob().getNameJobStep());
+        this.setTitle("qcTable for "+model.getDbJob().getNameJobStep());
         this.setScene(new Scene(this.view));
         this.show();
         
@@ -466,10 +476,17 @@ public class QcTableController extends Stage{
     }
     
     
+    public void reload(){
+        model=new QcTableModel(model.getJob());
+        treetableView.getColumns().clear();
+        this.setModel(model);
+        treetableView.refresh();
+    }
+    
     private ChangeListener<Boolean> REFRESH_TABLE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            //treetableView.refresh();
+            treetableView.refresh();
            
         }
     };
@@ -480,5 +497,14 @@ public class QcTableController extends Stage{
     }
 
     
+    @FXML
+    private Button reloadBtn;
+
+    
+    @FXML
+    void reloadTable(ActionEvent event) {
+        this.reload();
+    }
+
    
 }

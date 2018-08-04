@@ -92,10 +92,22 @@ public class JobType1Model implements JobType0Model {
     private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
     private BooleanProperty finishedReloading=new SimpleBooleanProperty(false);
     private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
-    
-    
      BooleanProperty blockProperty=new SimpleBooleanProperty(false);
 
+    private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
+    
+     @Override
+    public BooleanProperty exitQcTableProperty() {
+        return exitedQcTableProperty;
+    }
+
+    @Override
+    public void exitedQcTable() {
+        exitedQcTableProperty.set(!exitedQcTableProperty.get());
+    }
+
+    
+    
     public BooleanProperty blockProperty() {
         return blockProperty;
     }
@@ -758,7 +770,7 @@ public class JobType1Model implements JobType0Model {
         this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
     }
 
-    
+   
     
 
     

@@ -38,7 +38,7 @@ public class UserPreference implements Serializable {
     private CommentType commentType;
     
     
-    @Column(name="json_property_string")
+    @Column(name="json_property_string",columnDefinition = "text")
     private String jsonProperty=new String("");
 
     public Job getJob() {

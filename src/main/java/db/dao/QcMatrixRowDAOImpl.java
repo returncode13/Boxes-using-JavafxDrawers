@@ -170,18 +170,18 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
     }
 
     @Override
-    public List<QcMatrixRow> getQcMatrixForJob(Job sessDetails, boolean b) {
+    public List<QcMatrixRow> getQcMatrixForJob(Job job, boolean b) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
         try{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcMatrixRow.class);
-        criteria.add(Restrictions.eq("job", sessDetails));
+        criteria.add(Restrictions.eq("job", job));
         criteria.add(Restrictions.eq("present",b));
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         result=criteria.list();
-            System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixForJob(): for job "+sessDetails.getNameJobStep()+" size of qcMatrix : "+result.size());
+            System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixForJob(): for job "+job.getNameJobStep()+" size of qcMatrix : "+result.size());
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();

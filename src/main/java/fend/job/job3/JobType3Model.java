@@ -97,6 +97,17 @@ public class JobType3Model implements JobType0Model {
     
     
      BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+     private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
+    
+     @Override
+    public BooleanProperty exitQcTableProperty() {
+        return exitedQcTableProperty;
+    }
+
+    @Override
+    public void exitedQcTable() {
+        exitedQcTableProperty.set(!exitedQcTableProperty.get());
+    }
 
     public BooleanProperty blockProperty() {
         return blockProperty;

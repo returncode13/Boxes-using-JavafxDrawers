@@ -159,6 +159,7 @@ public class JobType4Controller implements JobType0Controller{
         model.deleteProperty().addListener(CURRENT_JOB_DELETE_LISTENER);
         model.qcChangedProperty().addListener(QC_CHANGED_LISTENER);
         model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
+         model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
         exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -473,6 +474,9 @@ parent.addChild(model);*/
             
     }
     
+    
+    private QcTableView qcTableView;
+    
      @FXML
     void showQctable(ActionEvent event) {
             
@@ -495,7 +499,7 @@ parent.addChild(model);*/
              qctable.setDisable(false);
          });
          qctableTask.setOnSucceeded(e -> {
-             QcTableView qcTableView = new QcTableView(qcTableModel);
+             qcTableView = new QcTableView(qcTableModel);
              qctable.setDisable(false);
 
          });
@@ -1033,5 +1037,11 @@ parent.addChild(model);*/
         }
     };
     
-    
+     private ChangeListener<Boolean> QC_TABLE_EXITED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            qcTableView=null;
+            qcTableModel=null;
+        }
+    };   
 }

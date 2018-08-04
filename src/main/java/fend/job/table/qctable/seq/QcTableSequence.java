@@ -7,11 +7,13 @@ package fend.job.table.qctable.seq;
 
 import db.model.Comment;
 import db.model.QcMatrixRow;
+import db.model.QcTable;
 import db.model.Sequence;
 import db.model.Subsurface;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -102,7 +104,7 @@ public class QcTableSequence  {
         return observableQcMatrix;
     }
 
-    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix) {
+    public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix,Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
         for(QcMatrixRowModelParent q:qcmatrix){
             QcMatrixRowModelParent nq=new QcMatrixRowModelParent();
             nq.setCheckUncheckProperty(q.getCheckUncheckProperty().get());
@@ -120,7 +122,7 @@ public class QcTableSequence  {
         }
         this.observableQcMatrix=FXCollections.observableArrayList(this.qcmatrix);
         for(QcTableSequence child:children){
-            child.setQcmatrix(qcmatrix);
+            child.setQcmatrix(qcmatrix,qcmatrixRowSubQcTableMap);
         }
         /**
          * during loading
@@ -257,7 +259,8 @@ public class QcTableSequence  {
         boolean val=refreshTableProperty.get();
         refreshTableProperty.set(!val);
     }
-    
+
+  
     
     
 }

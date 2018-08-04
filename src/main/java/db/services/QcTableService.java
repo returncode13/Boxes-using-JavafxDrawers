@@ -13,6 +13,7 @@ import db.model.QcType;
 import db.model.Subsurface;
 import db.model.Volume;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -32,4 +33,6 @@ public interface QcTableService {
     public QcTable getQcTableFor(Long qcmatrixRowId,Subsurface s) throws Exception;
 
     public void deleteAllQcTablesForJob(Job dbjob);
+
+    public void getQcTablesFor(Job parentJob, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap);
 }
