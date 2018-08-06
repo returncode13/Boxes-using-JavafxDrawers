@@ -43,7 +43,7 @@ public class QcTableView extends AnchorPane{
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
                 
-                
+                controller.init();
                 controller.setModel(item);
                 controller.setView(this) ;
                

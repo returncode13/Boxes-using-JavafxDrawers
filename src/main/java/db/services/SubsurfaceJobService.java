@@ -35,5 +35,7 @@ public interface SubsurfaceJobService {
     public List<Subsurface> getSubsurfacesForJob(Job dbjob);
 
     public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
+
+    public void updateTimeWhere(Job job, Subsurface childsub,String updateTime);
    
 }

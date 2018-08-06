@@ -10,7 +10,9 @@ import db.model.Job;
 import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.QcType;
+import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.User;
 import db.model.Volume;
 import java.util.List;
 import java.util.Map;
@@ -34,5 +36,9 @@ public interface QcTableService {
 
     public void deleteAllQcTablesForJob(Job dbjob);
 
-    public void getQcTablesFor(Job parentJob, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap);
+    public int getQcTablesFor(Job parentJob, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap,Boolean present);
+
+    public int update(Long qcmrId, Subsurface childsub, Boolean resForDb, String updateTime, User currentUser);
+    public void setAllqcTableValuesFor(Sequence seq,Job j,Long qcmatrixId,Boolean result,String updateTime, User currentUser);
+    public void createBulkQcTables(List<QcTable> qctables);
 }

@@ -287,6 +287,32 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
         return result;
     }
 
+    @Override
+    public void updateTimeWhere(Job job, Subsurface sub, String updateTime) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        System.out.println("db.dao.SubsurfaceJobDAOImpl.updateTimeWhere()");
+        String sql="update SubsurfaceJob set updateTime = :up where pk.job =:j and pk.subsurface =:i";
+        try{
+            transaction=session.beginTransaction();
+            /*Criteria criteria=session.createCriteria(SubsurfaceJob.class);
+            criteria.add(Restrictions.sqlRestriction(hql));*/
+            Query query= session.createQuery(sql);
+            query.setParameter("j", job);
+            query.setParameter("i",sub);
+            query.setParameter("up", updateTime);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
+
   
    
    

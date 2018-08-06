@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -107,7 +109,9 @@ public class AppProperties {
         AppProperties.MODE = MODE;
     }
 
-   
+   public static String timeNow(){
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+   }
     
     
     

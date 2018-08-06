@@ -8,6 +8,7 @@ package fend.job.job4.definitions.qcmatrix;
 
 //import fend.job.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModel;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.qcmatrix.Qint;
 import fend.job.job4.definitions.qcmatrix.qcmatrixrow.QcMatrixRowType4Model;
 import fend.job.job4.definitions.qcmatrix.selected.SelectedQcType4Model;
 
@@ -25,7 +26,7 @@ import javafx.collections.ObservableList;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcMatrixType4Model {
+public class QcMatrixType4Model implements Qint{
     List<QcMatrixRowType4Model> qcMatrixRows;
     ObservableList<QcMatrixRowType4Model> observableQcMatrixRows;
     JobType0Model parentjob;
@@ -49,6 +50,7 @@ public class QcMatrixType4Model {
     public QcMatrixType4Model(JobType0Model parentjob,SelectedQcType4Model sm) {
         this.parentjob=parentjob;
         qcMatrixRows=new ArrayList<>();
+        this.parentjob.setQcMatrixModel(this);
         observableQcMatrixRows=FXCollections.observableArrayList(qcMatrixRows);
         observableQcMatrixRows.addListener(qcmatrixChangeListener);
         selectedModel=sm;
@@ -63,6 +65,11 @@ public class QcMatrixType4Model {
         this.selectedModel = selectedModel;
     }
     
+    
+    @Override
+    public int listSize() {
+        return observableQcMatrixRows.size();
+    }
     
     public ObservableList<QcMatrixRowType4Model> getMatrixRows() {
         return observableQcMatrixRows;

@@ -31,6 +31,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.Qint;
 import fend.job.job0.property.JobModelProperty;
 import fend.job.job5.properties.JobType5Properties;
 
@@ -86,6 +88,22 @@ public class JobType5Model implements JobType0Model {
     BooleanProperty blockProperty=new SimpleBooleanProperty(false);
     
     private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
+    
+    private Qint qcMatrixModel;
+    
+    
+    
+    @Override
+    public void setQcMatrixModel(Qint qmm){
+        qcMatrixModel=qmm;
+    }
+    
+    
+    @Override
+    public Qint getQcMatrixModel(){
+        return qcMatrixModel;
+        
+    }
     
      @Override
     public BooleanProperty exitQcTableProperty() {

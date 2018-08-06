@@ -5,6 +5,7 @@
  */
 package fend.job.table.qctable;
 
+import app.properties.AppProperties;
 import db.model.Comment;
 import db.model.Job;
 import db.model.QcMatrixRow;
@@ -95,6 +96,14 @@ public class QcTableModel {
         commentService.getCommentsFor(dbJob,CommentTypeModel.TYPE_QC,sequenceComments, subsurfaceComments);
         Map<Sequence,List<QcTableSequence>> lookupmap=new HashMap<>();  //all subsurfaces grouped under the sequence key
         
+         Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbJob));
+         qcmatrixRowSubQcTableMap.clear();
+         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): loading the qctable for the job");
+        int existingSize=qcTableService.getQcTablesFor(dbJob,qcmatrixRowSubQcTableMap,true);
+        
+        
+         Map<Long,QcMatrixRow> qcmrlookup=new HashMap<>();
+        
         for(QcMatrixRow qcmrow:qcmatrixForJob){
             
             QcMatrixRowModelParent femod=new QcMatrixRowModelParent();
@@ -102,16 +111,92 @@ public class QcTableModel {
             femod.setName(qcmrow.getQctype().getName());
             femod.setQctype(qcmrow.getQctype());
             feqcmr.add(femod);
+            qcmrlookup.put(qcmrow.getId(),qcmrow);
          //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModelParent with id: "+femod.getId()+" name: "+femod.getName().get());
         }
         
+       
         
-        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): loading the qctable for the job");
-        qcTableService.getQcTablesFor(dbJob,qcmatrixRowSubQcTableMap);
+       List<QcTable> qctablesToCreate=new ArrayList<>();
+       Map<QcMatrixRow,Set<Subsurface>> tempMapForqcTables=new HashMap<>();
+       //int existingsize=((HashMap<?,?>)(qcmatrixRowSubQcTableMap.values())).values().size();
+       
+       
+       
+        if(qcmatrixForJob.size()*subsinJob.size() == existingSize){    //i.e all the qcmatrices have subs (i.e. qctable entries in the database 
+            System.out.println("fend.job.table.qctable.QcTableModel.<init>():  all the qcmatrices have subs qcmatrixForJob.size()*subsinJob.size() = qcmatrixRowSubQcTableMap.values().size() ==> "+qcmatrixForJob.size()+"*"+subsinJob.size() +
+                    "="+existingSize);
+        }else{
+            System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Size mismatch qcmatrixForJob.size()*subsinJob.size() = qcmatrixRowSubQcTableMap.values().size() ==> "+qcmatrixForJob.size()+"*"+subsinJob.size() +
+                    "="+existingSize);
+           
+             for (Map.Entry<Long, Map<Subsurface, QcTable>> entry : qcmatrixRowSubQcTableMap.entrySet()) {
+                Long key = entry.getKey();
+
+                if(qcmrlookup.containsKey(key)){
+                    Set<Subsurface> subsNotPresentInTable=new HashSet<>(subsinJob);
+                    Map<Subsurface, QcTable> value = entry.getValue();
+                    subsNotPresentInTable.removeAll(value.keySet());
+                    System.out.println("fend.job.table.qctable.QcTableModel.<init>(): "
+                    +subsNotPresentInTable
+                    .size()+""
+                    + " subs are missing qctable entries for qcmatrix: "+
+                    qcmrlookup
+                    .get(key)
+                    .getQctype()
+                    .getName());
+                    tempMapForqcTables.put(qcmrlookup.get(key), subsNotPresentInTable);
+
+
+                    for(Subsurface s:subsNotPresentInTable){
+                        QcTable qct=new QcTable();
+                        qct.setQcMatrixRow(qcmrlookup.get(key));
+                        qct.setSubsurface(s);
+                        qct.setUpdateTime(AppProperties.timeNow());
+                        qct.setResult(Boolean.FALSE);
+                        qct.setUser(AppProperties.getCurrentUser());
+                        qctablesToCreate.add(qct);
+                    }
+                    
+                    qcmrlookup.remove(key);
+                }
+                
+                
+            
+            }
+             //have all the keys been accounted for
+                if(qcmrlookup.isEmpty()){
+                    System.out.println("fend.job.table.qctable.QcTableModel.<init>(): all qcmatrices accounted for");
+                }else{
+                    for (Map.Entry<Long, QcMatrixRow> entry1 : qcmrlookup.entrySet()) {
+                        Long newKey = entry1.getKey();
+                        QcMatrixRow value = entry1.getValue();
+                        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): "+value.getQctype().getName()+" has  no qctable entries");
+                        for(Subsurface s: subsinJob){
+                            QcTable qct=new QcTable();
+                            qct.setQcMatrixRow(qcmrlookup.get(newKey));
+                            qct.setSubsurface(s);
+                            qct.setUpdateTime(AppProperties.timeNow());
+                            qct.setResult(Boolean.FALSE);
+                            qct.setUser(AppProperties.getCurrentUser());
+                            qctablesToCreate.add(qct);
+                        }
+                        
+                    }
+                }
+            
+            System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Creating "+qctablesToCreate.size()+" qctables");
+            qcTableService.createBulkQcTables(qctablesToCreate);
+            
+            
+             
+        }
+        
+       
         
         
         //Set<Subsurface> subsinJob=dbJob.getSubsurfaces();
-        Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbJob));
+       
         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): starting to build the lookup map");
      //   System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of subs from job: "+dbJob.getId()+" size: "+subsinJob.size());
         for(Subsurface s:subsinJob){

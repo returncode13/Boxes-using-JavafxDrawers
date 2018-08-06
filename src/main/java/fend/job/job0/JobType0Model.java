@@ -10,9 +10,11 @@ import db.model.Job;
 import db.model.Log;
 import db.model.Subsurface;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.Qint;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.property.JobModelProperty;
+import fend.job.job1.definitions.qcmatrix.QcMatrixType1Model;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -113,6 +115,9 @@ public interface JobType0Model {
     
     public BooleanProperty exitQcTableProperty();
     public void exitedQcTable();
+
+    public void setQcMatrixModel(Qint qmm);
+    public Qint getQcMatrixModel();
 
    
     

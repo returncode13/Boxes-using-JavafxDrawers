@@ -12,7 +12,10 @@ import db.model.QcType;
 import db.model.Subsurface;
 import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Job;
+import db.model.Sequence;
+import db.model.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -322,17 +325,18 @@ public class QcTableDAOImpl implements QcTableDAO{
     }
 
     @Override
-    public void getQcTablesFor(Job j, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
+    public int getQcTablesFor(Job j, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap,Boolean present) {
         System.out.println("db.dao.QcTableDAOImpl.getQcTablesFor()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<QcTable> results=null;
-        String hql="Select q from  QcTable q INNER JOIN q.qcMatrixRow qmr where qmr.job =:j";
+        String hql="Select q from  QcTable q INNER JOIN q.qcMatrixRow qmr where qmr.job =:j and qmr.present=:p";
         
         try{
             transaction=session.beginTransaction();
             Query query=session.createQuery(hql);
             query.setParameter("j", j);
+            query.setParameter("p",present);
             results=query.list();
             
             transaction.commit();
@@ -351,6 +355,131 @@ public class QcTableDAOImpl implements QcTableDAO{
                 qcmatrixRowSubQcTableMap.put(qct.getQcMatrixRow().getId(), new HashMap<>());
                 qcmatrixRowSubQcTableMap.get(qct.getQcMatrixRow().getId()).put(qct.getSubsurface(), qct);
             }
+        }
+        return results.size();
+    }
+
+    @Override
+    public int update(Long idOfQcMatrix, Subsurface sub, Boolean result, String updateTime, User currentUser) {
+        System.out.println("db.dao.QcTableDAOImpl.update()");
+        int res=0;
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String select="Select q.id from QcTable q INNER JOIN q.qcMatrixRow qmr"
+                + "                             INNER JOIN q.subsurface sub"
+                + "                             where qmr.id =:q AND sub =:s";
+        
+        String update="Update QcTable set result=:r , updateTime=:ut, user=:usr where id in (:ids) ";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query sq=session.createQuery(select);
+            sq.setParameter("q", idOfQcMatrix);
+            sq.setParameter("s", sub);
+            
+                List<Long> ids=sq.list();
+                if(ids.isEmpty()){
+                    transaction.commit();
+                    res = -13;    //return < 0 to indicate no such qctable > for idOfQcMatrix,sub
+                }else{
+                    Query up=session.createQuery(update);
+                    up.setParameter("r", result);
+                    up.setParameter("ut", updateTime);
+                    up.setParameter("usr", currentUser);
+                    up.setParameterList("ids", ids);
+                        res=up.executeUpdate();
+                    transaction.commit();
+                }
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return res;
+    }
+
+    @Override
+    public void setAllqcTableValuesFor(Sequence seq, Job job, Long qcmatrixId,Boolean result,String updateTime, User currentUser) {
+       System.out.println("db.dao.QcTableDAOImpl.update()");
+        int res=0;
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String select="Select q.id from QcTable q INNER JOIN q.subsurface sub"
+                + "                               INNER JOIN q.qcMatrixRow qmr"
+                + "                               "
+                + "                                     WHERE "
+                + "                                 qmr.job=:j "
+                + "                                      AND"
+                + "                                 sub.sequence=:s"
+                + "                                      AND"
+                + "                                 qmr.id=:qid";
+        
+        
+        String update="Update QcTable set result=:r , updateTime=:ut, user=:usr where id in (:ids) ";
+        String update2="Update QcTable set result=:r , updateTime=:ut, user=:usr where id in ("+select+")";
+        try{
+            transaction=session.beginTransaction();
+            //Query sq=session.createQuery(select);
+            Query sq=session.createQuery(update2);
+            sq.setParameter("r", result);
+            sq.setParameter("ut", updateTime);
+            sq.setParameter("usr", currentUser);
+            sq.setParameter("j", job);
+            sq.setParameter("s", seq);
+            sq.setParameter("qid", qcmatrixId);
+            
+            /*List<Long> ids=sq.list();
+            if(ids.isEmpty()){
+            transaction.commit();
+            res = -13;    //return < 0 to indicate no such qctable > for idOfQcMatrix,sub
+            }else{
+            Query up=session.createQuery(update);
+            up.setParameter("r", result);
+            up.setParameter("ut", updateTime);
+            up.setParameter("usr", currentUser);
+            up.setParameterList("ids", ids);*/
+                        res=sq.executeUpdate();
+                    transaction.commit();
+         //       }
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+    }
+
+    @Override
+    public void createBulkQcTables(List<QcTable> qctables) {
+         System.out.println("db.dao.SummaryDAOImpl.createBulkSummaries()");
+        if(qctables.isEmpty()){
+            return;
+        }
+        int batchsize=Math.min(qctables.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<qctables.size();ii++){
+                session.saveOrUpdate(qctables.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
         }
     }
     

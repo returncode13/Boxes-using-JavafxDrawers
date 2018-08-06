@@ -9,6 +9,8 @@ import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job1.definitions.qcmatrix.selected.SelectedQcType1Model;
@@ -50,6 +52,7 @@ public class QcMatrixRowType1Model extends QcMatrixRowModelParent{
                 qcMatrixRowService.updatePresent(id,newValue);
                 parentJob.toggleQcChangedProperty();
                selectedModel.updateList();
+               
             }
             
         });
@@ -89,8 +92,11 @@ public class QcMatrixRowType1Model extends QcMatrixRowModelParent{
 
     @Override
     public void setCheckedByUser(Boolean checked) {
+       
         if(checked==null)checked=false;
         this.checkedByUser.set(checked);
+        
+       
     }
 
     @Override

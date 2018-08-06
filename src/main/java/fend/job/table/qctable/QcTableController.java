@@ -53,6 +53,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -92,15 +93,16 @@ public class QcTableController extends Stage{
     UserPreference up=null;
     /*@FXML
     private JFXTreeTableView<QcTableSequence> treeTableView;*/
+    List<TreeTableColumn<QcTableSequence,?>> allcols;
+    List<TreeItem<QcTableSequence>> treeSeq;
+    
     
      @FXML
     private TreeTableView<QcTableSequence> treetableView;
 
-    
-    public void setModel(QcTableModel item){
-        model=item;
-        qcCommentType=commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC);
-       userPrefColumnArrangement=new HashMap<>();
+    public void init(){
+         qcCommentType=commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC);
+       
         
         exec=Executors.newCachedThreadPool(runnable->{
                 Thread t=new Thread(runnable);
@@ -108,17 +110,27 @@ public class QcTableController extends Stage{
                 return t;
         });
         
+        
+    } 
+     
+     
+     
+    
+    public void setModel(QcTableModel item){
+        model=item;
+       
+        userPrefColumnArrangement=new HashMap<>();
         model.reloadSequencesProperty().addListener(REFRESH_TABLE_LISTENER);
        
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
         
         System.out.println("fend.job.table.qctable.QcTableController.setModel(): starting to build the qc table");
-         List<TreeItem<QcTableSequence>> treeSeq=new ArrayList<>();
+        treeSeq=new ArrayList<>();
         for(QcTableSequence qcseq:sequences){
-            qcseq.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
+           // qcseq.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
             TreeItem<QcTableSequence> qseqroot=new TreeItem<>(qcseq);
             for(QcTableSequence qcsub:qcseq.getChildren()){
-                qcsub.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
+             //   qcsub.refreshTableProperty().addListener(REFRESH_TABLE_LISTENER);
                 TreeItem<QcTableSequence> qcsubchild=new TreeItem<>(qcsub);
                 qseqroot.getChildren().add(qcsubchild);
             }
@@ -222,7 +234,7 @@ public class QcTableController extends Stage{
                 }
             });
             
-          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index,exec);});
+          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index,exec,model.getDbJob());});
           //Label qcL=new Label(qseq.getQcmatrix().get(index).getName().get());
              Label qcL=new Label(qcrow.getName().get());
                     VBox qcvbx=new VBox(qcL);
@@ -338,7 +350,7 @@ public class QcTableController extends Stage{
        
         totalColumnCount+=3;                    //three cols in addition to the qc matrix (seq,sub,comment);
         //loading user preferences
-        List<TreeTableColumn<QcTableSequence,?>> allcols=new ArrayList<>();
+        allcols=new ArrayList<>();
         
         JSONObject jsnLoad=null;
         
@@ -401,6 +413,18 @@ public class QcTableController extends Stage{
         /*  treetableView.getColumns().addAll(seqCol,subCol);
         treetableView.getColumns().addAll(columns);
         treetableView.getColumns().addAll(commentCol);*/
+        
+       
+        
+        
+        
+        
+        
+    }
+    
+    
+   private void buildTreeView(){
+        
         treetableView.getColumns().addAll(allcols);
         CheckBoxTreeItem<QcTableSequence> root=new CheckBoxTreeItem<>();
         root.getChildren().addAll(treeSeq);
@@ -453,15 +477,12 @@ public class QcTableController extends Stage{
         });
         
         
-       
-        
-        
-        
-        
-        
-    }
+   }
     
     public void setView(QcTableView vw){
+        buildTreeView();
+       
+        
         this.view=vw;
         
         this.setTitle("qcTable for "+model.getDbJob().getNameJobStep());
@@ -477,16 +498,53 @@ public class QcTableController extends Stage{
     
     
     public void reload(){
-        model=new QcTableModel(model.getJob());
-        treetableView.getColumns().clear();
-        this.setModel(model);
-        treetableView.refresh();
+        this.model.reloadSequencesProperty().unbind();
+        view.setDisable(true);
+        treetableView.setPlaceholder(new ProgressBar(-1));
+        allcols.clear();
+          Task<Void> qctableTask=new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+                  //  qctable.setDisable(true);
+                  model=new QcTableModel(model.getJob());
+                  QcTableController.this.setModel(model);
+                     return null;
+                    }
+                    };
+            
+             qctableTask.setOnFailed(e->{
+            qctableTask.getException().printStackTrace();
+             view.setDisable(false);
+               model.getJob().unblock();
+            });
+            qctableTask.setOnSucceeded(e->{
+                view.setDisable(false);
+                treetableView.getColumns().clear();
+                    buildTreeView();
+                   treetableView.refresh();
+                   model.getJob().unblock();
+            
+            });
+            qctableTask.setOnRunning(e->{
+                //model.getJob().block();
+                view.setDisable(true);
+                treetableView.setPlaceholder(new ProgressBar(-1.0));
+                
+            });
+            
+            exec.execute(qctableTask);
+        
+        
+        
+        
+        
+        
     }
     
     private ChangeListener<Boolean> REFRESH_TABLE_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            treetableView.refresh();
+           reload();
            
         }
     };

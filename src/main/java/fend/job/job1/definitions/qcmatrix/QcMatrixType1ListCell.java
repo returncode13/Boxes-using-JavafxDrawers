@@ -37,11 +37,15 @@ public class QcMatrixType1ListCell extends JFXListCell<QcMatrixRowType1Model>{
         checkbox.selectedProperty().addListener(new ChangeListener<Boolean>(){
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                System.out.println(".changed(): old:new "+oldValue+" "+newValue);
+                
                 getItem().setCheckedByUser(newValue);
                 
             }
             
         });
+        
+        
         
         //this.getStyleClass().add("-fx-background-color: #5264AE ");
     }

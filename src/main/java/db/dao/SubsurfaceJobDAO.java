@@ -34,5 +34,7 @@ public interface SubsurfaceJobDAO {
     public List<Subsurface> getSubsurfacesForJob(Job j);
 
     public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
+
+    public void updateTimeWhere(Job job, Subsurface sub, String updateTime);
           
 }
