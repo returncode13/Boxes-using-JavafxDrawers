@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.SubsurfaceJob;
 import db.model.Job;
+import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJobId;
 import db.model.Workspace;
@@ -36,5 +37,6 @@ public interface SubsurfaceJobDAO {
     public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
 
     public void updateTimeWhere(Job job, Subsurface sub, String updateTime);
+    public void updateTimeWhere(Job job, Sequence seq,String updateTime);
           
 }

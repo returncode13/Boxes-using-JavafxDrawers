@@ -6,6 +6,7 @@
 package db.services;
 
 import db.model.Job;
+import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
 import db.model.SubsurfaceJobId;
@@ -37,5 +38,6 @@ public interface SubsurfaceJobService {
     public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
 
     public void updateTimeWhere(Job job, Subsurface childsub,String updateTime);
+    public void updateTimeWhere(Job job, Sequence seq,String updateTime);
    
 }

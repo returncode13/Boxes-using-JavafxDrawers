@@ -275,7 +275,7 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                 }
              //   updateParent=false;
             }
-            CheckBoxCell.this.param.getTreeTableView().refresh();
+          //  CheckBoxCell.this.param.getTreeTableView().refresh();
             
            
         }
@@ -376,10 +376,10 @@ public class CheckBoxCell extends TreeTableCell<QcTableSequence, Boolean> {
                             else if(result.equals(QcMatrixRowModelParent.SELECTED)) {resForDb=true;}
                             else{resForDb=false;}
                 qcTableService.setAllqcTableValuesFor(children.get(0).getSequence(), job,qcmrId, resForDb, updateTime, AppProperties.getCurrentUser());
-                 //subsurfaceJobService.updateTimeWhere(job,childsub,updateTime);    <<TO DO
+                 subsurfaceJobService.updateTimeWhere(job,children.get(0).getSequence(),updateTime); 
               
              }
-             CheckBoxCell.this.param.getTreeTableView().refresh();
+            // CheckBoxCell.this.param.getTreeTableView().refresh();
              
         }
     

@@ -105,6 +105,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         subsurfaceJobDAO.updateTimeWhere(job,sub, updateTime);
     }
 
+    @Override
+    public void updateTimeWhere(Job job, Sequence seq, String updateTime) {
+        subsurfaceJobDAO.updateTimeWhere(job,seq,updateTime);
+    }
+
     
    
     
