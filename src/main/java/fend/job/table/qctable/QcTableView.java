@@ -25,7 +25,7 @@ public class QcTableView extends AnchorPane{
     
     public QcTableView(QcTableModel item){
         
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/qctable/qctable-2.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/qctable/qctable-3.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

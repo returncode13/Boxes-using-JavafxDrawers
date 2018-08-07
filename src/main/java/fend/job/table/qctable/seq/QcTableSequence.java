@@ -10,6 +10,7 @@ import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.User;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,10 @@ public class QcTableSequence  {
     private String updateTime=new String();
     public boolean updateChildren=false;
     public boolean updateParent=false;
+    
+    
+    private User user;
+    
     
     private BooleanProperty updateParentStatusProperty=new SimpleBooleanProperty(false);
     

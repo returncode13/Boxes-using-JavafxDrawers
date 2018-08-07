@@ -37,6 +37,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -54,6 +55,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -68,6 +70,7 @@ import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import sun.text.normalizer.UBiDiProps;
 
 /**
  *
@@ -95,6 +98,11 @@ public class QcTableController extends Stage{
     private JFXTreeTableView<QcTableSequence> treeTableView;*/
     List<TreeTableColumn<QcTableSequence,?>> allcols;
     List<TreeItem<QcTableSequence>> treeSeq;
+    BooleanProperty showUserTime=new SimpleBooleanProperty(false);
+    List<TreeTableColumn<QcTableSequence,?>> columns;
+    
+     @FXML
+    private Button fairAndJustButton;
     
     
      @FXML
@@ -121,7 +129,7 @@ public class QcTableController extends Stage{
        
         userPrefColumnArrangement=new HashMap<>();
         model.reloadSequencesProperty().addListener(REFRESH_TABLE_LISTENER);
-       
+        model.showUserTimeStampProperty().addListener(EXPAND_TABLE_COLUMN_LISTENER);
         ObservableList<QcTableSequence> sequences=model.getQctableSequences();
         
         System.out.println("fend.job.table.qctable.QcTableController.setModel(): starting to build the qc table");
@@ -142,7 +150,7 @@ public class QcTableController extends Stage{
         
         
         System.out.println("fend.job.table.qctable.QcTableController.setView(): size of sequenceList received: "+sequences.size());
-        List<TreeTableColumn<QcTableSequence,Boolean>> columns=new ArrayList<>();
+        columns=new ArrayList<>();
         ObservableList<QcMatrixRowModelParent> qcMatrixForCols;
         if(!sequences.isEmpty()){
             qcMatrixForCols=sequences.get(0).getQcmatrix();
@@ -183,6 +191,7 @@ public class QcTableController extends Stage{
             QcMatrixRowModelParent qcrow=qcMatrixForCols.get(i);
             final int index=i;
             //TreeTableColumn<QcTableSequence,Boolean> qcCol=new TreeTableColumn<>(qcrow.getName().get());
+            //TreeTableColumn<QcTableSequence,Boolean> qcCol=new TreeTableColumn<>();
             TreeTableColumn<QcTableSequence,Boolean> qcCol=new TreeTableColumn<>();
            // qcCol.setText(qcrow.getName().get());
             
@@ -234,8 +243,12 @@ public class QcTableController extends Stage{
                 }
             });
             
-          qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index,exec,model.getDbJob());});
+         // qcCol.setCellFactory((param)->{return new CheckBoxCell(param, index,exec,model.getDbJob());});
+          qcCol.setCellFactory((param)->{return new CheckBoxLabelCell(param, index,exec,model.getDbJob(),showUserTime);});
           //Label qcL=new Label(qseq.getQcmatrix().get(index).getName().get());
+          
+          
+          
              Label qcL=new Label(qcrow.getName().get());
                     VBox qcvbx=new VBox(qcL);
                     qcvbx.setRotate(-90);
@@ -247,7 +260,26 @@ public class QcTableController extends Stage{
                     ++totalColumnCount;
                     namesOfcols.add(qcL.getText());
                     userPrefColumnArrangement.put(qcL.getText(), qcCol);
+                    
+                    
+                    //who done it columns
+                    /*TreeTableColumn<QcTableSequence,String> usertimestamp=new TreeTableColumn<>("fnj");
+                    usertimestamp.setCellValueFactory(p->{return new SimpleStringProperty(p.getValue().getValue().getUpdateTime());});
+                    qcCol.getColumns().add(usertimestamp);*/
+                    
+            
+                    /*
+                    TreeTableColumn<QcTableSequence,String> userTimeCol=new TreeTableColumn<>();
+                    userTimeCol.setCellValueFactory(p->{
+                    return new SimpleStringProperty(p.getValue().getValue().getQcmatrix().get(index).getUser().getInitials()+" @ "+p.getValue().getValue().getQcmatrix().get(index).getLastUpdatedTime());
+                    
+                    });
+                    userTimeCol.setCellFactory();
+                    TreeTableColumn<QcTableSequence,?> com=new TreeTableColumn<>();
+                    com.getColumns().addAll(qcCol,userTimeCol);*/
+                    qcCol.setPrefWidth(30);
             columns.add(qcCol);
+           // columns.add(com);
         }
         
         
@@ -550,6 +582,15 @@ public class QcTableController extends Stage{
     };
     
     
+    
+    private ChangeListener<Boolean> EXPAND_TABLE_COLUMN_LISTENER = new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+         
+
+        }
+    };
+    
     private String timeNow() {
         return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
     }
@@ -564,5 +605,24 @@ public class QcTableController extends Stage{
         this.reload();
     }
 
-   
+      @FXML
+    void fairAndJust(ActionEvent event) {
+        showWhoDoneIt();
+    }
+
+    int colsize=3+AppProperties.TIMESTAMP_FORMAT.length()+1;
+    
+    private void showWhoDoneIt() {
+       // model.toggleUserTimeStamp();
+       showUserTime.set(!showUserTime.get());
+       if(showUserTime.get()){
+           colsize=180;
+       }else{
+           colsize=30;
+       }
+       for(TreeTableColumn<QcTableSequence, ?> c: columns){
+           c.setPrefWidth(colsize);
+       }
+    }
+
 }

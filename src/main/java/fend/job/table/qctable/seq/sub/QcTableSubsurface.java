@@ -164,13 +164,17 @@ public class QcTableSubsurface extends QcTableSequence{
                  }
                  
                  
+                 nq.setUser(qcTableFromDb.getUser());
+                 nq.setLastUpdatedTime(qcTableFromDb.getUpdateTime());
+                 
              }catch(Exception e){
                nq.setPassQc(q.isPassQc());
              }
             
             nq.setCheckedByUser(q.getCheckedByUser());
+            
             nq.setName(q.getName().get());
-          
+            
             nq.setQctype(q.getQctype());
             
             

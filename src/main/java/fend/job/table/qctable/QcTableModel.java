@@ -110,6 +110,7 @@ public class QcTableModel {
             femod.setId(qcmrow.getId());
             femod.setName(qcmrow.getQctype().getName());
             femod.setQctype(qcmrow.getQctype());
+            
             feqcmr.add(femod);
             qcmrlookup.put(qcmrow.getId(),qcmrow);
          //   System.out.println("fend.job.table.qctable.QcTableModel.<init>() created and added new QcMatrixRowModelParent with id: "+femod.getId()+" name: "+femod.getName().get());
@@ -208,6 +209,7 @@ public class QcTableModel {
             
             qctableSubsurface.setSequence(seq);
             qctableSubsurface.setSubsurface(s);
+            
             if(subsurfaceComments.containsKey(s)){
                 qctableSubsurface.setQcComment(subsurfaceComments.get(s).get(0));
             }
@@ -276,6 +278,19 @@ public class QcTableModel {
 
     public JobType0Model getJob() {
         return fejob;
+    }
+
+    
+    private BooleanProperty showUserTimeStampProperty=new SimpleBooleanProperty(true);
+
+    public BooleanProperty showUserTimeStampProperty() {
+        return showUserTimeStampProperty;
+    }
+    
+    
+    
+    void toggleUserTimeStamp() {
+        this.showUserTimeStampProperty.set(!this.showUserTimeStampProperty.get());
     }
     
     
