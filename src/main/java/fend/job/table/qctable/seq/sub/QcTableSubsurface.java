@@ -11,11 +11,13 @@ import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.User;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.table.qctable.seq.QcTableSequence;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.InvalidationListener;
@@ -57,7 +59,8 @@ public class QcTableSubsurface extends QcTableSequence{
     public boolean updateParent=false;
    
     private StringProperty commentProperty=new SimpleStringProperty("");
-
+     private String commentStack=new String("");
+     
      @Override
     public StringProperty commentProperty(){
         return this.commentProperty;
@@ -86,21 +89,40 @@ public class QcTableSubsurface extends QcTableSequence{
     }
 
      @Override
-    public void setQcComment(Comment subQcComment) {
+    public void setLatestComment(Comment subQcComment) {
         this.qcComment = subQcComment;
         //show the latest comment.
         if(!subQcComment.getComments().isEmpty()){
+             this.commentStack=subQcComment.getComments();
          String usertimeComment=subQcComment.getComments().split("\n")[0];
             int start=usertimeComment.indexOf(">",usertimeComment.indexOf(">")+1);
         String latestComment=usertimeComment.substring(start+1);
+        if(latestComment.trim().isEmpty()){
+            latestComment=DELETED;
+        }
         commentProperty.set(latestComment);
+            
         }else{
             commentProperty.set("");
+            
         }
+        if(parent!=null){
+                parent.redoComments();
+            }
+        
     }
     
     
     
+    
+    
+     public String getCommentStack() {
+        return commentStack;
+    }
+
+    public void setCommentStack(String commentStack) {
+        this.commentStack = commentStack;
+    }
      
      
      
@@ -136,14 +158,69 @@ public class QcTableSubsurface extends QcTableSequence{
         return observableQcMatrix;
     }
 
+    
+     private BooleanProperty redoComments=new SimpleBooleanProperty(false);
+    
+    public BooleanProperty redoCommentsProperty(){
+        return redoComments;
+    } 
+     
+    
+    Map<QcMatrixRowModelParent,Map<String,HashMap<String,User>>> raceMap=new HashMap<>();
+    final String IND="ind";
+    final String CHK="chk";
+    final String UNCHK="uchk";
+
+     @Override
+    public Map<QcMatrixRowModelParent,Map<String,HashMap<String,User>>> getRaceMap() {
+        return raceMap;
+    }
+    
+    
+     @Override
+    public void addToRaceMap(Boolean res,QcMatrixRowModelParent q,User u,String time){
+        if(!raceMap.containsKey(q)){
+            
+                raceMap.put(q, new HashMap<>());
+                raceMap.get(q).put(IND, new HashMap<>());
+                raceMap.get(q).put(CHK, new HashMap<>());
+                raceMap.get(q).put(UNCHK, new HashMap<>());
+        }
+         if(res==null){
+                raceMap.get(q).get(IND).clear();
+                raceMap.get(q).get(IND).put(time, u);
+            }
+         else if(!res){
+                raceMap.get(q).get(UNCHK).clear();
+                raceMap.get(q).get(UNCHK).put(time, u);
+            }
+         else if(res){
+                raceMap.get(q).get(CHK).clear();
+                raceMap.get(q).get(CHK).put(time, u);
+            }
+    } 
+    
      @Override
     public void setQcmatrix(List<QcMatrixRowModelParent> qcmatrix,Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap) {
         changedList.clear();
         changedListProperty.clear();
         changedListProperty.unbind();
         
+       
+        
          for(QcMatrixRowModelParent q:qcmatrix){
             QcMatrixRowModelParent nq=new QcMatrixRowModelParent();
+            if(raceMap.containsKey(q)){
+                raceMap.get(q).put(IND, new HashMap<>());
+                raceMap.get(q).put(CHK, new HashMap<>());
+                raceMap.get(q).put(UNCHK, new HashMap<>());
+            }else{
+                raceMap.put(q, new HashMap<>());
+                raceMap.get(q).put(IND, new HashMap<>());
+                raceMap.get(q).put(CHK, new HashMap<>());
+                raceMap.get(q).put(UNCHK, new HashMap<>());
+            }
+            
             nq.setId(q.getId());
              //System.out.println("loading result for QMid: "+nq.getId()+" Subid: "+subsurface.getId()+" - "+subsurface.getSubsurface());
              try{
@@ -156,10 +233,14 @@ public class QcTableSubsurface extends QcTableSequence{
                         Boolean result=qcTableFromDb.getResult();
                         if(result==null){
                             nq.setPassQc(QcMatrixRowModelParent.INDETERMINATE);
+                            raceMap.get(q).get(IND).put(qcTableFromDb.getUpdateTime(), qcTableFromDb.getUser());
+                            
                         }else if(result){
                             nq.setPassQc(QcMatrixRowModelParent.SELECTED);
+                            raceMap.get(q).get(CHK).put(qcTableFromDb.getUpdateTime(), qcTableFromDb.getUser());
                         }else{
                             nq.setPassQc(QcMatrixRowModelParent.UNSELECTED);
+                             raceMap.get(q).get(UNCHK).put(qcTableFromDb.getUpdateTime(), qcTableFromDb.getUser());
                         }
                  }
                  
@@ -210,6 +291,7 @@ public class QcTableSubsurface extends QcTableSequence{
      @Override
     public void setParent(QcTableSequence parent) {
         this.parent = parent;
+        //parent.redoCommentsProperty().bind(redoComments);
     }
 
      @Override
@@ -303,5 +385,14 @@ public class QcTableSubsurface extends QcTableSequence{
         refreshTableProperty.set(!val);
     }
     
+     @Override
+    public void redoComments() {
+        redoCommentsProperty().set(!redoComments.get());
+    }
     
+    
+     @Override
+    public boolean hasComments(){
+        return !commentProperty.get().trim().isEmpty();
+    }
 }

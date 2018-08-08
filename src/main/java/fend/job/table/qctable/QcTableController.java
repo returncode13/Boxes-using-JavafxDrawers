@@ -21,6 +21,8 @@ import db.services.UserPreferenceServiceImpl;
 import fend.comments.CommentTypeModel;
 import fend.job.table.qctable.seq.QcTableSequence;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
+import fend.job.table.qctable.comment.CommentStackModel;
+import fend.job.table.qctable.comment.CommentStackView;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -159,6 +161,27 @@ public class QcTableController extends Stage{
             qcMatrixForCols=FXCollections.observableArrayList();
         }
         
+        treetableView.setRowFactory(new Callback<TreeTableView<QcTableSequence>, TreeTableRow<QcTableSequence>>() {
+            @Override
+            public TreeTableRow<QcTableSequence> call(TreeTableView<QcTableSequence> param) {
+                
+                TreeTableRow<QcTableSequence> row=new TreeTableRow<>();
+                row.setOnContextMenuRequested(e->{
+                    
+                    QcTableSequence selectedItem=row.getItem();
+                    String cm = selectedItem.getCommentStack();
+                    CommentStackModel cms = new CommentStackModel();
+                    cms.setCommentStack(cm);
+                        if (selectedItem.isParent()) {
+                            cms.setTitle(selectedItem.getSequence().getSequenceno() + "");
+                        } else {
+                            cms.setTitle(selectedItem.getSequence().getSequenceno() + " : " + selectedItem.getSubsurface().getSubsurface());
+                        }
+
+                    CommentStackView cmv = new CommentStackView(cms);});
+                return row;
+            }
+        });
         
         
         TreeTableColumn<QcTableSequence,Long> seqCol=new TreeTableColumn<>();
@@ -261,22 +284,7 @@ public class QcTableController extends Stage{
                     namesOfcols.add(qcL.getText());
                     userPrefColumnArrangement.put(qcL.getText(), qcCol);
                     
-                    
-                    //who done it columns
-                    /*TreeTableColumn<QcTableSequence,String> usertimestamp=new TreeTableColumn<>("fnj");
-                    usertimestamp.setCellValueFactory(p->{return new SimpleStringProperty(p.getValue().getValue().getUpdateTime());});
-                    qcCol.getColumns().add(usertimestamp);*/
-                    
-            
-                    /*
-                    TreeTableColumn<QcTableSequence,String> userTimeCol=new TreeTableColumn<>();
-                    userTimeCol.setCellValueFactory(p->{
-                    return new SimpleStringProperty(p.getValue().getValue().getQcmatrix().get(index).getUser().getInitials()+" @ "+p.getValue().getValue().getQcmatrix().get(index).getLastUpdatedTime());
-                    
-                    });
-                    userTimeCol.setCellFactory();
-                    TreeTableColumn<QcTableSequence,?> com=new TreeTableColumn<>();
-                    com.getColumns().addAll(qcCol,userTimeCol);*/
+                 
                     qcCol.setPrefWidth(30);
             columns.add(qcCol);
            // columns.add(com);
@@ -289,7 +297,8 @@ public class QcTableController extends Stage{
         namesOfcols.add(COMMENTS);
         userPrefColumnArrangement.put(COMMENTS, commentCol);
        commentCol.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
-        //commentCol.setCellFactory(TextFieldCell.forTreeTableColumn());
+       //commentCol.setCellFactory(p->{return new TextFieldCell(model.getDbJob(), currentUser, qcCommentType, commentService);});
+      
         commentCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<QcTableSequence, String> param) {
@@ -305,9 +314,9 @@ public class QcTableController extends Stage{
                 return;
             }
             
-            if(e.getNewValue().isEmpty()){
-               return; 
-            }
+            /* if(e.getNewValue().isEmpty()){
+            return;
+            }*/
              currentUser=AppProperties.getCurrentUser();
             String userTimeStamp=timeNow()+" > "+currentUser.getInitials()+" > ";
             
@@ -327,13 +336,13 @@ public class QcTableController extends Stage{
                                         seqcomment.setComments(userTimeStamp+e.getNewValue());
 
                                         commentService.createComment(seqcomment);
-                                        qseq.setQcComment(seqcomment);
+                                        qseq.setLatestComment(seqcomment);
                                     }else{
                                         String oldComments=seqcomment.getComments();
                                         String newComments=userTimeStamp+e.getNewValue()+"\n"+oldComments;
                                         seqcomment.setComments(newComments);
                                         commentService.updateComment(seqcomment);
-                                        qseq.setQcComment(seqcomment);
+                                        qseq.setLatestComment(seqcomment);
                                         //commentService.addToCommentStackFor(qseq.getSequence(),null, model.getParentJob(),newComments, CommentTypeModel.TYPE_QC);
                                     }
                                 } catch (Exception ex) {
@@ -353,13 +362,13 @@ public class QcTableController extends Stage{
                                         subcomment.setComments(userTimeStamp+e.getNewValue());
 
                                         commentService.createComment(subcomment);
-                                        qseq.setQcComment(subcomment);
+                                        qseq.setLatestComment(subcomment);
                                     }else{
                                         String oldComments=subcomment.getComments();
                                         String newComments=userTimeStamp+e.getNewValue()+"\n"+oldComments;
                                         subcomment.setComments(newComments);
                                         commentService.updateComment(subcomment);
-                                        qseq.setQcComment(subcomment);
+                                        qseq.setLatestComment(subcomment);
                                         //commentService.addToCommentStackFor(qseq.getSequence(),qseq.getSubsurface(), model.getParentJob(),newComments, CommentTypeModel.TYPE_QC);
                                     }
                                 } catch (Exception ex) {
@@ -371,6 +380,7 @@ public class QcTableController extends Stage{
         
         });
         commentCol.setEditable(true);
+        
          
         seqCol.setText(SEQUENCE); 
             namesOfcols.add(SEQUENCE);

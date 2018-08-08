@@ -16,6 +16,7 @@ import app.settings.ssh.SShSettingsNode;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.controls.JFXTextArea;
+import db.model.CommentType;
 import db.model.DoubtType;
 import db.model.Job;
 import db.model.NodeProperty;
@@ -25,6 +26,8 @@ import db.model.PropertyType;
 import db.model.User;
 import db.model.UserWorkspace;
 import db.model.Workspace;
+import db.services.CommentTypeService;
+import db.services.CommentTypeServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import db.services.NodePropertyService;
@@ -66,6 +69,7 @@ import javafx.stage.Stage;
 import db.services.UserService;
 import db.services.UserWorkspaceService;
 import db.services.UserWorkspaceServiceImpl;
+import fend.comments.CommentTypeModel;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.property.JobModelProperty;
 import fend.job.job0.property.properties.JobType0Properties;
@@ -713,6 +717,9 @@ public class AppController extends Stage implements Initializable{
     }
     
     private BooleanProperty enableButtons=new SimpleBooleanProperty(false);
+    private CommentTypeService commentTypeService=new CommentTypeServiceImpl();
+    
+    
     
     @FXML
     void startNewWorkspace(ActionEvent event) {
@@ -949,8 +956,16 @@ public class AppController extends Stage implements Initializable{
            
        });
        
-       
-        
+       /*
+       check if the comment types exist
+       if not create
+       **/
+        CommentType qccommentType=null;
+        if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
+            qccommentType=new CommentType();
+            qccommentType.setType(CommentTypeModel.TYPE_QC);
+            commentTypeService.createCommentType(qccommentType);
+        }
     }
     
     

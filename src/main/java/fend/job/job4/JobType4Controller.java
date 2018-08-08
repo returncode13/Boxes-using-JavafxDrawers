@@ -39,6 +39,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.QcTypeService;
+import db.services.QcTypeServiceImpl;
 import db.services.SubsurfaceJobService;
 import db.services.SubsurfaceJobServiceImpl;
 import db.services.SummaryService;
@@ -147,11 +149,13 @@ public class JobType4Controller implements JobType0Controller{
     @FXML
     private Label message;
     
+    QcTypeService qcTypeService=new QcTypeServiceImpl();
+    
     void setModel(JobType4Model item) {
         model=item;
         //dbjob=jobService.getJob(model.getId());
          dbjob=model.getDatabaseJob();
-
+numberOfTypes=qcTypeService.getAllQcTypes().size();
         model.getHeadersCommited().addListener(headerExtractionListener);
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       
@@ -1007,13 +1011,23 @@ parent.addChild(model);*/
 
     
     
-    private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
-        @Override
+    int numberOfTypes;
+     private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
+         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-            System.out.println("fend.job.job4.JobType4Controller.QC_CHANGED_LISTENER: will reload qcs");
-            
-            qcTableModel=null;
-            
+            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            if(qcTableModel!=null && qcTableView!=null){
+                //reload only if the number of items in the 
+                if(model.getQcMatrixModel().listSize()==numberOfTypes){
+                    System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload the qctable");
+                    model.block();
+                    qcTableModel.reloadSequences();
+                }else{
+                    System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: mismatch of size: model.getQcMatrixModel().listSize() != numberOfTypes : "+ model.getQcMatrixModel().listSize()+"!="+numberOfTypes);
+                }
+                
+            }
+            //qcTableModel=null;
         }
     };
     

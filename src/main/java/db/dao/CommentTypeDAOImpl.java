@@ -38,5 +38,21 @@ public class CommentTypeDAOImpl implements CommentTypeDAO {
         }
         return results.get(0);
     }
+
+   
+    @Override
+    public void createCommentType(CommentType c) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        try{
+                transaction=session.beginTransaction();
+            session.saveOrUpdate(c);
+            transaction.commit();
+        }catch(Exception e){
+            
+        }finally{
+            session.close();
+        }
+    }
     
 }

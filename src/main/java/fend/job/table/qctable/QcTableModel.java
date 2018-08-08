@@ -74,15 +74,7 @@ public class QcTableModel {
     public void reloadSequences(){
         reloadSequencesProperty.set(!reloadSequencesProperty.get());
     }
-    /*public BooleanProperty qcSelectionChangedProperty(){
-    return qcSelectionChanged;
-    }
     
-    public void userHasChangedQcSelection(){
-    
-    Boolean val=qcSelectionChanged.get();
-    qcSelectionChanged.set(!val);
-    }*/
     
     public QcTableModel(JobType0Model fejob) {
         this.fejob = fejob;
@@ -211,7 +203,7 @@ public class QcTableModel {
             qctableSubsurface.setSubsurface(s);
             
             if(subsurfaceComments.containsKey(s)){
-                qctableSubsurface.setQcComment(subsurfaceComments.get(s).get(0));
+                qctableSubsurface.setLatestComment(subsurfaceComments.get(s).get(0));
             }
            
             
@@ -241,15 +233,17 @@ public class QcTableModel {
             seqtreeroot.setQcmatrix(feqcmr,qcmatrixRowSubQcTableMap);      //the qc matrix are set for the subs in this call
             seqtreeroot.setSequence(seq);
             if(sequenceComments.containsKey(seq)){
-                seqtreeroot.setQcComment(sequenceComments.get(seq).get(0));
+                seqtreeroot.setLatestComment(sequenceComments.get(seq).get(0));
             }
             //System.out.println("fend.job.table.qctable.QcTableModel.<init>(): starting to build for seq: "+seq.getSequenceno());
            // seqtreeroot.setIsParent(true);
             for(QcTableSequence sub:obssubs){
                 sub.setParent(seqtreeroot);
+                
             }
+            obssubs.get(obssubs.size()-1).redoComments();
            // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): finished building for seq: "+seq.getSequenceno());
-            
+          
             qctableSequences.add(seqtreeroot);      //each entry can now be rendered as seq.Long   sub.string   qcmatrix[1].check/Uncheck/Indeterminate  qcmatrix[2].check/Uncheck/Indeterminate... qcmatrix[n].check/uncheck/indeteminate
         }
         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): added the seqs to the qctableSequences List");

@@ -13,4 +13,6 @@ import db.model.CommentType;
  */
 public interface CommentTypeService {
     public CommentType getCommentTypeByName(String type);
+
+    public void createCommentType(CommentType qccommentType);
 }

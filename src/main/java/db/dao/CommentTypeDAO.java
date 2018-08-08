@@ -13,4 +13,5 @@ import db.model.CommentType;
  */
 public interface CommentTypeDAO {
     public CommentType getCommentTypeByName(String type);
+    public void createCommentType(CommentType c);
 }

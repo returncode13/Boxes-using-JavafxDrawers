@@ -26,7 +26,7 @@ public class PQCheckBox extends CheckBox{
     
     @Override
     public void fire() {
-        super.fire(); //To change body of generated methods, choose Tools | Templates.
+        super.fire(); 
         if(!isDisabled()){
             
             if(isAllowIndeterminate()){
