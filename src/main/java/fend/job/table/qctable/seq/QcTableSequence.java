@@ -273,8 +273,9 @@ public class QcTableSequence  {
     public void addToRaceMap(Boolean res,QcMatrixRowModelParent q,User u,String time){
         
     }
+    private String winningTime=new String("");
     
-    public User getWinnerForQcMatrixFromChildren(QcMatrixRowModelParent q,String winningtime){
+    public User getWinnerForQcMatrixFromChildren(QcMatrixRowModelParent q){
          Map<QcMatrixRowModelParent,Map<String,HashMap<String,User>>> temp=new HashMap<>();
          Map<String,Map<String,User>> winners=new HashMap<>();
          winners.put(IND, new HashMap<>());
@@ -299,7 +300,7 @@ public class QcTableSequence  {
             List<String> sortedTimes=new ArrayList<>(times);
             Collections.sort(sortedTimes);
             String reqKey=sortedTimes.get(sortedTimes.size()-1);
-            winningtime=reqKey;
+            winningTime=reqKey;
             return winners.get(IND).get(reqKey);
             
         }else if(winners.get(UNCHK).values().size()>0){
@@ -307,21 +308,27 @@ public class QcTableSequence  {
             List<String> sortedTimes=new ArrayList<>(times);
             Collections.sort(sortedTimes);
             String reqKey=sortedTimes.get(sortedTimes.size()-1);
-            winningtime=reqKey;
+            winningTime=reqKey;
             return winners.get(UNCHK).get(reqKey);
         }else{
              Set<String> times=winners.get(CHK).keySet();
             List<String> sortedTimes=new ArrayList<>(times);
             Collections.sort(sortedTimes);
             String reqKey=sortedTimes.get(sortedTimes.size()-1);
-            winningtime=reqKey;
+            winningTime=reqKey;
             return winners.get(CHK).get(reqKey);
         }
          }catch(Exception e){
-             winningtime=AppProperties.timeNow();
+             winningTime=AppProperties.timeNow();
              return AppProperties.getCurrentUser();
          }
     }
+
+    public String getWinningTime() {
+        return winningTime;
+    }
+    
+    
     
     
 

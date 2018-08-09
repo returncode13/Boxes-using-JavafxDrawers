@@ -21,7 +21,7 @@ public class AppProperties {
     public static String DEVELOPER_MODE="DEVELOPER";
     public static String OFFICE_MODE="OFFICE";
     public static String PRODUCTION_MODE="PRODUCTION";
-    public static final String VERSION="Internal-36.0.7";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="Internal-36.0.9";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.
@@ -45,7 +45,7 @@ public class AppProperties {
     public static double PERCENTAGE_OF_PROCESSORS_USED=0.5;                 // 0<p<=1 control for percentage of processors used.
     
     
-    public static int APPLICATION_PORT_ON_LOCAL=5435;                       //port to be bound on localhost
+    public static int APPLICATION_PORT_ON_LOCAL=5434;                       //port to be bound on localhost
     public static int APPLICATION_PORT_ON_REMOTE=5432;                      //irdb host port that is been used by postgres
     public static final String URLTEMPLATE_FOR_DATABASE_LISTING="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/template1";   //for listing the databases
     final public static String PROJECT_URL="jdbc:postgresql://localhost:"+AppProperties.APPLICATION_PORT_ON_LOCAL+"/";  //for appending to the chosen database

@@ -216,7 +216,11 @@ public class CheckBoxLabelCell extends TreeTableCell<QcTableSequence, Boolean> {
                  if(selectedItem.isParent()){
                     // label.setText(" user @ time");
                      //System.out.println("fend.job.table.qctable.CheckBoxLabelCell.updateItem() Winner: "+selectedItem.getWinnerForQcMatrixFromChildren(selectedItem.getQcmatrix().get(index), winTime).getInitials()+" @ "+winTime);
-                     label.setText(selectedItem.getWinnerForQcMatrixFromChildren(selectedItem.getQcmatrix().get(index), winTime).getInitials()+" @ "+winTime);
+                     
+                     String sequser=selectedItem.getWinnerForQcMatrixFromChildren(selectedItem.getQcmatrix().get(index)).getInitials();
+                     String time=selectedItem.getWinningTime();
+                     //label.setText(selectedItem.getWinnerForQcMatrixFromChildren(selectedItem.getQcmatrix().get(index), winTime).getInitials()+" @ "+winTime);
+                     label.setText(sequser+" @ "+time);
                  }else{
                      label.setText(selectedItem.getQcmatrix().get(index).getUser().getInitials()+" @ "+selectedItem.getQcmatrix().get(index).getLastUpdatedTime());
                  }

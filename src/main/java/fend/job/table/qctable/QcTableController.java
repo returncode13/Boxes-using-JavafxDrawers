@@ -46,9 +46,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -64,9 +66,12 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import middleware.sequences.SequenceHeaders;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
@@ -296,7 +301,8 @@ public class QcTableController extends Stage{
         TreeTableColumn<QcTableSequence,String> commentCol=new TreeTableColumn<>(COMMENTS);
         namesOfcols.add(COMMENTS);
         userPrefColumnArrangement.put(COMMENTS, commentCol);
-       commentCol.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+       //commentCol.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+       commentCol.setCellFactory(TreeTextFieldCellExt.forTreeTableColumn());
        //commentCol.setCellFactory(p->{return new TextFieldCell(model.getDbJob(), currentUser, qcCommentType, commentService);});
       
         commentCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, String>, ObservableValue<String>>() {
@@ -446,7 +452,13 @@ public class QcTableController extends Stage{
               }
           }
            
-          
+          treeSeq.sort((o1, o2) -> {
+           
+            
+           // return ((SequenceHeaders)o1.getValue()).getSequence().getSequenceno().compareTo(((SequenceHeaders)o2.getValue()).getSequence().getSequenceno());
+           return o2.getValue().getSequence().getSequenceno().compareTo(o1.getValue().getSequence().getSequenceno());
+        });
+        
       }
        
         
@@ -477,6 +489,16 @@ public class QcTableController extends Stage{
         treetableView.setRoot(root);
         treetableView.setShowRoot(false);
         treetableView.setEditable(true);
+        
+        treetableView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(event.getButton()==MouseButton.PRIMARY && event.getClickCount()==2){
+                    event.consume();
+                }
+            }
+        });
+        
         
         final List<TreeTableColumn<QcTableSequence,?>> unchangedColumns=Collections.unmodifiableList(treetableView.getColumns());
         
@@ -519,6 +541,48 @@ public class QcTableController extends Stage{
           model.getJob().exitedQcTable();
             
             
+        });
+        
+        
+        
+        
+        treetableView.getColumns().addListener(new ListChangeListener<TreeTableColumn<QcTableSequence, ?>>(){
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends TreeTableColumn<QcTableSequence, ?>> c) {
+                 System.out.println("fend.job.table.qctable.QcTableController.setModel(): Save preferences now");
+            
+            
+            ObservableList<TreeTableColumn<QcTableSequence,?>> cols=treetableView.getColumns();
+            int[] columnOrder=new int[cols.size()];
+            
+            for(int i=0;i<cols.size();i++){
+                columnOrder[i]=unchangedColumns.indexOf(cols.get(i));
+                if(cols.get(i)
+                         .getGraphic()!=null){
+                    jsn.put(""+i,cols.get(i)
+                         .getGraphic()
+                         .getAccessibleText());
+                }else{
+                    jsn.put(""+i,cols.get(i).getText());
+                }
+                
+                 
+                
+            }
+            
+            List<Integer> order=new ArrayList<>();
+            for(int i=0;i<columnOrder.length;i++){
+                System.out.print(" "+columnOrder[i]+" ");
+              order.add(i);
+                  
+            }System.out.println("");
+            jsn.put(JSON_ORDER, order);
+        
+          String newPref=jsn.toString();
+          up.setJsonProperty(newPref);
+          userPreferenceService.updateUserPreference(up);
+            
+            }
         });
         
         

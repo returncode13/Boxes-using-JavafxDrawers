@@ -8,7 +8,11 @@ package fend.job.table.qctable;
 import fend.job.table.qctable.comment.CommentStackModel;
 import fend.job.table.qctable.comment.CommentStackView;
 import fend.job.table.qctable.seq.QcTableSequence;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 /**
  *
@@ -19,22 +23,16 @@ public class TreeTextFieldCellExt extends TextFieldTreeTableCell<QcTableSequence
     
     QcTableSequence selectedItem;
     public TreeTextFieldCellExt() {
-         
-        setOnContextMenuRequested(e->{
-              selectedItem= getTreeTableView().getSelectionModel().getModelItem(getTreeTableRow().getIndex()).getValue();
-            String cm=selectedItem.getComment();
-            CommentStackModel cms=new CommentStackModel();
-            cms.setCommentStack(cm);
-            if(selectedItem.isParent()){
-                cms.setTitle(selectedItem.getSequence().getSequenceno()+"");
-            }else{
-                cms.setTitle(selectedItem.getSequence().getSequenceno()+" : "+selectedItem.getSubsurface().getSubsurface());
+        this.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(event.getButton()==MouseButton.PRIMARY && event.getClickCount()==2){
+                    event.consume();
+                }
             }
-           
-            
-            CommentStackView cmv=new CommentStackView(cms);
         });
-        
     }
+    
+    
     
 }
