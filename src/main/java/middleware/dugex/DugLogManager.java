@@ -238,6 +238,9 @@ public class DugLogManager {
          
             
         }
+        
+        System.out.println("middleware.dugex.DugLogManager.work(): Versioning of the logs: ");
+        logsService.versioningOfLogsFor(dbJob);
     }
 
     private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType,Map<String,List<LogInformation>> mapofLogs,int recursionCounter){
@@ -261,7 +264,11 @@ public class DugLogManager {
             for(int ii=0;ii<filesToCommit.size();ii++){
           //  for(FileWrapper fw:filesToCommit){
                 FileWrapper fw=filesToCommit.get(ii);
-            
+                /* List<Subsurface> allsubsInDatabase=subsurfaceService.getSubsurfaceList();
+                Map<String,Subsurface> subm=new HashMap<>();
+                for(Subsurface s:allsubsInDatabase){
+                subm.put(s.getSubsurface(), s);
+                }*/
                 final int iii=ii;
                     Callable<String> task= new Callable<String>(){
                         @Override
@@ -308,7 +315,11 @@ public class DugLogManager {
                             li.log=fw.fwrap;
                             try{
                                 Subsurface sbb=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
-                                sbb.getSubsurface();
+                                /* if(subm.containsKey(linename)){
+                                
+                                }*/
+                                //Subsurface sbb=subm.get(linename);
+                               // sbb.getSubsurface();
                                 li.linename=sbb;
                                 li.insightVersion=insight;
                                 li.timestamp=hackTimeStamp(fw.fwrap);
@@ -322,7 +333,7 @@ public class DugLogManager {
                           
                             }
                             catch(NullPointerException npe){
-                                System.out.println("middleware.dugex.DugLogManager.extractInformation(): COULD NOT ASSOCIATE A SUBSURFACE FOR LOG FILE: "+li.log.getAbsolutePath());
+                                System.out.println("middleware.dugex.DugLogManager.extractInformation(): COULD NOT ASSOCIATE A SUBSURFACE FOR LOG FILE: "+li.log.getAbsolutePath()+" Has the database been updated for this line?");
                                 continue;
                             }
                             

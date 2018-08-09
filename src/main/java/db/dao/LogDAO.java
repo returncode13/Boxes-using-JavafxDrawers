@@ -59,4 +59,5 @@ public interface LogDAO {
     public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub);
 
     public void deleteLogsFor(Job job);
+    public void versioningOfLogsFor(Job j);
 }

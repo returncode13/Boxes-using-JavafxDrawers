@@ -59,4 +59,5 @@ public interface LogService {
     public void deleteLogsFor(Job dbjob);
 
     public void bulkUpdateOnLogs(Volume dbvol, Fheader h, Subsurface subsurface);
+    public void versioningOfLogsFor(Job j);
 }

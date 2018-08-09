@@ -92,7 +92,6 @@ public class QcMatrixRowType1Model extends QcMatrixRowModelParent{
 
     @Override
     public void setCheckedByUser(Boolean checked) {
-       
         if(checked==null)checked=false;
         this.checkedByUser.set(checked);
         

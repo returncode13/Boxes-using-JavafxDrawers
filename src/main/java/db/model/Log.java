@@ -56,7 +56,7 @@ public class Log implements Serializable{
     @ManyToOne
     @JoinColumn(name="workflow_fk",nullable = true)
     private Workflow workflow=null;
-    /* @Column(name="numberOfRuns")
+   /* @Column(name="numberOfRuns")
     private Long numberOfRuns;*/
 
     @Column(name="logPath",length=4096)
@@ -94,10 +94,24 @@ public class Log implements Serializable{
     private String summaryTime;
     
     
-    @Formula("(select count(*) from obpmanager.log l where l.job_fk=job_fk AND l.volume_headers_fk=volume_headers_fk AND l.subsurface_fk=subsurface_fk)")
-   // @Column(name="version")
+   // @Formula("(select count(*) from obpmanager.log l where l.job_fk=job_fk AND l.volume_headers_fk=volume_headers_fk AND l.subsurface_fk=subsurface_fk)")
+    @Column(name="version")
     private Long version;
 
+    
+   @Column(name="is_max_version")
+   private Boolean isMaxVersion;
+
+    public Boolean isMaxVersion() {
+        return isMaxVersion;
+    }
+
+    public void setIsMaxVersion(Boolean isMaxVersion) {
+        this.isMaxVersion = isMaxVersion;
+    }
+   
+   
+    
     
     @Column(name="input_volumes",columnDefinition = "text")
     private String inputVolumeNames=new String();

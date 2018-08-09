@@ -1143,6 +1143,7 @@ private UserPreferenceService userPreferenceService=new UserPreferenceServiceImp
     
     
     
+    
 
    private ChangeListener<Boolean> QC_CHANGED_LISTENER=new ChangeListener<Boolean>() {
         @Override
@@ -1150,6 +1151,7 @@ private UserPreferenceService userPreferenceService=new UserPreferenceServiceImp
             System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
             if(qcTableModel!=null && qcTableView!=null){
                 //reload only if the number of items in the 
+                numberOfTypes=qcTypeService.getAllQcTypes().size();
                 if(model.getQcMatrixModel().listSize()==numberOfTypes){
                     System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload the qctable");
                     model.block();

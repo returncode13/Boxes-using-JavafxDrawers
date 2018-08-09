@@ -1181,6 +1181,7 @@ public class JobType2Controller implements JobType0Controller{
             System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
             if(qcTableModel!=null && qcTableView!=null){
                 //reload only if the number of items in the 
+                 numberOfTypes=qcTypeService.getAllQcTypes().size();
                 if(model.getQcMatrixModel().listSize()==numberOfTypes){
                     System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload the qctable");
                     model.block();

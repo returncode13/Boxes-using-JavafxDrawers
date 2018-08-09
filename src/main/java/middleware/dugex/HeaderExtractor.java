@@ -320,6 +320,7 @@ public class HeaderExtractor {
                         for(int kk=0;kk<headers.size();kk++){
                             Header h=headers.get(kk);
                             logService.bulkUpdateOnLogs(dbvol, h, h.getSubsurface());
+                            
                             progress.set((double)(kk+1)/headers.size());
                         }
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): "+timeNow()+"   Completed update of logs for "+headers.size()+" headers");
@@ -328,7 +329,7 @@ public class HeaderExtractor {
                          message.set("updating delete flags");
                          progress.set(-1);
                          headerService.updateDeleteFlagsFor(dbvol,subsurfacesOnDisk);
-                   
+                         headerService.updateRunInsightWorkflowVariables(dbjob,dbvol);
                     
           }
                         
@@ -336,7 +337,7 @@ public class HeaderExtractor {
                         message.set("checking for duplicates");
                         progress.set(-1);
                         headerService.checkForMultipleSubsurfacesInHeadersForJob(dbjob);
-                   
+                        
                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): shutting down executorService");
                     message.set("");
                     progress.set(0);

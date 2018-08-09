@@ -115,6 +115,11 @@ public class HeaderServiceImpl implements HeaderService{
         hDao.updateDeleteFlagsFor(vol,  subsurfacesOnDisk);
     }
 
+    @Override
+    public void updateRunInsightWorkflowVariables(Job dbjob, Volume dbvol) {
+        hDao.updateRunInsightWorkflowVariables(dbjob, dbvol);
+    }
+
     
     
     

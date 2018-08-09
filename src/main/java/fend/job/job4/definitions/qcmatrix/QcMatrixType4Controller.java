@@ -74,7 +74,6 @@ public class QcMatrixType4Controller {
             qcMatrixRow.setName(name);
             qcMatrixRow.setQctype(qctype);
             qcMatrixRow.setParentJob(qcMatrixModel.getParentjob());
-            qcMatrixModel.addQcMatrixRow(qcMatrixRow);
             qcMatrixRow.setSelectionModel(qcMatrixModel.getSelectedModel());
             qcMatrixModel.addQcMatrixRow(qcMatrixRow);
             qcMatrixModel.getSelectedModel().updateList();

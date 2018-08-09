@@ -135,21 +135,21 @@ public class Header implements Serializable{
     private Boolean deleted=false; 
     
     
-    @Formula("(select count(*) from obpmanager.log L where L.job_fk=job_fk and L.subsurface_fk=subsurface_fk)")
-   // @Column(name="NumberOfRuns")
+   // @Formula("(select count(*) from obpmanager.log L where L.job_fk=job_fk and L.subsurface_fk=subsurface_fk)")
+    @Column(name="NumberOfRuns")
     private Long numberOfRuns=0L;                                               //number of times the subsurface was run
     
-    @Formula("(select l.insightversion from obpmanager.log l where l.timestamp in "
+  /*  @Formula("(select l.insightversion from obpmanager.log l where l.timestamp in "
                 + "("
                     + "select max(ll.timestamp) from obpmanager.log ll where ll.job_fk=job_fk and ll.subsurface_fk=subsurface_fk"
                 + ")"
                 + "AND l.job_fk=job_fk AND l.subsurface_fk=subsurface_fk"
             + ")"
-            + "")    
-  //  @Column(name="InsightVersion")
+            + "")    */
+    @Column(name="InsightVersion")
     private String insightVersion;                                        //version of insight as derived from the latest log.
     
-    @Formula("("
+   /* @Formula("("
             + "select W.wfversion from  obpmanager.workflow W where W.id in "
                     + "("
                         +"select l.workflow_fk from obpmanager.log l where l.timestamp in "
@@ -158,8 +158,8 @@ public class Header implements Serializable{
                         + ")"
                         + "AND l.job_fk=job_fk AND l.subsurface_fk=subsurface_fk"
                     + ")"
-            + ")")
-   // @Column(name="workflowVersion")                                       //version of workflow from latest log
+            + ")")*/
+    @Column(name="workflowVersion")                                       //version of workflow from latest log
     private Long workflowVersion;
     
     

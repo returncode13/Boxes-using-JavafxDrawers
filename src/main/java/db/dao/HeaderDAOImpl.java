@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import db.model.Header;
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workspace;
@@ -626,6 +627,75 @@ selectQuery.setParameter("subid", sub);
                     }
                  
             }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateRunInsightWorkflowVariables(Job j, Volume v) {
+        System.out.println("db.dao.HeaderDAOImpl.updateRunInsightWorkflowVariables()");
+       Session session=HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       List<Header> headersToBeUpdated=new ArrayList<>();
+       String hqlLatestLogs="Select l from Log l where l.job=:jb and l.volume=:v and l.isMaxVersion=true";
+       try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlLatestLogs);
+            query.setParameter("jb", j);
+            query.setParameter("v", v);
+            
+            List<Log> latestLogs=query.list();
+            transaction.commit();
+            
+            for(Log l:latestLogs){
+                Header h=l.getHeader();
+                if(h!=null){
+                    h.setNumberOfRuns(l.getVersion()+1);
+                    h.setInsightVersion(l.getInsightVersion());
+                    h.setWorkflowVersion(l.getWorkflow().getWfversion());
+                    headersToBeUpdated.add(h);
+                }
+               
+            }
+            
+            System.out.println("db.dao.HeaderDAOImpl.updateRunInsightWorkflowVariables(): will update "+headersToBeUpdated.size());
+            
+            
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+       
+       updateBulkHeaders(headersToBeUpdated);
+    }
+
+    private void updateBulkHeaders(List<Header> headersToBeUpdated) {
+          if(headersToBeUpdated.isEmpty()) {
+            System.out.println("db.dao.HeaderDAOImpl.updateBulkHeaders(): No headers to be updated!");
+            return;
+        }
+         System.out.println("db.dao.HeaderDAOImpl.updateBulkHeaders():");
+          int batchsize=Math.min(headersToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<headersToBeUpdated.size();ii++){
+                session.update(headersToBeUpdated.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
         }catch(Exception e){
             e.printStackTrace();
         }finally{

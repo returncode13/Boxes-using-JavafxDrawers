@@ -10,13 +10,17 @@ import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Fheader;
 import db.model.Job;
 import db.model.Pheader;
 import db.model.Subsurface;
 import db.model.Workspace;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -659,6 +663,94 @@ public class LogDAOImpl implements LogDAO{
                 int result=delQuery.executeUpdate();
             }
             
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void versioningOfLogsFor(Job j) {
+         System.out.println("db.dao.LogDAOImpl.deleteLogsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Log> results=null;
+        String hqlSelect="Select l from Log l where l.job =:j order by l.subsurface asc,l.timestamp asc";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", j);
+            results=query.list();
+            
+            Subsurface ref=null;
+            Log earlierLog=null;
+            if(!results.isEmpty()){
+                ref=results.get(0).getSubsurface();
+                earlierLog=results.get(0);
+            }
+            int i=0;
+            long ver;
+            long max=0L;
+            int count=0;
+            
+            for(Log l:results){
+               
+                
+                if(l.getSubsurface().equals(ref)){
+                    ver=i++;
+                    //if(ver>max) max=ver;
+                    earlierLog.setIsMaxVersion(false);
+                    
+                }else{
+                    
+                    i=0;
+                    ver=i++;
+                    ref=l.getSubsurface();
+                    earlierLog.setIsMaxVersion(true);
+                    
+                }
+                l.setVersion(ver);
+                
+                earlierLog=l;
+                
+            }
+            earlierLog.setIsMaxVersion(true);
+            
+            bulkUpdateOnLogs(results);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+       
+    }
+
+    private void bulkUpdateOnLogs(List<Log> logsToBeUpdated) {
+       
+        if(logsToBeUpdated.isEmpty()) {
+            System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs(): No logs to be updated!");
+            return;
+        }
+         System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+          int batchsize=Math.min(logsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<logsToBeUpdated.size();ii++){
+                session.update(logsToBeUpdated.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
             
             transaction.commit();
             

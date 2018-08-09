@@ -55,5 +55,6 @@ public interface HeaderDAO {
 
     public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk);   //if header has sub NOT belonging to subsurfacesOnDisk, then header.delete=true
     
+    public void updateRunInsightWorkflowVariables(Job j,Volume v);
     
 }

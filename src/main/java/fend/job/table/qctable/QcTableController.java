@@ -468,6 +468,9 @@ public class QcTableController extends Stage{
    private void buildTreeView(){
         
         treetableView.getColumns().addAll(allcols);
+       
+        
+        
         CheckBoxTreeItem<QcTableSequence> root=new CheckBoxTreeItem<>();
         root.getChildren().addAll(treeSeq);
         root.setIndependent(true);

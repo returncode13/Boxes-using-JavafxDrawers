@@ -160,6 +160,11 @@ public class LogServiceImpl implements LogService{
         ldao.bulkUpdateOnLogs(dbvol, h, subsurface);
     }
 
+    @Override
+    public void versioningOfLogsFor(Job j) {
+        ldao.versioningOfLogsFor(j);
+    }
+
    
     
 }
