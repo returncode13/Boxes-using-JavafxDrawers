@@ -301,8 +301,8 @@ public class QcTableController extends Stage{
         TreeTableColumn<QcTableSequence,String> commentCol=new TreeTableColumn<>(COMMENTS);
         namesOfcols.add(COMMENTS);
         userPrefColumnArrangement.put(COMMENTS, commentCol);
-       //commentCol.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
-       commentCol.setCellFactory(TreeTextFieldCellExt.forTreeTableColumn());
+       commentCol.setCellFactory(TextFieldTreeTableCell.forTreeTableColumn());
+      // commentCol.setCellFactory(TreeTextFieldCellExt.forTreeTableColumn());
        //commentCol.setCellFactory(p->{return new TextFieldCell(model.getDbJob(), currentUser, qcCommentType, commentService);});
       
         commentCol.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<QcTableSequence, String>, ObservableValue<String>>() {

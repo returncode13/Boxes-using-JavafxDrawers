@@ -2469,20 +2469,25 @@ public class WorkspaceController {
         Job jchild = link.getChild();
         List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
         Boolean passQc = true;
+        Boolean failed=false;
         for (QcMatrixRow qcmr : parentQcMatrix) {
             try {
                 QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
                 Boolean qcresult;
-                if(qctableentries==null){
+                if(qctableentries==null){ 
                     qcresult=false;
                 }else{
                     qcresult=qctableentries.getResult();
                 }
                 
                 if (qcresult == null) {
-                    qcresult = false;
+                   // qcresult = false;
+                  // passQc=null;
+                  failed=true;
+                }else{
+                    passQc = passQc && qcresult;
                 }
-                passQc = passQc && qcresult;
+                
             } catch (Exception ex) {
                 Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2491,8 +2496,12 @@ public class WorkspaceController {
         
         
         ResultHolder resultHolder=new ResultHolder();
-        if (!passQc) {
+        if(failed){
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+        }else
+        if (!passQc) {
+            resultHolder.result=DEPENDENCY_FAIL_WARNING;
             resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }else{
             resultHolder.result=DEPENDENCY_PASS;
@@ -2507,21 +2516,26 @@ public class WorkspaceController {
         Job lparent = link.getParent();
         Job jchild = link.getChild();
         List<QcMatrixRow> childQcMatrix = qcMatrixRowService.getQcMatrixForJob(jchild, true);    //put this in a map
-        Boolean passQc = true;
+         Boolean passQc = true;
+        Boolean failed=false;
         for (QcMatrixRow qcmr : childQcMatrix) {
             try {
                 QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
                 Boolean qcresult;
-                if(qctableentries==null){
+                if(qctableentries==null){ 
                     qcresult=false;
                 }else{
                     qcresult=qctableentries.getResult();
                 }
                 
                 if (qcresult == null) {
-                    qcresult = false;
+                   // qcresult = false;
+                  // passQc=null;
+                  failed=true;
+                }else{
+                    passQc = passQc && qcresult;
                 }
-                passQc = passQc && qcresult;
+                
             } catch (Exception ex) {
                 Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -2530,12 +2544,16 @@ public class WorkspaceController {
         
         
         ResultHolder resultHolder=new ResultHolder();
-        if (!passQc) {
+        if(failed){
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
-            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+        }else
+        if (!passQc) {
+            resultHolder.result=DEPENDENCY_FAIL_WARNING;
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }else{
             resultHolder.result=DEPENDENCY_PASS;
-            resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(jchild.getNameJobStep(), lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+            resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(lparent.getNameJobStep(), jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }
         
         return resultHolder;

@@ -5,10 +5,13 @@
  */
 package fend.job.job3.definitions.qcmatrix.qcmatrixrow;
 
+import app.properties.AppProperties;
 import db.model.QcMatrixRow;
 import db.model.QcType;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job1.definitions.qcmatrix.selected.SelectedQcType1Model;
@@ -40,19 +43,24 @@ public class QcMatrixRowType3Model extends QcMatrixRowModelParent{
     BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
     SelectedQcType3Model selectedModel;
     JobType0Model parentJob;
+   
     
     public QcMatrixRowType3Model() {
         
         checkedByUser.addListener(new ChangeListener<Boolean>(){
+           
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+               
                
                 qcMatrixRowService.updatePresent(id,newValue);
                 parentJob.toggleQcChangedProperty();
                 selectedModel.updateList();
+               
             }
             
         });
+           
     }
     
      public void setSelectionModel(SelectedQcType3Model selectedModel) {

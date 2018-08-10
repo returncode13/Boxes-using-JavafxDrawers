@@ -1149,18 +1149,25 @@ private UserPreferenceService userPreferenceService=new UserPreferenceServiceImp
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            numberOfTypes=qcTypeService.getAllQcTypes().size();
             if(qcTableModel!=null && qcTableView!=null){
                 //reload only if the number of items in the 
-                numberOfTypes=qcTypeService.getAllQcTypes().size();
+                //numberOfTypes=qcTypeService.getAllQcTypes().size();
                 if(model.getQcMatrixModel().listSize()==numberOfTypes){
                     System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload the qctable");
                     model.block();
                     qcTableModel.reloadSequences();
+                    
                 }else{
                     System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: mismatch of size: model.getQcMatrixModel().listSize() != numberOfTypes : "+ model.getQcMatrixModel().listSize()+"!="+numberOfTypes);
                 }
                 
             }
+            
+            
+                if(model.getQcMatrixModel().listSize()==numberOfTypes){
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, AppProperties.timeNow());
+                }
             //qcTableModel=null;
         }
     };
