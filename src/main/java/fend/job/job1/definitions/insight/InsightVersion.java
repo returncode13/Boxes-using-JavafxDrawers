@@ -62,6 +62,7 @@ public class InsightVersion {
                     //jobService.updateJob(job.getId(), job);
                     jobService.updateInsightVersionInJob(job);
                     //if(count>0)subsurfaceJobService.updateTimeWhereJobEquals(job, AppProperties.timeNow());     //the listener is called once during loading. count>1==> loading completed
+                    
                     parentJob.setDatabaseJob(job);
                }else{
                     //Job job=jobService.getJob(parentJob.getId());
@@ -85,6 +86,7 @@ public class InsightVersion {
                     parentJob.setDatabaseJob(job);
                }
                
+               parentJob.insightSelectionHasChanged();
                
             }
             

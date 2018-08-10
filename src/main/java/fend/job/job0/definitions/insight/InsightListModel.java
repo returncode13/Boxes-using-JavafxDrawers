@@ -49,7 +49,8 @@ public class InsightListModel {
     public void removeFromInsightVersionList(InsightVersion ins){
         this.observableInsightList.remove(ins);
     }
-    
+
+   
     
     
     

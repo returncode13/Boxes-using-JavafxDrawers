@@ -9,11 +9,13 @@ package fend.job.job0;
 import db.model.Job;
 import db.model.Log;
 import db.model.Subsurface;
+import fend.job.job0.definitions.insight.InsightListParentModel;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
 import fend.job.job0.definitions.qcmatrix.Qint;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.property.JobModelProperty;
+import fend.job.job1.definitions.insight.InsightListModel;
 import fend.job.job1.definitions.qcmatrix.QcMatrixType1Model;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
@@ -119,6 +121,10 @@ public interface JobType0Model {
     public void setQcMatrixModel(Qint qmm);
     public Qint getQcMatrixModel();
 
-   
-    
+     public BooleanProperty insightChangedProperty();
+
+    public void insightSelectionHasChanged() ;
+
+    public void setInsightListModel(InsightListParentModel ilistModel);
+    public InsightListParentModel getInsightListModel();
 }

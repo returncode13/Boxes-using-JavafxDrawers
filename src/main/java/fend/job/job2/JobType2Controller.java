@@ -162,7 +162,7 @@ public class JobType2Controller implements JobType0Controller{
 
     @FXML
     private Label message;
-
+    int numberOfInsights=0;
 
     void setModel(JobType2Model item) {
         model=item;
@@ -173,6 +173,8 @@ public class JobType2Controller implements JobType0Controller{
 //checkForHeaders=new SimpleBooleanProperty(false);
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
+        numberOfInsights=model.getWorkspaceModel().getInsightVersions().size();
+        model.insightChangedProperty().addListener(INSIGHT_CHANGED_LISTENER);
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       //  model.getDepth().addListener(DEPTH_CHANGE_LISTENER);
          model.finishedCheckingLogs().addListener(LOGS_COMPLETED_LISTENER);
@@ -1198,6 +1200,23 @@ public class JobType2Controller implements JobType0Controller{
                 if(model.getQcMatrixModel().listSize()==numberOfTypes){
                     subsurfaceJobService.updateTimeWhereJobEquals(dbjob, AppProperties.timeNow());
                 }
+        }
+    };
+   
+   
+   private ChangeListener<Boolean> INSIGHT_CHANGED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            
+              
+            
+                if(model.getInsightListModel().listSize()==numberOfInsights){
+                    model.block();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, AppProperties.timeNow());
+                    model.unblock();
+                }
+            
         }
     };
    

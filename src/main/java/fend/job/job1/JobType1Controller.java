@@ -166,6 +166,7 @@ public class JobType1Controller implements JobType0Controller{
     private Label message;
     QcTypeService qcTypeService=new QcTypeServiceImpl();
     int numberOfTypes;
+    int numberOfInsights=0;
     
     void setModel(JobType1Model item) {
         model=item;
@@ -176,6 +177,7 @@ public class JobType1Controller implements JobType0Controller{
         //checkForHeaders.addListener(headerExtractionListener);
         model.getHeadersCommited().addListener(headerExtractionListener);
         numberOfTypes=qcTypeService.getAllQcTypes().size();
+        numberOfInsights=model.getWorkspaceModel().getInsightVersions().size();
         //model.getListenToDepthChangeProperty().addListener(listenToDepthChange);
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       //  model.getDepth().addListener(DEPTH_CHANGE_LISTENER);
@@ -186,7 +188,7 @@ public class JobType1Controller implements JobType0Controller{
       model.reloadSequenceHeadersProperty().addListener(RELOAD_SEQUENCE_HEADERS_LISTENER);
       model.exitLineTableProperty().addListener(LINE_TABLE_EXITED_LISTENER);
       model.exitQcTableProperty().addListener(QC_TABLE_EXITED_LISTENER);
-      
+      model.insightChangedProperty().addListener(INSIGHT_CHANGED_LISTENER);
       exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
           t.setDaemon(true);
@@ -1171,6 +1173,25 @@ private UserPreferenceService userPreferenceService=new UserPreferenceServiceImp
             //qcTableModel=null;
         }
     };
+   
+   
+   
+    private ChangeListener<Boolean> INSIGHT_CHANGED_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            System.out.println("fend.job.job1.JobType1Controller.QC_CHANGED_LISTENER: will reload qcs");
+            
+              
+            
+                if(model.getInsightListModel().listSize()==numberOfInsights){
+                    model.block();
+                    subsurfaceJobService.updateTimeWhereJobEquals(dbjob, AppProperties.timeNow());
+                    model.unblock();
+                }
+            
+        }
+    };
+   
    
     private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() {
         @Override

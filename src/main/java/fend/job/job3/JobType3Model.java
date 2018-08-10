@@ -39,6 +39,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.insight.InsightListParentModel;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
 import fend.job.job0.definitions.qcmatrix.Qint;
 import fend.job.job0.property.JobModelProperty;
@@ -101,6 +102,25 @@ public class JobType3Model implements JobType0Model {
      BooleanProperty blockProperty=new SimpleBooleanProperty(false);
      private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
     private Qint qcMatrixModel;
+    private InsightListParentModel insightListModel;
+
+    public InsightListParentModel getInsightListModel() {
+        return insightListModel;
+    }
+
+    public void setInsightListModel(InsightListParentModel insightListModel) {
+        this.insightListModel = insightListModel;
+    }
+    
+    
+     private BooleanProperty insightChangedProperty=new SimpleBooleanProperty(false);
+    public BooleanProperty insightChangedProperty() {
+        return insightChangedProperty;
+    }
+
+    public void insightSelectionHasChanged() {
+        this.insightChangedProperty.set(!this.insightChangedProperty().get());
+    }
     
     
     

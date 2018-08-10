@@ -9,6 +9,7 @@ import db.model.Job;
 import db.services.JobService;
 import db.services.JobServiceImpl;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.insight.InsightListParentModel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
@@ -18,7 +19,7 @@ import javafx.collections.ObservableList;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class InsightListModel {
+public class InsightListModel implements InsightListParentModel{
     private List<InsightVersion> insightVersionList;
     private ObservableList<InsightVersion> observableInsightList;
     private JobType0Model parentJob;
@@ -27,6 +28,7 @@ public class InsightListModel {
         this.parentJob = parentJob;
         insightVersionList=new ArrayList<>();
         observableInsightList=FXCollections.observableArrayList(insightVersionList);
+        this.parentJob.setInsightListModel(this);
         
     }
 
@@ -48,6 +50,11 @@ public class InsightListModel {
     
     public void removeFromInsightVersionList(InsightVersion ins){
         this.observableInsightList.remove(ins);
+    }
+
+    @Override
+    public int listSize() {
+         return this.observableInsightList.size();
     }
     
     

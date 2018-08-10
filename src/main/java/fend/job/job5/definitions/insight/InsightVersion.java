@@ -81,7 +81,7 @@ public class InsightVersion {
                     parentJob.setDatabaseJob(job);
                }
                
-               
+               parentJob.insightSelectionHasChanged();
             }
             
         });

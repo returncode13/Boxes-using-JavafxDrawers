@@ -144,6 +144,9 @@ public class JobType3Controller implements JobType0Controller{
     @FXML
     private Label message;
 QcTypeService qcTypeService=new QcTypeServiceImpl();
+ 
+ 
+ 
     void setModel(JobType3Model item) {
         model=item;
         //dbjob=jobService.getJob(model.getId());
@@ -152,6 +155,7 @@ QcTypeService qcTypeService=new QcTypeServiceImpl();
         //checkForHeaders.addListener(headerExtractionListener);
         numberOfTypes=qcTypeService.getAllQcTypes().size();
         model.getHeadersCommited().addListener(headerExtractionListener);
+        
         model.getListenToDepthChangeProperty().addListener(DEPTH_CHANGE_LISTENER);
       //  model.getDepth().addListener(depthChangeListener);
       model.updateProperty().addListener(DATABASE_JOB_UPDATE_LISTENER);
@@ -996,6 +1000,9 @@ int numberOfTypes;
                 }
         }
     };
+     
+     
+     
      
     private ChangeListener<Boolean> BLOCK_UNBLOCK_LISTENER=new ChangeListener<Boolean>() {
         @Override
