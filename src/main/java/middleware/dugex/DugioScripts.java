@@ -174,7 +174,7 @@ public class DugioScripts implements Serializable{
        
        
        private String workflowDifferenceContents="#!/bin/bash\n" +
-        "/usr/bin/diff -y $1 $2";
+        "/usr/bin/diff -y -W 250 $1 $2";
        
        
        private String parentVolumeFrom2DLogsContents="#!/bin/bash\n" +

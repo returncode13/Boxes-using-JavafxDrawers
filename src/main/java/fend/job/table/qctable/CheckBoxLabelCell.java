@@ -274,6 +274,7 @@ public class CheckBoxLabelCell extends TreeTableCell<QcTableSequence, Boolean> {
                                                                 qctable.setUser(AppProperties.getCurrentUser());
                                                                 qcTableService.createQcTable(qctable);
                                                             }
+                                                            subsurfaceJobService.updateTimeWhere(job, childsub, AppProperties.timeNow());
                                                         } catch (Exception ex) {
                                                             //Exceptions.printStackTrace(ex);
                                                             ex.printStackTrace();

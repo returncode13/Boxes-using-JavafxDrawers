@@ -17,11 +17,16 @@ import java.io.File;
    Long version;
    String timestamp;
    File logfile;
-
-    public VersionLogsModel(Long version, String timestamp, String logfile) {
+   Long workflowVersion;
+   String linename;
+   
+   
+    public VersionLogsModel(Long version, String timestamp, String logfile,Long wfversion,String line) {
         this.version = version;
         this.timestamp = timestamp;
         this.logfile = new File(logfile);
+        this.workflowVersion=wfversion;
+        this.linename=line;
     }
 
     public Long getVersion() {
@@ -35,7 +40,16 @@ import java.io.File;
     public File getLogfile() {
         return logfile;
     }
+
+    public Long getWorkflowVersion() {
+        return workflowVersion;
+    }
+
+    public String getLinename() {
+        return linename;
+    }
    
+    
     
    
    

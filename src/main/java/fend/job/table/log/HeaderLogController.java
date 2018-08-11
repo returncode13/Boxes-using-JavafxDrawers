@@ -95,7 +95,7 @@ public class HeaderLogController extends Stage{
             }
             
             Tab tab= new Tab();
-            tab.setText("      "+versionsTab.getVersion().toString()+"      ");
+            tab.setText(" log ver:"+versionsTab.getVersion().toString()+" workflow version:"+versionsTab.getWorkflowVersion());
             HBox hbox=new HBox();
             //hbox.getChildren().add(new Label(""+contents));
             TextArea ta=new TextArea();
@@ -131,6 +131,7 @@ public class HeaderLogController extends Stage{
         try{
        headerLogView=aThis;
        this.setScene(new Scene(headerLogView));
+       this.setTitle("log for "+headerLogModel.getLogsmodel().get(0).getLinename());
        this.showAndWait();
         }catch(Exception ex){
             logger.severe(ex.getMessage());

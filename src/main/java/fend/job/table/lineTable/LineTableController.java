@@ -200,7 +200,7 @@ public class LineTableController extends Stage{
          
          showLogsMenuItem.setOnAction(e->{
                 Long id=row.getItem().getId();
-          
+                Subsurface line;
               Set<VersionLogsModel> versionModels=new HashSet<>();
              Task<String> loghTask=new Task<String>(){
                     @Override
@@ -208,10 +208,11 @@ public class LineTableController extends Stage{
                         Header h=headerService.getHeader(id);
                         //Set<Log> logs=h.getLogs();
                         Set<Log> logs=new HashSet<>(logservice.getLogsFor(h));
-
+                        
                         for(Log l:logs){
-                           VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath());
+                           VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath(),l.getWorkflow().getWfversion(),l.getSubsurface().getSubsurface());
                            versionModels.add(vlm);
+                           
                         }
                    
                         return "Finished extracting logs for : "+h.getHeaderId();

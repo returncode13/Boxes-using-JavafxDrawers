@@ -237,6 +237,7 @@ public class HeaderExtractor {
                                 if(existingHeadersInThisJob.containsKey(vskey)){
                                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): updating existing Header");
                                     header=existingHeadersInThisJob.get(vskey);
+                                    subsurfaceJobService.updateTimeWhere(header.getJob(), header.getSubsurface(), updateTime);
                                 }else{
                                     System.out.println("middleware.dugex.HeaderExtractor.<init>(): creating a new Header");
                                     header=new Header();

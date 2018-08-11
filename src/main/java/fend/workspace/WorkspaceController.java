@@ -2110,11 +2110,11 @@ public class WorkspaceController {
                     if(hpt >= hct) {    //parent header created not before child header
                         resultHolder.result=DEPENDENCY_FAIL_ERROR;
                         resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                       return resultHolder;
+                       //return resultHolder;
                     }else{
                         resultHolder.result=DEPENDENCY_PASS;
                         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        return resultHolder;
+                        //return resultHolder;
                     }
         }else if(parentIs2D && childIsSegy){
                     HeaderKey parentKey = generateHeaderKey(hparent, subb);
@@ -2161,7 +2161,7 @@ public class WorkspaceController {
                     Long hpt = Long.valueOf(hp.getTimeStamp());
                     Long hct = Long.valueOf(hc.getTimeStamp());
 
-                    if (hpt >= hct) {    //parent header created not before child header
+                    if (hpt >= hct) {    //parent header created  not before header
                         resultHolder.result = DEPENDENCY_FAIL_ERROR;
                         resultHolder.reason = DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
                         // return resultHolder;
@@ -2559,6 +2559,47 @@ public class WorkspaceController {
         return resultHolder;
     }
     
+    
+    /**
+     * hold revision and base
+    */ 
+    private class RevBaseHolder{
+        String revision;
+        String base;
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 53 * hash + Objects.hashCode(this.revision);
+            hash = 53 * hash + Objects.hashCode(this.base);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final RevBaseHolder other = (RevBaseHolder) obj;
+            if (!Objects.equals(this.revision, other.revision)) {
+                return false;
+            }
+            if (!Objects.equals(this.base, other.base)) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+    }
+    
+    
     private ResultHolder checkInsightDependency(Link link,Subsurface sub){
         Job parent=link.getParent();
         Job child=link.getChild();
@@ -2568,7 +2609,8 @@ public class WorkspaceController {
         boolean insightFail=false;
         
         String insightsInParent=parent.getInsightVersions();                // ins1; ins2; ins3;
-            List<String> parentList=new ArrayList<>();
+            //List<String> childList=new ArrayList<>();
+             List<RevBaseHolder> parentList=new ArrayList<>();
             String insightVersionInHeader=" **NO ENTRY FOUND** ";
             if(insightsInParent==null){
                 insightFail=true;
@@ -2579,9 +2621,21 @@ public class WorkspaceController {
             String[] parts=insightsInParent.split(";");
             for (String s: parts){
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for job : "+parent.getNameJobStep()+" found: "+s);
-                parentList.add(s);
+                RevBaseHolder revbase=new RevBaseHolder();
+                if(!s.isEmpty() && s.contains("-")){         //s==>  x.y-abcd
+                    String[] baseRevision=s.split("-");    
+                    String base=baseRevision[0];
+                    String revision=baseRevision[1];
+                    revbase.base=base;
+                    revbase.revision=revision;
+                     parentList.add(revbase);
+                }
+                
+               
             };
-        
+        for(RevBaseHolder rb:parentList){
+            System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): Job: "+parent.getNameJobStep()+" Sub: "+sub.getSubsurface()+" Base: "+rb.base+" Rev: "+rb.revision);
+        }
         
         boolean parentIsSegy=parent.getNodetype().equals(nodeSegy);
         if(!parentIsSegy){
@@ -2590,7 +2644,14 @@ public class WorkspaceController {
                 Header hp=headerMap.get(key);     //get headers of the parent
                 insightVersionInHeader=hp.getInsightVersion();
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-                if(!parentList.contains(insightVersionInHeader)) {
+                Boolean present=false;
+                for(RevBaseHolder rb:parentList){
+                    present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
+                }
+                /*if(!childList.contains(insightVersionInHeader)) {
+                insightFail=true;
+                }*/
+                if(!present){
                     insightFail=true;
                 }
 
@@ -2603,7 +2664,14 @@ public class WorkspaceController {
                 Pheader ph=pheaderMap.get(key);     //get headers of the parent
                 insightVersionInHeader=ph.getInsightVersion();
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-                if(!parentList.contains(insightVersionInHeader)) {
+                 Boolean present=false;
+                for(RevBaseHolder rb:parentList){
+                    present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
+                }
+                /*if(!childList.contains(insightVersionInHeader)) {
+                insightFail=true;
+                }*/
+                if(!present){
                     insightFail=true;
                 }
 
@@ -2637,7 +2705,8 @@ public class WorkspaceController {
         boolean insightFail=false;
         
         String insightsInChild=child.getInsightVersions();                // ins1; ins2; ins3;
-            List<String> childList=new ArrayList<>();
+          //  List<String> childList=new ArrayList<>();
+            List<RevBaseHolder> childList=new ArrayList<>();
             String insightVersionInHeader=" **NO ENTRY FOUND** ";
             if(insightsInChild==null){
                 insightFail=true;
@@ -2648,9 +2717,21 @@ public class WorkspaceController {
             String[] parts=insightsInChild.split(";");
             for (String s: parts){
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for job : "+child.getNameJobStep()+" found: "+s);
-                childList.add(s);
+                RevBaseHolder revbase=new RevBaseHolder();
+                if(!s.isEmpty() && s.contains("-")){         //s==>  x.y-abcd
+                    String[] baseRevision=s.split("-");    
+                    String base=baseRevision[0];
+                    String revision=baseRevision[1];
+                    revbase.base=base;
+                    revbase.revision=revision;
+                     childList.add(revbase);
+                }
+                
+               
             };
-        
+        for(RevBaseHolder rb:childList){
+            System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): Job: "+child.getNameJobStep()+" Sub: "+sub.getSubsurface()+" Base: "+rb.base+" Rev: "+rb.revision);
+        }
         
         
         boolean childIsSegy=child.getNodetype().equals(nodeSegy);
@@ -2660,9 +2741,17 @@ public class WorkspaceController {
                 Header hp=headerMap.get(key);     //get headers of the parent
                 insightVersionInHeader=hp.getInsightVersion();
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-                if(!childList.contains(insightVersionInHeader)) {
+                 Boolean present=false;
+                for(RevBaseHolder rb:childList){
+                    present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
+                }
+                
+                if(!present){
                     insightFail=true;
                 }
+                /*if(!childList.contains(insightVersionInHeader)) {
+                insightFail=true;
+                }*/
 
             }else{
                 //do nothing. no header present for this key.
@@ -2673,9 +2762,17 @@ public class WorkspaceController {
                 Pheader ph=pheaderMap.get(key);     //get headers of the parent
                 insightVersionInHeader=ph.getInsightVersion();
                 System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
-                if(!childList.contains(insightVersionInHeader)) {
+                 Boolean present=false;
+                for(RevBaseHolder rb:childList){
+                    present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
+                }
+                
+                if(!present){
                     insightFail=true;
                 }
+                /*if(!childList.contains(insightVersionInHeader)) {
+                insightFail=true;
+                }*/
 
             }else{
                 //do nothing. no header present for this key.

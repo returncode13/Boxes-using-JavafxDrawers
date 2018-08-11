@@ -210,7 +210,7 @@ public class PlineTableController extends Stage{
                         Set<Log> logs=new HashSet<>(logservice.getLogsFor(h));
 
                         for(Log l:logs){
-                           VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath());
+                           VersionLogsModel vlm=new VersionLogsModel(l.getVersion(), l.getTimestamp(), l.getLogpath(),l.getWorkflow().getWfversion(),l.getSubsurface().getSubsurface());
                            versionModels.add(vlm);
                         }
                    

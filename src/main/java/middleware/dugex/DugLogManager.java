@@ -241,6 +241,7 @@ public class DugLogManager {
         
         System.out.println("middleware.dugex.DugLogManager.work(): Versioning of the logs: ");
         logsService.versioningOfLogsFor(dbJob);
+        System.out.println("middleware.dugex.DugLogManager.work(): Versioning of the workflows:");
     }
 
     private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType,Map<String,List<LogInformation>> mapofLogs,int recursionCounter){
@@ -387,16 +388,16 @@ public class DugLogManager {
                                         logInformation.addAll(listOfLogsForSub);
                 }
           
-            try {
+                /*try {
                 System.out.println("middleware.dugex.DugLogManager.extractInformation(): getWorkFlowInformationFor2D..for logInformation.size() : "+logInformation.size()+" dbVol.name = "+dbVol.getNameVolume()+" files To Commit size : "+filesToCommit.size());
                 message.set("fetching workflow info");
                 progress.set(0);
                 workflowsToBeCreated.addAll(getWorkFlowInformationFor2D(logInformation,dbVol));
-            } catch (IOException ex) {
+                } catch (IOException ex) {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NoSuchAlgorithmException ex) {
+                } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                }*/
          
              if(logInformation.size()!=filesToCommit.size()){
                  List<FileWrapper> filesPending=calculatePendingFiles(logInformation,filesToCommit);
@@ -413,6 +414,19 @@ public class DugLogManager {
                  }
                  
              }
+             
+             
+              try {
+                System.out.println("middleware.dugex.DugLogManager.extractInformation(): getWorkFlowInformationFor2D..for logInformation.size() : "+logInformation.size()+" dbVol.name = "+dbVol.getNameVolume()+" files To Commit size : "+filesToCommit.size());
+                message.set("fetching workflow info");
+                progress.set(0);
+                workflowsToBeCreated.addAll(getWorkFlowInformationFor2D(logInformation,dbVol));
+            } catch (IOException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(DugLogManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         
             
          }
          
@@ -837,7 +851,7 @@ public class DugLogManager {
          //Long highestVersion=new Long(highestVersionOfWorkFlowInVolume);
          
          System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): size of the md5Map: "+md5MapForWorkflow.size());
-         System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): highest Workflow Version present in volume: "+highestVersion);
+        // System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): highest Workflow Version present in volume: "+highestVersion);
          for (Map.Entry<String, List<LogInformation>> entry : md5MapForWorkflow.entrySet()) {
             String md5 = entry.getKey();
             List<LogInformation> logs = entry.getValue();
@@ -847,7 +861,7 @@ public class DugLogManager {
                 w=new Workflow();
                 w.setMd5sum(md5);
                 w.setContents(logs.get(0).workflowHolder.contents);
-                w.setWfversion(++highestVersion);
+                w.setWfversion(++highestVersion);   //version at the very end
                 w.setVolume(volume);
                 workflows.add(w);
             }
