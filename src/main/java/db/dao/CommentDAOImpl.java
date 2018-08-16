@@ -11,6 +11,7 @@ import db.model.Comment;
 import db.model.CommentType;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workflow;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -330,6 +331,81 @@ public class CommentDAOImpl implements CommentDAO{
            session.close();
        }
     }
+
+    @Override
+    public void getCommentFor(Job job, String TYPE, Map<Workflow, List<Comment>> map) {
+         System.out.println("db.dao.QcCommentDAOImpl.getQcCommentsFor(Job job, String TYPE, Map<Workflow, List<Comment>> map)");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        
+        List<Comment> results=null;
+        String seqcommentsHql="select qcc from Comment qcc "
+                + "                             INNER JOIN qcc.job jb"
+                + "                             INNER JOIN qcc.commentType ctype"
+                + "                              where jb =:jb AND ctype.type =:t AND qcc.comments is not empty";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(seqcommentsHql);
+            query.setParameter("jb", job);
+            query.setParameter("t", TYPE);
+            
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.QcCommentDAOImpl.getQcCommentsFor(Job job, String TYPE, Map<Workflow, List<Comment>> map): returning results.size(): "+results.size());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        for(Comment q:results){
+           
+                if(!map.containsKey(q.getWorkflow())){
+                    map.put(q.getWorkflow(), new ArrayList<>());
+                    map.get(q.getWorkflow()).add(q);
+                }else{
+                    map.get(q.getWorkflow()).add(q);
+                }
+         
+            
+        }
+    }
+
+    @Override
+    public Comment getCommentFor(String TYPE, Job job, Workflow workflow) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        
+        List<Comment> results=null;
+        String seqcommentsHql="select qcc from Comment qcc "
+                + "                             INNER JOIN qcc.job jb"
+                + "                             INNER JOIN qcc.commentType ctype"
+                + "                              where jb =:jb AND ctype.type =:t AND qcc.workflow=:w";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(seqcommentsHql);
+            query.setParameter("jb", job);
+            query.setParameter("t", TYPE);
+            query.setParameter("w", workflow);
+            
+            results=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        if(results.isEmpty()){
+            return null;
+        }else{
+            return results.get(0);
+        }
+    }
+    
+    
     
     
 }

@@ -6,6 +6,7 @@
 package db.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,11 +43,38 @@ public class Workflow implements Serializable{
     @Column(name="md5sum")
     private String md5sum;
     
-    @Column(name="contents",length=600000)
+    @Column(name="contents",columnDefinition = "text")
     private String contents;
     
     @Column(name="time")
     private String time;
+    
+    @Column(name="control")
+    private Boolean control=false;
+
+    @Column(name="is_current_version")
+    private Boolean isCurrentVersion=false;
+
+    public Boolean isCurrentVersion() {
+        return isCurrentVersion;
+    }
+
+    public void setIsCurrentVersion(Boolean isCurrentVersion) {
+        this.isCurrentVersion = isCurrentVersion;
+    }
+    
+    
+    
+    public Boolean getControl() {
+        return control;
+    }
+
+    public void setControl(Boolean control) {
+        this.control = control;
+    }
+    
+    
+    
     
     
     public Long getId() {
@@ -103,6 +131,31 @@ public class Workflow implements Serializable{
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Workflow other = (Workflow) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     

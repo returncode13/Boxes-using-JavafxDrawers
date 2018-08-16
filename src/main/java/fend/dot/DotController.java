@@ -140,13 +140,14 @@ public class DotController extends Stage{
                 dbDot=model.getDatabaseDot();
             }
             
-            
+          
             
          //   workspaceService.updateWorkspace(dbWorkspace.getId(), dbWorkspace);//Commented for troubleshooting. Positively to be uncommented.            
            
     //   model.dotClickedProperty().addListener(DOT_CLICKED_LISTENER);
        model.exitedFormulaFieldProperty().addListener(FORMULA_FIELD_EXITED);
         model.getDelete().addListener(DOT_DELETE_LISTENER);
+        
         /*model.getDelete().addListener(new ChangeListener<Boolean>(){
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -158,6 +159,9 @@ public class DotController extends Stage{
         
         
         });*/
+        
+        
+        
         
         exec=Executors.newCachedThreadPool(runnable->{
           Thread t=new Thread(runnable);
@@ -291,11 +295,20 @@ public class DotController extends Stage{
            
         });
          
+          
+         
          model.toggleLinkWasCreated();          //force a toggle during load
          
          model.getFunction().addListener(functionChangeListener);
+         model.warnUserProperty().addListener(FUNCTION_IS_NOT_DEFINED_LISTENER);
          model.getTolerance().addListener(toleranceChangeListener);
          model.getError().addListener(errorChangeListener);
+         
+         
+         
+          if(dbDot.getFunction()==null || dbDot.getFunction().isEmpty()){
+                model.warnUser();
+            }
     }
     
     private FormulaFieldModel formulaModel=null;
@@ -334,9 +347,12 @@ public class DotController extends Stage{
     
     private void updateColor() {
         System.out.println("fend.dot.DotController.updateColor(): model status is : "+model.getStatus().get());
+     
             if(model.getStatus().get().equals(DotModel.NJS))node.setFill(Color.DIMGRAY);
             if(model.getStatus().get().equals(DotModel.JOIN))node.setFill(Color.DARKORCHID);
             if(model.getStatus().get().equals(DotModel.SPLIT))node.setFill(Color.NAVY);
+            
+               
     }
     
     
@@ -865,5 +881,30 @@ public class DotController extends Stage{
             }
         }
     };
+ 
+    
+    
+    
+    
+     private ChangeListener<Boolean> FUNCTION_IS_NOT_DEFINED_LISTENER=new ChangeListener<Boolean>(){
+       
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                node.setFill(Color.RED);
+                model.getWorkspaceModel().blockSummary();
+                
+            }else{
+                updateColor();
+                model.getWorkspaceModel().unBlockSummary();
+                
+            }
+        }
+       
+     };
+    
+    
+    
     
 }

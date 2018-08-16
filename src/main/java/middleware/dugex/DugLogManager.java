@@ -79,7 +79,7 @@ public class DugLogManager {
     private List<FileWrapper> exclusionList=new ArrayList<>();
     private ExecutorService exec;
     private final WorkflowService workflowService=new WorkflowServiceImpl();
-    private Set<Workflow> workflowsToBeCreated=new HashSet<>();
+    private List<Workflow> workflowsToBeCreated=new ArrayList<>();
     private Map<Subsurface,Log> latestLogForSub=new HashMap<>();
     private Set<LogInformation> latestLogSet=new HashSet<>();
     
@@ -241,7 +241,9 @@ public class DugLogManager {
         
         System.out.println("middleware.dugex.DugLogManager.work(): Versioning of the logs: ");
         logsService.versioningOfLogsFor(dbJob);
-        System.out.println("middleware.dugex.DugLogManager.work(): Versioning of the workflows:");
+        
+        System.out.println("middleware.dugex.DugLogManager.work(): Updating workflows (setting the current version flags):");
+        workflowService.updateCurrentVersionsFor(dbJob);
     }
 
     private Set<LogInformation> extractInformation(Volume dbVol,List<FileWrapper> filesToCommit,Long volumeType,Map<String,List<LogInformation>> mapofLogs,int recursionCounter){
@@ -748,8 +750,8 @@ public class DugLogManager {
     * the workflow information is stored under volume/logs/notes.txt
     * 
     **/
-   private Set<Workflow> getWorkFlowforSegD(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException{
-        Set<Workflow> workflows=new HashSet<>();
+   private List<Workflow> getWorkFlowforSegD(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException{
+        List<Workflow> workflows=new ArrayList<>();
         MessageDigest md;
         message.set("extract workflow info");
                 Process process=new ProcessBuilder(dugioScripts.getSegdLoadNotesTxtTimeWorkflowExtractor().getAbsolutePath(),volume.getPathOfVolume()).start();
@@ -775,9 +777,11 @@ public class DugLogManager {
                 }
                String md5=new String(sbuf.toString());                                             //just the one workflow version for segd for a volume from the single source (notes.txt)
                
-               Long highestVersion=workflowService.getHighestWorkFlowVersionFor(volume);
+              // Long highestVersion=workflowService.getHighestWorkFlowVersionFor(volume);
+               Long highestVersion=workflowService.getHighestWorkFlowVersionFor(job.getDatabaseJob());
                //Long highestVersion=new Long(highestVersionOfWorkFlowInVolume);
-               
+               System.out.println("middleware.dugex.DugLogManager.getWorkFlowforSegD(): highest workflow Version found  for job: "+job.getDatabaseJob().getNameJobStep()+" is: "+highestVersion);
+                       
                 
                Workflow w=null;
                 if((w=workflowService.getWorkFlowWith(md5, volume))==null){
@@ -804,10 +808,10 @@ public class DugLogManager {
     * Extract workflow for each and populate the loginformation.workflowholder.workflow variable of each
     * return the set of workflows that need to be committed to the database
     **/
-    private Set<Workflow> getWorkFlowInformationFor2D(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException {
+    private List<Workflow> getWorkFlowInformationFor2D(Set<LogInformation> logInformation,Volume volume) throws IOException, NoSuchAlgorithmException {
         System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): logInformation.size "+logInformation.size()+" dbVol.name: "+volume.getNameVolume());
          Map<String,List<LogInformation>> md5MapForWorkflow=new HashMap<>();   //map of md5 of workflows and their logs.
-        Set<Workflow> workflows=new HashSet<>();
+        List<Workflow> workflows=new ArrayList<>();
          int totall=logInformation.size();
          message.set("extract workflow info");
          MessageDigest md;
@@ -846,8 +850,9 @@ public class DugLogManager {
                 
                 
         }
-         
-         Long highestVersion=workflowService.getHighestWorkFlowVersionFor(volume);
+         // Long highestVersion=workflowService.getHighestWorkFlowVersionFor(volume);
+            Long highestVersion=workflowService.getHighestWorkFlowVersionFor(job.getDatabaseJob());
+             System.out.println("middleware.dugex.DugLogManager.getWorkFlowforSegD(): highest workflow Version found  for job: "+job.getDatabaseJob().getNameJobStep()+" is: "+highestVersion);
          //Long highestVersion=new Long(highestVersionOfWorkFlowInVolume);
          
          System.out.println("middleware.dugex.DugLogManager.getWorkFlowInformationFor2D(): size of the md5Map: "+md5MapForWorkflow.size());

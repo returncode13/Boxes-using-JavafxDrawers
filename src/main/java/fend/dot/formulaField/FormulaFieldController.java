@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -60,7 +61,10 @@ public class FormulaFieldController extends Stage{
     
     void setModel(FormulaFieldModel lsm) {
         model=lsm;
+       // model.getFunction().addListener(FUNCTION_IS_NOT_DEFINED_LISTENER);
+        //function.textProperty().addListener(FUNCTION_IS_NOT_DEFINED_LISTENER);
         function.setText(model.getFunction().get());
+        
         tolerance.setText(model.getTolerance().get()+"");
         error.setText(model.getError().get()+"");
         textArea.setText(model.getInfo());
@@ -77,6 +81,7 @@ public class FormulaFieldController extends Stage{
         
         model.functionValidityProperty().addListener(FUNCTION_VALIDITY_LISTENER);
         model.limitsValidityProperty().addListener(LIMITS_VALIDITY_LISTENER);
+       
         /*tolerance.textProperty().addListener(toleranceListener);
         error.textProperty().addListener(errorListener);
         function.textProperty().addListener(functionListener);*/
@@ -94,6 +99,21 @@ public class FormulaFieldController extends Stage{
     }
     
     
+     private ChangeListener<String> FUNCTION_IS_NOT_DEFINED_LISTENER=new ChangeListener<String>(){
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+            
+            System.out.println("fend.dot.formulaField.FUNCTION_IS_NOT_DEFINED: changed(): "+oldValue+"-->"+newValue);
+            if(newValue.trim().isEmpty()){
+                
+                System.out.println(".changed(): warn user");
+            }else{
+                
+                 System.out.println(".changed(): remove Warning");
+            }
+        }
+       
+     };
    
     @FXML
     void okClicked(ActionEvent event) {
@@ -103,6 +123,9 @@ public class FormulaFieldController extends Stage{
         
         close();
         model.getDot().exitedFormulaField();
+        if(model.getDot().warnUserProperty().get()){
+            model.removeUserWarning();
+        }
     }
     
     

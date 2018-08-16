@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import db.dao.CommentDAO;
 import db.model.CommentType;
+import db.model.Workflow;
 
 /**
  *
@@ -63,6 +64,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteAllCommentsRelatedToJob(Job job) {
         qccDao.deleteAllCommentsRelatedToJob(job);
+    }
+
+    @Override
+    public void getCommentsFor(Job job, String TYPE, Map<Workflow, List<Comment>> map) {
+        qccDao.getCommentFor(job,TYPE,map);
+    }
+
+    @Override
+    public Comment getCommentFor(String TYPE_WORKFLOW, Job job, Workflow workflow) {
+        return qccDao.getCommentFor(TYPE_WORKFLOW, job, workflow);
     }
 
    

@@ -10,6 +10,7 @@ import db.model.Comment;
 import db.model.CommentType;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workflow;
 import java.util.List;
 import java.util.Map;
 
@@ -29,5 +30,9 @@ public interface CommentDAO {
     public Comment getCommentFor(String TYPE, Job job, Sequence sequence, Subsurface subsurface) throws Exception;
 
     public void deleteAllCommentsRelatedToJob(Job job);
+
+    public void getCommentFor(Job job, String TYPE, Map<Workflow, List<Comment>> map);
+
+    public Comment getCommentFor(String TYPE, Job job, Workflow workflow);
 
 }

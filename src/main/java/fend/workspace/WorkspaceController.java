@@ -721,7 +721,7 @@ public class WorkspaceController {
         model.rebuildGraphOrderProperty().addListener(REBUILD_GRAPH_LISTENER);
         model.prepareToRebuildProperty().addListener(CLEAR_ANCESTOR_LISTENER);
         model.blockProperty().addListener(BLOCK_UNBLOCK_LISTENER);
-       
+        model.summaryBlockProperty().addListener(SUMMARY_BLOCK_LISTENER);
         exec = Executors.newCachedThreadPool((r) -> {
             Thread t = new Thread(r);
             t.setDaemon(true);
@@ -2483,7 +2483,8 @@ public class WorkspaceController {
                 if (qcresult == null) {
                    // qcresult = false;
                   // passQc=null;
-                  failed=true;
+                  //failed=true;
+                  failed=failed||true;
                 }else{
                     passQc = passQc && qcresult;
                 }
@@ -2531,7 +2532,8 @@ public class WorkspaceController {
                 if (qcresult == null) {
                    // qcresult = false;
                   // passQc=null;
-                  failed=true;
+                  failed=failed||true;
+                  
                 }else{
                     passQc = passQc && qcresult;
                 }
@@ -2546,11 +2548,11 @@ public class WorkspaceController {
         ResultHolder resultHolder=new ResultHolder();
         if(failed){
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
-            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }else
         if (!passQc) {
             resultHolder.result=DEPENDENCY_FAIL_WARNING;
-            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
+            resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
         }else{
             resultHolder.result=DEPENDENCY_PASS;
             resultHolder.reason=DoubtStatusModel.getQcDependencyPassedMessage(lparent.getNameJobStep(), jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
@@ -2810,7 +2812,15 @@ public class WorkspaceController {
         
         // get the childs input volumes from mIMap
         SubsurfaceJobKey key=generateSubsurfaceJobKey(child, sub);
-        List<String> inputVolumes=new ArrayList<>(mIpVols.get(key));
+        
+        List<String> inputVolumes=null;
+        
+        if(mIpVols.containsKey(key)){
+            inputVolumes=new ArrayList<>(mIpVols.get(key));
+        }else{
+            inputVolumes=new ArrayList<>();
+        }
+        
         System.out.println("fend.workspace.WorkspaceController.checkIODependency(): input volumes in child  : "+child.getNameJobStep()+" : "+inputVolumes.toString());
         // get the names of the volumes in the parent (not the parents input.)
         List<String> parentVolumes=jvMap.get(parent);
@@ -4277,9 +4287,9 @@ public class WorkspaceController {
         summaryService.createBulkSummaries(newSummaries);
         
         
-        List<SubsurfaceJob> subsurfaceJobsToBeUpdated = new ArrayList<SubsurfaceJob>(subsurfaceJobSummaryTimeMap.values());
+        List<SubsurfaceJob> subsurfaceJobsToBeUpdated = new ArrayList<>(subsurfaceJobSummaryTimeMap.values());
         System.out.println("fend.workspace.WorkspaceController.summaryDatabaseOperations() " + timeNow() + " Updating the summary times for the " + subsurfaceJobsToBeUpdated.size() + " subsurfaces that were queried");
-
+        
         subsurfaceJobService.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
         
     }
@@ -5018,6 +5028,27 @@ public class WorkspaceController {
         }
     };
    
+   
+   
+   
+   private ChangeListener<Boolean> SUMMARY_BLOCK_LISTENER=new ChangeListener<Boolean>() { 
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                System.out.println("fend.workspace.WorkspaceController.SUMMARY_BLK_UBLK_LISTENER().blocking");
+                //interactivePane.setDisable(true);
+                
+                model.getAppmodel().blockSummary(); 
+               
+                
+            }else{
+                 System.out.println("fend.workspace.WorkspaceController.SUMMMARY_BLK_UBLK_LISTENER().unblocking");
+                model.getAppmodel().unblockSummary(); 
+                //interactivePane.setDisable(false);
+            }
+        }
+    };        
+           
    private void rebuildGraph(Link l){
        
        System.out.println("fend.workspace.WorkspaceController.rebuildGraph(): checking "+l.getParent().getNameJobStep()+" --> "+l.getChild().getNameJobStep());

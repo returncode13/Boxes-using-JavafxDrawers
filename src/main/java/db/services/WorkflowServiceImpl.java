@@ -74,5 +74,25 @@ public class WorkflowServiceImpl implements WorkflowService{
     public void deleteWorkFlowsFor(Job job) {
         wdao.deleteWorkFlowsFor(job);
     }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Job job) {
+       return wdao.getHighestWorkFlowVersionFor(job);
+    }
+
+    @Override
+    public List<Workflow> getWorkFlowsFor(Job job) {
+       return wdao.getWorkFlowsFor(job);
+    }
+
+    @Override
+    public void updateControlFor(Workflow workflow, Boolean control) {
+        wdao.updateControlFor(workflow, control);
+    }
+
+    @Override
+    public void updateCurrentVersionsFor(Job job) {
+        wdao.updateCurrentVersionsFor(job);
+    }
     
 }

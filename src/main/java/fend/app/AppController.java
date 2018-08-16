@@ -966,6 +966,11 @@ public class AppController extends Stage implements Initializable{
             qccommentType.setType(CommentTypeModel.TYPE_QC);
             commentTypeService.createCommentType(qccommentType);
         }
+        if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
+            qccommentType=new CommentType();
+            qccommentType.setType(CommentTypeModel.TYPE_QC);
+            commentTypeService.createCommentType(qccommentType);
+        }
     }
     
     
@@ -1003,7 +1008,7 @@ public class AppController extends Stage implements Initializable{
         //createLoadWorkspaceButton();
         //createUserButton();
         model.blockProperty().addListener(BLOCK_UNBLOCK_LISTENER);
-        
+        model.summaryBlockProperty().addListener(SUMMARY_BLOCK_LISTENER);
             guestService.setPeriod(Duration.seconds(AppProperties.TIME_FOR_GUEST_QUERY));
             
             guestService.setOnSucceeded(e->{
@@ -1440,6 +1445,33 @@ public class AppController extends Stage implements Initializable{
                 System.out.println("fend.app.AppController.BLK_UBLK_LISTENER().unblocking");
               spinner.setProgress(0);
               basePane.getChildren().remove(spinner);
+              
+            }
+        }
+    };
+     
+     
+     
+             private ChangeListener<Boolean> SUMMARY_BLOCK_LISTENER=new ChangeListener<Boolean>() { 
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                
+                /*progressBarForBlock.setProgress(-1);
+                progressBarForBlock.setMinWidth(1000);
+                basePane.getChildren().add(progressBarForBlock);
+                basePane.setAlignment(progressBarForBlock,Pos.CENTER);*/
+                 System.out.println("fend.app.AppController.SUMMARY_BLK_UBLK_LISTENER().blocking");
+              summaryButton.setDisable(true);
+              
+              
+                
+            }else{
+                
+                /*progressBarForBlock.setProgress(0);
+                basePane.getChildren().remove(progressBarForBlock);*/
+                System.out.println("fend.app.AppController.SUMMARY_BLK_UBLK_LISTENER().unblocking");
+              summaryButton.setDisable(false);
               
             }
         }

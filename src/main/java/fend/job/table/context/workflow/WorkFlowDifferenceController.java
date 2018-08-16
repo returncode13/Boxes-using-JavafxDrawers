@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.table.workflow;
+package fend.job.table.context.workflow;
 
 import db.model.Workflow;
 import db.services.WorkflowService;

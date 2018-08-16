@@ -88,6 +88,8 @@ import fend.job.table.lineTable.LineTableModel;
 import fend.job.table.lineTable.LineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
+import fend.job.table.workflow.WorkflowTableModel;
+import fend.job.table.workflow.WorkflowTableView;
 import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -164,6 +166,11 @@ public class JobType1Controller implements JobType0Controller{
 
     @FXML
     private Label message;
+    
+    @FXML
+    private JFXButton workflowbutton;
+    
+    
     QcTypeService qcTypeService=new QcTypeServiceImpl();
     int numberOfTypes;
     int numberOfInsights=0;
@@ -399,7 +406,15 @@ public class JobType1Controller implements JobType0Controller{
          });
     }
     
+    /**
+     * Show workflow table
+     */
     
+     @FXML
+    void showWorkflowTable(ActionEvent event) {
+            WorkflowTableModel wfm=new WorkflowTableModel(dbjob);
+            WorkflowTableView wfv=new WorkflowTableView(wfm);
+    }
     /***
      * Extract headers for the current job
      

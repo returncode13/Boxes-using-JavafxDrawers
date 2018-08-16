@@ -180,6 +180,22 @@ public class WorkspaceModel {
     public void unblock(){
         blockProperty.set(false);
     }
+
+    BooleanProperty summaryBlockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty summaryBlockProperty() {
+        return summaryBlockProperty;
+    }
+    
+    
+    
+    public void blockSummary() {
+        summaryBlockProperty.set(true);
+    }
+
+    public void unBlockSummary() {
+        summaryBlockProperty.set(false);
+    }
     
     
     

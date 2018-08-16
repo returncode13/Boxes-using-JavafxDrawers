@@ -66,6 +66,9 @@ public class DotModel {
     private Dot databaseDot;
     private BooleanProperty dotclickedProperty=new SimpleBooleanProperty(false);
     
+    
+    
+    
     public BooleanProperty dotClickedProperty(){
         return dotclickedProperty;
     }
@@ -99,6 +102,7 @@ public class DotModel {
 
     public void setDatabaseDot(Dot databaseDot) {
         this.databaseDot = databaseDot;
+        
     }
     
     
@@ -307,6 +311,23 @@ public class DotModel {
     public void exitedFormulaField() {
         this.exitedFormulaFieldProperty.set(!exitedFormulaFieldProperty.get());
         
+    }
+
+    
+    BooleanProperty warnUser=new SimpleBooleanProperty(false);
+
+    public BooleanProperty warnUserProperty() {
+        return warnUser;
+    }
+    
+    
+    
+    public void removeUserWarning() {
+        warnUser.set(false);
+    }
+
+    public void warnUser() {
+        warnUser.set(true);
     }
 
    

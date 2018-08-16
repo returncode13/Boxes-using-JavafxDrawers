@@ -238,4 +238,112 @@ public class WorkflowDAOImpl implements WorkflowDAO {
             session.close();
         }
     }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Job job) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        Long highest=-1L;
+        String hqlSelect="Select w.id from Workflow w inner join w.volume v inner join v.job j where j =:jj";
+        String sql="select MAX(wfversion) from Workflow where  id in (:ids)";
+         try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("jj", job);
+            List<Long> idsBelongingToJob=selectQuery.list();
+            if(idsBelongingToJob.isEmpty()){
+               highest=-1L;
+            }else{
+                List<Long> result=null;
+                Query query=session.createQuery(sql);
+                query.setParameterList("ids", idsBelongingToJob);
+                result=query.list();
+                highest=result.get(0);
+            }
+               transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return highest;
+    }
+
+    @Override
+    public List<Workflow> getWorkFlowsFor(Job job) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Workflow> results=null;
+        String hqlSelect="Select w from Workflow w inner join w.volume v inner join v.job j where j =:jj";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("jj", job);
+            results=selectQuery.list();
+             transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+    @Override
+    public void updateControlFor(Workflow workflow, Boolean control) {
+       Session session=HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String update="update Workflow w set w.control=:c where w.id =:i";
+       try{
+           transaction=session.beginTransaction();
+           Query query=session.createQuery(update);
+           query.setParameter("i", workflow.getId());
+           query.setParameter("c", control);
+           int res=query.executeUpdate();
+           transaction.commit();
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+       
+    }
+
+    @Override
+    public void updateCurrentVersionsFor(Job job) {
+        System.out.println("db.dao.WorkflowDAOImpl.updateCurrentVersionsFor(job)");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String selectCurrentWorkflows="Select  distinct w.id from Log L INNER JOIN L.job j"
+                + "                                                  INNER JOIN L.workflow w"
+                + "                                                  WHERE j=:jj AND L.isMaxVersion=true";
+        String updateCurrentWorkflows="update  Workflow  set isCurrentVersion=true where id in (:ids)";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(selectCurrentWorkflows);
+            query.setParameter("jj", job);
+            List<Long>idsToupdate=query.list();
+            if(!idsToupdate.isEmpty()){
+                
+                Query updateQ=session.createQuery(updateCurrentWorkflows);
+                updateQ.setParameterList("ids", idsToupdate);
+                int res=updateQ.executeUpdate();
+                System.out.println("db.dao.WorkflowDAOImpl.updateCurrentVersionsFor(): updating "+idsToupdate.size()+" current workflows ");
+                
+            }else{
+                System.out.println("db.dao.WorkflowDAOImpl.updateCurrentVersionsFor(): NO Current Workflows found for job: "+job.getNameJobStep());
+            }
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        
+        
+    }
 }

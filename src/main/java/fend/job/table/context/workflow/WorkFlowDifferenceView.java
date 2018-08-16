@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.table.workflow;
+package fend.job.table.context.workflow;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +24,7 @@ public class WorkFlowDifferenceView extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/workflow/workflowDifference.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/context/workflow/workflowDifference.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

@@ -455,7 +455,7 @@ public class QcTableDAOImpl implements QcTableDAO{
 
     @Override
     public void createBulkQcTables(List<QcTable> qctables) {
-         System.out.println("db.dao.SummaryDAOImpl.createBulkSummaries()");
+         System.out.println("db.dao.QcTableDAOImpl.createBulkQcTables()");
         if(qctables.isEmpty()){
             return;
         }

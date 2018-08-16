@@ -39,7 +39,7 @@ public class Comment implements Serializable {
     
     
     @ManyToOne
-    @JoinColumn(name="seq_fk",nullable=false)
+    @JoinColumn(name="seq_fk",nullable=true)
     private Sequence sequence;
     
     
@@ -51,6 +51,22 @@ public class Comment implements Serializable {
     @Column(name="comments",columnDefinition = "text")
     String comments=new String("");
 
+    
+    
+    @ManyToOne
+    @JoinColumn(name="workflow_fk",nullable=true)
+    private Workflow workflow;
+
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
+    
+    
+    
     public Comment() {
     }
 

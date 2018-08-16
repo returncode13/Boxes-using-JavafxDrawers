@@ -10,6 +10,7 @@ import db.model.Comment;
 import db.model.CommentType;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workflow;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,8 @@ public interface CommentService {
     public Comment getCommentFor(String TYPE, Job job, Sequence sequence, Subsurface subsurface) throws Exception;
 
     public void deleteAllCommentsRelatedToJob(Job dbjob);
+
+    public void getCommentsFor(Job job, String TYPE_WORKFLOW, Map<Workflow, List<Comment>> workflowCommentMap);
+
+    public Comment getCommentFor(String TYPE_WORKFLOW, Job job, Workflow workflow);
 }

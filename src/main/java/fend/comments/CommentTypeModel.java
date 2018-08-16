@@ -12,5 +12,6 @@ package fend.comments;
 public class CommentTypeModel {
     public final static String TYPE_QC="QC";
     public final static String TYPE_JOB="JOB";
+    public final static String TYPE_WORKFLOW="WORKFLOW";
  
 }

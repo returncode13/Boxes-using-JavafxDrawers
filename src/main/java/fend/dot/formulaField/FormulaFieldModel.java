@@ -194,6 +194,9 @@ public class FormulaFieldModel {
     dot.setError(error.get());
     }
     };*/
+    
+    
+    
     private final ChangeListener<Number> errorChangeListener=new ChangeListener<Number>() {
        @Override
        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -201,4 +204,17 @@ public class FormulaFieldModel {
          
        }
    };
+
+    
+    BooleanProperty warnUser=new SimpleBooleanProperty(false);
+    
+    void removeUserWarning() {
+        dot.removeUserWarning();
+        warnUser.set(false);
+    }
+
+    void warnUser() {
+        dot.warnUser();
+        warnUser.set(true);
+    }
 }

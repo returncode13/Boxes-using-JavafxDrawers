@@ -50,6 +50,9 @@ public class QcTable implements Serializable {
     @Column(name="result")
     private Boolean result;
     
+    /**
+     * This is unused
+     **/
     @Column(name="comment",columnDefinition = "text")
     private String comment;
 

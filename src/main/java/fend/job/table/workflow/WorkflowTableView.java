@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.job.table.log;
+package fend.job.table.workflow;
+
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,17 +16,16 @@ import javafx.scene.layout.AnchorPane;
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class HeaderLogView extends AnchorPane {
-    private FXMLLoader fXMLLoader;
+public class WorkflowTableView extends AnchorPane{
+     private FXMLLoader fXMLLoader;
     private final URL location;
-    private HeaderLogController controller;
+    private WorkflowTableController controller;
     
-    public HeaderLogView(HeaderLogModel lsm)
-    {
+     public WorkflowTableView(WorkflowTableModel item){
+        
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/workflowtable/workflowtable.fxml"); 
        
-        //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/log/logView.fxml"); 
-          System.out.println(location.toString());
+          
            fXMLLoader=new FXMLLoader();
               
             fXMLLoader.setLocation(location);
@@ -34,32 +34,24 @@ public class HeaderLogView extends AnchorPane {
             fXMLLoader.setBuilderFactory(new JavaFXBuilderFactory());
            
             try{
-                
                 fXMLLoader.load(location.openStream());
-                
-                
-                controller=(HeaderLogController)fXMLLoader.getController();
+           
+                controller=(WorkflowTableController)fXMLLoader.getController();
              
                // setId(UUID.randomUUID().toString());
                 //setId((new UID()).toString());
-               
-               // sc.setId(Long.valueOf(getId()));
-                
-                controller.setModel(lsm);
+                 controller.setModel(item);
                 controller.setView(this) ;
-                
                
-               
-                System.out.println("fend.session.node.headers.HeadersNode.<init>()");
                 
             }catch(IOException e){
                 throw new RuntimeException(e);
-            } 
-}
-
-    public HeaderLogController getController() {
-        return controller;
+            }
     }
 
-    
+    public WorkflowTableController getController() {
+        return controller;
+    }
+     
+     
 }
