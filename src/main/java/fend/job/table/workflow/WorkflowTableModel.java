@@ -31,7 +31,9 @@ public class WorkflowTableModel {
     private WorkflowService workflowService=new WorkflowServiceImpl();
     Map<Workflow,List<Comment>> workflowCommentMap=new HashMap<>(); 
     List<WorkflowModel> currentWorkflows=new ArrayList<>();
-
+    Map<Long,Workflow> mapversionWorkflow=new HashMap<>();
+    List<Long> versions=new ArrayList<>(); 
+    
     public List<WorkflowModel> getCurrentWorkflows() {
         return currentWorkflows;
     }
@@ -60,7 +62,7 @@ public class WorkflowTableModel {
         for(Workflow w:workflowsInJob){
             WorkflowModel wfm=new WorkflowModel();
             wfm.setVersion(w.getWfversion());
-            
+            versions.add(w.getWfversion());
             
             
             String lastComment;
@@ -85,6 +87,7 @@ public class WorkflowTableModel {
                 currentWorkflows.add(wfm);
             }
             workflows.add(wfm);
+            mapversionWorkflow.put(w.getWfversion(), w);
         }
         
         
@@ -93,6 +96,14 @@ public class WorkflowTableModel {
 
     public Job getJob() {
         return job;
+    }
+
+    public Map<Long, Workflow> getMapversionWorkflow() {
+        return mapversionWorkflow;
+    }
+
+    public List<Long> getVersions() {
+        return versions;
     }
     
     

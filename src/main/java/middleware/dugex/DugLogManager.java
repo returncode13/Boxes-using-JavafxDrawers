@@ -318,6 +318,9 @@ public class DugLogManager {
                             li.log=fw.fwrap;
                             try{
                                 Subsurface sbb=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                                if(sbb==null){
+                                    System.out.println("middleware.dugex.DugLogManager.extractInformation(): COULD NOT ASSOCIATE A SUBSURFACE FOR LINE "+linename+" for LOG FILE: "+li.log.getAbsolutePath()+" Has the database been updated for this line?");
+                                }
                                 /* if(subm.containsKey(linename)){
                                 
                                 }*/
@@ -618,6 +621,10 @@ public class DugLogManager {
                                         LogInformation lw=new LogInformation();
                                         lw.log=gcfile;
                                         lw.linename=subsurfaceService.getSubsurfaceObjBysubsurfacename(linename);
+                                        if(lw.linename==null) {
+                                            System.out.println("middleware.dugex.DugLogManager.getModifiedContents(): NO ENTRY FOUND FOR "+linename+" IN THE DATABASE...skipping this log!");
+                                            continue;
+                                        }
                                         lw.volume=dbVol;
                                        // lw.timestamp=timeStamp;
                                         lw.timestamp=dateTime;

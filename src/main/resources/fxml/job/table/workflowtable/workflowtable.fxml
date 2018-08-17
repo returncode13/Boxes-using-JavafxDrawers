@@ -12,6 +12,11 @@
          <children>
             <HBox alignment="CENTER_RIGHT" prefWidth="600.0">
                <children>
+                  <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="compareVersionsButton" mnemonicParsing="false" onAction="#compareVersions" text="compare versions" />
+                     </children>
+                  </HBox>
                   <Button fx:id="filterButton" mnemonicParsing="false" onAction="#filter" text="filter" />
                </children>
             </HBox>

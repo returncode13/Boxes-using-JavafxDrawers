@@ -35,6 +35,7 @@ public class DugioScripts implements Serializable{
     private File segdLoadCheckIfGCLogsFinished;
     private File subsurfaceInsightVersionForLog;
     private File workflowDifference;
+    private File workflowShowOnlyDifference;
     private File parentVolumesFrom2Dlogs;
     private File md5SumCheckforText;
     
@@ -150,14 +151,14 @@ public class DugioScripts implements Serializable{
 "content=$(cat $1/notes.txt)\n" +
 "echo $var \"  Contents: \" $content";
        
-       /*
-       check if the gun_cable.logs under segdloadVolume/logs folder has finished updating
+       /**
+       check if the gun_cable.logs under segdloadVolume/logs folder has finished updating.
        */
        private String segdLoadCheckIfGCLogsFinishedContents="#!/bin/bash\n" +
 "tail -1 $1| grep -q Finished ;echo $?";
        
-       /*
-       for extraction of time linename from the gun_cable.logs under segdloadVolume/logs folder
+       /**
+       for extraction of time linename from the gun_cable.logs under segdloadVolume/logs folder.
        */
        private String segdLoadLineNameTimeMappingFromGunCableLogsContents="#!/bin/bash\n" +
 "grep Finished $1 | awk '{print $5\"-\"$6\"-\"$7\"T\" $8\" \"$13}'|sed 's/.$//'|sed 's/]//'";
@@ -172,9 +173,17 @@ public class DugioScripts implements Serializable{
        private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
        "grep -B 1 Started  $1 ";
        
-       
+        /**
+        * Show the entire difference between the workflows.
+       **/
        private String workflowDifferenceContents="#!/bin/bash\n" +
         "/usr/bin/diff -y -W 250 $1 $2";
+       
+       /**
+        * Show only the differences between the workflows.
+       **/
+       private String workflowShowOnlyDifferenceContents="#!/bin/bash\n" +
+        "/usr/bin/diff -y --suppress-common-lines -W 250 $1 $2";
        
        
        private String parentVolumeFrom2DLogsContents="#!/bin/bash\n" +
@@ -417,6 +426,18 @@ public class DugioScripts implements Serializable{
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            workflowShowOnlyDifference=File.createTempFile("workflowShowOnlyDifference", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workflowShowOnlyDifference));
+            bw.write(workflowShowOnlyDifferenceContents);
+            bw.close();
+            workflowShowOnlyDifference.setExecutable(true,false);
+            workflowShowOnlyDifference.deleteOnExit();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         try{
             parentVolumesFrom2Dlogs=File.createTempFile("parentVolumesFrom2DLogs",".sh");
             BufferedWriter bw= new BufferedWriter(new FileWriter(parentVolumesFrom2Dlogs));
@@ -518,6 +539,12 @@ public class DugioScripts implements Serializable{
     public File getWorkflowDifference() {
         return workflowDifference;
     }
+
+    public File getWorkflowShowOnlyDifference() {
+        return workflowShowOnlyDifference;
+    }
+    
+    
 
     public File getParentVolumesFrom2Dlogs() {
         return parentVolumesFrom2Dlogs;

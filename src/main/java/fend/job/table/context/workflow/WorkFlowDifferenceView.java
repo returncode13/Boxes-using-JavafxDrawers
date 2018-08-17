@@ -24,7 +24,7 @@ public class WorkFlowDifferenceView extends AnchorPane{
     {
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/job/table/context/workflow/workflowDifference.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job/table/context/workflow/workflowDifference_1.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

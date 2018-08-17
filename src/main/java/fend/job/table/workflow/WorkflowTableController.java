@@ -18,8 +18,13 @@ import db.services.CommentTypeServiceImpl;
 import db.services.WorkflowService;
 import db.services.WorkflowServiceImpl;
 import fend.comments.CommentTypeModel;
+import fend.job.table.context.workflow.WorkFlowDifferenceModel;
+import fend.job.table.context.workflow.WorkFlowDifferenceView;
 import fend.job.table.workflow.workflowmodel.WorkflowModel;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -60,6 +65,32 @@ public class WorkflowTableController extends Stage{
     @FXML
     private Button filterButton;
     
+    @FXML
+    private Button compareVersionsButton;
+    
+     @FXML
+    void compareVersions(ActionEvent event) {
+        Map<Long,Workflow> mapversionWorkflow=model.getMapversionWorkflow();
+        List<Long> versions=model.getVersions();
+        if(!mapversionWorkflow.isEmpty()){
+            WorkFlowDifferenceModel workFlowDifferenceModel=new WorkFlowDifferenceModel();
+             workFlowDifferenceModel.setMapOfVersionsVersusWorkflows(mapversionWorkflow);
+             workFlowDifferenceModel.setLhsObs(versions);
+             workFlowDifferenceModel.setRhsObs(versions);
+             List<Long> allkeys=new ArrayList<>(mapversionWorkflow.keySet());
+             Collections.sort(allkeys);
+             Long minVersion=allkeys.get(0);
+             workFlowDifferenceModel.setLhsWorkflow(mapversionWorkflow.get(minVersion));
+             
+             
+             WorkFlowDifferenceView workFlowDifferenceView=new WorkFlowDifferenceView(workFlowDifferenceModel);
+             
+        }else{
+            System.out.println("fend.job.table.workflow.WorkflowTableController.compareVersions(): NO WORKFLOWS FOUND!");
+        }
+                      
+    }
+
      @FXML
     void filter(ActionEvent event) {
         showCurrent.set(!showCurrent.get());

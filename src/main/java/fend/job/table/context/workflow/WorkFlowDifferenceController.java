@@ -15,18 +15,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -60,15 +65,39 @@ public class WorkFlowDifferenceController extends Stage{
     private TextArea differenceTextArea;
     
     
+    @FXML
+    private CheckBox showDifferencesCheckBox;
+
+    BooleanProperty showOnlyDiffProperty=new SimpleBooleanProperty(false);
+
+            
+    @FXML
+    void showOnlyDifferences(ActionEvent event) {
+         if(showDifferencesCheckBox.isSelected()){
+             showOnlyDiffProperty.set(true);
+         }else{
+             showOnlyDiffProperty.set(false);
+         }
+      
+        // Long currentLhsVal=lhsVersionComboBox.getValue();
+        // Long currentRhsVal=rhsVersionComboBox.getValue();
+        
+        // lhsVersionComboBox.setValue();
+       //  lhsVersionComboBox.setValue(currentLhsVal);
+         
+    }
     
     void setModel(WorkFlowDifferenceModel item) {
         model=item;
       //  List<Workflow> workflows=model.getWorkflows();
+      
         mapOfVersionsVersusWorkflows=model.getMapOfVersionsVersusWorkflows();
         ObservableList<Long> lhsvalues=model.getLhsObs();
+        Collections.sort(lhsvalues);
         lhsVersionComboBox.getItems().addAll(lhsvalues);
         
         ObservableList<Long> rhsvalues=model.getRhsObs();
+        Collections.sort(rhsvalues);
         rhsVersionComboBox.getItems().addAll(rhsvalues);
         
         Workflow currentHdrWf=model.getLhsWorkflow();
@@ -81,7 +110,7 @@ public class WorkFlowDifferenceController extends Stage{
                 " is : "+
                 currentHdrWf.
                         getWfversion();
-        }else{
+        }else if(model.ptype){
             currentVHT="version used for "+model.
                 getChosenPHdr().
                 getSubsurface().
@@ -99,7 +128,7 @@ public class WorkFlowDifferenceController extends Stage{
                 
         lhsVersionComboBox.valueProperty().addListener(LHS_DIFFERENCE_LISTENER);
         rhsVersionComboBox.valueProperty().addListener(RHS_DIFFERENCE_LISTENER);
-        
+        showOnlyDiffProperty.addListener(SHOW_ONLY_DIFFERENCES_LISTENER);
         exec=Executors.newCachedThreadPool(r->{
             Thread t=new Thread(r);
             t.setDaemon(true);
@@ -128,7 +157,11 @@ public class WorkFlowDifferenceController extends Stage{
             Task<Void> ltask=new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    contents=calculateDiff(lhs, rhs);
+                    if(!showOnlyDiffProperty.get()){
+                        contents=calculateDiff(lhs, rhs);
+                    }else{
+                        contents=calculateShowOnlyDiff(lhs, rhs);
+                    }
                     return null; 
                 }
             };
@@ -160,9 +193,16 @@ public class WorkFlowDifferenceController extends Stage{
              Task<Void> ltask=new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    contents=calculateDiff(lhs, rhs);
+                    if(!showOnlyDiffProperty.get()){
+                        contents=calculateDiff(lhs, rhs);
+                    }else{
+                        contents=calculateShowOnlyDiff(lhs, rhs);
+                    }
+                    
                     return null; 
                 }
+
+                
             };
             ltask.setOnSucceeded(e->{
                 differenceTextArea.setText(contents);
@@ -180,6 +220,44 @@ public class WorkFlowDifferenceController extends Stage{
         }
     };
     
+    private String calculateShowOnlyDiff(Long lhs, Long rhs) throws Exception {
+        File lhsWk = File.createTempFile("lhsWk", ".sh");
+        Workflow lhsWorkflow = mapOfVersionsVersusWorkflows.get(lhs);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(lhsWk));
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): LHS CONTENTS: ");
+        // System.out.println(""+lhsWorkflow.getContents());
+        bw.write(lhsWorkflow.getContents());
+        bw.close();
+
+        File rhsWk = File.createTempFile("rhsWk", ".sh");
+        Workflow rhsWorkflow = mapOfVersionsVersusWorkflows.get(rhs);
+        BufferedWriter brw = new BufferedWriter(new FileWriter(rhsWk));
+        //System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): RHS CONTENTS: ");
+        // System.out.println(""+rhsWorkflow.getContents());
+        brw.write(rhsWorkflow.getContents());
+        brw.close();
+
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute LHS PATH: "+lhsWk.getAbsolutePath());
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute RHS PATH: "+rhsWk.getAbsolutePath());
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff(): absolute SCR PATH: "+dugioScripts.getWorkflowDifference().getAbsolutePath());
+        String contents = new String("");
+        Process process = new ProcessBuilder(dugioScripts.getWorkflowShowOnlyDifference().getAbsolutePath(), lhsWk.getAbsolutePath(), rhsWk.getAbsolutePath()).start();
+        InputStream is = process.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        String val = new String();
+        while ((contents = br.readLine()) != null) {
+            val += contents;
+            val += "\n";
+        };
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() val     "+val);
+        // System.out.println("fend.job.table.workflow.WorkFlowDifferenceController.calculateDiff() contents "+contents);
+
+        lhsWk.deleteOnExit();
+        rhsWk.deleteOnExit();
+        return val;
+    }
+    
     
     private String calculateDiff(Long lhs, Long rhs) throws IOException {
        File lhsWk=File.createTempFile("lhsWk", ".sh");
@@ -190,7 +268,9 @@ public class WorkFlowDifferenceController extends Stage{
        bw.write(lhsWorkflow.getContents());
        bw.close();
        
-       
+       if(rhs==null){
+           rhs=lhs;
+       }
        File rhsWk=File.createTempFile("rhsWk", ".sh");
        Workflow rhsWorkflow=mapOfVersionsVersusWorkflows.get(rhs);
        BufferedWriter brw = new BufferedWriter(new FileWriter(rhsWk));
@@ -221,4 +301,70 @@ public class WorkFlowDifferenceController extends Stage{
             rhsWk.deleteOnExit();
         return val;
     }
+    
+    
+    
+    
+    private final ChangeListener<Boolean> SHOW_ONLY_DIFFERENCES_LISTENER = new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            lhs=lhsVersionComboBox.getValue();
+            rhs=rhsVersionComboBox.getValue();
+            if(lhs!=null && rhs!=null){
+                        if (newValue) {
+                       Task<Void> ltask = new Task<Void>() {
+                           @Override
+                           protected Void call() throws Exception {
+
+                                   contents = calculateShowOnlyDiff(lhs, rhs);
+
+                               return null;
+                           }
+                       };
+
+                       ltask.setOnSucceeded(e -> {
+                           differenceTextArea.setText(contents);
+                       });
+
+                       ltask.setOnRunning(e -> {
+                           differenceTextArea.setText("..hang on...");
+                       });
+
+                       ltask.setOnFailed(e -> {
+                           ltask.getException().printStackTrace();
+                       });
+
+                       exec.execute(ltask);
+
+                   } else {
+                           Task<Void> ltask = new Task<Void>() {
+                           @Override
+                           protected Void call() throws Exception {
+
+                                   contents = calculateDiff(lhs, rhs);
+
+                               return null;
+                           }
+                       };
+
+                       ltask.setOnSucceeded(e -> {
+                           differenceTextArea.setText(contents);
+                       });
+
+                       ltask.setOnRunning(e -> {
+                           differenceTextArea.setText("..hang on...");
+                       });
+
+                       ltask.setOnFailed(e -> {
+                           ltask.getException().printStackTrace();
+                       });
+
+                       exec.execute(ltask);
+                   }
+            }
+           
+        }
+
+    };
+    
 }
