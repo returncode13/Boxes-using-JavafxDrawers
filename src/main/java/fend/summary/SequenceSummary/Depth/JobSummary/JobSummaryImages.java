@@ -67,6 +67,16 @@ public class JobSummaryImages {
     private  Image IO_INHERITED_OVERRIDE;
     private  Image IO_WARNING;
     private  Image IO_NO_SEQ_PRESENT;
+    
+     //workflow images basic:
+    //https://www.flaticon.com/free-icon/input_411062#term=input&page=1&position=20
+    private  Image WORKFLOW_DOUBT;
+    private  Image WORKFLOW_GOOD;
+    private  Image WORKFLOW_INHERITED_DOUBT;
+    private  Image WORKFLOW_OVERRIDE;
+    private  Image WORKFLOW_INHERITED_OVERRIDE;
+    private  Image WORKFLOW_WARNING;
+    private  Image WORKFLOW_NO_SEQ_PRESENT;
 
     public JobSummaryImages() {
     
@@ -115,6 +125,46 @@ public class JobSummaryImages {
     IO_INHERITED_OVERRIDE=new Image(getClass().getResourceAsStream("/icons/summary/io/io_inherited_override.png")); 
     IO_WARNING=new Image(getClass().getResourceAsStream("/icons/summary/io/io_warning.png"));    
     IO_NO_SEQ_PRESENT=new Image(getClass().getResourceAsStream("/icons/summary/io/io_no_seq_present.png"));   
+    
+    
+    
+    //WORKFLOW
+     
+    WORKFLOW_DOUBT=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_doubt.png"));   //https://www.flaticon.com/free-icon/diagram_134659#term=structure%20diagram&page=1&position=17
+    WORKFLOW_GOOD=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_good.png")); 
+    WORKFLOW_INHERITED_DOUBT=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_inherited_doubt.png"));
+    WORKFLOW_OVERRIDE=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_override.png"));
+    WORKFLOW_INHERITED_OVERRIDE=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_inherited_override.png")); 
+    WORKFLOW_WARNING=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_warning.png"));    
+    WORKFLOW_NO_SEQ_PRESENT=new Image(getClass().getResourceAsStream("/icons/summary/workflow/workflow_no_seq_present.png"));
+    }
+
+    public Image getWORKFLOW_DOUBT() {
+        return WORKFLOW_DOUBT;
+    }
+
+    public Image getWORKFLOW_GOOD() {
+        return WORKFLOW_GOOD;
+    }
+
+    public Image getWORKFLOW_INHERITED_DOUBT() {
+        return WORKFLOW_INHERITED_DOUBT;
+    }
+
+    public Image getWORKFLOW_OVERRIDE() {
+        return WORKFLOW_OVERRIDE;
+    }
+
+    public Image getWORKFLOW_INHERITED_OVERRIDE() {
+        return WORKFLOW_INHERITED_OVERRIDE;
+    }
+
+    public Image getWORKFLOW_WARNING() {
+        return WORKFLOW_WARNING;
+    }
+
+    public Image getWORKFLOW_NO_SEQ_PRESENT() {
+        return WORKFLOW_NO_SEQ_PRESENT;
     }
     
     

@@ -10,6 +10,7 @@ import db.dao.WorkflowDAOImpl;
 import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -93,6 +94,16 @@ public class WorkflowServiceImpl implements WorkflowService{
     @Override
     public void updateCurrentVersionsFor(Job job) {
         wdao.updateCurrentVersionsFor(job);
+    }
+
+    @Override
+    public List<Object[]> getCurrentWorkflowsIn(Workspace workspace) {
+        return wdao.getCurrentWorkflowsIn(workspace);
+    }
+
+    @Override
+    public void updateSubsurfacesForJobWithWorkflow(Job job, Workflow workflow) {
+        wdao.updateSubsurfacesForJobWithWorkflow(job, workflow);
     }
     
 }

@@ -8,7 +8,9 @@ package db.dao;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import db.model.Job;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -319,10 +321,21 @@ public class WorkflowDAOImpl implements WorkflowDAO {
         String selectCurrentWorkflows="Select  distinct w.id from Log L INNER JOIN L.job j"
                 + "                                                  INNER JOIN L.workflow w"
                 + "                                                  WHERE j=:jj AND L.isMaxVersion=true";
+        String setCurrentWorkflowsToFalse="update Workflow set isCurrentVersion=false where id in ("
+                + "                                                                                 Select  distinct w.id from Log L INNER JOIN L.job j "
+                + "                                                                                                                  INNER JOIN L.workflow w"
+                + "                                                                                 where j=:jj"
+                + "                                                                               )";
         String updateCurrentWorkflows="update  Workflow  set isCurrentVersion=true where id in (:ids)";
         
         try{
             transaction=session.beginTransaction();
+            Query falseQuery=session.createQuery(setCurrentWorkflowsToFalse);
+            falseQuery.setParameter("jj", job);
+            int f=falseQuery.executeUpdate();
+            System.out.println("db.dao.WorkflowDAOImpl.updateCurrentVersionsFor(): Set all current versions to false. returned value: "+f);
+            
+            
             Query query=session.createQuery(selectCurrentWorkflows);
             query.setParameter("jj", job);
             List<Long>idsToupdate=query.list();
@@ -339,6 +352,84 @@ public class WorkflowDAOImpl implements WorkflowDAO {
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        
+        
+    }
+
+    @Override
+    public List<Object[]> getCurrentWorkflowsIn(Workspace workspace) {
+        System.out.println("db.dao.WorkflowDAOImpl.getCurrentWorkflowsIn(Workspace)");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Object[]> results=null;
+        String hql="Select j,sub,w from Log lg INNER JOIN lg.job j"
+                + "                            INNER JOIN j.workspace wks"
+                + "                            INNER JOIN lg.subsurface sub"
+                + "                            INNER JOIN lg.workflow w"
+                + "                            WHERE lg.isMaxVersion=true and wks=:wksp";
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("wksp", workspace);
+            results=query.list();
+             System.out.println("db.dao.WorkflowDAOImpl.getCurrentWorkflowsIn(): returning "+results.size()+" workflows");
+
+             transaction.commit();
+        }catch(Exception e){
+            throw e;
+        }finally{
+             session.close();
+         }
+     return results;   
+    }
+
+    @Override
+    public void updateSubsurfacesForJobWithWorkflow(Job job, Workflow workflow) {
+        System.out.println("db.dao.WorkflowDAOImpl.updateSubsurfacesForJobWithWorkflow()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        /*String getSubs="Select sub.id from Log l INNER JOIN l.job job"
+        + "                           INNER JOIN l.subsurface sub"
+        + "                           INNER JOIN l.workflow w "
+        + "                             WHERE "
+        + "                           l.isMaxVersion=true"
+        + "                             AND"
+        + "                           job=:jj"
+        + "                             AND"
+        + "                           w=:wkf";*/
+         String getSubs="Select l.subsurface.id from Log l "
+                + "                                 WHERE "
+                + "                           l.isMaxVersion=true"
+                + "                             AND"
+                + "                           l.job=:jj"
+                + "                             AND"
+                + "                           l.workflow=:wkf";
+        String updateSubs="update SubsurfaceJob set updateTime = :up where pk.job =:jj and pk.subsurface.id in (:subids)";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query getSubQuery=session.createQuery(getSubs);
+            getSubQuery.setParameter("jj", job);
+            getSubQuery.setParameter("wkf", workflow);
+            List<Long> subids=getSubQuery.list();
+                if(subids.isEmpty()){
+                    System.out.println("db.dao.WorkflowDAOImpl.updateSubsurfacesForJobWithWorkflow(): no subsurfaces found for "+job.getNameJobStep()+" workflow: id: "+workflow.getId()+" version: "+workflow.getWfversion());
+                }else{
+                    Query updateQuery=session.createQuery(updateSubs);
+                    updateQuery.setParameter("jj",job);
+                    updateQuery.setParameter("up",AppProperties.timeNow());
+                    updateQuery.setParameterList("subids", subids);
+                    int res=updateQuery.executeUpdate();
+                    System.out.println("db.dao.WorkflowDAOImpl.updateSubsurfacesForJobWithWorkflow(): updating "+subids.size()+" subsurfaces ");
+                }
+            transaction.commit();
+                
+        }catch(Exception e){
+            throw e;
         }finally{
             session.close();
         }

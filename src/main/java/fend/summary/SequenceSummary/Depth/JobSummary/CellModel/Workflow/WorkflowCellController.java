@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Qc;
+package fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Workflow;
 
 import db.model.Doubt;
-import db.model.DoubtStatus;
 import db.model.DoubtType;
 import db.model.Link;
 import db.services.DoubtService;
@@ -16,40 +15,34 @@ import db.services.DoubtStatusServiceImpl;
 import db.services.DoubtTypeService;
 import db.services.DoubtTypeServiceImpl;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.CellState;
+
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryColors;
 import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryImages;
-import fend.summary.SequenceSummary.colors.SequenceSummaryColors;
 import fend.summary.override.OverrideModel;
 import fend.summary.override.OverrideView;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import middleware.doubt.DoubtStatusModel;
-import middleware.doubt.DoubtTypeModel;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
  */
-public class QcCellController {
-    QcCellModel model;
-    QcCellView view;
+
+public class WorkflowCellController {
+    WorkflowCellModel model;
+    WorkflowCellView view;
     DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
     DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     DoubtService doubtService=new DoubtServiceImpl();
-    DoubtType qcDoubtType;
+    DoubtType workflowDoubtType;
     private JobSummaryImages jobSummaryImages;
      private Image doubtImage;
      private Image inheritedDoubtImage;
@@ -61,55 +54,53 @@ public class QcCellController {
      /* @FXML
      private Label qcLabel;*/
      @FXML
-    private ImageView qcCellImage;
+    private ImageView workflowCellImage;
 
     @FXML
-    void qcClicked(MouseEvent event) {
+    void workflowClicked(MouseEvent event) {
         if(model.getJobSummaryModel().getSubsurface()!=null){
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.qcClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCellController.workflowClicked(): workflow clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
             System.out.println("failedDependency:     "+model.cellHasFailedDependency());
             System.out.println("hasInheritedFail:     "+model.cellHasInheritedFail());
             System.out.println("hasInheritedOVerride: "+model.cellHasInheritedOverride());
             System.out.println("hasOverridenFail:     "+model.cellHasOverridenFail());
             System.out.println("hasWarning:           "+model.cellHasWarning());
-            
-            
-            
+          
         }
             
             
     }
 
     
-    public void setModel(QcCellModel item) {
+    public void setModel(WorkflowCellModel item) {
         //qcDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.QC );
         model=item;
-        qcDoubtType=model.getCellDoubtType();
+        workflowDoubtType=model.getCellDoubtType();
        
        
          if(model.isActive()){
         //qcLabel.setDisable(false);
-        qcCellImage.setDisable(false);
+        workflowCellImage.setDisable(false);
         // model.getJobSummaryModel().toggleQuery();
         }else{
              /* qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
              qcLabel.setDisable(true);*/
-             qcCellImage.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-             qcCellImage.setDisable(true);
+             workflowCellImage.setStyle("-fx-background-color: "+JobSummaryColors.WORKFLOW_NO_SEQ_PRESENT);
+             workflowCellImage.setDisable(true);
         }
          try{
             jobSummaryImages=model.getJobSummaryModel().getSummaryModel().getJobSummaryImages();
         }catch(NullPointerException npe){
             jobSummaryImages=new JobSummaryImages();
         }
-        doubtImage=jobSummaryImages.getQC_DOUBT();
-        inheritedDoubtImage = jobSummaryImages.getQC_INHERITED_DOUBT();
-        overridenDoubtImage = jobSummaryImages.getQC_OVERRIDE();
-        inheritedOverridenDoubtImage = jobSummaryImages.getQC_INHERITED_OVERRIDE();
-        warningImage = jobSummaryImages.getQC_WARNING();
-        goodImage = jobSummaryImages.getQC_GOOD();
-        noSeqPresImage = jobSummaryImages.getQC_NO_SEQ_PRESENT();
+        doubtImage=jobSummaryImages.getWORKFLOW_DOUBT();
+        inheritedDoubtImage = jobSummaryImages.getWORKFLOW_INHERITED_DOUBT();
+        overridenDoubtImage = jobSummaryImages.getWORKFLOW_OVERRIDE();
+        inheritedOverridenDoubtImage = jobSummaryImages.getWORKFLOW_INHERITED_OVERRIDE();
+        warningImage = jobSummaryImages.getWORKFLOW_WARNING();
+        goodImage = jobSummaryImages.getWORKFLOW_GOOD();
+        noSeqPresImage = jobSummaryImages.getWORKFLOW_NO_SEQ_PRESENT();
         
         //    applyColor();
                
@@ -122,7 +113,7 @@ public class QcCellController {
        
     }
 
-    void setView(QcCellView vw) {
+    void setView(WorkflowCellView vw) {
         view=vw;
         
     }
@@ -151,7 +142,7 @@ public class QcCellController {
     /**
      * Set the background based on whether the doubt flag is set.
      */
-    private ChangeListener<Boolean> QC_DOUBT_LISTENER=new ChangeListener<Boolean>() {
+    private ChangeListener<Boolean> WORKFLOW_DOUBT_LISTENER=new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
@@ -165,7 +156,7 @@ public class QcCellController {
      * Set the inheritance on and off.
      * The background color changes if the inheritance is set.
      **/
-    private ChangeListener<Boolean> QC_INHERITANCE_LISTENER=new ChangeListener<Boolean>(){
+    private ChangeListener<Boolean> WORKFLOW_INHERITANCE_LISTENER=new ChangeListener<Boolean>(){
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
            
@@ -180,7 +171,7 @@ public class QcCellController {
      * Set the override on and off.
      * The background color changes if the override is set. At this point model.isTime()==True
      **/
-    private ChangeListener<Boolean> QC_OVERRIDE_LISTENER=new ChangeListener<Boolean>(){
+    private ChangeListener<Boolean> WORKFLOW_OVERRIDE_LISTENER=new ChangeListener<Boolean>(){
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             
@@ -199,11 +190,9 @@ public class QcCellController {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
             if(newValue){
-                
-               // qcLabel.setDisable(false);
-               qcCellImage.setDisable(false);
-              //  applyColor();
-              // model.getJobSummaryModel().toggleQuery();
+              
+               workflowCellImage.setDisable(false);
+            
                 if(model.getJobSummaryModel().isChild()){
                     labelColorForSub();
                 }else{
@@ -211,11 +200,9 @@ public class QcCellController {
                 }
                 
             }if(!newValue){
-                
-                /* qcLabel.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-                qcLabel.setDisable(true);*/
-                qcCellImage.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
-                qcCellImage.setDisable(true);
+               
+                workflowCellImage.setStyle("-fx-background-color: "+JobSummaryColors.QC_NO_SEQ_PRESENT);
+                workflowCellImage.setDisable(true);
             }
         }
      };
@@ -241,17 +228,13 @@ public class QcCellController {
             getJobSummaryModel().
             getJob().
             getNameJobStep());*/
-            
-           //  applyColor();
+    
            if(model.getJobSummaryModel().isChild()){
               labelColorForSub();
           }else{
               labelColorForSeq();
           }
-            
           
-         
-             
             
         }
      };
@@ -273,7 +256,7 @@ public class QcCellController {
                                       getNameJobStep());
 
                       // DoubtType modelDoubtType=doubtTypeService.getDoubtTypeByName(model.getContextAskedForDoubtType());
-                      List<Doubt> doubts = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), qcDoubtType);
+                      List<Doubt> doubts = doubtService.getDoubtFor(model.getJobSummaryModel().getSubsurface(), model.getJobSummaryModel().getJob(), workflowDoubtType);
                     //DoubtStatus ds=new ArrayList<>(doubt.getDoubtStatuses()).get(0);
                     // DoubtStatus ds=doubtStatusService.getDoubtStatusForDoubt(doubt).get(0);
                     
@@ -291,7 +274,7 @@ public class QcCellController {
                       ovrModel.setDoubt(doubt);
                       //   ovrModel.setDoubtStatus(ds);
 
-                      ovrModel.setTypeText(qcDoubtType.getName());
+                      ovrModel.setTypeText(workflowDoubtType.getName());
                       ovrModel.setSubsurfaceName(model.getJobSummaryModel().getSubsurface().getSubsurface());
                       ovrModel.setLinkDescription(linkDesc);
                       ovrModel.setParentJobName(parentJobName);
@@ -316,7 +299,6 @@ public class QcCellController {
         
        
        
-        
            Image image=noSeqPresImage;
            String color=new String();
            if(model.isActive()){
@@ -330,31 +312,15 @@ public class QcCellController {
            image=noSeqPresImage;
            }
           //qcLabel.setGraphic(new ImageView(image));
-          qcCellImage.setImage(image);
-       
-           qcCellImage.setStyle("-fx-background-color: transparent;");
+          workflowCellImage.setImage(image);
+          
+           workflowCellImage.setStyle("-fx-background-color: transparent;");
      
      }
      
       private void labelColorForSeq(){
         
-        
-        
-          /*
-          String color=new String();
-          if(model.isActive()){
-          
-          if(model.getCellState() == CellState.FAILED) color= JobSummaryColors.QC_DOUBT;
-          else if(model.getCellState() == CellState.INHERITED_FAIL) color= JobSummaryColors.QC_INHERITED_DOUBT;
-          else if(model.getCellState() == CellState.OVERRIDE) color= JobSummaryColors.QC_OVERRRIDE;
-          else if(model.getCellState() == CellState.INHERITED_OVERRIDE) color= JobSummaryColors.QC_INHERITED_OVERRRIDE;
-          else if(model.getCellState() == CellState.WARNING) color= JobSummaryColors.QC_WARNING;
-          else if(model.getCellState() == CellState.GOOD) color= JobSummaryColors.QC_GOOD;
-          }else{
-          color=JobSummaryColors.TRACES_NO_SEQ_PRESENT;
-          }
-          qcLabel.setStyle("-fx-background-color: "+color);*/
-          
+       
            Image image=noSeqPresImage;
            String color=new String();
            if(model.isActive()){
@@ -368,20 +334,9 @@ public class QcCellController {
            image=noSeqPresImage;
            }
           //qcLabel.setGraphic(new ImageView(image));
-           qcCellImage.setImage(image); 
-           /*try{
-           if(model.getJobSummaryModel().isParent()){
-           color=SequenceSummaryColors.SEQUENCE;
-           }
-           else{
-           color=SequenceSummaryColors.SUBSURFACE;
-           }
-           }catch(NullPointerException npe){
+           workflowCellImage.setImage(image); 
            
-           }*/
-           //qcLabel.setStyle("-fx-background-color: "+color);
-           //qcLabel.setStyle("-fx-background-color: transparent;");
-           qcCellImage.setStyle("-fx-background-color: transparent;");
+           workflowCellImage.setStyle("-fx-background-color: transparent;");
      
      }
     

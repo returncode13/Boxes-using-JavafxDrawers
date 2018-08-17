@@ -19,6 +19,7 @@ public class JobSummaryColors {
     final public static String QC_NO_SEQ_PRESENT="#FFFFFF";
     final public static String INSIGHT_NO_SEQ_PRESENT="#FFFFFF";
     final public static String INHERITANCE_NO_SEQ_PRESENT="#FFFFFF";
+    final public static String WORKFLOW_NO_SEQ_PRESENT="#FFFFFF";
      
     /**
      * Colors for when the Sequence/Subsurface is  GOOD during summary

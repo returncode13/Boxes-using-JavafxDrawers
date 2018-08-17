@@ -39,6 +39,7 @@ import fend.summary.SequenceSummary.Depth.JobSummary.JobSummaryModel;
 import fend.summary.SequenceSummary.Depth.JobSummaryCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Time.TimeCell.TimeCell;
 import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Trace.TraceCell.TraceCell;
+import fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Workflow.WorkflowCell.WorkflowCell;
 import fend.summary.SequenceSummary.SequenceCell.SequenceCell;
 import fend.summary.SequenceSummary.SequenceSummary;
 import fend.summary.SequenceSummary.SubsurfaceCell.SubsurfaceCell;
@@ -107,6 +108,7 @@ public class SummaryController extends Stage{
     private DoubtType qcDoubtType;
     private DoubtType insightDoubtType;
     private DoubtType ioDoubtType;
+    private DoubtType workflowDoubtType;
     private DoubtType inheritanceDoubtType;
     private DoubtTypeService doubtTypeService=new DoubtTypeServiceImpl();
     private DoubtStatusService doubtStatusService=new DoubtStatusServiceImpl();
@@ -146,7 +148,7 @@ public class SummaryController extends Stage{
          insightDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
          inheritanceDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
          ioDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.IO);
-        
+         workflowDoubtType=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.WORKFLOW);
 
          
          Map<Sequence,SequenceSummary> seqSummaryMap=new HashMap<>();
@@ -292,6 +294,7 @@ public class SummaryController extends Stage{
                                     newValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());                  //Qc
                                     newValue.getInsightCellModel().setFailedInsightDependency(value.getInsightCellModel().cellHasFailedDependency());   //Insight
                                     newValue.getIoCellModel().setFailedIoDependency(value.getIoCellModel().cellHasFailedDependency());                //IO
+                                    newValue.getWorkflowCellModel().setFailedDependency(value.getWorkflowCellModel().cellHasFailedDependency());       //WORKFLOW
                                     
                                     
                                     JobSummaryModel newSeqValue=new JobSummaryModel(model);
@@ -304,6 +307,7 @@ public class SummaryController extends Stage{
                                     newSeqValue.getQcCellModel().setFailedQcDependency(value.getQcCellModel().cellHasFailedDependency());                  //Qc
                                     newSeqValue.getInsightCellModel().setFailedInsightDependency(value.getInsightCellModel().cellHasFailedDependency());   //Insight
                                     newSeqValue.getIoCellModel().setFailedIoDependency(value.getIoCellModel().cellHasFailedDependency());                //IO
+                                    newSeqValue.getWorkflowCellModel().setFailedDependency(value.getWorkflowCellModel().cellHasFailedDependency());     //WORKFLOW
                                     
                                     d1.addToJobSummaryMap(newValue);
                                     d2ForSeq.addToJobSummaryMap(newSeqValue);
@@ -402,6 +406,16 @@ public class SummaryController extends Stage{
                         
                         //<--End IO
                         
+                        
+                        //<--Start Worfklow
+                        seqJsm.getWorkflowCellModel().setActive(true);
+                        seqJsm.getWorkflowCellModel().setFailedDependency(seqJsm.getWorkflowCellModel().cellHasFailedDependency() || x.hasFailedWorkflowDependency());
+                        seqJsm.getWorkflowCellModel().setInheritedFail(seqJsm.getWorkflowCellModel().cellHasInheritedFail() || x.hasInheritedWorkflowFail());
+                        seqJsm.getWorkflowCellModel().setInheritedOverride(seqJsm.getWorkflowCellModel().cellHasInheritedOverride() || x.hasInheritedWorkflowOverride());
+                        seqJsm.getWorkflowCellModel().setOverridenFail(seqJsm.getWorkflowCellModel().cellHasOverridenFail() || x.hasOverridenWorkflowFail());
+                        seqJsm.getWorkflowCellModel().setWarning(seqJsm.getWorkflowCellModel().cellHasWarning() || x.hasWarningForWorkflow());
+                        //<--End Workflow
+                        
                         JobSummaryModel jsm=seqSummaryMap.get(seq).
                                 getChild(sub).
                                 getDepth(depth).
@@ -465,6 +479,17 @@ public class SummaryController extends Stage{
                         jsm.getIoCellModel().calculateCellState();
                         //<--End IO
                         
+                        
+                        //<--Start WORKFLOW
+                        jsm.getWorkflowCellModel().setActive(true);
+                        jsm.getWorkflowCellModel().setFailedDependency(x.hasFailedWorkflowDependency());
+                        jsm.getWorkflowCellModel().setInheritedFail(x.hasInheritedWorkflowFail());
+                        jsm.getWorkflowCellModel().setInheritedOverride(x.hasInheritedWorkflowOverride());
+                        jsm.getWorkflowCellModel().setOverridenFail(x.hasOverridenWorkflowFail());
+                        jsm.getWorkflowCellModel().setWarning(x.hasWarningForWorkflow());
+                        jsm.getWorkflowCellModel().calculateCellState();
+                        //<--End WORKFLOW
+                        
                         seqJsm.setParentCellState();
                         /*seqJsm.getTimeCellModel().calculateCellState();
                         seqJsm.getTraceCellModel().calculateCellState();
@@ -517,6 +542,13 @@ public class SummaryController extends Stage{
               vboxIO.setRotate(-90);
               vboxIO.setPadding(new Insets(5,5,5,5));
               Group grpIO=new Group(vboxIO);
+              
+               
+              Label wfL=new Label("Workflow");
+              VBox vboxwfO=new VBox(wfL);
+              vboxwfO.setRotate(-90);
+              vboxwfO.setPadding(new Insets(5,5,5,5));
+              Group grpwfO=new Group(vboxwfO);
             
             
             TreeTableColumn<SequenceSummary,Depth> depthColumn = new TreeTableColumn<>("Depth: "+depth.getDepth()+"");
@@ -609,6 +641,22 @@ public class SummaryController extends Stage{
                      jobcolumn.getColumns().add(ioColumn);
                  
                  //<==End of IO column
+                 
+                 
+                 
+                 //<==Start of Workflow column
+                 TreeTableColumn<SequenceSummary,Boolean> workflowColumn=new TreeTableColumn<>("");
+                    workflowColumn.setGraphic(grpwfO);
+                    workflowColumn.setCellValueFactory(new Callback<TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean>, ObservableValue<Boolean>>() {
+                        @Override
+                        public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<SequenceSummary, Boolean> param) {
+                           return  new SimpleBooleanProperty(param.getValue().getValue().getDepth(Long.valueOf(depthId+"")).getJobSummaryModel(jobkey).getWorkflowCellModel().isActive());
+                        }
+                    });
+                     workflowColumn.setCellFactory(param->new WorkflowCell(depthId,jobkey,workflowDoubtType));
+                     jobcolumn.getColumns().add(workflowColumn);
+                 
+                 //<==End of Workflow column
                 // jobcolumn.setStyle("-fx-padding: 0 0 0 0;");
                 // jobcolumn.setStyle("-fx-margin:");
                 depthColumn.getColumns().add(jobcolumn);

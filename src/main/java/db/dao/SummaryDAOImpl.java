@@ -146,6 +146,13 @@ public class SummaryDAOImpl implements  SummaryDAO{
             summary.setInheritedIoOverride(newSummary.hasInheritedIoOverride());
             summary.setWarningForIo(newSummary.hasWarningForIo());
             
+             summary.setFailedWorkflowDependency(newSummary.hasFailedWorkflowDependency());
+            summary.setOverridenWorkflowFail(newSummary.hasOverridenWorkflowFail());
+            summary.setInheritedWorkflowFail(newSummary.hasInheritedWorkflowFail());
+            summary.setInheritedWorkflowOverride(newSummary.hasInheritedWorkflowOverride());
+            summary.setWarningForWorkflow(newSummary.hasWarningForWorkflow());
+            
+            
             summary.setJob(newSummary.getJob());
             summary.setSequence(newSummary.getSequence());
             summary.setSubsurface(newSummary.getSubsurface());

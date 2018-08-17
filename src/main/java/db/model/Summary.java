@@ -59,6 +59,9 @@ public class Summary implements Serializable {
     @Column(name="io_fail")
     private Boolean failedIoSummary=false;
     
+    @Column(name="workflow_fail")
+    private Boolean failedWorkflowSummary=false;
+    
     @Column(name="time_fail_inherited")
     private Boolean inheritedTimeFail=false;
     
@@ -73,6 +76,9 @@ public class Summary implements Serializable {
     
     @Column(name="io_fail_inherited")
     private Boolean inheritedIoFail=false;
+    
+    @Column(name="workflow_fail_inherited")
+    private Boolean inheritedWorkflowFail=false;
     
     @Column(name="time_override_inherited")
     private Boolean inheritedTimeOverride=false;
@@ -89,6 +95,9 @@ public class Summary implements Serializable {
     @Column(name="io_override_inherited")
     private Boolean inheritedIoOverride=false;
     
+    @Column(name="workflow_override_inherited")
+    private Boolean inheritedWorkflowOverride=false;
+    
     @Column(name="time_fail_override")
     private Boolean overridenTimeFail=false;
     
@@ -103,6 +112,9 @@ public class Summary implements Serializable {
     
     @Column(name="io_fail_override")
     private Boolean overridenIoFail=false;
+    
+    @Column(name="workflow_fail_override")
+    private Boolean overridenWorkflowFail=false;
     
     @Column(name="time_fail_warning")
     private Boolean warningForTime=false;
@@ -119,6 +131,10 @@ public class Summary implements Serializable {
     
     @Column(name="io_fail_warning")
     private Boolean warningForIo=false;
+    
+    
+    @Column(name="workflow_fail_warning")
+    private Boolean warningForWorkflow=false;
     /*@Column(name="insight_inheritance_summary")
     private Boolean insightInheritanceSummary=false;
     */
@@ -214,6 +230,16 @@ public class Summary implements Serializable {
         this.failedIoSummary=this.failedIoSummary || failedIoSummary;
     }
     
+    
+    public void setFailedWorkflowDependency(boolean b) {
+        this.failedWorkflowSummary=this.failedWorkflowSummary || b;
+    }
+    
+    public boolean hasFailedWorkflowDependency() {
+        return failedWorkflowSummary;
+    }
+
+    
     public Boolean hasInheritedTimeFail() {
         return inheritedTimeFail;
     }
@@ -253,7 +279,15 @@ public class Summary implements Serializable {
     public void setInheritedIoFail(Boolean inheritedIoFail){
         this.inheritedIoFail=this.inheritedIoFail || inheritedIoFail;
     }
+    
+     public void setInheritedWorkflowFail(boolean b) {
+        this.inheritedWorkflowFail=this.inheritedWorkflowFail || b;
+    }
 
+    public boolean hasInheritedWorkflowFail() {
+        return inheritedWorkflowFail;
+    } 
+     
     public Boolean hasOverridenTimeFail() {
         return overridenTimeFail;
     }
@@ -293,7 +327,15 @@ public class Summary implements Serializable {
     public void setOverridenIoFail(Boolean overridenIoFail){
         this.overridenIoFail=this.overridenIoFail || overridenIoFail;
     }
-
+    
+    public void setOverridenWorkflowFail(boolean b) {
+        this.overridenWorkflowFail=this.overridenWorkflowFail || b;
+    }
+    
+     public boolean hasOverridenWorkflowFail() {
+        return overridenWorkflowFail;
+    }
+    
     public Boolean hasWarningForTime() {
         return warningForTime;
     }
@@ -334,6 +376,15 @@ public class Summary implements Serializable {
         this.warningForIo=this.warningForIo || warningForIo;
     }
     
+    public void setWarningForWorkflow(boolean b) {
+        this.warningForWorkflow=this.warningForWorkflow || b;
+    }
+    
+     public boolean hasWarningForWorkflow() {
+        return warningForWorkflow;
+    }
+    
+    
     public Boolean hasInheritedTimeOverride() {
         return inheritedTimeOverride;
     }
@@ -373,6 +424,16 @@ public class Summary implements Serializable {
     public void  setInheritedIoOverride(Boolean inheritedIoOverride){
         this.inheritedIoOverride=this.inheritedIoOverride ||inheritedIoOverride;
     }
+    
+    
+    public void setInheritedWorkflowOverride(boolean b) {
+        this.inheritedWorkflowOverride=this.inheritedWorkflowOverride || b;
+    }
+    
+    public boolean hasInheritedWorkflowOverride() {
+        return inheritedWorkflowOverride;
+    }
+
     
     
 
@@ -420,14 +481,32 @@ public class Summary implements Serializable {
     }
 
     public void setAll(boolean b) {
-        failedTimeDependency=failedTraceDependency=failedQcSummary=failedInsightSummary=failedIoSummary=b;
-        inheritedTimeFail=inheritedTraceFail=inheritedQcFail=inheritedInsightFail=inheritedIoFail=b;
-        inheritedTimeOverride=inheritedTraceOverride=inheritedQcOverride=inheritedInsightOverride=inheritedIoOverride=b;
-        overridenTimeFail=overridenTraceFail=overridenQcFail=overridenInsightFail=overridenIoFail=b;
-        warningForTime=warningForTrace=warningForQc=warningForInsight=warningForIo=b;
+        failedTimeDependency=failedTraceDependency=failedQcSummary=failedInsightSummary=failedIoSummary=failedWorkflowSummary=b;
+        inheritedTimeFail=inheritedTraceFail=inheritedQcFail=inheritedInsightFail=inheritedIoFail=inheritedWorkflowFail=b;
+        inheritedTimeOverride=inheritedTraceOverride=inheritedQcOverride=inheritedInsightOverride=inheritedIoOverride=inheritedWorkflowOverride=b;
+        overridenTimeFail=overridenTraceFail=overridenQcFail=overridenInsightFail=overridenIoFail=overridenWorkflowFail=b;
+        warningForTime=warningForTrace=warningForQc=warningForInsight=warningForIo=warningForWorkflow=b;
         
     }
+
+   
+
+   
+
+  
+  
+
     
+    
+
+   
+
+   
+    
+
+    
+
+ 
     
     
     

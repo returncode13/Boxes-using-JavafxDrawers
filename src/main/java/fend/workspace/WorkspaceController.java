@@ -31,6 +31,7 @@ import db.model.Summary;
 import db.model.Theader;
 import db.model.VariableArgument;
 import db.model.Volume;
+import db.model.Workflow;
 import db.model.Workspace;
 import db.services.AncestorService;
 import db.services.AncestorServiceImpl;
@@ -78,6 +79,8 @@ import db.services.VariableArgumentService;
 import db.services.VariableArgumentServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
+import db.services.WorkflowService;
+import db.services.WorkflowServiceImpl;
 import db.services.WorkspaceService;
 import db.services.WorkspaceServiceImpl;
 import fend.dot.DotModel;
@@ -194,6 +197,7 @@ public class WorkspaceController {
     private DoubtType doubtTypeTime;
     private DoubtType doubtTypeInsight;
     private DoubtType doubtTypeInherit;
+    private DoubtType doubtTypeWorkflow;
     private DoubtType doubtTypeIO;
     
     private NodeType node2D;
@@ -699,6 +703,7 @@ public class WorkspaceController {
         doubtTypeInsight=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INSIGHT);
         doubtTypeInherit = doubtTypeService.getDoubtTypeByName(DoubtTypeModel.INHERIT);
         doubtTypeIO=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.IO);
+        doubtTypeWorkflow=doubtTypeService.getDoubtTypeByName(DoubtTypeModel.WORKFLOW);
         
         node2D=nodeTypeService.getNodeTypeObjForType(JobType0Model.PROCESS_2D);
         nodeSegd=nodeTypeService.getNodeTypeObjForType(JobType0Model.SEGD_LOAD);
@@ -1106,6 +1111,27 @@ public class WorkspaceController {
                     summary.setWarningForIo(true);
                 }
             }
+            //worflow
+            if(t.equals(doubtTypeWorkflow)){
+                boolean error=c.getState().equals(DoubtStatusModel.ERROR);
+                if(error){
+                    boolean causeIsOverriden=c.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                    if(causeIsOverriden){
+                        summary.setFailedWorkflowDependency(true);
+                        summary.setOverridenWorkflowFail(true);
+                        summary.setWarningForWorkflow(false); 
+                    }else{
+                        summary.setFailedWorkflowDependency(true);
+                        summary.setOverridenWorkflowFail(false);
+                        summary.setWarningForWorkflow(false);
+                    }
+                    
+                }else{
+                    summary.setFailedWorkflowDependency(false);
+                    summary.setOverridenWorkflowFail(false);
+                    summary.setWarningForWorkflow(true);
+                }
+            }
             
         }
         
@@ -1123,6 +1149,10 @@ public class WorkspaceController {
         
         int ioInhFail=0;
         int ioInhOver=0;
+        
+        int workflowInhFail=0;
+        int workflowInhOver=0;
+        
         
         for(Doubt i:inheritedDoubts){
             Doubt c=i.getDoubtCause();
@@ -1147,6 +1177,10 @@ public class WorkspaceController {
             if(t.equals(doubtTypeIO)){
                 if(causeIsOverriden) ++ioInhOver;
                 else ++ioInhFail;
+            }
+            if(t.equals(doubtTypeWorkflow)){
+                if(causeIsOverriden) ++workflowInhOver;
+                else ++workflowInhFail;
             }
         }
         //time start
@@ -1214,6 +1248,20 @@ public class WorkspaceController {
             summary.setInheritedIoOverride(false);
         }    
         //io end
+        //workflow start
+         if(workflowInhFail>0){
+            summary.setInheritedWorkflowFail(true);
+        }else{
+            summary.setInheritedWorkflowFail(false);
+        } 
+        
+        if(workflowInhOver>0){
+            summary.setInheritedWorkflowOverride(true);
+        }else{
+            summary.setInheritedWorkflowOverride(false);
+        }   
+        
+        //workflow end
         System.out.println("final summary for "+sub.getSubsurface()+" for job: "+job.getNameJobStep()+" is: ");
             System.out.println("traces: ");
             System.out.println("   fail    : "+summary.hasFailedTraceDependency());
@@ -1223,7 +1271,7 @@ public class WorkspaceController {
             System.out.println("   warn    : "+summary.hasWarningForTrace());
             
             System.out.println("fend.workspace.WorkspaceController.summaryFor(): updating summary: "+summary.getId());
-        summaryService.updateSummary(summary.getId(), summary);
+        summaryService.updateSummary(summary.getId(), summary); //update each type...see implementation
         
     }
 
@@ -2061,6 +2109,7 @@ public class WorkspaceController {
         mIpVols.clear();
         jvMap.clear();
         theaderMap.clear();
+        mapOfCurrentWorkflows.clear();
     }
 
 
@@ -2462,6 +2511,117 @@ public class WorkspaceController {
         return resultHolder;
         
     }
+    
+    
+    
+    /**
+     * Workflow is checked on the parent. 
+     * 
+     */
+    private ResultHolder checkWorkflowDependency(Link link,Subsurface sub){
+        System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency():  "+link.getParent().getNameJobStep()+"-->"+link.getChild().getNameJobStep());
+        Job pjob = link.getParent();
+        Workflow pcurrent=null;
+        boolean failed=false;
+        boolean passed=true;
+       
+        if(mapOfCurrentWorkflows.containsKey(pjob)){
+             System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows contains key : "+pjob.getNameJobStep());
+            if(mapOfCurrentWorkflows.get(pjob).containsKey(sub)){
+                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
+                pcurrent=mapOfCurrentWorkflows.get(pjob).get(sub);                          //the current workflow for the sub
+                
+                if(pcurrent.getControl()==null){
+                    System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is null: failed is true");
+                    failed=true;
+                }else if(!pcurrent.getControl()){
+                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is false");
+                    passed=false;
+                }else{
+                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is true");
+                    passed=true;
+                }
+            }else{
+                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
+            }
+        }else{
+            System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows DOESNOT contain key : "+pjob.getNameJobStep());
+        }
+        ResultHolder resultHolder=new ResultHolder();
+        if(pcurrent==null){
+            failed=true;
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason="NO WORKFLOWS WERE FOUND FOR job: "+pjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+            return resultHolder;
+        }
+        if(failed){
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason="Failed Control for Workflow Version: "+pcurrent.getWfversion()+ " in job "+pjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }else if(!passed){
+            resultHolder.result=DEPENDENCY_FAIL_WARNING;
+            resultHolder.reason="No control set for Workflow Version: "+pcurrent.getWfversion()+ " in job "+pjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }else{
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason="Passed Control for Workflow Version: "+pcurrent.getWfversion()+ " in job "+pjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }
+        
+        return resultHolder;
+        
+    } 
+    
+    /**
+     * Workflow is checked on child. 
+     * 
+     */
+    private ResultHolder checkWorkflowDependencyOnLeaf(Link link,Subsurface sub){
+         System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf():  "+link.getParent().getNameJobStep()+"-->"+link.getChild().getNameJobStep());
+        Job cjob = link.getChild();
+        Workflow chcurrent=null;
+        boolean failed=false;
+        boolean passed=true;
+         if(mapOfCurrentWorkflows.containsKey(cjob)){
+             System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows contains key : "+cjob.getNameJobStep());
+            if(mapOfCurrentWorkflows.get(cjob).containsKey(sub)){
+                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
+                chcurrent=mapOfCurrentWorkflows.get(cjob).get(sub);                          //the current workflow for the sub
+                
+                if(chcurrent.getControl()==null){
+                    System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is null: failed is true");
+                    failed=true;
+                }else if(!chcurrent.getControl()){
+                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is false");
+                    passed=false;
+                }else{
+                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is true");
+                    passed=true;
+                }
+            }else{
+                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
+            }
+        }else{
+            System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows DOESNOT contain key : "+cjob.getNameJobStep());
+        }
+        ResultHolder resultHolder=new ResultHolder();
+        if(chcurrent==null){
+            failed=true;
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason="NO WORKFLOWS WERE FOUND FOR job: "+cjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+            return resultHolder;
+        }
+        if(failed){
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason="Failed Control for Workflow Version: "+chcurrent.getWfversion()+ " in job "+cjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }else if(!passed){
+            resultHolder.result=DEPENDENCY_FAIL_WARNING;
+            resultHolder.reason="No control set for Workflow Version: "+chcurrent.getWfversion()+ " in job "+cjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }else{
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason="Passed Control for Workflow Version: "+chcurrent.getWfversion()+ " in job "+cjob.getNameJobStep()+" sub: "+sub.getSubsurface();
+        }
+        
+        return resultHolder;
+        
+    } 
     
     private ResultHolder checkQcDependency(Link link,Subsurface sub){
         
@@ -2931,6 +3091,10 @@ public class WorkspaceController {
                                 ioStatus.result=DEPENDENCY_PASS;
                                 setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);                                  
                                 
+                                ResultHolder workflowStatus=new ResultHolder();
+                                workflowStatus.result=DEPENDENCY_PASS;                                              //force good
+                                
+                                
                                 
                                 if(link.getChild().isLeaf()){
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
@@ -2938,6 +3102,9 @@ public class WorkspaceController {
                                     
                                     ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                                    
+                                     ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
                                 }
                         }
                         
@@ -2964,7 +3131,12 @@ public class WorkspaceController {
                                 
                                  
                                 ResultHolder ioStatus=checkIODependency(link, subb);
-                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);              
+                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);             
+                                
+                                
+                                ResultHolder workflowStatus=checkWorkflowDependency(link, subb);
+                                setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
+                                
                                 
                                 if(link.getChild().isLeaf()){     //for doubts that arise on the nodes themselves (unchecked qcs , insight versions)
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
@@ -2972,6 +3144,9 @@ public class WorkspaceController {
                                     
                                     ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                                    
+                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
                                 }
                                 
                         }
@@ -3004,6 +3179,10 @@ public class WorkspaceController {
                                     ResultHolder insightStatusForLeaf=new ResultHolder();
                                     insightStatusForLeaf.result=DEPENDENCY_PASS;
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                                    
+                                    
+                                     ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
                                 }
                         }
                         /*   if(segyType){
@@ -3103,9 +3282,11 @@ public class WorkspaceController {
     
     private Map<SubsurfaceJobKey,List<String>> mIpVols=new HashMap<>();
     private Map<Job,List<String>> jvMap=new HashMap<>();                  // lookup map for job and the paths of the volumes it contains. for summary
-    
-    
+    private Map<Job,Map<Subsurface,Workflow>> mapOfCurrentWorkflows=new HashMap<>(); //lookup map for job->subsurface->currentWorkflow used for the sub in that job
+    //private Map<Job,List<Workflow>> mapOfAllJobWorkflows=new HashMap<>();     //lookup map for job
     private TheaderService theaderService=new TheaderServiceImpl();
+     
+    private WorkflowService workflowService=new WorkflowServiceImpl();
     
     private void loadAllMaps(){
         /**
@@ -3436,7 +3617,28 @@ public class WorkspaceController {
             }
         }
         
+        
+        /**
+         * mapOfCurrentWorkflows contains the job->sub->currentWorkflow used for all jobs in the workspace
+         **/
+        List<Object[]>currentWorkflowsInWorkspace=workflowService.getCurrentWorkflowsIn(dbWorkspace);           //returned as an array of Job,Subsurface,Workflow
+        for(Object[] jsw:currentWorkflowsInWorkspace){
+            Job j=(Job) jsw[0];
+            Subsurface s=(Subsurface) jsw[1];
+            Workflow w=(Workflow) jsw[2];
+            if(!mapOfCurrentWorkflows.containsKey(j)){
+                mapOfCurrentWorkflows.put(j,new HashMap<>());
+                mapOfCurrentWorkflows.get(j).put(s, w);
+            }else{
+                mapOfCurrentWorkflows.get(j).put(s,w);
+            }
+        }
+        
+        System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): the size of the mapOfCurrentWorkflows: "+mapOfCurrentWorkflows.values().size());
     }
+    
+   
+    
     
     /***
      * dot belongs to the link
@@ -3551,6 +3753,34 @@ public class WorkspaceController {
                 jobWithDoubt = link.getChild();
                 DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
                 keys.add(key);
+            }else if(doubtType.equals(doubtTypeWorkflow)){                  //workflow on parent
+                        if (forLeaf) {
+                            jobWithDoubt = link.getChild();
+                        } else {
+                            jobWithDoubt = link.getParent();
+                        }
+
+                        if (jobWithDoubt.isRoot()) {
+                            if (!djMap.containsKey(jobWithDoubt)) {
+                                djMap.put(jobWithDoubt, new ArrayList<>());
+                                djMap.get(jobWithDoubt).add(dot);
+                            }
+                        }
+
+                        if (!forLeaf) {                                                      // link the parent node with the dot of the link with link.parent=parent
+                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                            keys.add(key);
+                        } else {
+                            if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                for (Dot dp : dotsParent) {
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                    keys.add(key);
+                                    break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                    // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                }
+                            }
+                        }
             }else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
@@ -3711,7 +3941,40 @@ public class WorkspaceController {
                 jobWithDoubt = link.getChild();
                 DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
                 keys.add(key);
-            } else {
+            } else if(doubtType.equals(doubtTypeWorkflow)){
+                
+                                 if(forLeaf){
+                                    jobWithDoubt = link.getChild();
+                                }else{
+                                    jobWithDoubt = link.getParent();
+                                }
+                                
+                                
+                                if(jobWithDoubt.isRoot()){
+                                    /* DoubtKey key=generateDoubtKey(sub, jobWithDoubt, dot, doubtType);  //make a key with the links dot. This is unique
+                                    keys.add(key);*/
+                                    if(!djMap.containsKey(jobWithDoubt)){
+                                        djMap.put(jobWithDoubt, new ArrayList<>());
+                                        djMap.get(jobWithDoubt).add(dot);
+                                    }
+                                }
+                                
+
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
+                                    }
+                                }
+            }else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
              
@@ -3853,7 +4116,37 @@ public class WorkspaceController {
                 jobWithDoubt = link.getChild();
                 DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
                 keys.add(key);
-            }  else {
+            }else if(doubtType.equals(doubtTypeWorkflow)){
+                
+                                if(forLeaf){
+                                    jobWithDoubt = link.getChild();
+                                }else{
+                                    jobWithDoubt = link.getParent();
+                                }
+                                
+                                if(jobWithDoubt.isRoot()){
+                                   if(!djMap.containsKey(jobWithDoubt)){
+                                        djMap.put(jobWithDoubt, new ArrayList<>());
+                                        djMap.get(jobWithDoubt).add(dot);
+                                    }
+                                }
+                                
+                                
+                                if(!forLeaf){                                                      // link the parent node with the dot of the link with link.parent=parent
+                                    DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dot, doubtType);
+                                    keys.add(key);
+                                }else{
+                                    if (djMap.containsKey(jobWithDoubt)) {                              //when the (parent) job is a leaf ( for p-type doubts i.e doubts set on the parents)
+                                        List<Dot> dotsParent = djMap.get(jobWithDoubt);                //dot(s) of the link(s) of which the parent is a child
+                                        for (Dot dp : dotsParent) {
+                                            DoubtKey key = generateDoubtKey(sub, jobWithDoubt, dp, doubtType);
+                                            keys.add(key);
+                                            break;                                                      //since this doubt refers to the node and is independent of the link dropped on it unlike trace/time where different links may contribute each to a cause.
+                                                                                                        // this case (p-type i.e insight,qc) doesn't depend on the link as a cause. Therefore it's redundant to have more than one doubt related to the same p-cause for a node
+                                        }
+                                    }
+                                }
+            }else {
                 jobWithDoubt = link.getChild();                                  //default on child   
             }
              
@@ -3962,6 +4255,7 @@ public class WorkspaceController {
                     DoubtKey qcKey=generateDoubtKey(sub, job, dot, doubtTypeQc);
                     DoubtKey insightKey=generateDoubtKey(sub, job, dot, doubtTypeInsight);
                     DoubtKey ioKey=generateDoubtKey(sub,job,dot,doubtTypeIO);
+                    DoubtKey workflowKey=generateDoubtKey(sub, job, dot, doubtTypeWorkflow);
                         //time Start
                         if(dMap.containsKey(timeKey)){
                             DoubtHolder dh=dMap.get(timeKey);
@@ -4126,6 +4420,37 @@ public class WorkspaceController {
                         }
                         //io end
                         
+                        //workflow start
+                        if(dMap.containsKey(workflowKey)){
+                            DoubtHolder dh=dMap.get(workflowKey);
+                            if(!dh.delete){
+                                Doubt cause=dh.cause;
+                                boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
+                                if(error){
+                                    
+                                    summary.setFailedWorkflowDependency(true);
+                                    summary.setWarningForWorkflow(false);
+                                    boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
+                                        if(causeIsOverriden) {
+                                            summary.setOverridenWorkflowFail(true);
+                                        }else{
+                                            
+                                            summary.setOverridenWorkflowFail(false);
+                                        }
+                                                
+                                }else{
+                                    summary.setFailedWorkflowDependency(false);
+                                    summary.setWarningForWorkflow(true);
+                                }
+                            }
+                        }else{
+                            summary.setFailedWorkflowDependency(false);
+                            summary.setWarningForWorkflow(false);
+                            summary.setOverridenWorkflowFail(false);
+                            
+                        }
+                        //workflow end
+                        
             }
                         //are there any inherited doubts on this job,sub?
                         SubsurfaceJobKey sjkey=generateSubsurfaceJobKey(job, sub);
@@ -4172,6 +4497,13 @@ public class WorkspaceController {
                                         sh.inheritedIOCause.add(cause);
                                     }
                                 }
+                                if(causeType.equals(doubtTypeWorkflow)){
+                                    if(causeIsOverriden){
+                                        sh.inheritedWorkflowoverridenCause.add(cause);
+                                    }else{
+                                        sh.inheritedWorkflowCause.add(cause);
+                                    }
+                                }
                             }
                             
                            boolean inheritedTime = !sh.inheritedTimeCause.isEmpty();
@@ -4189,6 +4521,10 @@ public class WorkspaceController {
                            boolean inheritedIO = !sh.inheritedIOCause.isEmpty();
                            boolean inheritedOverridenIO = !sh.inheritedIOoverridenCause.isEmpty();
                            
+                           
+                           boolean inheritedWorkFlow=!sh.inheritedWorkflowCause.isEmpty();
+                           boolean inheritedOverridenWorkflow=!sh.inheritedWorkflowoverridenCause.isEmpty();
+                           
                            summary.setInheritedTimeFail(inheritedTime);
                            summary.setInheritedTimeOverride(inheritedOverridenTime);
                            
@@ -4203,6 +4539,9 @@ public class WorkspaceController {
                            
                            summary.setInheritedIoFail(inheritedIO);
                            summary.setInheritedIoOverride(inheritedOverridenIO);
+                           
+                           summary.setInheritedWorkflowFail(inheritedWorkFlow);
+                           summary.setInheritedWorkflowOverride(inheritedOverridenWorkflow);
                            
                         }else{                                                      // no inheritance on this key
                             summary.setInheritedTraceFail(false);
@@ -4219,6 +4558,9 @@ public class WorkspaceController {
                             
                             summary.setInheritedIoFail(false);
                             summary.setInheritedIoOverride(false);
+                            
+                            summary.setInheritedWorkflowFail(false);
+                            summary.setInheritedWorkflowOverride(false);
                            
                         }
           //  }
@@ -4338,6 +4680,9 @@ public class WorkspaceController {
         
         List<Doubt> inheritedIOCause=new ArrayList<>();
         List<Doubt> inheritedIOoverridenCause=new ArrayList<>();
+        
+        List<Doubt> inheritedWorkflowCause=new ArrayList<>();
+        List<Doubt> inheritedWorkflowoverridenCause=new ArrayList<>();
     }
     
     private class ResultHolder{

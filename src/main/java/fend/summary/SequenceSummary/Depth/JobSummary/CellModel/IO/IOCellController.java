@@ -68,7 +68,7 @@ public class IOCellController {
     void ioClicked(MouseEvent event) {
         if(model.getJobSummaryModel().getSubsurface()!=null){
             
-            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellController.timeClicked(): time clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
+            System.out.println("fend.summary.SequenceSummary.Depth.JobSummary.CellModel.IO.IOCellController.timeClicked(): io clicked for  "+model.getJobSummaryModel().getJob().getNameJobStep());
             System.out.println("active  : "+model.isActive());
             
             System.out.println("failedDependency:     "+model.cellHasFailedDependency());

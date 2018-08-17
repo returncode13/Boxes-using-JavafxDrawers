@@ -5,6 +5,7 @@
  */
 package fend.job.table.workflow.cell;
 
+import db.model.Job;
 import db.services.WorkflowService;
 import fend.job.table.qctable.PQCheckBox;
 import fend.job.table.workflow.workflowmodel.WorkflowModel;
@@ -26,7 +27,8 @@ public class WorkflowCheckBoxCell extends TableCell<WorkflowModel,Boolean>{
     WorkflowModel selectedItem;
     WorkflowService workflowService;
     TableColumn<WorkflowModel, Boolean> param;
-    public WorkflowCheckBoxCell(TableColumn<WorkflowModel, Boolean> p,WorkflowService ws) {
+    Job job;
+    public WorkflowCheckBoxCell(TableColumn<WorkflowModel, Boolean> p,Job j,WorkflowService ws) {
         
         checkBox=new PQCheckBox();
         label=new Label();
@@ -34,6 +36,7 @@ public class WorkflowCheckBoxCell extends TableCell<WorkflowModel,Boolean>{
        checkBox.setAllowIndeterminate(true);
        workflowService=ws;
                 param=p;
+                job=j;
        
         checkBox.selectedProperty().addListener((obs, ol, nv) -> {
             if (getTableRow() != null) {
@@ -46,6 +49,7 @@ public class WorkflowCheckBoxCell extends TableCell<WorkflowModel,Boolean>{
                 selectedItem.setCheckedProperty(nv);
 
                 workflowService.updateControlFor(selectedItem.getWorkflow(), nv);
+              
             }
 
         });
@@ -62,9 +66,14 @@ public class WorkflowCheckBoxCell extends TableCell<WorkflowModel,Boolean>{
                 selectedItem.setIndeterminateProperty(nv);
                 if (nv) {
                     workflowService.updateControlFor(selectedItem.getWorkflow(), null);
+                   
                 }
             }
 
+        });
+       
+        checkBox.setOnMouseClicked(e->{
+             workflowService.updateSubsurfacesForJobWithWorkflow(job,selectedItem.getWorkflow());
         });
        
        

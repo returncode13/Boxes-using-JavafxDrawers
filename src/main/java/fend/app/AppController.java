@@ -879,6 +879,11 @@ public class AppController extends Stage implements Initializable{
                     inherit.setName(DoubtTypeModel.INHERIT);
                     doubtTypeService.createDoubtType(inherit);
                 }
+                if(doubtTypeService.getDoubtTypeByName(DoubtTypeModel.WORKFLOW)==null){
+                    DoubtType workflow=new DoubtType();
+                    workflow.setName(DoubtTypeModel.WORKFLOW);
+                    doubtTypeService.createDoubtType(workflow);
+                }
             }
             
             

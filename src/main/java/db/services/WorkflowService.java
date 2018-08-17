@@ -8,6 +8,7 @@ package db.services;
 import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -34,4 +35,8 @@ public interface WorkflowService {
 
     public void updateControlFor(Workflow workflow, Boolean object);
     public void updateCurrentVersionsFor(Job job);
+
+    public List<Object[]> getCurrentWorkflowsIn(Workspace dbWorkspace);
+
+    public void updateSubsurfacesForJobWithWorkflow(Job job, Workflow workflow);
 }

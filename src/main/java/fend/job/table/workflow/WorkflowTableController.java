@@ -134,7 +134,7 @@ public class WorkflowTableController extends Stage{
         });
        
        
-        workflowControl.setCellFactory(p->{return new WorkflowCheckBoxCell(p,workflowService);});
+        workflowControl.setCellFactory(p->{return new WorkflowCheckBoxCell(p,model.getJob(),workflowService);});
       
        filterButton.setText("show current workflows");
        workflowTable.getColumns().addAll(workflowVersionCol,workflowControl,workflowComments);

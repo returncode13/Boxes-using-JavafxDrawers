@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -34,6 +35,10 @@ public interface WorkflowDAO {
 
     public void updateControlFor(Workflow workflow, Boolean control);
     public void updateCurrentVersionsFor(Job job);
+
+    public List<Object[]> getCurrentWorkflowsIn(Workspace workspace);
+
+    public void updateSubsurfacesForJobWithWorkflow(Job job, Workflow workflow);
 
     
 }
