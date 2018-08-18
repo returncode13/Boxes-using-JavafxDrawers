@@ -407,7 +407,7 @@ public class JobType1Controller implements JobType0Controller{
     }
     
     /**
-     * Show workflow table
+     * Show workflow table.
      */
     
      @FXML
@@ -416,7 +416,7 @@ public class JobType1Controller implements JobType0Controller{
             WorkflowTableView wfv=new WorkflowTableView(wfm);
     }
     /***
-     * Extract headers for the current job
+     * Extract headers for the current job.
      
      */
     
@@ -429,7 +429,7 @@ public class JobType1Controller implements JobType0Controller{
                 headerButton.setDisable(true);
                  showTable.setDisable(true);
                  qctable.setDisable(true);
-                 
+                  workflowbutton.setDisable(true);
                 Task<Void> logExtraction=new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
@@ -450,6 +450,7 @@ public class JobType1Controller implements JobType0Controller{
                         headerButton.setDisable(false);
                         showTable.setDisable(false);
                         openDrawer.setDisable(false);
+                        workflowbutton.setDisable(false);
                         model.setFinishedCheckingLogs(false);
                         dugLogManager=null;
                         progressBar.progressProperty().unbind();
@@ -464,6 +465,7 @@ public class JobType1Controller implements JobType0Controller{
                         headerButton.setDisable(false);
                          showTable.setDisable(false);
                          openDrawer.setDisable(false);
+                          workflowbutton.setDisable(false);
                          progressBar.progressProperty().unbind();
                          progressBar.setProgress(0);
                          message.textProperty().unbind();
@@ -477,6 +479,7 @@ public class JobType1Controller implements JobType0Controller{
                         headerButton.setDisable(true);
                         showTable.setDisable(true);
                         openDrawer.setDisable(true); 
+                        workflowbutton.setDisable(true);
                 });
                 
                 progressBar.progressProperty().unbind();

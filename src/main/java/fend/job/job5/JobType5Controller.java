@@ -97,6 +97,8 @@ import fend.job.table.lineTable.job5.PlineTableModel;
 import fend.job.table.lineTable.job5.PlineTableView;
 import fend.job.table.qctable.QcTableModel;
 import fend.job.table.qctable.QcTableView;
+import fend.job.table.workflow.WorkflowTableModel;
+import fend.job.table.workflow.WorkflowTableView;
 import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -185,7 +187,10 @@ public class JobType5Controller implements JobType0Controller{
 
     @FXML
     private JFXButton fullHeaderButton;
-
+    
+     @FXML
+    private JFXButton workflowbutton;
+    
     QcTypeService qcTypeService=new QcTypeServiceImpl();
     int numberOfInsights=0;
     
@@ -425,9 +430,18 @@ public class JobType5Controller implements JobType0Controller{
          });
     }
     
+      /**
+     * Show workflow table.
+     */
+    
+     @FXML
+    void showWorkflowTable(ActionEvent event) {
+            WorkflowTableModel wfm=new WorkflowTableModel(dbjob);
+            WorkflowTableView wfv=new WorkflowTableView(wfm);
+    }
     
     /***
-     * Extract headers for the current job
+     * Extract headers for the current job.
      
      */
     
@@ -440,7 +454,7 @@ public class JobType5Controller implements JobType0Controller{
                 headerButton.setDisable(true);
                  showTable.setDisable(true);
                  qctable.setDisable(true);
-                 
+                 workflowbutton.setDisable(true);
                 Task<Void> logExtraction=new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
@@ -453,6 +467,7 @@ public class JobType5Controller implements JobType0Controller{
                         logExtraction.getException().printStackTrace();
                         headerButton.setDisable(false);
                          showTable.setDisable(false);
+                         workflowbutton.setDisable(false);
                         model.setFinishedCheckingLogs(false);
                         dugLogManager=null;
                 });

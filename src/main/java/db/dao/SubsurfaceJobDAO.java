@@ -38,5 +38,6 @@ public interface SubsurfaceJobDAO {
 
     public void updateTimeWhere(Job job, Subsurface sub, String updateTime);
     public void updateTimeWhere(Job job, Sequence seq,String updateTime);
+    
           
 }
