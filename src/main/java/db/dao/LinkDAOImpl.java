@@ -201,7 +201,8 @@ public class LinkDAOImpl implements LinkDAO{
          String hql="SELECT l,lpsjs,lcsjs from Link l INNER JOIN l.parent lp INNER JOIN lp.subsurfaceJobs lpsjs"
                  + "                      INNER JOIN l.child  lc INNER JOIN lc.subsurfaceJobs lcsjs"
                  + "                      INNER JOIN l.dot d"
-                 + "                      WHERE lpsjs.pk.subsurface=lcsjs.pk.subsurface "                                                       // all child and parent jobs who contain the same sub
+                 + "                      WHERE"
+                 + "                             lpsjs.pk.subsurface=lcsjs.pk.subsurface "                                                       // all child and parent jobs who contain the same sub
                  + "                                     AND"
                  + "                            ( lpsjs.updateTime > lpsjs.summaryTime OR lcsjs.updateTime > lcsjs.summaryTime)"                //job-sub combinations where update > summary  
                  + "                                     AND"
@@ -251,7 +252,7 @@ public class LinkDAOImpl implements LinkDAO{
     }
 
     @Override
-    public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace) {
+    public List<Link> getLinksInWorkspace(Workspace dbWorkspace) {
         System.out.println("db.dao.LinkDAOImpl.getLinksForDot()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;

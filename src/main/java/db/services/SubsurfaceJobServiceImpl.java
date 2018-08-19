@@ -110,6 +110,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         subsurfaceJobDAO.updateTimeWhere(job,seq,updateTime);
     }
 
+    @Override
+    public List<SubsurfaceJob> getSubsurfaceJobForSummary(Workspace dbWorkspace) {
+        return subsurfaceJobDAO.getSubsurfaceJobForSummary(dbWorkspace);
+    }
+
     
    
     

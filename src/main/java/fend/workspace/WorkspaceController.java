@@ -232,6 +232,23 @@ public class WorkspaceController {
     private Map<DescendantKey, List<Descendant>> descendantMapForSummary = new HashMap<>(); // each pkey (job,sub) has a list of descendants (jobs that contain the sub)
     private double percentageOfProcessorsUsed = AppProperties.PERCENTAGE_OF_PROCESSORS_USED;
     private double dividerWidth = 0.90;
+    
+    
+    
+    private PheaderService pheaderService=new PheaderServiceImpl();
+    private LogService logservice=new LogServiceImpl();
+    
+    private Map<SubsurfaceJobKey,List<String>> mIpVols=new HashMap<>();
+    private Map<Job,List<String>> jvMap=new HashMap<>();                  // lookup map for job and the paths of the volumes it contains. for summary
+    private Map<Job,Map<Subsurface,Workflow>> mapOfCurrentWorkflows=new HashMap<>(); //lookup map for job->subsurface->currentWorkflow used for the sub in that job
+    private Map<Job, Map<Subsurface, List<QcTable>>> mapOfQcTables=new HashMap<>();  //look up map for Leaf jobs-> subsurface->listof qcs.
+    private List<SubsurfaceJob> subsurfaceJobsForSummary=new ArrayList<>();         //subsurface jobs for current workspace where updatetime>summarytime
+    private List<Link> linksInWorkspace=new ArrayList<>();                          //get all the links in the workspace
+    private Map<Job,List<Subsurface>> jobSubsurfaceMap=new HashMap<>();             // look up for job,subsurface
+    private TheaderService theaderService=new TheaderServiceImpl();
+     
+    private WorkflowService workflowService=new WorkflowServiceImpl();
+    
 
     @FXML
     private AnchorPane baseWindow;              //depth =0 
@@ -2120,7 +2137,17 @@ public class WorkspaceController {
     private ResultHolder checkTimeDependency(Link l, Subsurface subb){
         Job hparent = l.getParent();
         Job hchild = l.getChild();
-       
+        
+        ResultHolder resultHolder=new ResultHolder();
+        
+        if(!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkTimeDependency(): Skipping check for "+subb.getSubsurface()+" couldn't find it in either or both the parent or in the child job: "+hparent.getNameJobStep()+" --- > "+hchild.getNameJobStep());
+            return resultHolder;
+        }
+        
+        
         boolean parentIsSegy=hparent.getNodetype().equals(nodeSegy);
         boolean childIsSegy=hchild.getNodetype().equals(nodeSegy);
         
@@ -2145,7 +2172,7 @@ public class WorkspaceController {
         */
        
                     
-        ResultHolder resultHolder=new ResultHolder();
+        
         
         if(parentIs2D && childIs2D){
                     HeaderKey parentKey = generateHeaderKey(hparent, subb);
@@ -2420,6 +2447,19 @@ public class WorkspaceController {
     
     
     private ResultHolder checkTraceDependency(Link link,Subsurface subb){
+        
+        Job hparent=link.getParent();
+        Job hchild=link.getChild();
+          ResultHolder resultHolder=new ResultHolder();
+        if(!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for "+subb.getSubsurface()+" couldn't find it in either or both the parent or in the child job: "+hparent.getNameJobStep()+" --- > "+hchild.getNameJobStep());
+            return resultHolder;
+        }
+        
+        
+        
         Dot dot=link.getDot();
         String function = dot.getFunction();
         Double tolerance = dot.getTolerance();
@@ -2431,7 +2471,7 @@ public class WorkspaceController {
         Map<String, Double> mapForVariableSetting = new HashMap<>();
         Set<String> variableSet = new HashSet<>();
         Set<Job> argumentSet = new HashSet<>();
-        ResultHolder resultHolder=new ResultHolder();
+        
         mapForVariableSetting.clear();
         variableSet.clear();
         argumentSet.clear();
@@ -2627,36 +2667,74 @@ public class WorkspaceController {
         
         Job lparent = link.getParent();
         Job jchild = link.getChild();
-        List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
+       // List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
+        ResultHolder resultHolder=new ResultHolder();
+         if(!(jobSubsurfaceMap.get(lparent).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+lparent.getNameJobStep()+"");
+            return resultHolder;
+        }
+        
+        if(!mapOfQcTables.containsKey(lparent)){
+             resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+lparent.getNameJobStep()+" in the QC Map");
+            return resultHolder;
+        }
+        if(!mapOfQcTables.get(lparent).containsKey(sub)){
+             resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+lparent.getNameJobStep()+" in the QC Map");
+            return resultHolder;
+        }
+       List<QcTable> qctForParent=mapOfQcTables.get(lparent).get(sub);
+       
+       
         Boolean passQc = true;
         Boolean failed=false;
-        for (QcMatrixRow qcmr : parentQcMatrix) {
-            try {
-                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
-                Boolean qcresult;
-                if(qctableentries==null){ 
-                    qcresult=false;
+        /*for (QcMatrixRow qcmr : parentQcMatrix) {
+        try {
+        QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
+        Boolean qcresult;
+        if(qctableentries==null){
+        qcresult=false;
+        }else{
+        qcresult=qctableentries.getResult();
+        }
+        
+        if (qcresult == null) {
+        // qcresult = false;
+        // passQc=null;
+        //failed=true;
+        failed=failed||true;
+        }else{
+        passQc = passQc && qcresult;
+        }
+        
+        } catch (Exception ex) {
+        Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        }
+        */
+        for(QcTable qctabeentries:qctForParent){
+             Boolean qcresult;
+            if(qctabeentries==null){
+                qcresult=false;
                 }else{
-                    qcresult=qctableentries.getResult();
-                }
-                
-                if (qcresult == null) {
-                   // qcresult = false;
-                  // passQc=null;
-                  //failed=true;
-                  failed=failed||true;
-                }else{
-                    passQc = passQc && qcresult;
-                }
-                
-            } catch (Exception ex) {
-                Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+                qcresult=qctabeentries.getResult();
             }
-            
+            if (qcresult == null) {
+                failed=failed||true;
+            }else{
+                passQc = passQc && qcresult;
+            }
         }
         
         
-        ResultHolder resultHolder=new ResultHolder();
+        
+       
         if(failed){
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
             resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(lparent.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
@@ -2676,36 +2754,76 @@ public class WorkspaceController {
         
         Job lparent = link.getParent();
         Job jchild = link.getChild();
-        List<QcMatrixRow> childQcMatrix = qcMatrixRowService.getQcMatrixForJob(jchild, true);    //put this in a map
-         Boolean passQc = true;
+       // List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
+        ResultHolder resultHolder=new ResultHolder(); 
+       if(!(jobSubsurfaceMap.get(jchild).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+jchild.getNameJobStep()+"");
+            return resultHolder;
+        }
+       
+        if(!mapOfQcTables.containsKey(jchild)){
+             resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+jchild.getNameJobStep()+" in the QC Map");
+            return resultHolder;
+        }
+        if(!mapOfQcTables.get(jchild).containsKey(sub)){
+             resultHolder.result = DEPENDENCY_PASS;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+jchild.getNameJobStep()+" in the QC Map");
+            return resultHolder;
+        }
+       
+       
+       List<QcTable> qctForChild=mapOfQcTables.get(jchild).get(sub);
+       
+       
+        Boolean passQc = true;
         Boolean failed=false;
-        for (QcMatrixRow qcmr : childQcMatrix) {
-            try {
-                QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
-                Boolean qcresult;
-                if(qctableentries==null){ 
-                    qcresult=false;
+       
+        for(QcTable qctabeentries:qctForChild){
+             Boolean qcresult;
+            if(qctabeentries==null){
+                qcresult=false;
                 }else{
-                    qcresult=qctableentries.getResult();
-                }
-                
-                if (qcresult == null) {
-                   // qcresult = false;
-                  // passQc=null;
-                  failed=failed||true;
-                  
-                }else{
-                    passQc = passQc && qcresult;
-                }
-                
-            } catch (Exception ex) {
-                Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+                qcresult=qctabeentries.getResult();
             }
-            
+            if (qcresult == null) {
+                failed=failed||true;
+            }else{
+                passQc = passQc && qcresult;
+            }
         }
         
+        /*for (QcMatrixRow qcmr : childQcMatrix) {
+        try {
+        QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
+        Boolean qcresult;
+        if(qctableentries==null){
+        qcresult=false;
+        }else{
+        qcresult=qctableentries.getResult();
+        }
         
-        ResultHolder resultHolder=new ResultHolder();
+        if (qcresult == null) {
+        // qcresult = false;
+        // passQc=null;
+        failed=failed||true;
+        
+        }else{
+        passQc = passQc && qcresult;
+        }
+        
+        } catch (Exception ex) {
+        Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        }*/
+        
+        
+       
         if(failed){
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
             resultHolder.reason=DoubtStatusModel.getNew2DoubtQCmessage(jchild.getNameJobStep(), sub.getSubsurface(), doubtTypeQc.getName());
@@ -3014,7 +3132,8 @@ public class WorkspaceController {
   * new summary algorithm 23rd April 2018
 **/   
     public void summarizeOne() throws Exception{
-        
+       
+                
          /*
             Clear all containers
          */
@@ -3034,19 +3153,26 @@ public class WorkspaceController {
 
         String latestSummaryTime = subsurfaceJobService.getLatestSummaryTime();
         
-        if(subsurfaceLinkMap.isEmpty()){
-            System.out.println("fend.workspace.WorkspaceController.summarizeOne(): No change detected on the DAG.");
-            return;
-        }
-        for (Map.Entry<Subsurface, Set<Link>> entry : subsurfaceLinkMap.entrySet()) {
-            Subsurface subb = entry.getKey();
-            Set<Link> links = entry.getValue();
-
+        /* if(subsurfaceLinkMap.isEmpty()){
+        System.out.println("fend.workspace.WorkspaceController.summarizeOne(): No change detected on the DAG.");
+        return;
+        }*/
+        
+        for(SubsurfaceJob sj:subsurfaceJobsForSummary){
+            Subsurface subb=sj.getSubsurface();
+           
+                
+                /*     }
+                }
+                for (Map.Entry<Subsurface, Set<Link>> entry : subsurfaceLinkMap.entrySet()) {
+                Subsurface subb = entry.getKey();
+                Set<Link> links = entry.getValue();*/
             Callable<String> summaryTask = new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     
-                    for(Link link : links){
+              //      for(Link link : links){
+               for(Link link:linksInWorkspace){
                         /**
                          * the dot that the link belongs to 
                          */
@@ -3093,18 +3219,33 @@ public class WorkspaceController {
                                 
                                 ResultHolder workflowStatus=new ResultHolder();
                                 workflowStatus.result=DEPENDENCY_PASS;                                              //force good
-                                
+                                setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
                                 
                                 
                                 if(link.getChild().isLeaf()){
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                   
                                     
-                                    ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                                    ResultHolder insightStatusForLeaf=new ResultHolder();
+                                    insightStatus.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
+                                    
+                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
+                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    
+                                    
+                                     
+                                    /**
+                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
+                                     **/
+                                    
+                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
                                     
-                                     ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
                                 }
                         }
                         
@@ -3142,11 +3283,25 @@ public class WorkspaceController {
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
                                     
-                                    ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                                     ResultHolder insightStatusForLeaf=new ResultHolder();
+                                    insightStatus.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
+                                    
+                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
+                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    
+                                    
+                                     
+                                    /**
+                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
+                                     **/
+                                    
+                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
                                     
                                     ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
                                 }
                                 
                         }
@@ -3176,13 +3331,35 @@ public class WorkspaceController {
                                     ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
                                     setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
                                     
-                                    ResultHolder insightStatusForLeaf=new ResultHolder();
+                                     ResultHolder insightStatusForLeaf=new ResultHolder();
+                                    insightStatus.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
+                                    
+                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
+                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    
+                                    
+                                     
+                                    /**
+                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
+                                     **/
+                                    
+                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+                                    
+                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
+                                    
+                                    
+                                    
+                                    /* ResultHolder insightStatusForLeaf=new ResultHolder();
                                     insightStatusForLeaf.result=DEPENDENCY_PASS;
                                     setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
                                     
                                     
-                                     ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
                                 }
                         }
                         /*   if(segyType){
@@ -3277,45 +3454,47 @@ public class WorkspaceController {
         
     }
    
-    private PheaderService pheaderService=new PheaderServiceImpl();
-    private LogService logservice=new LogServiceImpl();
-    
-    private Map<SubsurfaceJobKey,List<String>> mIpVols=new HashMap<>();
-    private Map<Job,List<String>> jvMap=new HashMap<>();                  // lookup map for job and the paths of the volumes it contains. for summary
-    private Map<Job,Map<Subsurface,Workflow>> mapOfCurrentWorkflows=new HashMap<>(); //lookup map for job->subsurface->currentWorkflow used for the sub in that job
-    //private Map<Job,List<Workflow>> mapOfAllJobWorkflows=new HashMap<>();     //lookup map for job
-    private TheaderService theaderService=new TheaderServiceImpl();
-     
-    private WorkflowService workflowService=new WorkflowServiceImpl();
-    
+   
     private void loadAllMaps(){
         /**
          * Retrieve all links that need to be summarized
          * if no links are found( due to no change to the DAG) then return
          **/
         
-        List<Object[]> elementsToSummarize = linkService.getSubsurfaceAndLinksForSummary(dbWorkspace);
-        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Retrieved " + elementsToSummarize.size() + " elements to summarize");
-        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Building the elements map");
-
-        for (Object[] element : elementsToSummarize) {
-            SubsurfaceJob sjc = (SubsurfaceJob) element[2];     //child job of the link
-            SubsurfaceJob sjp = (SubsurfaceJob) element[1];     //parent job of the link
-            Link value = (Link) element[0];
-            
-            Subsurface ckey = sjc.getSubsurface();
-            if (!subsurfaceLinkMap.containsKey(ckey)) {
-                subsurfaceLinkMap.put(ckey, new HashSet<>());
-                subsurfaceLinkMap.get(ckey).add(value);
-            } else {
-                subsurfaceLinkMap.get(ckey).add(value);
-            }
-            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjp.getJob(), sjp.getSubsurface()), sjp);
-            subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjc.getJob(), sjc.getSubsurface()), sjc);
-
-        }
         
-        if(subsurfaceLinkMap.isEmpty()) return;
+        subsurfaceJobsForSummary=subsurfaceJobService.getSubsurfaceJobForSummary(dbWorkspace);
+        for(SubsurfaceJob s:subsurfaceJobsForSummary){
+            if(!jobSubsurfaceMap.containsKey(s.getJob())){
+                jobSubsurfaceMap.put(s.getJob(),new ArrayList<>());
+                
+            }
+            jobSubsurfaceMap.get(s.getJob()).add(s.getSubsurface());
+        }
+        linksInWorkspace=linkService.getLinksInWorkspace(dbWorkspace);
+       // List<Object[]> elementsToSummarize = linkService.getSubsurfaceAndLinksForSummary(dbWorkspace);
+//        System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Retrieved " + elementsToSummarize.size() + " elements to summarize");
+        //System.out.println("fend.workspace.WorkspaceController.summarizeZero() : " + timeNow() + " Building the elements map");
+        System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): will run summary for "+subsurfaceJobsForSummary.size()+" subsurface job combinations");
+        System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): will run summary for "+linksInWorkspace.size()+" links in the workspace");
+
+        /*  for (Object[] element : elementsToSummarize) {
+        SubsurfaceJob sjc = (SubsurfaceJob) element[2];     //child job of the link
+        SubsurfaceJob sjp = (SubsurfaceJob) element[1];     //parent job of the link
+        Link value = (Link) element[0];
+        
+        Subsurface ckey = sjc.getSubsurface();
+        if (!subsurfaceLinkMap.containsKey(ckey)) {
+        subsurfaceLinkMap.put(ckey, new HashSet<>());
+        subsurfaceLinkMap.get(ckey).add(value);
+        } else {
+        subsurfaceLinkMap.get(ckey).add(value);
+        }
+        subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjp.getJob(), sjp.getSubsurface()), sjp);
+        subsurfaceJobSummaryTimeMap.put(generateSubsurfaceJobKey(sjc.getJob(), sjc.getSubsurface()), sjc);
+        
+        }
+        */
+       // if(subsurfaceLinkMap.isEmpty()) return;
         
         /***
          * Get all Theaders and put them in a lookup map.
@@ -3569,7 +3748,7 @@ public class WorkspaceController {
          * The dot and the job are together required to generate the DoubtKey
          **/
         
-        List<Link> dotAncestorList=linkService.getDotJobListForWorkspace(dbWorkspace);
+        List<Link> dotAncestorList=linkService.getLinksInWorkspace(dbWorkspace);
         for(Link lk:dotAncestorList){
             Dot d=lk.getDot();
             Job j=lk.getChild();
@@ -3635,6 +3814,11 @@ public class WorkspaceController {
         }
         
         System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): the size of the mapOfCurrentWorkflows: "+mapOfCurrentWorkflows.values().size());
+        
+        
+        
+        
+        mapOfQcTables=qcTableService.getQcTablesFor(dbWorkspace);
     }
     
    
@@ -4632,7 +4816,12 @@ public class WorkspaceController {
         List<SubsurfaceJob> subsurfaceJobsToBeUpdated = new ArrayList<>(subsurfaceJobSummaryTimeMap.values());
         System.out.println("fend.workspace.WorkspaceController.summaryDatabaseOperations() " + timeNow() + " Updating the summary times for the " + subsurfaceJobsToBeUpdated.size() + " subsurfaces that were queried");
         
-        subsurfaceJobService.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
+        //subsurfaceJobService.updateBulkSubsurfaceJobs(subsurfaceJobsToBeUpdated);
+        String stime=AppProperties.timeNow();
+        for(SubsurfaceJob s:subsurfaceJobsForSummary){
+            s.setSummaryTime(stime);
+        }
+        subsurfaceJobService.updateBulkSubsurfaceJobs(subsurfaceJobsForSummary);
         
     }
 

@@ -14,6 +14,7 @@ import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.User;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 import java.util.Map;
 
@@ -41,4 +42,6 @@ public interface QcTableService {
     public int update(Long qcmrId, Subsurface childsub, Boolean resForDb, String updateTime, User currentUser);
     public void setAllqcTableValuesFor(Sequence seq,Job j,Long qcmatrixId,Boolean result,String updateTime, User currentUser);
     public void createBulkQcTables(List<QcTable> qctables);
+    public  Map<Job,Map<Subsurface,List<QcTable>>> getQcTablesOnLeafJobsFor(Workspace w);
+     public  Map<Job,Map<Subsurface,List<QcTable>>> getQcTablesFor(Workspace w);  //all tables for subs where update>summary
 }

@@ -16,6 +16,7 @@ import app.properties.AppProperties;
 import db.model.Job;
 import db.model.Sequence;
 import db.model.User;
+import db.model.Workspace;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -481,6 +482,147 @@ public class QcTableDAOImpl implements QcTableDAO{
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesOnLeafJobsFor(Workspace w) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        int jc = 0;
+        int sbc = 0;
+        int qcc = 0;
+        
+        Map<Job, Map<Subsurface, List<QcTable>>> map=new HashMap<>();
+        List<Long> leavesId=null;
+        List<Object[]> jobsubQc=null;
+        //String selectLeaves="select j.id from  Descendant D RIGHT JOIN D.job j where j is null and  j.workspace= :w";
+        String selectLeaves="select jj.id from Job jj where jj.id not in (select j.id from  Descendant D Left JOIN D.job j) and jj.workspace=:w";
+        
+        String subsSelect="select sj.pk.subsurface.id from SubsurfaceJob sj where  sj.pk.job.id in (:leavesId) and sj.updateTime > sj.summaryTime";  //get all subsurfaces in leavesId that were updated
+        
+        String getJobSubQc="select j,sub,qct from QcTable qct INNER JOIN qct.qcMatrixRow QMR "
+                + "                                           INNER JOIN QMR.job j"
+                + "                                           INNER JOIN qct.subsurface sub "
+                + "         where  QMR.present=true and sub.id in ("+subsSelect+") and j.id in (:leavesId)";                //all qctables for all subsurfaces for all leavesId
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(selectLeaves);
+            query.setParameter("w", w);
+            leavesId=query.list();
+            System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor(): returning a list of "+leavesId.size()+" leaves");
+            for(Long l:leavesId){
+                System.out.println("id: "+l);
+            }
+          
+            if(!leavesId.isEmpty()){
+                    Query qcquery=session.createQuery(getJobSubQc);
+                    qcquery.setParameterList("leavesId", leavesId);
+                    jobsubQc=qcquery.list();
+                    
+            }else{
+                System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor(): NO leaves found!");
+            }
+            transaction.commit();
+            
+            for(Object[] jsq:jobsubQc){
+                Job jb=(Job) jsq[0];
+                Subsurface sb=(Subsurface) jsq[1];
+                QcTable qc=(QcTable) jsq[2];
+                if(!map.containsKey(jb)){
+                    map.put(jb,new HashMap<>());
+                    jc++;
+                }
+                if(!map.get(jb).containsKey(sb)){
+                    map.get(jb).put(sb, new ArrayList<>());
+                    sbc++;
+                }
+                map.get(jb).get(sb).add(qc);
+                qcc++;
+               
+            }
+            
+        }catch(Exception e){
+            throw e;
+        }finally{
+            session.close();
+        }
+        
+       
+        Set<Job> keys=map.keySet();
+        int size=0;
+        for(Job j: keys){
+            size+=map.get(j).values().size();
+        }
+        
+         System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor() :  "+jc+" jobs "+sbc+" subs "+qcc+" qcs entered: -> mapsize: "+(jc*sbc*qcc));
+        return map;
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesFor(Workspace w) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction =null;
+        int jc = 0;
+        int sbc = 0;
+        int qcc = 0;
+        
+        Map<Job, Map<Subsurface, List<QcTable>>> map=new HashMap<>();
+        List<Long> leavesId=null;
+        List<Object[]> jobsubQc=null;
+        //String selectLeaves="select j.id from  Descendant D RIGHT JOIN D.job j where j is null and  j.workspace= :w";
+        //String selectLeaves="select jj.id from Job jj where jj.id not in (select j.id from  Descendant D Left JOIN D.job j) and jj.workspace=:w";
+        
+       
+        
+        String getJobSubQc="select j,sub,qct from QcTable qct INNER JOIN qct.qcMatrixRow QMR "
+                + "                                           INNER JOIN QMR.job j"
+                + "                                           INNER JOIN qct.subsurface sub "
+                + "                                           INNER JOIN qct.subsurfaceJob subjob"
+                + "                                            WHERE QMR.present=true AND subjob.updateTime > subjob.summaryTime AND j.workspace=:w";
+                
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(getJobSubQc);
+            query.setParameter("w", w);
+            jobsubQc=query.list();
+            System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor(): returning a list of "+jobsubQc.size()+" objects");
+           
+            transaction.commit();
+            
+            for(Object[] jsq:jobsubQc){
+                Job jb=(Job) jsq[0];
+                Subsurface sb=(Subsurface) jsq[1];
+                QcTable qc=(QcTable) jsq[2];
+                if(!map.containsKey(jb)){
+                    map.put(jb,new HashMap<>());
+                    jc++;
+                }
+                if(!map.get(jb).containsKey(sb)){
+                    map.get(jb).put(sb, new ArrayList<>());
+                    sbc++;
+                }
+                map.get(jb).get(sb).add(qc);
+                qcc++;
+               
+            }
+            
+        }catch(Exception e){
+            throw e;
+        }finally{
+            session.close();
+        }
+        
+       
+        Set<Job> keys=map.keySet();
+        int size=0;
+        for(Job j: keys){
+            size+=map.get(j).values().size();
+        }
+        
+         System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor() :  "+jc+" jobs "+sbc+" subs "+qcc+" qcs entered: -> mapsize: "+(jc*sbc*qcc));
+        return map;
     }
     
     

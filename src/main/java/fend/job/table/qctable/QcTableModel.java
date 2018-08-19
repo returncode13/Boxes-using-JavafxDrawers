@@ -12,6 +12,7 @@ import db.model.QcMatrixRow;
 import db.model.QcTable;
 import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.SubsurfaceJob;
 import db.services.CommentService;
 import db.services.CommentServiceImpl;
 import db.services.JobService;
@@ -20,6 +21,8 @@ import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import db.services.QcTableService;
 import db.services.QcTableServiceImpl;
+import db.services.SubsurfaceJobService;
+import db.services.SubsurfaceJobServiceImpl;
 import db.services.SubsurfaceService;
 import db.services.SubsurfaceServiceImpl;
 import fend.comments.CommentTypeModel;
@@ -63,7 +66,9 @@ public class QcTableModel {
     private Map<Long,Map<Subsurface,QcTable>> qcmatrixRowSubQcTableMap=new HashMap<>();
     private QcTableService qcTableService=new QcTableServiceImpl();
     private BooleanProperty reloadSequencesProperty=new SimpleBooleanProperty(false);
-
+    private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
+    private Map<Job,Map<Subsurface,SubsurfaceJob>> mapOfsubjobs=new HashMap<>();
+    
     public BooleanProperty reloadSequencesProperty() {
         return reloadSequencesProperty;
     }
@@ -83,7 +88,16 @@ public class QcTableModel {
         List<QcMatrixRow> qcmatrixForJob=qcMatrixRowService.getQcMatrixForJob(dbJob, true);
        // System.out.println("fend.job.table.qctable.QcTableModel.<init>(): size of qcmatrix for job: "+dbJob.getId()+" is "+qcmatrixForJob.size());
         List<QcMatrixRowModelParent> feqcmr=new ArrayList<>();
-        
+        List<SubsurfaceJob> subsurfaceJobs=subsurfaceJobService.getSubsurfaceJobFor(dbJob.getWorkspace());
+        for(SubsurfaceJob sj:subsurfaceJobs){
+            if(!mapOfsubjobs.containsKey(dbJob)){
+                mapOfsubjobs.put(dbJob,new HashMap<>());
+            }
+          
+                mapOfsubjobs.get(dbJob).put(sj.getSubsurface(),sj);                   //what???
+            
+        }
+       
         System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Loading all comments for the job: "+dbJob.getNameJobStep());
         commentService.getCommentsFor(dbJob,CommentTypeModel.TYPE_QC,sequenceComments, subsurfaceComments);
         Map<Sequence,List<QcTableSequence>> lookupmap=new HashMap<>();  //all subsurfaces grouped under the sequence key
@@ -148,6 +162,7 @@ public class QcTableModel {
                         qct.setUpdateTime(AppProperties.timeNow());
                         qct.setResult(Boolean.FALSE);
                         qct.setUser(AppProperties.getCurrentUser());
+                        qct.setSubsurfaceJob(mapOfsubjobs.get(dbJob).get(s));
                         qctablesToCreate.add(qct);
                     }
                     
@@ -172,6 +187,7 @@ public class QcTableModel {
                             qct.setUpdateTime(AppProperties.timeNow());
                             qct.setResult(Boolean.FALSE);
                             qct.setUser(AppProperties.getCurrentUser());
+                            qct.setSubsurfaceJob(mapOfsubjobs.get(dbJob).get(s));
                             qctablesToCreate.add(qct);
                         }
                         

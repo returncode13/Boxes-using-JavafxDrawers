@@ -15,6 +15,7 @@ import db.model.QcMatrixRow;
 import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.User;
+import db.model.Workspace;
 import java.util.Map;
 
 /**
@@ -100,6 +101,16 @@ public class QcTableServiceImpl implements QcTableService{
     @Override
     public void createBulkQcTables(List<QcTable> qctables) {
         qctDAO.createBulkQcTables(qctables);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesOnLeafJobsFor(Workspace w) {
+        return qctDAO.getQcTablesOnLeafJobsFor(w);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesFor(Workspace w) {
+        return qctDAO.getQcTablesFor(w);
     }
     
     

@@ -109,8 +109,8 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public List<Link> getDotJobListForWorkspace(Workspace dbWorkspace) {
-        return linkDAO.getDotJobListForWorkspace(dbWorkspace);
+    public List<Link> getLinksInWorkspace(Workspace dbWorkspace) {
+        return linkDAO.getLinksInWorkspace(dbWorkspace);
     }
 
     @Override
