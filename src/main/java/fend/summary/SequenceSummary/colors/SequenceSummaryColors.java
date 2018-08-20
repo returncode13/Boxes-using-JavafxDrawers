@@ -33,4 +33,8 @@ public class SequenceSummaryColors {
     public final static Color SEQUENCE_TEXT_SELECTED=Color.BLACK;
     public final static Color SUBSURFACE_TEXT_SELECTED=Color.BLACK;
     
+    
+    public final static String SEQUENCE_SUBSURFACES_NOT_COMPLETE="#5A5A5A";
+    
+    
 }

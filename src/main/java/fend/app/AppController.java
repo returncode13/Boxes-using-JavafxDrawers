@@ -966,15 +966,16 @@ public class AppController extends Stage implements Initializable{
        if not create
        **/
         CommentType qccommentType=null;
+        CommentType workflowCommentType=null;
         if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
             qccommentType=new CommentType();
             qccommentType.setType(CommentTypeModel.TYPE_QC);
             commentTypeService.createCommentType(qccommentType);
         }
         if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
-            qccommentType=new CommentType();
-            qccommentType.setType(CommentTypeModel.TYPE_QC);
-            commentTypeService.createCommentType(qccommentType);
+            workflowCommentType=new CommentType();
+            workflowCommentType.setType(CommentTypeModel.TYPE_WORKFLOW);
+            commentTypeService.createCommentType(workflowCommentType);
         }
     }
     
@@ -1280,7 +1281,7 @@ public class AppController extends Stage implements Initializable{
                 segdButton.setDisable(false);
                 button2D.setDisable(false);
                 textButton.setDisable(false);
-                segybutton.setDisable(false);
+                //segybutton.setDisable(false);
                 summaryButton.setDisable(false);
                 chartButton.setDisable(false);
                 
@@ -1289,7 +1290,7 @@ public class AppController extends Stage implements Initializable{
                 segdButton.setDisable(true);
                 button2D.setDisable(true);
                 textButton.setDisable(true);
-                segybutton.setDisable(true);
+                //segybutton.setDisable(true);
                 summaryButton.setDisable(true);
                 chartButton.setDisable(true);
                 

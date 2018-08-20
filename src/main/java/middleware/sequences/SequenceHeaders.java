@@ -145,10 +145,14 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
             
              String subname=sub.getSubsurface().getSubsurface();
              String gun=subname.substring(subname.lastIndexOf("_")+1,subname.length());
+             Long shots=0L;
+             try{
+                 shots=(sub.getDugShotMax()-sub.getDugShotMin()+sub.getDugShotInc())/sub.getDugShotInc();
+             }catch(ArithmeticException ae){
+                 shots=-1L;
+             }
              
-             
-             
-             Long shots=(sub.getDugShotMax()-sub.getDugShotMin()+sub.getDugShotInc())/sub.getDugShotInc();
+             //Long 
            //  System.out.println("fend.session.node.headers.setRowFactory():  shots = "+shots+" for gun: "+gun);
              if(gunShotMap.containsKey(gun)&& gunShotMap.get(gun)<=shots){
                  gunShotMap.put(gun, shots);

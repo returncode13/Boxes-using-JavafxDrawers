@@ -246,7 +246,7 @@ public class WorkspaceController {
     private List<Link> linksInWorkspace=new ArrayList<>();                          //get all the links in the workspace
     private Map<Job,List<Subsurface>> jobSubsurfaceMap=new HashMap<>();             // look up for job,subsurface
     private TheaderService theaderService=new TheaderServiceImpl();
-     
+    private  List<Dot> dots=new ArrayList<>();
     private WorkflowService workflowService=new WorkflowServiceImpl();
     
 
@@ -2127,9 +2127,14 @@ public class WorkspaceController {
         jvMap.clear();
         theaderMap.clear();
         mapOfCurrentWorkflows.clear();
+        linksInWorkspace.clear();
+        subsurfaceJobsForSummary.clear();
+        mapOfQcTables.clear();
+        jobSubsurfaceMap.clear();
+        dots.clear();
     }
 
-
+    final private int DEPENDENCY_NEUTRAL      = -5;
     final private int DEPENDENCY_FAIL_ERROR   = -1;
     final private int DEPENDENCY_FAIL_WARNING =  0;
     final private int DEPENDENCY_PASS         =  1;
@@ -2139,14 +2144,21 @@ public class WorkspaceController {
         Job hchild = l.getChild();
         
         ResultHolder resultHolder=new ResultHolder();
-        
-        if(!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
-                        resultHolder.result = DEPENDENCY_PASS;
-                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkTimeDependency(): Skipping check for "+subb.getSubsurface()+" couldn't find it in either or both the parent or in the child job: "+hparent.getNameJobStep()+" --- > "+hchild.getNameJobStep());
-            return resultHolder;
+        /*
+        if (!(jobSubsurfaceMap.containsKey(hparent) && jobSubsurfaceMap.containsKey(hchild))) {
+        resultHolder.result = DEPENDENCY_NEUTRAL;
+        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        System.out.println("fend.workspace.WorkspaceController.checkTimeDependency(): Skipping check for " + subb.getSubsurface() + " couldn't find it in either or both the parent or in the child job: " + hparent.getNameJobStep() + " --- > " + hchild.getNameJobStep());
+        return resultHolder;
         }
+        if (!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
         
+        resultHolder.result = DEPENDENCY_NEUTRAL;
+        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        System.out.println("fend.workspace.WorkspaceController.checkTimeDependency(): Skipping check for " + subb.getSubsurface() + " couldn't find it in either or both the parent or in the child job: " + hparent.getNameJobStep() + " --- > " + hchild.getNameJobStep());
+        return resultHolder;
+        }*/
+
         
         boolean parentIsSegy=hparent.getNodetype().equals(nodeSegy);
         boolean childIsSegy=hchild.getNodetype().equals(nodeSegy);
@@ -2368,11 +2380,11 @@ public class WorkspaceController {
         
         
         if(hpt >= hct) {    //parent header created not before child header
-        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.resultHolder=DEPENDENCY_FAIL_ERROR;
         resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         return resultHolder;
         }else{
-        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.resultHolder=DEPENDENCY_PASS;
         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         return resultHolder;
         }
@@ -2388,11 +2400,11 @@ public class WorkspaceController {
         
         
         if(hpt >= hct) {    //parent header created not before child header
-        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.resultHolder=DEPENDENCY_FAIL_ERROR;
         resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         // return resultHolder;
         }else{
-        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.resultHolder=DEPENDENCY_PASS;
         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         //return resultHolder;
         }
@@ -2408,11 +2420,11 @@ public class WorkspaceController {
         
         
         if(hpt >= hct) {    //parent header created not before child header
-        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.resultHolder=DEPENDENCY_FAIL_ERROR;
         resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         //return resultHolder;
         }else{
-        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.resultHolder=DEPENDENCY_PASS;
         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         // return resultHolder;
         }
@@ -2427,11 +2439,11 @@ public class WorkspaceController {
         
         
         if(hpt >= hct) {    //parent header created not before child header
-        resultHolder.result=DEPENDENCY_FAIL_ERROR;
+        resultHolder.resultHolder=DEPENDENCY_FAIL_ERROR;
         resultHolder.reason=DoubtStatusModel.getNewDoubtTimeMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         //return resultHolder;
         }else{
-        resultHolder.result=DEPENDENCY_PASS;
+        resultHolder.resultHolder=DEPENDENCY_PASS;
         resultHolder.reason=DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(hpt + ""), hchild.getNameJobStep(), new String(hct + ""), subb.getSubsurface(), doubtTypeTime.getName());
         //return resultHolder;
         }
@@ -2451,12 +2463,21 @@ public class WorkspaceController {
         Job hparent=link.getParent();
         Job hchild=link.getChild();
           ResultHolder resultHolder=new ResultHolder();
-        if(!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
-                        resultHolder.result = DEPENDENCY_PASS;
-                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for "+subb.getSubsurface()+" couldn't find it in either or both the parent or in the child job: "+hparent.getNameJobStep()+" --- > "+hchild.getNameJobStep());
-            return resultHolder;
-        }
+        
+          /* if (!(jobSubsurfaceMap.containsKey(hparent) && jobSubsurfaceMap.containsKey(hchild))) {
+          resultHolder.result = DEPENDENCY_NEUTRAL;
+          //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+          System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for " + subb.getSubsurface() + " couldn't find it in either or both the parent or in the child job: " + hparent.getNameJobStep() + " --- > " + hchild.getNameJobStep());
+          return resultHolder;
+          }
+          if (!(jobSubsurfaceMap.get(hparent).contains(subb) && jobSubsurfaceMap.get(hchild).contains(subb))) {
+          
+          resultHolder.result = DEPENDENCY_NEUTRAL;
+          //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+          System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for " + subb.getSubsurface() + " couldn't find it in either or both the parent or in the child job: " + hparent.getNameJobStep() + " --- > " + hchild.getNameJobStep());
+          return resultHolder;
+          }*/
+
         
         
         
@@ -2561,33 +2582,52 @@ public class WorkspaceController {
     private ResultHolder checkWorkflowDependency(Link link,Subsurface sub){
         System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency():  "+link.getParent().getNameJobStep()+"-->"+link.getChild().getNameJobStep());
         Job pjob = link.getParent();
+        
+        ResultHolder resultHolder=new ResultHolder();
+        
+        
+        if (!(jobSubsurfaceMap.containsKey(pjob))) {
+            resultHolder.result =DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                       // System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+pjob.getNameJobStep());
+            return resultHolder;
+        }
+        if (!(jobSubsurfaceMap.get(pjob).contains(sub))) {
+
+            resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                       // System.out.println("fend.workspace.WorkspaceController.checkTraceDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+pjob.getNameJobStep());
+            return resultHolder;
+        }
+
+        
         Workflow pcurrent=null;
         boolean failed=false;
         boolean passed=true;
        
         if(mapOfCurrentWorkflows.containsKey(pjob)){
-             System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows contains key : "+pjob.getNameJobStep());
+             //System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows contains key : "+pjob.getNameJobStep());
             if(mapOfCurrentWorkflows.get(pjob).containsKey(sub)){
-                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
+               // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
                 pcurrent=mapOfCurrentWorkflows.get(pjob).get(sub);                          //the current workflow for the sub
                 
                 if(pcurrent.getControl()==null){
-                    System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is null: failed is true");
+                  //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is null: failed is true");
                     failed=true;
                 }else if(!pcurrent.getControl()){
-                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is false");
+                   //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is false");
                     passed=false;
                 }else{
-                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is true");
+                   //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+pcurrent.getId()+" control is true");
                     passed=true;
                 }
             }else{
-                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
+               // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+pjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
             }
         }else{
-            System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows DOESNOT contain key : "+pjob.getNameJobStep());
+         //   System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows DOESNOT contain key : "+pjob.getNameJobStep());
         }
-        ResultHolder resultHolder=new ResultHolder();
+        
         if(pcurrent==null){
             failed=true;
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
@@ -2614,34 +2654,50 @@ public class WorkspaceController {
      * 
      */
     private ResultHolder checkWorkflowDependencyOnLeaf(Link link,Subsurface sub){
-         System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf():  "+link.getParent().getNameJobStep()+"-->"+link.getChild().getNameJobStep());
+         //System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf():  "+link.getParent().getNameJobStep()+"-->"+link.getChild().getNameJobStep());
         Job cjob = link.getChild();
+        
+        ResultHolder resultHolder=new ResultHolder();
+          if (!(jobSubsurfaceMap.containsKey(cjob))) {
+            resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                       // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+cjob.getNameJobStep());
+            return resultHolder;
+        }
+        if (!(jobSubsurfaceMap.get(cjob).contains(sub))) {
+
+            resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                        //System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+cjob.getNameJobStep());
+            return resultHolder;
+        }
+
         Workflow chcurrent=null;
         boolean failed=false;
         boolean passed=true;
          if(mapOfCurrentWorkflows.containsKey(cjob)){
-             System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows contains key : "+cjob.getNameJobStep());
+            // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): mapofCurrentWorkflows contains key : "+cjob.getNameJobStep());
             if(mapOfCurrentWorkflows.get(cjob).containsKey(sub)){
-                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
+              //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") contains key : "+sub.getSubsurface());
                 chcurrent=mapOfCurrentWorkflows.get(cjob).get(sub);                          //the current workflow for the sub
                 
                 if(chcurrent.getControl()==null){
-                    System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is null: failed is true");
+                 //   System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): for current Workflow : "+chcurrent.getId()+" control is null: failed is true");
                     failed=true;
                 }else if(!chcurrent.getControl()){
-                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is false");
+                   //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): for current Workflow : "+chcurrent.getId()+" control is false");
                     passed=false;
                 }else{
-                     System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): for current Workflow : "+chcurrent.getId()+" control is true");
+                   //  System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): for current Workflow : "+chcurrent.getId()+" control is true");
                     passed=true;
                 }
             }else{
-                System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
+               // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): mapofCurrentWorkflows.get("+cjob.getNameJobStep()+") DOES NOT contains key : "+sub.getSubsurface());
             }
         }else{
-            System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependency(): mapofCurrentWorkflows DOESNOT contain key : "+cjob.getNameJobStep());
+           // System.out.println("fend.workspace.WorkspaceController.checkWorkflowDependencyonLeaf(): mapofCurrentWorkflows DOESNOT contain key : "+cjob.getNameJobStep());
         }
-        ResultHolder resultHolder=new ResultHolder();
+        
         if(chcurrent==null){
             failed=true;
             resultHolder.result=DEPENDENCY_FAIL_ERROR;
@@ -2669,23 +2725,29 @@ public class WorkspaceController {
         Job jchild = link.getChild();
        // List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
         ResultHolder resultHolder=new ResultHolder();
-         if(!(jobSubsurfaceMap.get(lparent).contains(sub))) {
-                        resultHolder.result = DEPENDENCY_PASS;
+         if(!(jobSubsurfaceMap.containsKey(lparent))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+lparent.getNameJobStep()+"");
+                       // System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+lparent.getNameJobStep()+"");
+            return resultHolder;
+        }
+         if(!(jobSubsurfaceMap.get(lparent).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                      //  System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+lparent.getNameJobStep()+"");
             return resultHolder;
         }
         
         if(!mapOfQcTables.containsKey(lparent)){
              resultHolder.result = DEPENDENCY_PASS;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+lparent.getNameJobStep()+" in the QC Map");
+                      //  System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+lparent.getNameJobStep()+" in the QC Map");
             return resultHolder;
         }
         if(!mapOfQcTables.get(lparent).containsKey(sub)){
              resultHolder.result = DEPENDENCY_PASS;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+lparent.getNameJobStep()+" in the QC Map");
+                      //  System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+lparent.getNameJobStep()+" in the QC Map");
             return resultHolder;
         }
        List<QcTable> qctForParent=mapOfQcTables.get(lparent).get(sub);
@@ -2756,23 +2818,31 @@ public class WorkspaceController {
         Job jchild = link.getChild();
        // List<QcMatrixRow> parentQcMatrix = qcMatrixRowService.getQcMatrixForJob(lparent, true);    //put this in a map
         ResultHolder resultHolder=new ResultHolder(); 
-       if(!(jobSubsurfaceMap.get(jchild).contains(sub))) {
-                        resultHolder.result = DEPENDENCY_PASS;
+        
+        if(!(jobSubsurfaceMap.containsKey(jchild))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+jchild.getNameJobStep()+"");
+                     //   System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+jchild.getNameJobStep()+"");
+            return resultHolder;
+        }
+       
+       if(!(jobSubsurfaceMap.get(jchild).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                      //  System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+jchild.getNameJobStep()+"");
             return resultHolder;
         }
        
         if(!mapOfQcTables.containsKey(jchild)){
-             resultHolder.result = DEPENDENCY_PASS;
+             resultHolder.result = DEPENDENCY_NEUTRAL;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+jchild.getNameJobStep()+" in the QC Map");
+                      //  System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find KEY : "+jchild.getNameJobStep()+" in the QC Map");
             return resultHolder;
         }
         if(!mapOfQcTables.get(jchild).containsKey(sub)){
-             resultHolder.result = DEPENDENCY_PASS;
+             resultHolder.result = DEPENDENCY_NEUTRAL;
                         //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
-                        System.out.println("fend.workspace.WorkspaceController.checkQcDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+jchild.getNameJobStep()+" in the QC Map");
+                     //   System.out.println("fend.workspace.WorkspaceController.checkQcDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it for job:  "+jchild.getNameJobStep()+" in the QC Map");
             return resultHolder;
         }
        
@@ -2885,6 +2955,18 @@ public class WorkspaceController {
         Job child=link.getChild();
         
         ResultHolder resultHolder=new ResultHolder();
+         if(!(jobSubsurfaceMap.containsKey(parent))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                     //   System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+parent.getNameJobStep()+"");
+            return resultHolder;
+        }
+        if(!(jobSubsurfaceMap.get(parent).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                    //    System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+parent.getNameJobStep());
+            return resultHolder;
+        }
         
         boolean insightFail=false;
         
@@ -2982,6 +3064,18 @@ public class WorkspaceController {
         
         ResultHolder resultHolder=new ResultHolder();
         
+        if(!(jobSubsurfaceMap.containsKey(child))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                       // System.out.println("fend.workspace.WorkspaceController.checkInsightDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in  job: "+child.getNameJobStep()+"");
+            return resultHolder;
+        }
+        if(!(jobSubsurfaceMap.get(child).contains(sub))) {
+                        resultHolder.result = DEPENDENCY_NEUTRAL;
+                        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+                      //  System.out.println("fend.workspace.WorkspaceController.checkInsightDependencyOnLeaf(): Skipping check for "+sub.getSubsurface()+" couldn't find it in job: "+child.getNameJobStep());
+            return resultHolder;
+        }
         boolean insightFail=false;
         
         String insightsInChild=child.getInsightVersions();                // ins1; ins2; ins3;
@@ -3020,7 +3114,7 @@ public class WorkspaceController {
             if(headerMap.containsKey(key)){
                 Header hp=headerMap.get(key);     //get headers of the parent
                 insightVersionInHeader=hp.getInsightVersion();
-                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+              //  System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
                  Boolean present=false;
                 for(RevBaseHolder rb:childList){
                     present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
@@ -3041,7 +3135,7 @@ public class WorkspaceController {
             if(pheaderMap.containsKey(key)){
                 Pheader ph=pheaderMap.get(key);     //get headers of the parent
                 insightVersionInHeader=ph.getInsightVersion();
-                System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
+               // System.out.println("fend.workspace.WorkspaceController.checkInsightDependency(): for sub: "+sub.getSubsurface()+" found insight: "+insightVersionInHeader);
                  Boolean present=false;
                 for(RevBaseHolder rb:childList){
                     present=present|| (insightVersionInHeader.contains(rb.base)&&insightVersionInHeader.contains(rb.revision));
@@ -3079,12 +3173,27 @@ public class WorkspaceController {
     private ResultHolder checkIODependency(Link link,Subsurface sub){
         Job parent = link.getParent();
         Job child = link.getChild();
-        ResultHolder result=new ResultHolder();
+        ResultHolder resultHolder=new ResultHolder();
         
+        
+        /* if (!(jobSubsurfaceMap.containsKey(parent) && jobSubsurfaceMap.containsKey(child))) {
+        resultHolder.result = DEPENDENCY_NEUTRAL;
+        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        System.out.println("fend.workspace.WorkspaceController.checkIODependency(): Skipping check for " + sub.getSubsurface() + " couldn't find it in either or both the parent or in the child job: " + parent.getNameJobStep() + " --- > " + child.getNameJobStep());
+        return resultHolder;
+        }
+        if(!(jobSubsurfaceMap.get(parent).contains(sub) && jobSubsurfaceMap.get(child).contains(sub))) {
+        resultHolder.result = DEPENDENCY_NEUTRAL;
+        //resultHolder.reason = DoubtStatusModel.getTimeDependencyPassedMessage(hparent.getNameJobStep(), new String(pt + ""), hchild.getNameJobStep(), new String(ct + ""), subb.getSubsurface(), doubtTypeTime.getName());
+        System.out.println("fend.workspace.WorkspaceController.checkIODependency(): Skipping check for "+sub.getSubsurface()+" couldn't find it in either or both the parent or in the child job: "+parent.getNameJobStep()+" --- > "+child.getNameJobStep());
+        return resultHolder;
+        }
+        
+        */
         if(child.getNodetype().equals(nodeSegd) && parent.getNodetype().equals(node2D)){
-            result.result=DEPENDENCY_FAIL_ERROR;
-            result.reason="the parent to : "+child.getNameJobStep()+" cannot be a non Acquisition node: the current parent "+parent.getNameJobStep()+" is of type "+parent.getNodetype().getName();
-            return result;
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason="the parent to : "+child.getNameJobStep()+" cannot be a non Acquisition node: the current parent "+parent.getNameJobStep()+" is of type "+parent.getNodetype().getName();
+            return resultHolder;
         }
         
         
@@ -3107,15 +3216,15 @@ public class WorkspaceController {
         inputVolumes.removeAll(parentVolumes);
         System.out.println("fend.workspace.WorkspaceController.checkIODependency(): after removing all the intersections: size of the input volumes in the child: "+inputVolumes.size());
         if(!inputVolumes.isEmpty()){
-            result.result=DEPENDENCY_FAIL_ERROR;
-            result.reason=DoubtStatusModel.getIOMessage(sub.getSubsurface(), child, parent, mIpVols.get(key), parentVolumes, doubtTypeIO.getName());
+            resultHolder.result=DEPENDENCY_FAIL_ERROR;
+            resultHolder.reason=DoubtStatusModel.getIOMessage(sub.getSubsurface(), child, parent, mIpVols.get(key), parentVolumes, doubtTypeIO.getName());
             
         }else{
-            result.result=DEPENDENCY_PASS;
-            result.reason=DoubtStatusModel.getIODependencyPassedMessage(child, sub.getSubsurface(), doubtTypeIO.getName());
+            resultHolder.result=DEPENDENCY_PASS;
+            resultHolder.reason=DoubtStatusModel.getIODependencyPassedMessage(child, sub.getSubsurface(), doubtTypeIO.getName());
         }
         
-        return result;
+        return resultHolder;
     
     
     }
@@ -3152,7 +3261,10 @@ public class WorkspaceController {
         execService = Executors.newFixedThreadPool(processorsUsed());
 
         String latestSummaryTime = subsurfaceJobService.getLatestSummaryTime();
-        
+        if(subsurfaceJobsForSummary.isEmpty()){
+            System.out.println("fend.workspace.WorkspaceController.summarizeOne(): No change detected on the DAG.");
+            return;
+        }
         /* if(subsurfaceLinkMap.isEmpty()){
         System.out.println("fend.workspace.WorkspaceController.summarizeOne(): No change detected on the DAG.");
         return;
@@ -3170,12 +3282,35 @@ public class WorkspaceController {
             Callable<String> summaryTask = new Callable<String>() {
                 @Override
                 public String call() throws Exception {
+                    boolean comparison=true;
+                    boolean status=false;
                     
               //      for(Link link : links){
                for(Link link:linksInWorkspace){
                         /**
                          * the dot that the link belongs to 
                          */
+                        Job lp=link.getParent();
+                        Job lc=link.getChild();
+                        if(jobSubsurfaceMap.containsKey(lp) && jobSubsurfaceMap.containsKey(lc)){
+                            if(jobSubsurfaceMap.get(lp).contains(subb) && jobSubsurfaceMap.get(lc).contains(subb) ){
+                                comparison=true;
+                            }
+                        }else{
+                            comparison=false;
+                        }
+                        
+                        
+                        if((jobSubsurfaceMap.containsKey(lp) && jobSubsurfaceMap.get(lp).contains(subb)) || (jobSubsurfaceMap.containsKey(lc) && jobSubsurfaceMap.get(lc).contains(subb))){
+                            status=true;
+                        }else{
+                            status=false;
+                        }
+                        
+                        
+                        if(!comparison && !status) continue;
+                        
+                        
                         Dot dot = link.getDot();                     
                          
                         
@@ -3198,55 +3333,51 @@ public class WorkspaceController {
                         
                         if(acquisitionType){
                                 boolean forLeaf=true;
-                                ResultHolder timestatus=new ResultHolder();
-                                timestatus.result=DEPENDENCY_PASS;                                                    // force good .all processing done after acquisition. 
-                                setDoubt(doubtTypeTime, timestatus, dot, subb, link,!forLeaf);
+                                if(comparison){
+                                    ResultHolder timestatus=new ResultHolder();
+                                    timestatus.result=DEPENDENCY_PASS;                                                    // force good .all processing done after acquisition. 
+                                    setDoubt(doubtTypeTime, timestatus, dot, subb, link,!forLeaf);
+
+                                    ResultHolder tracestatus=new ResultHolder();
+                                    tracestatus.result=DEPENDENCY_PASS;                                                    // force good . not applicable (or is it?? no of shots acquired per line to the next steps?)
+                                    setDoubt(doubtTypeTraces, tracestatus, dot, subb, link,!forLeaf);
+
+                                    ResultHolder ioStatus=new ResultHolder();                                             // force good
+                                    ioStatus.result=DEPENDENCY_PASS;
+                                    setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);          
+                                }
+                                              
+                                if(status){
+                                    ResultHolder qcstatus=checkQcDependency(link, subb);
+                                    setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+
+                                    ResultHolder insightStatus=new ResultHolder();
+                                    insightStatus.result=DEPENDENCY_PASS;                                                  // force good
+                                    setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
+
+
+
+                                    ResultHolder workflowStatus=new ResultHolder();
+                                    workflowStatus.result=DEPENDENCY_PASS;                                              //force good
+                                    setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
+                                }
                                 
-                                ResultHolder tracestatus=new ResultHolder();
-                                tracestatus.result=DEPENDENCY_PASS;                                                    // force good . not applicable (or is it?? no of shots acquired per line to the next steps?)
-                                setDoubt(doubtTypeTraces, tracestatus, dot, subb, link,!forLeaf);
                                 
-                                ResultHolder qcstatus=checkQcDependency(link, subb);
-                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
-                                
-                                ResultHolder insightStatus=new ResultHolder();
-                                insightStatus.result=DEPENDENCY_PASS;                                                  // force good
-                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
-                                
-                                ResultHolder ioStatus=new ResultHolder();                                             // force good
-                                ioStatus.result=DEPENDENCY_PASS;
-                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);                                  
-                                
-                                ResultHolder workflowStatus=new ResultHolder();
-                                workflowStatus.result=DEPENDENCY_PASS;                                              //force good
-                                setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
                                 
                                 
                                 if(link.getChild().isLeaf()){
-                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                    if(status){
+                                        ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+
+                                        ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+
+                                        ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    }
                                    
-                                    
-                                    ResultHolder insightStatusForLeaf=new ResultHolder();
-                                    insightStatus.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
-                                    
-                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
-                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
-                                    
-                                    
-                                     
-                                    /**
-                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
-                                     **/
-                                    
-                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
-                                    
-                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
-                                }
+                                } 
                         }
                         
                         
@@ -3256,58 +3387,57 @@ public class WorkspaceController {
                             
                             
                                 boolean forLeaf=true; 
-                                ResultHolder timestatus=checkTimeDependency(link, subb);
-                                setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf); 
+                                if(comparison){
+                                    ResultHolder timestatus=checkTimeDependency(link, subb);
+                                    setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf); 
 
 
-                                ResultHolder tracestatus=checkTraceDependency(link,subb);
-                                setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
-                                
-                                ResultHolder qcstatus=checkQcDependency(link, subb);
-                                setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
-                               
-                                
-                                ResultHolder insightStatus=checkInsightDependency(link, subb);
-                                setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
-                                
+                                    ResultHolder tracestatus=checkTraceDependency(link,subb);
+                                    setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
+
+                                    ResultHolder ioStatus=checkIODependency(link, subb);
+                                    setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);  
+                                }
                                  
-                                ResultHolder ioStatus=checkIODependency(link, subb);
-                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);             
-                                
-                                
-                                ResultHolder workflowStatus=checkWorkflowDependency(link, subb);
-                                setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
+                                if(status){
+                                     ResultHolder qcstatus=checkQcDependency(link, subb);
+                                    setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
+
+
+                                    ResultHolder insightStatus=checkInsightDependency(link, subb);
+                                    setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
+
+
+
+
+
+                                    ResultHolder workflowStatus=checkWorkflowDependency(link, subb);
+                                    setDoubt(doubtTypeWorkflow, workflowStatus, dot, subb, link, !forLeaf);
+                                }
+                               
                                 
                                 
                                 if(link.getChild().isLeaf()){     //for doubts that arise on the nodes themselves (unchecked qcs , insight versions)
-                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+                                   
+                                    if(status){
+                                        ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
                                     
-                                     ResultHolder insightStatusForLeaf=new ResultHolder();
-                                    insightStatus.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
+                                                                      
+                                        ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
+
+                                        ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
+                                        setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    }
                                     
-                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
-                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
-                                    
-                                    
-                                     
-                                    /**
-                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
-                                     **/
-                                    
-                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
-                                    
-                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
                                 }
                                 
                         }
                         if(textType){
                              boolean forLeaf=true; 
-                                ResultHolder timestatus=checkTimeDependency(link, subb);
+                             if(comparison){
+                                 ResultHolder timestatus=checkTimeDependency(link, subb);
                                 setDoubt(doubtTypeTime,timestatus,dot,subb,link,!forLeaf); 
 
 
@@ -3315,51 +3445,42 @@ public class WorkspaceController {
                                 tracestatus.result=DEPENDENCY_PASS;                                                     //force good. change later if the files contain any trace info( viz ads)
                                 setDoubt(doubtTypeTraces,tracestatus,dot,subb,link,!forLeaf);
                                 
-                                ResultHolder qcstatus=checkQcDependency(link, subb);
+                                ResultHolder ioStatus=new ResultHolder();                                             // force good
+                                ioStatus.result=DEPENDENCY_PASS;
+                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf); 
+                             }
+                                           
+                               if(status){
+                                   ResultHolder qcstatus=checkQcDependency(link, subb);
                                 setDoubt(doubtTypeQc, qcstatus, dot, subb, link,!forLeaf);
                                
                                 
                                  ResultHolder insightStatus=new ResultHolder();
                                 insightStatus.result=DEPENDENCY_PASS;                                                  // force good
                                 setDoubt(doubtTypeInsight,insightStatus,dot,subb,link,!forLeaf);
+                               } 
                                 
-                                ResultHolder ioStatus=new ResultHolder();                                             // force good
-                                ioStatus.result=DEPENDENCY_PASS;
-                                setDoubt(doubtTypeIO,ioStatus,dot,subb,link,!forLeaf);            
+                                
+                               
                                 
                                 if(link.getChild().isLeaf()){     //for doubts that arise on the nodes themselves (unchecked qcs , insight versions)
-                                    ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
-                                    
-                                     ResultHolder insightStatusForLeaf=new ResultHolder();
-                                    insightStatus.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeIO,insightStatus,dot,subb,link,forLeaf); 
-                                    
-                                     ResultHolder workflowStatusForLeaf=new ResultHolder();
-                                    workflowStatusForLeaf.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    if(status){
+                                       ResultHolder qcstatusForLeaf=checkQcDependencyOnLeaf(link, subb);
+                                       setDoubt(doubtTypeQc, qcstatusForLeaf, dot, subb, link,forLeaf);
+
+                                       ResultHolder insightStatusForLeaf=new ResultHolder();
+                                       insightStatusForLeaf.result=DEPENDENCY_PASS;
+                                       setDoubt(doubtTypeIO,insightStatusForLeaf,dot,subb,link,forLeaf); 
+
+                                       ResultHolder workflowStatusForLeaf=new ResultHolder();
+                                       workflowStatusForLeaf.result=DEPENDENCY_PASS;
+                                       setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);
+                                    }
+                                   
                                     
                                     
                                      
-                                    /**
-                                     * BIG WARNING!. ONLY SWITCHED OFF FOR TESTING.
-                                     **/
                                     
-                                    /* ResultHolder insightStatusForLeaf=checkInsightDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
-                                    
-                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
-                                    
-                                    
-                                    
-                                    /* ResultHolder insightStatusForLeaf=new ResultHolder();
-                                    insightStatusForLeaf.result=DEPENDENCY_PASS;
-                                    setDoubt(doubtTypeInsight,insightStatusForLeaf,dot,subb,link,forLeaf);
-                                    
-                                    
-                                    ResultHolder workflowStatusForLeaf=checkWorkflowDependencyOnLeaf(link, subb);
-                                    setDoubt(doubtTypeWorkflow, workflowStatusForLeaf, dot, subb, link, forLeaf);*/
                                 }
                         }
                         /*   if(segyType){
@@ -3460,8 +3581,7 @@ public class WorkspaceController {
          * Retrieve all links that need to be summarized
          * if no links are found( due to no change to the DAG) then return
          **/
-        
-        
+        dots=dotService.getDotsInWorkspace(dbWorkspace);
         subsurfaceJobsForSummary=subsurfaceJobService.getSubsurfaceJobForSummary(dbWorkspace);
         for(SubsurfaceJob s:subsurfaceJobsForSummary){
             if(!jobSubsurfaceMap.containsKey(s.getJob())){
@@ -3495,7 +3615,9 @@ public class WorkspaceController {
         }
         */
        // if(subsurfaceLinkMap.isEmpty()) return;
-        
+        if(subsurfaceJobsForSummary.isEmpty()){
+            return;
+        }
         /***
          * Get all Theaders and put them in a lookup map.
          * 
@@ -3816,7 +3938,7 @@ public class WorkspaceController {
         System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): the size of the mapOfCurrentWorkflows: "+mapOfCurrentWorkflows.values().size());
         
         
-        
+        System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): Now loading the qctable map.");
         
         mapOfQcTables=qcTableService.getQcTablesFor(dbWorkspace);
     }
@@ -3829,7 +3951,11 @@ public class WorkspaceController {
      **/
     
     private void setDoubt(DoubtType doubtType, ResultHolder result, Dot dot, Subsurface sub, Link link,Boolean forLeaf) {
-        if(result.result == DEPENDENCY_FAIL_ERROR){
+        if(result.result == DEPENDENCY_NEUTRAL){
+            /**
+             * do nothing. 
+             **/
+        }else if(result.result == DEPENDENCY_FAIL_ERROR){
             /**
              * if doubt exists for the key (doubtType,dot,sub,job) then update its reason 
              * else if it doesn't exist then create a new doubt for the key and add to map. 
@@ -4430,7 +4556,7 @@ public class WorkspaceController {
                 summary.setAll(false);
                 continue;
             }
-            List<Dot> dots=dotService.getDotsInWorkspace(dbWorkspace);
+           
             //List<Dot> dots=djMap.get(job);
             
             for(Dot dot:dots){
@@ -4505,13 +4631,13 @@ public class WorkspaceController {
                         
                         if(dMap.containsKey(qcKey)){
                             DoubtHolder dh=dMap.get(qcKey);
-                            System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map contains key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
+                            //System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map contains key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
                             if(!dh.delete){
-                                System.out.println(": to update or create");
+                                //System.out.println(": to update or create");
                                 Doubt cause=dh.cause;
                                 boolean error=cause.getState().equals(DoubtStatusModel.ERROR);
                                 if(error){
-                                    System.out.println(": errored.");
+                                  //  System.out.println(": errored.");
                                     summary.setFailedQcDependency(true);
                                     summary.setWarningForQc(false);
                                     boolean  causeIsOverriden=cause.getStatus().equals(DoubtStatusModel.OVERRIDE);
@@ -4523,16 +4649,16 @@ public class WorkspaceController {
                                         }
                                                 
                                 }else{
-                                    System.out.println(": warning");
+                                    //System.out.println(": warning");
                                     summary.setFailedQcDependency(false);
                                     summary.setWarningForQc(true);
                                 }
                             }else{
-                                System.out.println(": to delete");
+                                //System.out.println(": to delete");
                             }
                         }else{
                             
-                            System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map DOES NOT contain key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
+                            //System.out.println("fend.workspace.WorkspaceController.populateSummaries(): map DOES NOT contain key j= "+job.getNameJobStep()+" , s= "+sub.getSubsurface()+" d= "+dot.getId()+" dt= "+doubtTypeQc.getName() );
                             summary.setFailedQcDependency(false);
                             summary.setWarningForQc(false);
                             summary.setOverridenQcFail(false);
