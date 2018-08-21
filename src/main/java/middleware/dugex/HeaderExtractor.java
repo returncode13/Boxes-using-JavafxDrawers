@@ -917,7 +917,7 @@ public class HeaderExtractor {
                             offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
                             
                         }catch(NumberFormatException nfe){
-                            traceCount=-1L;
+                            traceCount=0L;
                             cmpMax=-1L;
                             cmpMin=-1L;
                             cmpInc=-1L;

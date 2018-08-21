@@ -65,21 +65,21 @@ public class WorkflowTableModel {
             versions.add(w.getWfversion());
             
             
-            String lastComment;
+            String commentStack;
             if(workflowCommentMap.containsKey(w)){
                 System.out.println("fend.job.table.workflow.WorkflowTableModel.<init>(): key found!: "+w.getId());
                 if(!workflowCommentMap.get(w).isEmpty()){
                    
-                    lastComment=workflowCommentMap.get(w).get(0).getComments();
-                     System.out.println("fend.job.table.workflow.WorkflowTableModel.<init>(): comments present "+lastComment);
+                    commentStack=workflowCommentMap.get(w).get(0).getComments();
+                     System.out.println("fend.job.table.workflow.WorkflowTableModel.<init>(): comments present "+commentStack);
                 }else{
                      System.out.println("fend.job.table.workflow.WorkflowTableModel.<init>(): NO comments present ");
-                    lastComment="";
+                    commentStack="";
                 }
             }else{
-                lastComment="";
+                commentStack="";
             }
-            wfm.setCommentStack(lastComment);
+            wfm.setCommentStack(commentStack);
             wfm.setControl(w.getControl());
             wfm.setWorkflow(w);
             wfm.setCurrentVersionProperty(w.isCurrentVersion());

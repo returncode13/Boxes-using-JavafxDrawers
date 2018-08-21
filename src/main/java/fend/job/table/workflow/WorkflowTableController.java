@@ -20,6 +20,8 @@ import db.services.WorkflowServiceImpl;
 import fend.comments.CommentTypeModel;
 import fend.job.table.context.workflow.WorkFlowDifferenceModel;
 import fend.job.table.context.workflow.WorkFlowDifferenceView;
+import fend.job.table.qctable.comment.CommentStackModel;
+import fend.job.table.qctable.comment.CommentStackView;
 import fend.job.table.workflow.workflowmodel.WorkflowModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +41,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
@@ -105,6 +108,27 @@ public class WorkflowTableController extends Stage{
        TableColumn<WorkflowModel,Long> workflowVersionCol=new TableColumn<>("worflowVersion");
        TableColumn<WorkflowModel,String> workflowComments=new TableColumn<>("comments");
        TableColumn<WorkflowModel,Boolean> workflowControl=new TableColumn<>("control");
+       
+        workflowTable.setRowFactory(new Callback<TableView<WorkflowModel>, TableRow<WorkflowModel>>() {
+            @Override
+            public TableRow<WorkflowModel> call(TableView<WorkflowModel> param) {
+                
+                TableRow<WorkflowModel> row=new TableRow<>();
+                row.setOnContextMenuRequested(e->{
+                    
+                    WorkflowModel selectedItem=row.getItem();
+                    String cm = selectedItem.getCommentStack();
+                    CommentStackModel cms = new CommentStackModel();
+                    cms.setCommentStack(cm);
+                     
+
+                    CommentStackView cmv = new CommentStackView(cms);});
+                return row;
+            }
+        });
+        
+       
+       
        workflowVersionCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<WorkflowModel, Long>, ObservableValue<Long>>() {
            @Override
            public ObservableValue<Long> call(TableColumn.CellDataFeatures<WorkflowModel, Long> param) {
