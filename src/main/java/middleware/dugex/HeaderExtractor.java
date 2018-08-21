@@ -400,6 +400,7 @@ public class HeaderExtractor {
                       dbSubjob.setSubsurface(dbsub);
                       
                       dbSubjob.setUpdateTime(updateTime);                                 //replace by acquisition time from db
+                      dbSubjob.setSummaryTime(summaryTime);
                       subjobsToBeCommited.add(dbSubjob);
                 
                   

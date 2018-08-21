@@ -120,7 +120,8 @@ public class SummaryController extends Stage{
      @FXML
     private TreeTableView<SequenceSummary> treetable;
     
-  List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
+  //List<TreeTableColumn<SequenceSummary,Depth>> depthColumns=new ArrayList<>();
+      List<TreeTableColumn<SequenceSummary,?>> depthColumns=new ArrayList<>();
    TreeTableColumn<SequenceSummary,Long> seqTableColumn=new TreeTableColumn<>("seq");
     TreeTableColumn<SequenceSummary,String> subsurfaceTableColumn=new TreeTableColumn<>("subsurface");
     List<TreeItem<SequenceSummary>> treeSeq=new ArrayList<>();
@@ -655,16 +656,16 @@ public class SummaryController extends Stage{
                     });
                      workflowColumn.setCellFactory(param->new WorkflowCell(depthId,jobkey,workflowDoubtType));
                      jobcolumn.getColumns().add(workflowColumn);
-                 
+                 depthColumns.add(jobcolumn);
                  //<==End of Workflow column
                 // jobcolumn.setStyle("-fx-padding: 0 0 0 0;");
                 // jobcolumn.setStyle("-fx-margin:");
-                depthColumn.getColumns().add(jobcolumn);
+               // depthColumn.getColumns().add(jobcolumn);
                // depthColumn.setStyle("-fx-padding: 0 0 0 0;");
                 
             }
            
-            depthColumns.add(depthColumn);
+           // depthColumns.add(depthColumn);
         }
         
         

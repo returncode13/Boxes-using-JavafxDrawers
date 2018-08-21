@@ -563,12 +563,12 @@ public class CheckBoxLabelCell extends TreeTableCell<QcTableSequence, Boolean> {
                                             });
                                             qctableTask.setOnSucceeded(e->{
 
-                                                  System.out.println("fend.job.table.qctable.CheckBoxLabelCell.updateUpwards(): done commiting to db id,seqNo,result,updateTime,user"+qcmrId+","+children.get(0).getSequence().getSequenceno()+","+
+                                                  System.out.println("fend.job.table.qctable.CheckBoxLabelCell.updateDownwards(): done commiting to db id,seqNo,result,updateTime,user"+qcmrId+","+children.get(0).getSequence().getSequenceno()+","+
                                                           (resfDb==null?"NULL":resfDb)+","+updateTime+","+ AppProperties.getCurrentUser());
 
                                             });
                                             qctableTask.setOnRunning(e->{
-                                                    System.out.println("fend.job.table.qctable.CheckBoxLabelCell.updateUpwards(): commit in progress to db id,seqNo,result,updateTime,user"+qcmrId+","+children.get(0).getSequence().getSequenceno()+","+
+                                                    System.out.println("fend.job.table.qctable.CheckBoxLabelCell.updateDownwards(): commit in progress to db id,seqNo,result,updateTime,user"+qcmrId+","+children.get(0).getSequence().getSequenceno()+","+
                                                           (resfDb==null?"NULL":resfDb)+","+updateTime+","+ AppProperties.getCurrentUser());
                                             });
 
