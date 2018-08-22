@@ -3282,22 +3282,32 @@ public class WorkspaceController {
             Callable<String> summaryTask = new Callable<String>() {
                 @Override
                 public String call() throws Exception {
-                    boolean comparison=true;
-                    boolean status=false;
+                    //boolean comparison=false;
+                   // boolean status=false;
                     
               //      for(Link link : links){
                for(Link link:linksInWorkspace){
                         /**
                          * the dot that the link belongs to 
                          */
+                        boolean comparison=false;
+                        boolean status=false;
+                        
                         Job lp=link.getParent();
                         Job lc=link.getChild();
-                        if(updatedJobSubsurfaceMap.containsKey(lp) && updatedJobSubsurfaceMap.containsKey(lc)){
-                            if(updatedJobSubsurfaceMap.get(lp).contains(subb) && updatedJobSubsurfaceMap.get(lc).contains(subb) ){
-                                comparison=true;
+                        
+                        //Comparison is done when both the conditions below are fulfilled
+                        //either parent has been updated or child has been updated,
+                        // AND 
+                        // the sub is present in BOTH the child and the parent
+                        
+                        if((updatedJobSubsurfaceMap.containsKey(lp) && (updatedJobSubsurfaceMap.get(lp).contains(subb))) || (updatedJobSubsurfaceMap.containsKey(lc) && (updatedJobSubsurfaceMap.get(lc).contains(subb)))){
+                            if(allJobSubsurfaceMap.get(lp).contains(subb) && allJobSubsurfaceMap.get(lc).contains(subb)){
+                                 comparison=true;
                             }
+                           
                         }else{
-                            comparison=false;
+                           // comparison=false;
                         }
                         
                         
@@ -3574,7 +3584,9 @@ public class WorkspaceController {
         
         
     }
-   
+    
+   private Map<Job,List<Subsurface>> allJobSubsurfaceMap=new HashMap<>();
+           
    
     private void loadAllMaps(){
         /**
@@ -3618,6 +3630,22 @@ public class WorkspaceController {
         if(subsurfaceJobsForSummary.isEmpty()){
             return;
         }
+        /**
+         * Get all job,subsurface combinations. Again a look up map.
+         * 
+         **/
+        List<Object[]> allJs=subsurfaceJobService.getAllSubsurfaceJobsFor(dbWorkspace);
+        for(Object[] js:allJs){
+            Job j=(Job)js[0];
+            Subsurface s=(Subsurface) js[1];
+            if(!allJobSubsurfaceMap.containsKey(j)){
+                allJobSubsurfaceMap.put(j, new ArrayList<>());
+            }
+            allJobSubsurfaceMap.get(j).add(s);
+        }
+        
+        
+        
         /***
          * Get all Theaders and put them in a lookup map.
          * 

@@ -343,7 +343,7 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
    
     @Override
     public List<SubsurfaceJob> getSubsurfaceJobForSummary(Workspace dbWorkspace) {
-         Session session =HibernateUtil.getSessionFactory().openSession();
+        Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<SubsurfaceJob> result=null;
         String hql="SELECT sj from SubsurfaceJob sj INNER JOIN sj.pk.job jj WHERE jj.workspace =:w and sj.updateTime>sj.summaryTime";
@@ -354,6 +354,28 @@ public class SubsurfaceJobDAOImpl implements SubsurfaceJobDAO{
             
             result=query.list();
             
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public List<Object[]> getAllSubsurfaceJobsFor(Workspace workspace) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Object[]> result=null;
+        String hql="SELECT sj.pk.job,sj.pk.subsurface from SubsurfaceJob sj where sj.pk.job.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            
+            result=query.list();
+            System.out.println("db.dao.SubsurfaceJobDAOImpl.getAllSubsurfaceJobsFor(): returning "+result.size()+" job,subsurface combinations" );
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();

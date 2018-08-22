@@ -38,6 +38,6 @@ public interface SubsurfaceJobDAO {
 
     public void updateTimeWhere(Job job, Subsurface sub, String updateTime);
     public void updateTimeWhere(Job job, Sequence seq,String updateTime);
-     public List<SubsurfaceJob> getSubsurfaceJobForSummary(Workspace dbWorkspace);
-           
+    public List<SubsurfaceJob> getSubsurfaceJobForSummary(Workspace dbWorkspace);
+    public List<Object[]> getAllSubsurfaceJobsFor(Workspace workspace);              //returned as Job,subsurface belonging to workspace
 }

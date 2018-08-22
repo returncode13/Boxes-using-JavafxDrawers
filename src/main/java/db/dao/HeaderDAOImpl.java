@@ -471,7 +471,7 @@ selectQuery.setParameter("subid", sub);
         Session session =HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Header> result=null;
-        String hql="Select h from Header h INNER JOIN h.job j where j.workspace =:wrk and h.chosen=true ";
+        String hql="Select h from Header h INNER JOIN h.job j where h.chosen=true and  j.workspace =:wrk";
         try{
             transaction=session.beginTransaction();
             Query query= session.createQuery(hql);

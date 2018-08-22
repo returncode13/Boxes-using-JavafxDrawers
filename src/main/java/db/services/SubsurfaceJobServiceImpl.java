@@ -115,6 +115,11 @@ public class SubsurfaceJobServiceImpl implements SubsurfaceJobService{
         return subsurfaceJobDAO.getSubsurfaceJobForSummary(dbWorkspace);
     }
 
+    @Override
+    public List<Object[]> getAllSubsurfaceJobsFor(Workspace workspace) {
+        return subsurfaceJobDAO.getAllSubsurfaceJobsFor(workspace);
+    }
+
     
    
     
