@@ -560,7 +560,7 @@ public class QcTableDAOImpl implements QcTableDAO{
     }
 
     @Override
-    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesFor(Workspace w) {
+    public Map<Job, Map<Subsurface, List<QcTable>>> getUpdatedQcTablesFor(Workspace w) {
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction =null;
         int jc = 0;
@@ -622,6 +622,65 @@ public class QcTableDAOImpl implements QcTableDAO{
         }
         
          System.out.println("db.dao.QcTableDAOImpl.getQcTablesOnLeafJobsFor() :  "+jc+" jobs "+sbc+" subs "+qcc+" qcs entered: -> mapsize: "+(jc*sbc*qcc));
+        return map;
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesFor(Workspace w) {
+       
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="select j,sub,qct from QcTable qct INNER JOIN qct.qcMatrixRow QMR "
+                + "                                           INNER JOIN QMR.job j"
+                + "                                           INNER JOIN qct.subsurface sub "
+                + "                                            WHERE QMR.present=true  AND j.workspace=:w";
+        
+           Map<Job, Map<Subsurface, List<QcTable>>> map=new HashMap<>();
+       
+        List<Object[]> jobsubQc=null;
+         int jc = 0;
+        int sbc = 0;
+        int qcc = 0;
+         try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", w);
+            jobsubQc=query.list();
+            System.out.println("db.dao.QcTableDAOImpl.getQcTablesFor(): returning a list of "+jobsubQc.size()+" objects");
+           
+            transaction.commit();
+            
+            for(Object[] jsq:jobsubQc){
+                Job jb=(Job) jsq[0];
+                Subsurface sb=(Subsurface) jsq[1];
+                QcTable qc=(QcTable) jsq[2];
+                if(!map.containsKey(jb)){
+                    map.put(jb,new HashMap<>());
+                    jc++;
+                }
+                if(!map.get(jb).containsKey(sb)){
+                    map.get(jb).put(sb, new ArrayList<>());
+                    sbc++;
+                }
+                map.get(jb).get(sb).add(qc);
+                qcc++;
+               
+            }
+            
+        }catch(Exception e){
+            throw e;
+        }finally{
+            session.close();
+        }
+        
+       
+        Set<Job> keys=map.keySet();
+        int size=0;
+        for(Job j: keys){
+            size+=map.get(j).values().size();
+        }
+        
+         System.out.println("db.dao.QcTableDAOImpl.getQcTablesFor() :  "+jc+" jobs "+sbc+" subs "+qcc+" qcs entered: -> mapsize: "+(jc*sbc*qcc));
         return map;
     }
     

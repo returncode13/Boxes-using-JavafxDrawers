@@ -109,7 +109,12 @@ public class QcTableServiceImpl implements QcTableService{
     }
 
     @Override
-    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesFor(Workspace w) {
+    public Map<Job, Map<Subsurface, List<QcTable>>> getUpdatedQcTablesFor(Workspace w) {
+        return qctDAO.getUpdatedQcTablesFor(w);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getAllQcTablesFor(Workspace w) {
         return qctDAO.getQcTablesFor(w);
     }
     

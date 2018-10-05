@@ -2755,31 +2755,7 @@ public class WorkspaceController {
        
         Boolean passQc = true;
         Boolean failed=false;
-        /*for (QcMatrixRow qcmr : parentQcMatrix) {
-        try {
-        QcTable qctableentries = qcTableService.getQcTableFor(qcmr, sub);                   //put this in a map
-        Boolean qcresult;
-        if(qctableentries==null){
-        qcresult=false;
-        }else{
-        qcresult=qctableentries.getResult();
-        }
-        
-        if (qcresult == null) {
-        // qcresult = false;
-        // passQc=null;
-        //failed=true;
-        failed=failed||true;
-        }else{
-        passQc = passQc && qcresult;
-        }
-        
-        } catch (Exception ex) {
-        Logger.getLogger(WorkspaceController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        }
-        */
+       
         for(QcTable qctabeentries:qctForParent){
              Boolean qcresult;
             if(qctabeentries==null){
@@ -3228,6 +3204,7 @@ public class WorkspaceController {
     
     
     }
+    
     
     
  /**
@@ -3968,10 +3945,11 @@ public class WorkspaceController {
         
         System.out.println("fend.workspace.WorkspaceController.loadAllMaps(): Now loading the qctable map.");
         
-        mapOfQcTables=qcTableService.getQcTablesFor(dbWorkspace);
+        mapOfQcTables=qcTableService.getUpdatedQcTablesFor(dbWorkspace);
+      //  mapOfAllQctables=qcTableService.getAllQcTablesFor(dbWorkspace)
     }
     
-   
+ //  private Map<Job, Map<Subsurface, List<QcTable>>> mapOfAllQctables=new HashMap<>();
     
     
     /***

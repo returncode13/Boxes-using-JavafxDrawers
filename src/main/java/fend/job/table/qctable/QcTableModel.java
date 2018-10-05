@@ -69,6 +69,8 @@ public class QcTableModel {
     private SubsurfaceJobService subsurfaceJobService=new SubsurfaceJobServiceImpl();
     private Map<Job,Map<Subsurface,SubsurfaceJob>> mapOfsubjobs=new HashMap<>();
     
+    
+    
     public BooleanProperty reloadSequencesProperty() {
         return reloadSequencesProperty;
     }
@@ -156,6 +158,7 @@ public class QcTableModel {
 
 
                     for(Subsurface s:subsNotPresentInTable){
+                        System.out.println("fend.job.table.qctable.QcTableModel.<init>(): Creating entry for sub: "+s.getSubsurface());
                         QcTable qct=new QcTable();
                         qct.setQcMatrixRow(qcmrlookup.get(key));
                         qct.setSubsurface(s);
@@ -167,6 +170,9 @@ public class QcTableModel {
                     }
                     
                     qcmrlookup.remove(key);
+                    
+                    
+                    
                 }
                 
                 

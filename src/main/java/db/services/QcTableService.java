@@ -43,5 +43,6 @@ public interface QcTableService {
     public void setAllqcTableValuesFor(Sequence seq,Job j,Long qcmatrixId,Boolean result,String updateTime, User currentUser);
     public void createBulkQcTables(List<QcTable> qctables);
     public  Map<Job,Map<Subsurface,List<QcTable>>> getQcTablesOnLeafJobsFor(Workspace w);
-     public  Map<Job,Map<Subsurface,List<QcTable>>> getQcTablesFor(Workspace w);  //all tables for subs where update>summary
+     public  Map<Job,Map<Subsurface,List<QcTable>>> getUpdatedQcTablesFor(Workspace w);  //all tables for subs where update>summary
+     public Map<Job, Map<Subsurface, List<QcTable>>> getAllQcTablesFor(Workspace w); //all tables for workspace;
 }
