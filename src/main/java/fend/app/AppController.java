@@ -830,7 +830,7 @@ public class AppController extends Stage implements Initializable{
                     
                     checkForDoubtTypes();
                
-        
+                    checkForCommentTypes();
                     
                     
                     
@@ -958,6 +958,26 @@ public class AppController extends Stage implements Initializable{
                     }
               //  }
             }
+
+             private void checkForCommentTypes() {
+                    /*
+                    check if the comment types exist
+                    if not create
+                    **/
+                 
+                    CommentType qccommentType=null;
+                    CommentType workflowCommentType=null;
+                    if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
+                        qccommentType=new CommentType();
+                        qccommentType.setType(CommentTypeModel.TYPE_QC);
+                        commentTypeService.createCommentType(qccommentType);
+                    }
+                    if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
+                        workflowCommentType=new CommentType();
+                        workflowCommentType.setType(CommentTypeModel.TYPE_WORKFLOW);
+                        commentTypeService.createCommentType(workflowCommentType);
+                    }
+             }
            
        });
        
@@ -965,18 +985,18 @@ public class AppController extends Stage implements Initializable{
        check if the comment types exist
        if not create
        **/
-        CommentType qccommentType=null;
-        CommentType workflowCommentType=null;
-        if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
-            qccommentType=new CommentType();
-            qccommentType.setType(CommentTypeModel.TYPE_QC);
-            commentTypeService.createCommentType(qccommentType);
-        }
-        if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
-            workflowCommentType=new CommentType();
-            workflowCommentType.setType(CommentTypeModel.TYPE_WORKFLOW);
-            commentTypeService.createCommentType(workflowCommentType);
-        }
+       /* CommentType qccommentType=null;
+       CommentType workflowCommentType=null;
+       if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
+       qccommentType=new CommentType();
+       qccommentType.setType(CommentTypeModel.TYPE_QC);
+       commentTypeService.createCommentType(qccommentType);
+       }
+       if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
+       workflowCommentType=new CommentType();
+       workflowCommentType.setType(CommentTypeModel.TYPE_WORKFLOW);
+       commentTypeService.createCommentType(workflowCommentType);
+       }*/
     }
     
     
