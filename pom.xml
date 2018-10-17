@@ -4,7 +4,7 @@
 
     <groupId>com.polarcus</groupId>
     <artifactId>PQman</artifactId>
-    <version>Internal-37.1.10</version>
+    <version>Internal-38.0.0</version>
     <packaging>jar</packaging>
 
     <name>Box</name>

@@ -232,7 +232,7 @@ public class Volume1 implements Volume0{
    final private FileFilter getSubsurfaceNamesFilter=new WildcardFileFilter(SUBSURFACE_SEARCH);
    
    //final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names . Only the .single.idx files. Exclude the headers.single.idx files
-   final private String SUBSURFACE_TIMESTAMP=".*headers.single.idx";             //get the time stamps and the subsurface names . Only the headers.single.idx files   << the .single.idx files were getting touched by some unknown process
+   final private String SUBSURFACE_TIMESTAMP=".*headers.0.idx";             //get the time stamps and the subsurface names . Only the headers.single.idx files   << the .single.idx files were getting touched by some unknown process
    
    final Pattern pat=Pattern.compile(SUBSURFACE_TIMESTAMP);
    final private FileFilter getSubsurfaceTimeStampFilter=new FileFilter(){
