@@ -8,6 +8,7 @@ package db.dao;
 import db.model.Job;
 import db.model.NodeProperty;
 import db.model.NodePropertyValue;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -23,4 +24,14 @@ public interface NodePropertyValueDAO {
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job);
 
     public NodePropertyValue getNodePropertyValuesFor(Job jobStep, NodeProperty nodeProperty);
+
+    public void removeAllNodePropertyValuesFor(Job job);
+
+    public void updateCoordinateXforJob(Job job, double x);
+
+    public void updateCoordinateYforJob(Job job, double y);
+
+    public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace);
+
+    public NodePropertyValue getNodePropertyValueFor(Job job, String propname);
 }

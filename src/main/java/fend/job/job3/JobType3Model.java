@@ -7,6 +7,7 @@ package fend.job.job3;
 
 
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -38,25 +39,31 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.insight.InsightListParentModel;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.Qint;
 import fend.job.job0.property.JobModelProperty;
 import fend.job.job3.properties.JobType3Properties;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
+import middleware.dugex.AcquisitionLoader;
 import middleware.dugex.HeaderExtractor;
 import middleware.dugex.DugLogManager;
 import middleware.dugex.HeaderLoader;
 import middleware.sequences.SequenceHeaders;
+import middleware.sequences.acquisition.AcquisitionSequenceHeaders;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
+ * Type 3 : Acquisition Job Model
  */
 public class JobType3Model implements JobType0Model {
     final boolean DEBUG=WorkspaceModel.DEBUG;
-    final private Long type=3L;
+    final private Long type=JobType0Model.ACQUISITION;
     private Long id;
     private LongProperty depth;
     private StringProperty nameproperty;
@@ -82,9 +89,149 @@ public class JobType3Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
-    private BooleanProperty listenToDepthChange;
+    private BooleanProperty listenToDepthChange=new SimpleBooleanProperty(false);
     private List<JobModelProperty> jobProperties;
+    private Job databaseJob;
+    private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
+    private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
+    
+    
+     BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+     private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
+    private Qint qcMatrixModel;
+    private InsightListParentModel insightListModel;
 
+    public InsightListParentModel getInsightListModel() {
+        return insightListModel;
+    }
+
+    public void setInsightListModel(InsightListParentModel insightListModel) {
+        this.insightListModel = insightListModel;
+    }
+    
+    
+     private BooleanProperty insightChangedProperty=new SimpleBooleanProperty(false);
+    public BooleanProperty insightChangedProperty() {
+        return insightChangedProperty;
+    }
+
+    public void insightSelectionHasChanged() {
+        this.insightChangedProperty.set(!this.insightChangedProperty().get());
+    }
+    
+    
+    
+    @Override
+    public void setQcMatrixModel(Qint qmm){
+        qcMatrixModel=qmm;
+    }
+    
+    
+    @Override
+    public Qint getQcMatrixModel(){
+        return qcMatrixModel;
+        
+    }
+    
+    
+     @Override
+    public BooleanProperty exitQcTableProperty() {
+        return exitedQcTableProperty;
+    }
+
+    @Override
+    public void exitedQcTable() {
+        exitedQcTableProperty.set(!exitedQcTableProperty.get());
+    }
+
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    @Override
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    @Override
+    public void unblock(){
+        blockProperty.set(false);
+    }
+    
+    
+    @Override
+    public BooleanProperty exitLineTableProperty(){
+        return exitedLineTableProperty;
+    };
+    
+    @Override
+    public void exitedLineTable(){
+        boolean val=exitedLineTableProperty.get();
+        exitedLineTableProperty.set(!val);
+    };
+    
+    @Override
+    public BooleanProperty reloadSequenceHeadersProperty(){
+        return reloadSequenceHeaders;
+    };
+    
+    @Override
+    public void reLoadSequenceHeaders(){
+        boolean val=reloadSequenceHeaders.get();
+        reloadSequenceHeaders.set(!val);
+    };
+    
+    public BooleanProperty qcChangedProperty(){
+        return qcChangedProperty;
+    }
+    
+    public void setQcChanged(boolean v){
+        qcChangedProperty.set(v);
+    }
+    
+    
+    public void toggleQcChangedProperty(){
+        boolean val=qcChangedProperty.get();
+        qcChangedProperty.set(!val);
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void toggleDeleteProperty() {
+        boolean val=deleteProperty.get();
+        deleteProperty.set(!val);
+    }
+    
+    @Override
+    public Boolean getUpdate() {
+        return updateProperty.get();
+    }
+
+    @Override
+    public void toggleUpdateProperty() {
+        updateProperty.set(!getUpdate());
+    }
+     
+    @Override
+    public BooleanProperty updateProperty(){
+        return updateProperty;
+    }
+    public Job getDatabaseJob() {
+        return databaseJob;
+    }
+
+    public void setDatabaseJob(Job databaseJob) {
+        this.databaseJob = databaseJob;
+    }
     
     public JobType3Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
@@ -523,7 +670,7 @@ public class JobType3Model implements JobType0Model {
     
      private void extractHeaders() {
          System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
-         new HeaderExtractor(this);
+         //new HeaderExtractor(this);
         
      }
             
@@ -549,8 +696,14 @@ public class JobType3Model implements JobType0Model {
     }
     
      void retrieveHeaders() {
-        HeaderLoader headerloader=new HeaderLoader(this);
-        sequenceHeaders=headerloader.getSequenceHeaders();
+        //HeaderLoader headerloader=new HeaderLoader(this);
+         AcquisitionLoader acquisitionLoader=new AcquisitionLoader(this);
+        sequenceHeaders=acquisitionLoader.getSequenceHeaders();
+         System.out.println("fend.job.job3.JobType3Model.retrieveHeaders()");
+        for(SequenceHeaders s:sequenceHeaders){
+            AcquisitionSequenceHeaders aas=(AcquisitionSequenceHeaders) s;
+            System.out.println(""+aas.getSequence().getSequenceno()+" "+aas.getSequence().getRealLineName()+" "+aas.getSequence().getStatus()+" "+aas.getSubsurfaceName());
+        }
         
     }
     
@@ -603,6 +756,12 @@ public class JobType3Model implements JobType0Model {
         this.listenToDepthChange.set(listenToDepthChange);
     }
      
+     @Override
+    public void toggleDepthChange() {
+        boolean val=listenToDepthChange.get();
+        listenToDepthChange.set(!val);
+        
+    }
     
      @Override
     public List<JobModelProperty> getJobProperties() {
@@ -613,6 +772,16 @@ public class JobType3Model implements JobType0Model {
     @Override
     public void setJobProperties(List<JobModelProperty> jobModelProperties) {
         this.jobProperties=jobModelProperties;
+    }
+
+    @Override
+    public Map<Subsurface, Log> getLatestLogForSubsurfaceMap() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface, Log> mapOfLatestLogForSubsurface) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
    

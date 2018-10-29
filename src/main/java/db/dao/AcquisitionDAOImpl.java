@@ -165,6 +165,23 @@ public class AcquisitionDAOImpl implements AcquisitionDAO{
         System.out.println("db.dao.AcquisitionDAOImpl.getGuns(): returning guns: size: "+guns.size());
         return guns;
     }
+
+    @Override
+    public List<Acquisition> getEntireAcquisition() {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Acquisition> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Acquisition.class);
+            result=criteria.list();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
     
    
     

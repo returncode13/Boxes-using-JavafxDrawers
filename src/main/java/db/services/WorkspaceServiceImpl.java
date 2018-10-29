@@ -7,8 +7,11 @@ package db.services;
 
 import db.dao.WorkspaceDAO;
 import db.dao.WorkspaceDAOImpl;
+import db.model.Job;
+import db.model.User;
 import java.util.List;
 import db.model.Workspace;
+import java.util.Set;
 
 /**
  *
@@ -41,5 +44,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public List<Workspace> listWorkspaces() {
         return sessDAO.listWorkspaces();
     }
+
+    @Override
+    public List<Workspace> getWorkspacesForUser(User u) {
+        return sessDAO.getWorkspacesForUser(u);
+    }
+
     
+
+   
 }

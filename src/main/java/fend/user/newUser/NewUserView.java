@@ -29,7 +29,7 @@ public class NewUserView extends AnchorPane{
     
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/user/newUser/newUser.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/user/newUser/newUser_1.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

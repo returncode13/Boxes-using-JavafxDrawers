@@ -6,9 +6,13 @@
 package db.services;
 
 import db.model.Job;
+import db.model.Sequence;
 import db.model.Subsurface;
 import db.model.SubsurfaceJob;
+import db.model.SubsurfaceJobId;
+import db.model.Workspace;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -16,8 +20,26 @@ import java.util.List;
  */
 public interface SubsurfaceJobService {
      public void createSubsurfaceJob(SubsurfaceJob subsurfaceJob);
-    public SubsurfaceJob getSubsurface(Long id);
-    public void updateSubsurfaceJob(Long id,SubsurfaceJob nsj);
-    public void deleteSubsurfaceJob(Long id);
+      public void createBulkSubsurfaceJob(List<SubsurfaceJob> subsurfaceJobs);
+    public SubsurfaceJob getSubsurface(SubsurfaceJobId id);
+    public void updateSubsurfaceJob(SubsurfaceJob nsj);
+    public void deleteSubsurfaceJob(SubsurfaceJobId id);
     public SubsurfaceJob getSubsurfaceJobFor(Job job,Subsurface subsurface);
+    public Map<Job,List<Subsurface>> getSubsurfaceJobsForSummary();           //get subsurface_job records where updateTime>summaryTime;
+
+    public void updateTimeWhereJobEquals(Job parent, String updateTime);
+
+    public String getLatestSummaryTime();
+
+    public void updateBulkSubsurfaceJobs(List<SubsurfaceJob> subsurfaceJobsToBeUpdated);
+
+    public List<Subsurface> getSubsurfacesForJob(Job dbjob);
+
+    public List<SubsurfaceJob> getSubsurfaceJobFor(Workspace dbWorkspace);
+
+    public void updateTimeWhere(Job job, Subsurface childsub,String updateTime);
+    public void updateTimeWhere(Job job, Sequence seq,String updateTime);
+    public List<SubsurfaceJob> getSubsurfaceJobForSummary(Workspace dbWorkspace);
+     public List<Object[]> getAllSubsurfaceJobsFor(Workspace workspace);              //returned as Job,subsurface belonging to workspace
+   
 }

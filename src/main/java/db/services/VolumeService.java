@@ -9,6 +9,7 @@ import db.model.Job;
 import java.util.List;
 
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -26,5 +27,9 @@ public interface VolumeService {
     public void resetHeaderExtractionFlag(Volume v);
 
     public List<Volume> getVolumesForJob(Job dbjob);
+
+    public List<Volume> getAllVolumesIn(Workspace dbWorkspace);
+
+    public void deleteAllVolumesFor(Job dbjob);
     
 }

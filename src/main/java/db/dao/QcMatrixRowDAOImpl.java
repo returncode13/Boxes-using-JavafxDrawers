@@ -12,6 +12,7 @@ import db.model.Volume;
 import app.connections.hibernate.HibernateUtil;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -24,6 +25,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void createQcMatrixRow(QcMatrixRow qcmatrix) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.createQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -39,6 +41,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void updateQcMatrixRow(Long qid, QcMatrixRow newq) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.updateQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -62,6 +65,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public QcMatrixRow getQcMatrixRow(Long qid) {
+       // System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             QcMatrixRow h= (QcMatrixRow) session.get(QcMatrixRow.class, qid);
@@ -76,6 +80,7 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
 
     @Override
     public void deleteQcMatrixRow(Long qid) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.deleteQcMatrixRow()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -118,12 +123,17 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
+        String hql="from QcMatrixRow q where q.job =:j";
         try{
         transaction=session.beginTransaction();
-        Criteria criteria=session.createCriteria(QcMatrixRow.class);
+        /*Criteria criteria=session.createCriteria(QcMatrixRow.class);
         criteria.add(Restrictions.eq("job", sd));
         //criteria.add(Restrictions.eq("present", true));
-        result=criteria.list();
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        result=criteria.list();*/
+            Query query=session.createQuery(hql);
+            query.setParameter("j", sd);
+            result=query.list();
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();
@@ -160,16 +170,18 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
     }
 
     @Override
-    public List<QcMatrixRow> getQcMatrixForJob(Job sessDetails, boolean b) {
+    public List<QcMatrixRow> getQcMatrixForJob(Job job, boolean b) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<QcMatrixRow> result=null;
         try{
         transaction=session.beginTransaction();
         Criteria criteria=session.createCriteria(QcMatrixRow.class);
-        criteria.add(Restrictions.eq("job", sessDetails));
+        criteria.add(Restrictions.eq("job", job));
         criteria.add(Restrictions.eq("present",b));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         result=criteria.list();
+            System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixForJob(): for job "+job.getNameJobStep()+" size of qcMatrix : "+result.size());
         transaction.commit();
         }catch(Exception e){
         e.printStackTrace();
@@ -177,6 +189,86 @@ public class QcMatrixRowDAOImpl implements QcMatrixRowDAO{
         session.close();
         }
         return result; 
+    }
+
+    @Override
+    public void updatePresent(Long id,Boolean val) {
+         Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String sql=" update QcMatrixRow set present =:n where id = :id";
+              
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("n", val);
+            query.setParameter("id", id);
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void deleteAllQcMatrixRowsForJob(Job job) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.deleteAllQcMatrixRowsForJob()");
+       Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select q.id from  QcMatrixRow q where q.job =:j";
+       String hqlDelete = "Delete from QcMatrixRow q where q.id in (:ids)";
+       
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", job);
+           List<Long> idsToDelete=selectQuery.list();
+           
+           
+           if(idsToDelete.isEmpty()){
+               transaction.commit();
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcMatrixRowsForJob(): no qc definitions found for job: "+job.getNameJobStep());
+           }else{
+               System.out.println("db.dao.QcTableDAOImpl.deleteAllQcMatrixRowsForJob(): deleting "+idsToDelete.size()+" qc definitions for job: "+job.getNameJobStep());
+               Query deleteQuery=session.createQuery(hqlDelete);
+               deleteQuery.setParameterList("ids", idsToDelete);
+               int del=deleteQuery.executeUpdate();
+               transaction.commit();
+               
+           }
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+    }
+
+    @Override
+    public List<String> getQcMatrixRowNamesForJob(Job job) {
+        System.out.println("db.dao.QcMatrixRowDAOImpl.getQcMatrixRowNamesForJob()");
+         Session session= HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       String hqlSelect = "Select qt.name from  QcMatrixRow q INNER JOIN q.qctype qt where q.job =:j and q.present = true";
+       
+       List<String> result=null;
+       try{
+           transaction=session.beginTransaction();
+           Query selectQuery=session.createQuery(hqlSelect);
+           selectQuery.setParameter("j", job);
+           result=selectQuery.list();
+           transaction.commit();
+           
+          
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+       
+       return result;
     }
     
 }

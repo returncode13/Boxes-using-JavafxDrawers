@@ -7,8 +7,10 @@ package db.services;
 
 import db.dao.WorkflowDAO;
 import db.dao.WorkflowDAOImpl;
+import db.model.Job;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -45,7 +47,7 @@ public class WorkflowServiceImpl implements WorkflowService{
     }
 
     @Override
-    public List<Workflow> getWorkFlowWith(String md5, Volume vol) {
+    public Workflow getWorkFlowWith(String md5, Volume vol) {
         return wdao.getWorkFlowWith(md5, vol);
     }
 
@@ -57,6 +59,51 @@ public class WorkflowServiceImpl implements WorkflowService{
     @Override
     public Workflow getWorkflowRunBeforeTime(String time, Volume vol) {
         return wdao.getWorkflowRunBeforeTime(time, vol);
+    }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Volume v) {
+        return wdao.getHighestWorkFlowVersionFor(v);
+    }
+
+    @Override
+    public void deleteWorkFlowsFor(Volume vol) {
+        wdao.deleteWorkFlowsFor(vol) ;
+    }
+
+    @Override
+    public void deleteWorkFlowsFor(Job job) {
+        wdao.deleteWorkFlowsFor(job);
+    }
+
+    @Override
+    public Long getHighestWorkFlowVersionFor(Job job) {
+       return wdao.getHighestWorkFlowVersionFor(job);
+    }
+
+    @Override
+    public List<Workflow> getWorkFlowsFor(Job job) {
+       return wdao.getWorkFlowsFor(job);
+    }
+
+    @Override
+    public void updateControlFor(Workflow workflow, Boolean control) {
+        wdao.updateControlFor(workflow, control);
+    }
+
+    @Override
+    public void updateCurrentVersionsFor(Job job) {
+        wdao.updateCurrentVersionsFor(job);
+    }
+
+    @Override
+    public List<Object[]> getCurrentWorkflowsIn(Workspace workspace) {
+        return wdao.getCurrentWorkflowsIn(workspace);
+    }
+
+    @Override
+    public void updateSubsurfacesForJobWithWorkflow(Job job, Workflow workflow) {
+        wdao.updateSubsurfacesForJobWithWorkflow(job, workflow);
     }
     
 }

@@ -5,12 +5,15 @@
  */
 package db.dao;
 
+import db.model.Fheader;
 import db.model.Header;
 import db.model.Job;
 import db.model.Log;
+import db.model.Pheader;
 import db.model.Subsurface;
 import db.model.Volume;
 import db.model.Workflow;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -24,6 +27,7 @@ public interface LogDAO {
     public void deleteLogs(Long lid);
     
     public List<Log> getLogsFor(Header h);  //get the logs for which the foreign key=h.id
+    public List<Log> getLogsFor(Pheader h); 
     public List<Log> getLogsFor(Volume v);
     public List<Log> getLogsFor(Volume v,Boolean completed,Boolean running,Boolean errored,Boolean cancelled);
     public List<Log> getLogsFor(Volume v,Subsurface subline);
@@ -41,4 +45,19 @@ public interface LogDAO {
     public List<Log> getLogsByTimeFor(Job dbJob);
 
     public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub);
+    public void bulkUpdateOnLogs(Volume v,Workflow w);    //usually a lot of logs have their wk=null and this is to do a bulk update on all of them
+
+    public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub);
+
+    public String getLatestLogTimeFor(Volume dbVol);
+
+    public void deleteLogsFor(Volume vol);
+
+    public List<Log> getLogsWithInputVolumes(Workspace workspace);
+
+    public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub);
+    public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub);
+
+    public void deleteLogsFor(Job job);
+    public void versioningOfLogsFor(Job j);
 }

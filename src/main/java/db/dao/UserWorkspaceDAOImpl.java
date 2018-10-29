@@ -11,6 +11,7 @@ import db.model.UserWorkspace;
 import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -114,6 +115,50 @@ public class UserWorkspaceDAOImpl implements UserWorkspaceDAO{
             return null;
         }
         return result.get(0);
+    }
+
+    @Override
+    public void remove(User u, Workspace w) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="Delete  UserWorkspace uw where uw.pk.user =:usr AND uw.pk.workspace = :w";
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("usr", u);
+            query.setParameter("w", w);
+            
+            int result=query.executeUpdate();
+            transaction.commit();
+        }catch(Exception e){
+            
+        }finally{
+            session.close();
+        }
+        
+                
+    }
+
+    @Override
+    public List<User> getUsersInWorkspace(Workspace currentWorkspace) {
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="Select uw.pk.user from UserWorkspace uw where uw.pk.workspace = :w";
+        List<User> result=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+           
+            query.setParameter("w", currentWorkspace);
+            
+            result=query.list();
+            transaction.commit();
+        }catch(Exception e){
+            
+        }finally{
+            session.close();
+        }
+        return result;
     }
     
     

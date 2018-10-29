@@ -26,4 +26,10 @@ public interface QcMatrixRowService {
     public QcMatrixRow getQcMatrixRowFor(Job sd,QcType qctype) throws Exception;
 
     public List<QcMatrixRow> getQcMatrixForJob(Job job, boolean b);
+
+    public void updatePresent(Long id,Boolean val);
+
+    public void deleteAllQcMatrixRowsForJob(Job dbjob);
+
+    public List<String> getQcMatrixRowNamesForJob(Job job);
 }

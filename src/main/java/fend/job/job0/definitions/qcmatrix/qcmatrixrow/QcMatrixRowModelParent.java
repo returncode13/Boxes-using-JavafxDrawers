@@ -5,8 +5,10 @@
  */
 package fend.job.job0.definitions.qcmatrix.qcmatrixrow;
 
+import app.properties.AppProperties;
 import db.model.QcMatrixRow;
 import db.model.QcType;
+import db.model.User;
 import db.services.QcMatrixRowService;
 import db.services.QcMatrixRowServiceImpl;
 import java.util.Objects;
@@ -26,6 +28,8 @@ public class QcMatrixRowModelParent {
     public static final String SELECTED="selected";
     public static final String UNSELECTED="unselected";
     
+    
+    User user;
     Long id=null;
     StringProperty name=new SimpleStringProperty("");
     BooleanProperty checkedByUser=new SimpleBooleanProperty(false);
@@ -35,6 +39,7 @@ public class QcMatrixRowModelParent {
     BooleanProperty checkUncheckProperty=new SimpleBooleanProperty();
     BooleanProperty indeterminateProperty=new SimpleBooleanProperty();
     
+    String lastUpdatedTime=new String("EPOCH");
     
     public QcMatrixRowModelParent() {
         
@@ -47,6 +52,22 @@ public class QcMatrixRowModelParent {
             }
             
         });
+    }
+
+    public User getUser() {
+        return user==null?AppProperties.getCurrentUser():user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getLastUpdatedTime() {
+        return lastUpdatedTime;
+    }
+
+    public void setLastUpdatedTime(String lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
     }
     
     
@@ -74,6 +95,12 @@ public class QcMatrixRowModelParent {
         this.checkedByUser.set(checked);
     }
 
+   
+
+    
+    
+    
+    
     @Override
     public String toString() {
         return name.get();

@@ -7,6 +7,7 @@ package fend.job.job1;
 
 
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
@@ -38,10 +39,13 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 import fend.job.job0.JobType0Model;
+import fend.job.job0.definitions.insight.InsightListParentModel;
+import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.Qint;
 import fend.job.job0.property.JobModelProperty;
 import fend.job.job1.properties.JobType1Properties;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import java.util.logging.LogManager;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -82,9 +86,165 @@ public class JobType1Model implements JobType0Model {
     private ObservableSet<JobType0Model> observableDescendants;
     private BooleanProperty finishedCheckingLogs;
     private BooleanProperty headersCommited;
-    private BooleanProperty listenToDepthChange;
+    private BooleanProperty listenToDepthChange=new SimpleBooleanProperty(false);
     private List<JobModelProperty> jobProperties;
-            
+    private Map<Subsurface,Log> mapOfLatestLogForSubsurface=new HashMap<>();
+    private BooleanProperty updateProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty qcChangedProperty=new SimpleBooleanProperty(false);
+    
+    private BooleanProperty reloadSequenceHeaders=new SimpleBooleanProperty(false);
+    private BooleanProperty finishedReloading=new SimpleBooleanProperty(false);
+    private BooleanProperty exitedLineTableProperty=new SimpleBooleanProperty(false);
+     BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+
+    private BooleanProperty exitedQcTableProperty=new SimpleBooleanProperty(false);
+    private Qint qcMatrixModel;
+    private InsightListParentModel insightListModel;
+
+    public InsightListParentModel getInsightListModel() {
+        return insightListModel;
+    }
+
+    public void setInsightListModel(InsightListParentModel insightListModel) {
+        this.insightListModel = insightListModel;
+    }
+    
+   
+    
+    
+    
+    
+    private BooleanProperty insightChangedProperty=new SimpleBooleanProperty(false);
+    public BooleanProperty insightChangedProperty() {
+        return insightChangedProperty;
+    }
+
+    public void insightSelectionHasChanged() {
+        this.insightChangedProperty.set(!this.insightChangedProperty().get());
+    }
+    
+    
+    
+    @Override
+    public void setQcMatrixModel(Qint qmm){
+        qcMatrixModel=qmm;
+    }
+    
+    
+    @Override
+    public Qint getQcMatrixModel(){
+        return qcMatrixModel;
+        
+    }
+    
+    
+     @Override
+    public BooleanProperty exitQcTableProperty() {
+        return exitedQcTableProperty;
+    }
+
+    @Override
+    public void exitedQcTable() {
+        exitedQcTableProperty.set(!exitedQcTableProperty.get());
+    }
+
+    
+    
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    @Override
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    @Override
+    public void unblock(){
+        blockProperty.set(false);
+    }
+    
+    
+    @Override
+    public BooleanProperty exitLineTableProperty(){
+        return exitedLineTableProperty;
+    };
+    
+    @Override
+    public void exitedLineTable(){
+        boolean val=exitedLineTableProperty.get();
+        exitedLineTableProperty.set(!val);
+    };
+   
+    
+    @Override
+    public BooleanProperty reloadSequenceHeadersProperty(){
+        return reloadSequenceHeaders;
+    };
+    
+    @Override
+    public void reLoadSequenceHeaders(){
+        boolean val=reloadSequenceHeaders.get();
+        reloadSequenceHeaders.set(!val);
+    };
+    
+    @Override
+    public BooleanProperty qcChangedProperty(){
+        return qcChangedProperty;
+    }
+    
+    public void setQcChanged(boolean v){
+        qcChangedProperty.set(v);
+    }
+    
+    public void toggleQcChangedProperty(){
+        boolean val=qcChangedProperty.get();
+        qcChangedProperty.set(!val);
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void toggleDeleteProperty() {
+        boolean val=deleteProperty.get();
+        deleteProperty.set(!val);
+    }
+    
+    
+    @Override
+    public Boolean getUpdate() {
+        return updateProperty.get();
+    }
+
+    @Override
+    public void toggleUpdateProperty() {
+        updateProperty.set(!getUpdate());
+    }
+     
+    @Override
+    public BooleanProperty updateProperty(){
+        return updateProperty;
+    }
+    
+    
+    private Job databaseJob; 
+
+    public Job getDatabaseJob() {
+        return databaseJob;
+    }
+
+    public void setDatabaseJob(Job databaseJob) {
+        this.databaseJob = databaseJob;
+    }
+    
+    
+    
     public JobType1Model(WorkspaceModel workspaceModel) {
         //id=UUID.randomUUID().getMostSignificantBits();
         id=null;
@@ -109,7 +269,7 @@ public class JobType1Model implements JobType0Model {
         volumes=new ArrayList<>();
         
         observableVolumes=FXCollections.observableArrayList(volumes);
-        observableVolumes.addListener(volumeListChangeListener);
+      //  observableVolumes.addListener(volumeListChangeListener);
         
         
         qcmatrix =new ArrayList<>();
@@ -131,7 +291,7 @@ public class JobType1Model implements JobType0Model {
                 
         
         nameproperty.addListener(nameChangeListener);
-        finishedCheckingLogs.addListener(checkLogsListener);
+        //finishedCheckingLogs.addListener(checkLogsListener);
         
         listenToDepthChange=new SimpleBooleanProperty(false);
         
@@ -190,17 +350,22 @@ public class JobType1Model implements JobType0Model {
     
     @Override
     public ObservableList<Volume0> getVolumes() {
+        System.out.println("fend.job.job1.JobType1Model.getVolumes(): number of volumes returned: "+observableVolumes.size());
         return observableVolumes;
     }
     
     @Override
     public void addVolume(Volume0 vol){
+        System.out.println("fend.job.job1.JobType1Model.addVolume(): adding volume : "+vol.getName().get()+" to job : "+nameproperty.getName());
         observableVolumes.add(vol);
+        System.out.println("fend.job.job1.JobType1Model.addVolume(): no of volumes for job: "+nameproperty.get()+" : "+observableVolumes.size() );
     }
     
     @Override
     public void removeVolume(Volume0 vol){
+        System.out.println("fend.job.job1.JobType1Model.removeVolume(): removing volume "+vol.getId()+"from job: "+this.databaseJob.getId());
         observableVolumes.remove(vol);
+        System.out.println("fend.job.job1.JobType1Model.removeVolume(): Number of volumes: "+observableVolumes.size());
     }
    
 
@@ -244,13 +409,14 @@ public class JobType1Model implements JobType0Model {
     
 
     public ObservableSet<JobType0Model> getAncestors() {
-       
+        System.out.println("fend.job.job1.JobType1Model.getAncestors(): Inside "+this.getNameproperty().get());
        observableAncestors.clear();
             for(JobType0Model parent:observableParents){
+                System.err.println("Adding parent: "+parent.getNameproperty().get());
                 observableAncestors.add(parent);
                 observableAncestors.addAll(parent.getAncestors());
             }
-        
+        System.out.println("fend.job.job1.JobType1Model.getAncestors(): returning from : "+this.getNameproperty().get()); 
         return observableAncestors;
     }
 
@@ -516,44 +682,50 @@ public class JobType1Model implements JobType0Model {
         
     }
 
-    public void extractLogs() {
-        System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
-        new DugLogManager(this);
-       finishedCheckingLogs.set(!finishedCheckingLogs.get());
-    }
+    /*public void extractLogs() {
+    System.out.println("fend.job.job1.JobType1Model.extractLogs(): ..Process to check logs and commit");
+    new DugLogManager(this);
+    finishedCheckingLogs.set(!finishedCheckingLogs.get());
+    }*/
     
-     private void extractHeaders() {
-         System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
-         new HeaderExtractor(this);
-        
-     }
+    /*private void extractHeaders() {
+    System.out.println("fend.job.job1.JobType1Model.extractHeaders(): starting a new HeaderExtractor");
+    new HeaderExtractor(this);
+    
+    }*/
             
      
-     ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          //  if(newValue){
-                extractHeaders();
-           // }
-        }
-    };
+    /*ChangeListener<Boolean> checkLogsListener=new ChangeListener<Boolean>() {
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+    //  if(newValue){
+    extractHeaders();
+    // }
+    }
+    };*/
 
     void checkMultiples() {
        
     }
 
-   
+    public void setSequenceHeaders(ObservableList<SequenceHeaders> sequenceHeaders) {
+        this.sequenceHeaders = sequenceHeaders;
+    }
 
+   
+    
+    
+    
     public ObservableList<SequenceHeaders> getSequenceHeaders() {
-        retrieveHeaders();
+        //retrieveHeaders();
         return sequenceHeaders;
     }
     
-     void retrieveHeaders() {
-        HeaderLoader headerloader=new HeaderLoader(this);
-        sequenceHeaders=headerloader.getSequenceHeaders();
-        
-    }
+    /*void retrieveHeaders() {
+    HeaderLoader headerloader=new HeaderLoader(this);
+    sequenceHeaders=headerloader.getSequenceHeaders();
+    
+    }*/
     
 
     @Override
@@ -603,6 +775,14 @@ public class JobType1Model implements JobType0Model {
     public void setListenToDepthChange(Boolean listenToDepthChange) {
         this.listenToDepthChange.set(listenToDepthChange);
     }
+    
+    @Override
+    public void toggleDepthChange() {
+        boolean val=listenToDepthChange.get();
+        listenToDepthChange.set(!val);
+        
+    }
+
 
     @Override
     public List<JobModelProperty> getJobProperties() {
@@ -614,7 +794,29 @@ public class JobType1Model implements JobType0Model {
     public void setJobProperties(List<JobModelProperty> jobModelProperties) {
         this.jobProperties=jobModelProperties;
     }
-     
+
+    public BooleanProperty finishedCheckingLogs() {
+        return finishedCheckingLogs;
+    }
+
+    public void setFinishedCheckingLogs(Boolean finished) {
+        this.finishedCheckingLogs.set(finished);
+    }
+
+    @Override
+    public Map<Subsurface, Log> getLatestLogForSubsurfaceMap() {
+        return mapOfLatestLogForSubsurface;
+    }
+
+    @Override
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface, Log> mapOfLatestLogForSubsurface) {
+        this.mapOfLatestLogForSubsurface=mapOfLatestLogForSubsurface;
+    }
+
+   
+    
+
+    
     
     
     

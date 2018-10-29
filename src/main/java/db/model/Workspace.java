@@ -46,21 +46,31 @@ public class Workspace implements Serializable{
     /* @Column(name = "hashSessions",length = 1025)
     private String hashSessions;*/
     
-    @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
-    private Set<Job> jobs;
+    @OneToMany(mappedBy="workspace")
+    private Set<Job> jobs=new HashSet<>();
     
-     @OneToMany(mappedBy="workspace",fetch = FetchType.EAGER)
-    private Set<Dot> dots;
+     @OneToMany(mappedBy="workspace")
+    private Set<Dot> dots=new HashSet<>();
   
+      @OneToMany(mappedBy="workspace")
+    private Set<Summary> summary=new HashSet<>();
+     
+     
+      
+    @OneToMany(mappedBy = "pk.workspace")
+    private Set<UserWorkspace> userWorkspaceEntries=new HashSet<>();
+      
+      
     // @ManyToMany(mappedBy = "workspaces",fetch = FetchType.EAGER)
-      @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "workspace_user", 
-        joinColumns = { @JoinColumn(name = "workspace_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "user_id") }
-        
-    )
-     private Set<User> users=new HashSet<>();
+      /* @ManyToMany(cascade = CascadeType.MERGE)
+      @JoinTable(
+      name = "workspace_user",
+      joinColumns = { @JoinColumn(name = "workspace_id") },
+      inverseJoinColumns = { @JoinColumn(name = "user_id") }
+      
+      )
+      private Set<User> users=new HashSet<>();*/
+      
      
      
       /* @OneToMany(mappedBy = "pk.workspace",fetch = FetchType.EAGER)
@@ -84,6 +94,9 @@ public class Workspace implements Serializable{
     /*this.hashSessions = hashSessions;
     }*/
 
+      
+      
+      
     public Workspace() {
     }
 
@@ -157,22 +170,22 @@ public class Workspace implements Serializable{
         this.dots.add(dbDot);
     }
 
-    public Set<User> getUsers() {
-        return users;
+    /* public Set<User> getUsers() {
+    return users;
     }
-
+    
     public void setUsers(Set<User> users) {
-        this.users = users;
+    this.users = users;
     }
-
+    
     
     public void addToUsers(User user) {
-        this.users.add(user);
+    this.users.add(user);
     }
     
     public void removeUser(User user){
-        this.users.remove(user);
-    }
+    this.users.remove(user);
+    }*/
     
     public User getOwner() {
         return owner;
@@ -181,6 +194,27 @@ public class Workspace implements Serializable{
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+    public Set<Summary> getSummary() {
+        return summary;
+    }
+
+    public void setSummary(Set<Summary> summary) {
+        this.summary = summary;
+    }
+
+    public Set<UserWorkspace> getUserWorkspaceEntries() {
+        return userWorkspaceEntries;
+    }
+
+    public void setUserWorkspaceEntries(Set<UserWorkspace> userWorkspaceEntries) {
+        this.userWorkspaceEntries = userWorkspaceEntries;
+    }
+    
+  
+    
+    
+    
 
     /* public Set<UserWorkspace> getUserWorkspaces() {
     return userWorkspaces;

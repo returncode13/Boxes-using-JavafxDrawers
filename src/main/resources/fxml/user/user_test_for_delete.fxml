@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXSpinner?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<fx:root maxWidth="600.0" minWidth="600.0" style="-fx-min-width: 600; -fx-max-width: 600; -fx-background-color: #181A1E;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.user.UserController">
+    <stylesheets>
+        <URL value="@/styles/bootstrap3.css" />
+    </stylesheets>
+   <children>
+      <GridPane style="-fx-background-color: #181A1E;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="-Infinity" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="24.0" minHeight="10.0" prefHeight="13.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <VBox GridPane.rowIndex="2">
+               <children>
+                  <TextField fx:id="initialTextField" alignment="CENTER" promptText="login using your initials" styleClass="text-field" />
+               </children>
+            </VBox>
+            <HBox GridPane.rowIndex="4">
+               <children>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <AnchorPane>
+                     <children>
+                        <HBox spacing="50.0">
+                           <children>
+                              <Button fx:id="loginBtn" mnemonicParsing="false" onAction="#login" prefHeight="26.0" style="-fx-background-color: #272B30; -fx-text-fill: white;" text="Login" />
+                              <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#cancel" prefHeight="26.0" style="-fx-background-color: #272B30; -fx-text-fill: white;" text="Cancel" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </AnchorPane>
+                  <Pane prefHeight="202.0" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <AnchorPane GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+               <children>
+                  <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: white;" text="Don't have a login?">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../icons/user/right-arrow.png" />
+                                 </image>
+                                 <VBox.margin>
+                                    <Insets right="5.0" />
+                                 </VBox.margin></ImageView>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0">
+                           <children>
+                              <Label fx:id="addAUserLabel" alignment="CENTER" contentDisplay="CENTER" onMouseClicked="#addANewUserOnLabel" onMouseEntered="#changeMouseToHand" onMouseExited="#changeMouseToDefault" style="-fx-text-fill: yellow;" text="Add a user" underline="true">
+                                 <font>
+                                    <Font size="11.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets right="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../icons/user/pirate_head_32.png" />
+                     </image>
+                  </ImageView>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-text-fill: white;" text="Login using your initials">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </GridPane>
+      <JFXSpinner />
+   </children>
+</fx:root>

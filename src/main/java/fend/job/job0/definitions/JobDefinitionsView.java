@@ -30,7 +30,7 @@ public class JobDefinitionsView extends JFXDrawersStack {
     public JobDefinitionsView(JobDefinitionsModel item,JobType0Model parentBox){
         this.model=item;
         this.parentBox=parentBox;
-        this.location=getClass().getClassLoader().getResource("fxml/jobdefinitions.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/job3/definitions/jobdefinitions.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

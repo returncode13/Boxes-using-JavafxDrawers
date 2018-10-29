@@ -11,6 +11,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 //import fend.session.node.headers.SubSurfaceHeaders;
 
 /**
@@ -19,6 +20,7 @@ import db.model.Volume;
  */
 public interface HeaderDAO {
     public void createHeader(Header h);
+    public void createBulkHeaders(List<Header> headers);
     public Header getHeader(Long hid);
     public void updateHeader(Long hid,Header newH);
     public void deleteHeader(Long hid);
@@ -42,6 +44,17 @@ public interface HeaderDAO {
     public Set<Header> getMultipleInstances(Job job,Subsurface sub);
 
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception;
+
+    public String getLatestTimeStampFor(Volume volume);
+
+    public List<Header> getChosenHeadersForWorkspace(Workspace W);
+
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job);
+
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded);   //all conflicted except the one selected will have chosen=false and multiple=true;
+
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk);   //if header has sub NOT belonging to subsurfacesOnDisk, then header.delete=true
     
+    public void updateRunInsightWorkflowVariables(Job j,Volume v);
     
 }

@@ -5,6 +5,8 @@
  */
 package db.model;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
@@ -17,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -25,7 +28,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Dot",schema = "obpmanager")
-public class Dot {
+public class Dot implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,11 +38,11 @@ public class Dot {
     @JoinColumn(name="workspace_fk",nullable=false)
     private Workspace workspace;
     
-    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
-    private Set<VariableArgument> variableArguments;
+    @OneToMany(mappedBy = "dot")
+    private Set<VariableArgument> variableArguments=new HashSet<>();
     
-    @OneToMany(mappedBy = "dot",fetch = FetchType.EAGER)
-    private Set<Doubt> doubts;
+    @OneToMany(mappedBy = "dot")
+    private Set<Doubt> doubts=new HashSet<>();
     
     @Column(name="status")
     private String status;
@@ -53,6 +56,18 @@ public class Dot {
     @Column(name="error")
     private Double error=0.0;
     
+    @Column(name="creation_time")
+    private String creationTime;
+    
+    @OneToMany(mappedBy = "dot")
+    private Set<Link> links=new HashSet<>();
+    
+    @Formula("(select count(*) from obpmanager.link l where l.dot_fk=id )")
+    Integer dotCanBeDeleted;
+    
+    
+    
+    
     public Dot() {
     }
 
@@ -65,8 +80,7 @@ public class Dot {
         return id;
     }
     
-    @OneToMany(mappedBy = "dot",fetch=FetchType.EAGER)
-    private Set<Link> links;
+  
 
     public Set<Link> getLinks() {
         return links;
@@ -157,7 +171,17 @@ public class Dot {
         this.doubts = doubts;
     }
 
-    
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public boolean canBeDeleted(){
+        return dotCanBeDeleted==null ? true : (dotCanBeDeleted == 0);
+    }
     
     
     

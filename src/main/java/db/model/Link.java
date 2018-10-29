@@ -5,8 +5,12 @@
  */
 package db.model;
 
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +25,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Link",schema = "obpmanager")
-public class Link {
+public class Link implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +43,11 @@ public class Link {
     @JoinColumn(name="dot_fk")
     private Dot dot;
     
+    @OneToMany(mappedBy = "dot")
+    private Set<Doubt> doubts;
     
+    @Column(name="creation_time")
+    private String creationTime;
   
     
     public Link() {
@@ -75,9 +83,52 @@ public class Link {
     public void setDot(Dot dot) {
         this.dot = dot;
     }
-    
+
+    public Set<Doubt> getDoubts() {
+        return doubts;
+    }
+
+    public void setDoubts(Set<Doubt> doubts) {
+        this.doubts = doubts;
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
     
     
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Link other = (Link) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
+    
     
 }

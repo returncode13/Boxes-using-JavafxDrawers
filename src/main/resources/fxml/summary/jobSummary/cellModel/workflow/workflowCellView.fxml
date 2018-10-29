@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root style="-fx-border-color: green;" type="StackPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.summary.SequenceSummary.Depth.JobSummary.CellModel.Workflow.WorkflowCellController">
+   <children>
+      <ImageView fx:id="workflowCellImage" onContextMenuRequested="#onContextMenuRequested" onMouseClicked="#workflowClicked" pickOnBounds="true" preserveRatio="true" StackPane.alignment="CENTER" />
+   </children>
+</fx:root>

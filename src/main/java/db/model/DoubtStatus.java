@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Doubtstatus",schema="obpmanager")
-public class DoubtStatus {
+public class DoubtStatus implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,14 +30,20 @@ public class DoubtStatus {
     @JoinColumn(name="doubt_fk")
     private Doubt doubt;
     
-    @Column(name="comment")
-    private String comment;
+    @Column(name="reason")
+    private String reason;
     
     @Column(name="status")
     private String status;
     
     @Column(name="timestamp")
     private String timeStamp;
+    
+    @Column(name="comments",columnDefinition = "text" )
+    private String comments;
+    
+    @Column(name="state")
+    private String state;
     
     @ManyToOne
     @JoinColumn(name="user_fk")
@@ -58,12 +65,12 @@ public class DoubtStatus {
         this.doubt = doubt;
     }
 
-    public String getComment() {
-        return comment;
+    public String getReason() {
+        return reason;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public String getStatus() {
@@ -89,6 +96,24 @@ public class DoubtStatus {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
+    
     
     
     

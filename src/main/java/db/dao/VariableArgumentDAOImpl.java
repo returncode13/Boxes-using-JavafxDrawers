@@ -6,7 +6,11 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import db.model.Dot;
 import db.model.VariableArgument;
+import db.model.Workspace;
+import java.util.List;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -69,6 +73,7 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
 
     @Override
     public void deleteVariableArgument(Long vaid) {
+        System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgument()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -76,11 +81,81 @@ public class VariableArgumentDAOImpl implements VariableArgumentDAO{
             VariableArgument l= (VariableArgument) session.get(VariableArgument.class, vaid);
             session.delete(l);
             transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgument():..done deleting "+vaid);
         }catch(Exception e){
             e.printStackTrace();
         }finally{
             session.close();
         }
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot) {
+        System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="from VariableArgument v where v.dot =:d";
+        List<VariableArgument> results=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("d", dbDot);
+            results=query.list();
+            
+            transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot(): returning "+results.size()+" variable Arguments for dot "+dbDot.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+    @Override
+    public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w) {
+         System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForWorkspace()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="select v from VariableArgument v INNER JOIN v.dot d WHERE d.workspace =:w";
+        List<VariableArgument> results=null;
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w",w);
+            results=query.list();
+            
+            transaction.commit();
+            System.out.println("db.dao.VariableArgumentDAOImpl.getVariableArgumentsForDot(): returning "+results.size()+" variable Arguments for workspace "+w.getId());
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return results;
+    }
+
+    @Override
+    public void deleteVariableArgumentFor(Dot dot) {
+         System.out.println("db.dao.VariableArgumentDAOImpl.deleteVariableArgumentFor()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hql="Delete from VariableArgument v where v.dot =:d";
+       
+        try{
+            transaction = session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("d", dot);
+            int result=query.executeUpdate();
+            
+            transaction.commit();
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
     }
     
 }

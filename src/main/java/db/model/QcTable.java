@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -50,7 +51,21 @@ public class QcTable implements Serializable {
     @Column(name="result")
     private Boolean result;
     
-    @Column(name="comment",length=100000)
+    /**
+     * These should be changed to nullable =false after the update on the database
+     **/
+    
+    
+     @ManyToOne
+    @JoinColumns({@JoinColumn(name="job_id",nullable=true),
+                  @JoinColumn(name="sub_id",nullable=true)})
+    private SubsurfaceJob subsurfaceJob;
+    
+    
+    /**
+     * This is unused
+     **/
+    @Column(name="comment",columnDefinition = "text")
     private String comment;
 
    
@@ -81,6 +96,14 @@ public class QcTable implements Serializable {
 
     public void setSummaryTime(String summaryTime) {
         this.summaryTime = summaryTime;
+    }
+
+    public SubsurfaceJob getSubsurfaceJob() {
+        return subsurfaceJob;
+    }
+
+    public void setSubsurfaceJob(SubsurfaceJob subsurfaceJob) {
+        this.subsurfaceJob = subsurfaceJob;
     }
     
     

@@ -5,7 +5,9 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +26,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="Doubt",schema="obpmanager")
-public class Doubt {
+public class Doubt implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
@@ -52,10 +54,10 @@ public class Doubt {
     private User user;
     
         
-    /*  @ManyToOne
+     @ManyToOne
     @JoinColumn(name="link_fk")
     private Link link;                              //several doubts maybe associated to a single link.
-    */
+    
     
     @ManyToOne
     @JoinColumn(name="dot_fk")                      //several  with the same dot
@@ -65,12 +67,14 @@ public class Doubt {
     @JoinColumn(name="child_job_fk")
     private Job childJob;
     
+    
+    
     @ManyToOne
     @JoinColumn(name="seq_fk")
     private Sequence sequence;
     
-    @OneToMany(mappedBy = "doubt",fetch = FetchType.EAGER)
-    private Set<DoubtStatus> doubtStatuses;
+    @OneToMany(mappedBy = "doubt")
+    private Set<DoubtStatus> doubtStatuses=new HashSet<>();
     
     @ManyToOne
     @JoinColumn(name = "doubt_cause_id")
@@ -78,6 +82,66 @@ public class Doubt {
     
     @OneToMany(mappedBy = "doubtCause",fetch=FetchType.EAGER)
     private Set<Doubt> inheritedDoubts=new HashSet<>();
+    
+    @Column(name="reason",columnDefinition = "text")
+    private String reason=new String();
+    
+    @Column(name="status")
+    private String status=new String();
+    
+    @Column(name="timestamp")
+    private String timeStamp;
+    
+    @Column(name="comments",columnDefinition = "text" )
+    private String comments=new String();
+    
+    @Column(name="state")
+    private String state=new String();
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+    
+    
+    
+    
+    
     
     /*
     @ManyToOne
@@ -187,6 +251,16 @@ public class Doubt {
     this.link = link;
     }*/
 
+    public Link getLink() {
+        return link;
+    }
+
+    public void setLink(Link link) {
+        this.link = link;
+    }
+
+    
+    
     public Dot getDot() {
         return dot;
     }
@@ -245,6 +319,32 @@ public class Doubt {
         this.sequence = sequence;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Doubt other = (Doubt) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+   
     
     
     

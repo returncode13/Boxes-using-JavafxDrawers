@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import db.model.Descendant;
 import db.model.Job;
+import db.model.Subsurface;
+import db.model.Workspace;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -57,48 +59,50 @@ public class DescendantServiceImpl implements DescendantService{
         descDao.clearTableForJob(dbjob);
     }
     
-    /* @Override
-    public void makeDescendantTableFor(Job job, Set<Job> listOfDescendant) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    
-    try{
-    
-    Criteria criteria=session.createCriteria(Descendant.class);
-    criteria.add(Restrictions.eq("job", job));
-    List results=criteria.list();
-    
-    
-    if(results.size()>0){
-    
-    Transaction transaction=session.beginTransaction();
-    for (Iterator iterator = results.iterator(); iterator.hasNext();) {
-    Descendant next = (Descendant) iterator.next();
-    session.delete(next);
-    
+ 
+    @Override
+    public List<Descendant> getDescendantsFor(Job job) {
+        return descDao.getDescendantsFor(job);
     }
-    transaction.commit();
-    
-    
+
+    @Override
+    public List<Descendant> getDescendantsForJobContainingSub(Job job, Subsurface sub) {
+      //  List<Descendant> descendantsForJob=descDao.getDescendantsForJobContainingSubsurface(job,sub);
+        
+        
+        List<Descendant> result=descDao.getDescendantsForJobContainingSubsurface(job,sub);
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): results for descendants of "+job.getId()+" that contain sub "+sub.getId());
+        for(Descendant d:result){
+            System.out.println(""+d.getDescendant().getId());
+        }
+        /*System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of descendants for job "+job.getNameJobStep()+" size: "+descendantsForJob.size());
+        List<Descendant> result=new ArrayList<>();
+        for(Descendant desc:descendantsForJob){
+        Job descJob=desc.getDescendant();
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): number of subsurfaces in job: "+descJob.getNameJobStep()+" ==> "+descJob.getSubsurfaces().size());
+        if(descJob.getSubsurfaces().contains(sub)){
+        System.out.println("db.services.DescendantServiceImpl.getDescendantsForJobContainingSub(): adding "+descJob.getNameJobStep());
+        result.add(desc);
+        
+        }
+        }*/
+        return  result;
     }
-    
-    Transaction transaction=session.beginTransaction();
-    for (Iterator<Job> iterator = listOfDescendant.iterator(); iterator.hasNext();) {
-    Job next = iterator.next();
-    Descendant desc=new Descendant();
-    desc.setJob(job);
-    desc.setDescendant(next);
-    
+
+    @Override
+    public Descendant getDescendantFor(Job job, Job descendant) {
+        return descDao.getDescendantFor(job, descendant);
     }
-    transaction.commit();
-    
-    
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
+
+    @Override
+    public List<Object[]> getDescendantsSubsurfaceJobsForSummary(Workspace W) {
+        return descDao.getDescendantsSubsurfaceJobsForSummary(W);
     }
-    
-    }*/
+
+    @Override
+    public void removeAllDescendantEntriesFor(Workspace workspace) {
+        descDao.removeAllDescendantEntriesFor(workspace);
+    }
     
 
    

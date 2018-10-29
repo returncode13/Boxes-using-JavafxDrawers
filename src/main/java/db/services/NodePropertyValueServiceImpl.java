@@ -12,6 +12,7 @@ import db.model.Job;
 import db.model.NodeProperty;
 
 import db.model.NodePropertyValue;
+import db.model.Workspace;
 
 import java.util.List;
 
@@ -52,6 +53,31 @@ public class NodePropertyValueServiceImpl implements NodePropertyValueService{
     @Override
     public NodePropertyValue getNodePropertyValueFor(Job jobStep, NodeProperty nodeProperty) {
         return npvdao.getNodePropertyValuesFor(jobStep,nodeProperty);
+    }
+
+    @Override
+    public void removeAllNodePropertyValuesFor(Job job) {
+        npvdao.removeAllNodePropertyValuesFor(job);
+    }
+
+    @Override
+    public void updateCoordinateXforJob(Job job, double x) {
+        npvdao.updateCoordinateXforJob(job, x);
+    }
+
+    @Override
+    public void updateCoordinateYforJob(Job job, double y) {
+        npvdao.updateCoordinateYforJob(job, y);
+    }
+
+    @Override
+    public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace workspace) {
+        return npvdao.getNodePropertyXYvaluesForWorkspace(workspace);
+    }
+
+    @Override
+    public NodePropertyValue getNodePropertyValueFor(Job job, String propname) {
+        return npvdao.getNodePropertyValueFor(job,propname);
     }
     
     

@@ -36,6 +36,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import db.services.LogService;
+import fend.volume.volume0.Volume0;
+import java.util.ArrayList;
 
 /*
  * @author sharath nair
@@ -69,12 +71,13 @@ public class WorkflowManager {
     }
     
     private void watchForWorkflows(){
+        
           Workflow wnull=null;
         loglist=lserv.getLogsFor(volume,wnull);
         try {
             
          ExecutorService executorService= Executors.newFixedThreadPool(1);
-        if(volume.getVolumeType().equals(1L)){
+        if(volume.getVolumeType().equals(Volume0.PROCESS_2D)){
             
         
             executorService.submit(new Callable<Void>(){
@@ -108,7 +111,8 @@ public class WorkflowManager {
                 }
                 workflowHolder.md5=new String(sbuf.toString());
                    // System.out.println("watcher.WorkflowManager.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
-                List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowManager.this.volume);
+              //  List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowManager.this.volume);
+              List<Workflow> wlist=new ArrayList<>();
                 
                 if(wlist==null){                    // no workflow for vol with md5, so create a new entry for such a workflow
                     Workflow wver=wserv.getWorkFlowVersionFor(WorkflowManager.this.volume); //get the  workflow with the highest version for this volume
@@ -124,7 +128,7 @@ public class WorkflowManager {
                     newWorkflow.setMd5sum(workflowHolder.md5);
                     newWorkflow.setWfversion(++vers);       //increment the version
                     newWorkflow.setVolume(WorkflowManager.this.volume);
-                    System.out.println("watcher.WorkflowWatcher.init<>.call(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
+                    System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): creating entry with : md5 "+workflowHolder.md5+" and version: "+vers);
                     wserv.createWorkFlow(newWorkflow);      //create the workflow in the db table
                     next.setWorkflow(newWorkflow);          //set the log in question to have this new workflow
                 }
@@ -135,7 +139,7 @@ public class WorkflowManager {
                 }
                 
              //   mlogwfholder.put(next, workflowHolder);
-                    System.out.println("watcher.WorkflowWatcher.init<>.call(): updating logs");
+                    System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): updating logs");
             lserv.updateLogs(next.getIdLogs(), next);       //update all these logs . all logs now have a workflow assigned
              }
                 return null;
@@ -145,7 +149,7 @@ public class WorkflowManager {
         }
         
         if(volume.getVolumeType().equals(2L)){
-            System.out.println("Started watcher.WorkflowWatcher.watchForWorkflows(): loglist Size: "+loglist.size());
+            System.out.println("Started middleware.dugex.WorkflowManager.watchForWorkflows(): loglist Size: "+loglist.size());
         
             executorService.submit(new Callable<Void>(){
              @Override
@@ -186,7 +190,8 @@ public class WorkflowManager {
                 workflowHolder.md5=new String(sbuf.toString());
                  //   System.out.println("watcher.WorkflowManager.watchForWorkflows().SGDLOAD Volume: call(): MD5: "+md);
                    // System.out.println("watcher.WorkflowManager.init<>.call(): checking for  : md5"+workflowHolder.md5+" and content size: "+workflowHolder.context.length());
-                   List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowManager.this.volume);
+                   //List<Workflow> wlist=wserv.getWorkFlowWith(workflowHolder.md5, WorkflowManager.this.volume);
+                   List<Workflow> wlist=new ArrayList<>();
                    Workflow wfForLog=null;
                    if(wlist==null){                    // no workflow for vol with md5, so create a new entry for such a workflow
                    Workflow wver=wserv.getWorkFlowVersionFor(WorkflowManager.this.volume); //get the  workflow with the highest version for this volume
@@ -212,12 +217,15 @@ public class WorkflowManager {
                    
                    }
                    
-                   
-                   for(Log log:loglist){
-                      // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
-                       log.setWorkflow(wfForLog);
-                       lserv.updateLogs(log.getIdLogs(), log);
-                   }
+                   //one bulk update will speed this up.
+                   System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): updating "+loglist.size()+" logs with workflow entry "+wfForLog.getId());
+                   lserv.bulkUpdateOnLogs(volume, wfForLog);
+                   System.out.println("middleware.dugex.WorkflowManager.watchForWorkflows(): finished updating "+loglist.size()+" logs with workflow entry "+wfForLog.getId());
+                   /* for(Log log:loglist){
+                   // System.out.println(".call(): updating logs for "+log.getSubsurfaces()+" with workflow: "+wfForLog.getIdworkflows());
+                   log.setWorkflow(wfForLog);
+                   lserv.updateLogs(log.getIdLogs(), log);
+                   }*/
                    
                    //   mlogwfholder.put(next, workflowHolder);
                    

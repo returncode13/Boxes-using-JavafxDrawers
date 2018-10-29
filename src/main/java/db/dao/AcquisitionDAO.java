@@ -19,4 +19,6 @@ public interface AcquisitionDAO {
     public void updateAcquisition(Long aid, Acquisition newAcq);
     public List<Long> getCables();
     public List<Long> getGuns();
+
+    public List<Acquisition> getEntireAcquisition();
 }

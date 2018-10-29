@@ -8,6 +8,7 @@ package db.services;
 import db.model.Job;
 import db.model.NodeProperty;
 import db.model.NodePropertyValue;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -23,4 +24,14 @@ public interface NodePropertyValueService {
     public List<NodePropertyValue> getNodePropertyValuesFor(Job job);
 
     public NodePropertyValue getNodePropertyValueFor(Job jobStep, NodeProperty nodeProperty);
+
+    public void removeAllNodePropertyValuesFor(Job dbjob);
+
+    public void updateCoordinateXforJob(Job dbjob, double x);
+
+    public void updateCoordinateYforJob(Job dbjob, double y);
+
+    public List<NodePropertyValue> getNodePropertyXYvaluesForWorkspace(Workspace dbWorkspace);
+
+    public NodePropertyValue getNodePropertyValueFor(Job dbjob, String propName);
 }

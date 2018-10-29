@@ -58,7 +58,15 @@ public class Volume implements Serializable {
    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
    private Set<Header> headers;
    
+   @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Pheader> pheaders;
    
+    @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Theader> theaders;
+   
+     @OneToMany(mappedBy = "volume",cascade = CascadeType.ALL,orphanRemoval = true)
+   private Set<Fheader> fheaders;
+    
     @ManyToOne
     @JoinColumn(name= "job_fk",nullable = false)
     private Job job;
@@ -87,19 +95,61 @@ public class Volume implements Serializable {
        
     }
 
+    /*  @Override
+    public int hashCode() {
+    int hash = 7;
+    hash = 73 * hash + (int) (this.id ^ (this.id >>> 32));
+    hash = 73 * hash + Objects.hashCode(this.nameVolume);
+    hash = 73 * hash + Objects.hashCode(this.pathOfVolume);
+    hash = 73 * hash + Objects.hashCode(this.md5Hash);
+    hash = 73 * hash + Objects.hashCode(this.alert);
+    
+    hash = 73 * hash + Objects.hashCode(this.volumeType);
+    
+    return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final Volume other = (Volume) obj;
+    if (this.id != other.id) {
+    return false;
+    }
+    if (!Objects.equals(this.nameVolume, other.nameVolume)) {
+    return false;
+    }
+    if (!Objects.equals(this.pathOfVolume, other.pathOfVolume)) {
+    return false;
+    }
+    if (!Objects.equals(this.md5Hash, other.md5Hash)) {
+    return false;
+    }
+    if (!Objects.equals(this.alert, other.alert)) {
+    return false;
+    }
+    
+    if (!Objects.equals(this.volumeType, other.volumeType)) {
+    return false;
+    }
+    
+    return true;
+    }
+    
+    */
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 73 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 73 * hash + Objects.hashCode(this.nameVolume);
-        hash = 73 * hash + Objects.hashCode(this.pathOfVolume);
-        hash = 73 * hash + Objects.hashCode(this.md5Hash);
-        hash = 73 * hash + Objects.hashCode(this.alert);
-        /*hash = 73 * hash + Objects.hashCode(this.headers);
-        hash = 73 * hash + Objects.hashCode(this.jobVolumeDetails);*/
-        hash = 73 * hash + Objects.hashCode(this.volumeType);
-        /*hash = 73 * hash + Objects.hashCode(this.logs);
-        hash = 73 * hash + Objects.hashCode(this.workflows);*/
+        hash = 29 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 
@@ -118,37 +168,9 @@ public class Volume implements Serializable {
         if (this.id != other.id) {
             return false;
         }
-        if (!Objects.equals(this.nameVolume, other.nameVolume)) {
-            return false;
-        }
-        if (!Objects.equals(this.pathOfVolume, other.pathOfVolume)) {
-            return false;
-        }
-        if (!Objects.equals(this.md5Hash, other.md5Hash)) {
-            return false;
-        }
-        if (!Objects.equals(this.alert, other.alert)) {
-            return false;
-        }
-        /*if (!Objects.equals(this.headers, other.headers)) {
-        return false;
-        }
-        if (!Objects.equals(this.jobVolumeDetails, other.jobVolumeDetails)) {
-        return false;
-        }*/
-        if (!Objects.equals(this.volumeType, other.volumeType)) {
-            return false;
-        }
-        /* if (!Objects.equals(this.logs, other.logs)) {
-        return false;
-        }
-        if (!Objects.equals(this.workflows, other.workflows)) {
-        return false;
-        }*/
         return true;
     }
-
-   
+    
     
     
     
@@ -261,6 +283,22 @@ public class Volume implements Serializable {
 
     public void setHeaders(Set<Header> headers) {
         this.headers = headers;
+    }
+
+    public Set<Pheader> getPheaders() {
+        return pheaders;
+    }
+
+    public void setPheaders(Set<Pheader> pheaders) {
+        this.pheaders = pheaders;
+    }
+
+    public Set<Theader> getTheaders() {
+        return theaders;
+    }
+
+    public void setTheaders(Set<Theader> theaders) {
+        this.theaders = theaders;
     }
 
     

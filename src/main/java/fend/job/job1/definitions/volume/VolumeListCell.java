@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import fend.volume.volume0.Volume0;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -22,20 +23,28 @@ public class VolumeListCell extends JFXListCell<Volume0>{
     HBox hbox=new HBox();
    
     Pane pane=new Pane();
-    JFXButton  button=new JFXButton("Deletebtn");
+    Button  button=new Button("X");
     
     public VolumeListCell(){
        // super();
-        button.getStyleClass().add("-fx-background-color: #5264AE ");
-        button.getStyleClass().add("-jfx-button-type: RAISED");
+       button.getStylesheets().add("styles/bootstrap3.css");
+        //button.getStyleClass().add("-fx-background-color: #5264AE ");
+        button.getStyleClass().add("danger");
         hbox.getChildren().addAll(button);
         //HBox.setHgrow(pane, Priority.ALWAYS);
         //button.getStyleClass().add("button-raised");
        
         
-        button.setOnAction(e->{getListView().getItems().remove(getItem());});
+        button.setOnAction(e->{
+               getItem().delete(true);
+               getListView().
+                       getItems().
+                       remove(getItem());
+               
+        });
         //this.getStyleClass().add("-fx-background-color: #5264AE ");
     }
+
 
    
     

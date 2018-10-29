@@ -5,7 +5,10 @@
  */
 package db.services;
 
+import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
+import java.util.List;
 
 /**
  *
@@ -16,5 +19,15 @@ public interface DoubtStatusService {
     public DoubtStatus getDoubtStatus(Long id);
     public void deleteDoubtStatus(Long id);
     public void updateDoubtStatus(Long id,DoubtStatus newds);
+
+    public void createBulkDoubtStatus(List<DoubtStatus> doubtStatusForCause);
+
+    public void updateBulkDoubtStatus(List<DoubtStatus> doubtStatusToBeUpdated);
+
+    public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted);
+
+    public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt);
+
+   public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W);
     
 }

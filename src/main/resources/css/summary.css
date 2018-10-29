@@ -1,0 +1,26 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 20 Mar, 2018, 1:01:17 AM
+    Author     : sharath
+*/
+/*
+.button{
+    -fx-graphic:url('../icons/stats.svg');
+    /*-fx-min-width:157;
+    -fx-max-width:157;
+    -fx-min-height:48;
+    -fx-max-height:48;*/
+/*    
+}*/
+
+.button .svg{
+    -fx-fill : -fill;
+}
+
+.button:hover .svg{
+    -fx-fill : -hover-fill;
+}

@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,6 +36,10 @@ public class QcType implements Serializable {
     private String name;    
 
    
+    @OneToMany(mappedBy = "qctype")
+    private Set<QcMatrixRow> qcmatrix;
+    
+    
     public Long getId() {
         return id;
     }
@@ -48,6 +53,18 @@ public class QcType implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Set<QcMatrixRow> getQcmatrix() {
+        return qcmatrix;
+    }
+
+    public void setQcmatrix(Set<QcMatrixRow> qcmatrix) {
+        this.qcmatrix = qcmatrix;
+    }
+    
+    
+    
+    
 
    
     @Override

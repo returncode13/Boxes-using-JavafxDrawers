@@ -8,14 +8,11 @@ package middleware.sequences;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.model.Sequence;
 import db.model.Subsurface;
+import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -59,34 +56,65 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
     private String timeStamp=new String();
     private Long traceCount=0L;
     private Long inlineMax=0L;
-    private Long inlineMin=0L;
-    private Long inlineInc=0L;
+    private Long inlineMin=Long.MAX_VALUE;
+    private Long inlineInc=Long.MAX_VALUE;
     private Long xlineMax=0L;
-    private Long xlineMin=0L;
-    private Long xlineInc=0L;
+    private Long xlineMin=Long.MAX_VALUE;
+    private Long xlineInc=Long.MAX_VALUE;
     private Long dugShotMax=0L;
-    private Long dugShotMin=0L;
-    private Long dugShotInc=0L;
+    private Long dugShotMin=Long.MAX_VALUE;
+    private Long dugShotInc=Long.MAX_VALUE;
     private Long dugChannelMax=0L;
-    private Long dugChannelMin=0L;
-    private Long dugChannelInc=0L;
+    private Long dugChannelMin=Long.MAX_VALUE;
+    private Long dugChannelInc=Long.MAX_VALUE;
     private Long offsetMax=0L;
-    private Long offsetMin=0L;
-    private Long offsetInc=0L;
+    private Long offsetMin=Long.MAX_VALUE;
+    private Long offsetInc=Long.MAX_VALUE;
     private Long cmpMax=0L;
-    private Long cmpMin=0L;
-    private Long cmpInc=0L;
+    private Long cmpMin=Long.MAX_VALUE;
+    private Long cmpInc=Long.MAX_VALUE;
     private String insight=new String();
     private String workflow=new String();
     private Long numberOfRuns=0L;
     private Boolean chosen=true;
     private Boolean multiple=false;
-    
+    private Volume0 volume;
+    private Boolean deleted=false;
     
     
     private Sequence sequence;
     private Subsurface subsurface;
 
+    
+    
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public boolean isParent(){
+        return true;
+    }
+    
+    public boolean isChild(){
+        return false;
+    }
+    
+    
+    
+    public Volume0 getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Volume0 volume) {
+        this.volume = volume;
+    }
+
+    
+    
     public Long getId() {
         return id;
     }
@@ -117,10 +145,14 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
             
              String subname=sub.getSubsurface().getSubsurface();
              String gun=subname.substring(subname.lastIndexOf("_")+1,subname.length());
+             Long shots=0L;
+             try{
+                 shots=(sub.getDugShotMax()-sub.getDugShotMin()+sub.getDugShotInc())/sub.getDugShotInc();
+             }catch(ArithmeticException ae){
+                 shots=-1L;
+             }
              
-             
-             
-             Long shots=(sub.getDugShotMax()-sub.getDugShotMin()+sub.getDugShotInc())/sub.getDugShotInc();
+             //Long 
            //  System.out.println("fend.session.node.headers.setRowFactory():  shots = "+shots+" for gun: "+gun);
              if(gunShotMap.containsKey(gun)&& gunShotMap.get(gun)<=shots){
                  gunShotMap.put(gun, shots);
@@ -150,16 +182,19 @@ public class SequenceHeaders extends RecursiveTreeObject<SequenceHeaders>{
             inlineInc=Math.min(inlineInc, sub.getInlineInc());
             xlineMax=Math.max(xlineMax, sub.getXlineMax());
             xlineMin=Math.min(xlineMin,sub.getXlineMin());
+            xlineInc=Math.min(xlineInc, sub.getXlineInc());
             dugShotMax=Math.max(dugShotMax, sub.getDugShotMax());
             dugShotMin=Math.min(dugShotMin,sub.getDugShotMin());
-            dugShotInc=Math.max(dugShotInc, sub.getDugChannelInc());
+            dugShotInc=Math.min(dugShotInc, sub.getDugChannelInc());
             dugChannelMax=Math.max(dugChannelMax,sub.getDugChannelMax());
             dugChannelMin=Math.min(dugChannelMin, sub.getDugChannelMin());
+            dugChannelInc=Math.min(dugChannelInc,sub.getDugChannelInc());
             offsetMax=Math.max(offsetMax,sub.getOffsetMax());
             offsetMin=Math.min(offsetMin, sub.getOffsetMin());
+            offsetInc=Math.min(offsetInc, sub.getOffsetInc());
             cmpMax=Math.max(cmpMax,sub.getCmpMax());
             cmpMin=Math.min(cmpMin,sub.getCmpMin());
-            cmpInc=Math.max(cmpInc,sub.getCmpInc());
+            cmpInc=Math.min(cmpInc,sub.getCmpInc());
             numberOfRuns=Math.max(numberOfRuns, sub.getNumberOfRuns());
             
             /*sum(traceCount,sub.getTraceCount());

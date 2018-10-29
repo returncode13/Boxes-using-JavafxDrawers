@@ -24,7 +24,7 @@ public class WorkspaceView extends AnchorPane{
     
     
     public WorkspaceView(WorkspaceModel item){
-        this.location=getClass().getClassLoader().getResource("fxml/workspace/workspace.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/workspace/workspace_6.fxml"); 
        
           
            fXMLLoader=new FXMLLoader();

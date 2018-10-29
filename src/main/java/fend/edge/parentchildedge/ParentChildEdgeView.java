@@ -6,6 +6,7 @@
 package fend.edge.parentchildedge;
 
 
+import fend.dot.DotView;
 import fend.edge.edge.EdgeView;
 import java.io.IOException;
 import java.net.URL;
@@ -31,7 +32,7 @@ public class ParentChildEdgeView extends AnchorPane implements EdgeView{
     
     
     public ParentChildEdgeView(ParentChildEdgeModel item,JobType0View parentJob, AnchorPane interactivePane){
-        this.location=getClass().getClassLoader().getResource("fxml/parentchildedge.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/parentchildedge_1.fxml"); 
        this.parentJob=parentJob;
        this.interactivePane=interactivePane;
           
@@ -81,6 +82,10 @@ public class ParentChildEdgeView extends AnchorPane implements EdgeView{
     
     public boolean getDropReceived(){
         return this.dropReceived;
+    }
+    
+    public void add(DotView dot){
+        controller.add(dot);
     }
     
 }

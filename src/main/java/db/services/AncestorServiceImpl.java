@@ -23,6 +23,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import db.dao.AncestorDAO;
+import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -58,6 +60,11 @@ public class AncestorServiceImpl implements AncestorService{
         ancDao.clearTableForJob(dbjob);
     }
     
+    @Override
+    public Ancestor getAncestorFor(Job job, Job ancestor) {
+        return ancDao.getAncestorFor(job, ancestor);
+                
+    }
     
     /*@Override
     public void getInitialAncestorListFor(SessionDetails s,Set<Long> listOfAncestor){
@@ -238,6 +245,28 @@ public class AncestorServiceImpl implements AncestorService{
       return ancDao.getAncestorFor(fkid, ancestor);
       }*/
 
+    @Override
+    public List<Ancestor> getAncestorFor(Job job) {
+        return ancDao.getAncestorFor(job);
+    }
+
+    
+ @Override
+    public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub) {
+      
+        
+        return ancDao.getAncestorsForJobContainingSubsurface(job, sub);
+    }
+
+    @Override
+    public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W) {
+        return ancDao.getAncestorsSubsurfaceJobsForSummary(W);
+    }
+
+    @Override
+    public void removeAllAncestorEntriesFor(Workspace workspace) {
+         ancDao.removeAllAncestorEntriesFor(workspace);
+    }
     
    
     

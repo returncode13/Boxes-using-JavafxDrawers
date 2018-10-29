@@ -14,7 +14,9 @@ import db.model.DoubtType;
 import db.model.Job;
 
 import db.model.Link;
+import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,7 @@ import java.util.Set;
  * @author sharath nair <sharath.nair@polarcus.com>
  */
 public class DoubtServiceImpl implements DoubtService{
+    
 
     DoubtDAO dsDAO=new DoubtDAOImpl();
             
@@ -84,5 +87,109 @@ public class DoubtServiceImpl implements DoubtService{
     public List<Doubt> getDoubtFor(Subsurface sub, Job job, Dot dot) {
         return dsDAO.getDoubtFor(sub, job, dot);
     }
+
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job job) {
+        return dsDAO.getDoubtFor(seq, job);
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Sequence seq, Job job, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(seq, job,doubtType);
+    }
+
+    @Override
+    public Doubt getDoubtFor(Subsurface sub, Job job, Doubt cause, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(sub, job, cause, doubtType);
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job, DoubtType doubtType) {
+        return dsDAO.getDoubtFor(sub, job, doubtType);
+    }
+
+    @Override
+    public Doubt getCauseOfInheritedDoubtForType(Subsurface sub, Job job, DoubtType doubtType) {
+        List<Doubt> inheritedDoubtsInSubJob=dsDAO.getInheritedDoubtFor(sub, job);
+        for(Doubt inh:inheritedDoubtsInSubJob){
+            Doubt cause=inh.getDoubtCause();
+            if(cause.getDoubtType().equals(doubtType)){
+                return cause;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Doubt> getDoubtFor(Subsurface sub, Job job) {
+        return dsDAO.getDoubtFor(sub, job);
+    }
+
+    @Override
+    public List<Doubt> getAllDoubtsExceptInheritanceFor(Workspace w) {
+        return dsDAO.getAllDoubtsExceptInheritanceFor(w);
+    }
+
+    @Override
+    public void createBulkDoubts(List<Doubt> doubts) {
+        dsDAO.createBulkDoubts(doubts);
+    }
+
+    @Override
+    public void updateBulkDoubts(List<Doubt> doubtsToBeUpdated) {
+        dsDAO.updateBulkDoubts(doubtsToBeUpdated);
+     }
+
+    @Override
+    public void deleteBulkDoubts(List<Long> doubtsToBeDeleted) {
+        dsDAO.deleteBulkDoubts(doubtsToBeDeleted);
+    }
+
+    @Override
+    public List<Doubt> getAllDoubtsJobsAndSubsurfacesFor(Workspace W, DoubtType type) {
+        return dsDAO.getAllDoubtsJobsAndSubsurfacesFor(W, type);
+    }
+
+    @Override
+    public List<Doubt> getInheritedDoubtsForCause(Doubt cause) {
+        return dsDAO.getInheritedDoubtsForCause(cause);
+    }
+
+    @Override
+    public void deleteAllInheritedDoubts(Workspace dbWorkspace) {
+        dsDAO.deleteAllInheritedDoubts(dbWorkspace);
+    }
+
+    @Override
+    public void deleteAllDoubtsRelatedTo(Job job) {
+        dsDAO.deleteAllDoubtsRelatedTo(job);
+    }
+
+    @Override
+    public void deleteAllDoubtsRelatedTo(Dot dot) {
+        dsDAO.deleteAllDoubtsRelatedTo(dot);
+    }
+
+    @Override
+    public void deleteAllDoubtsRelatedTo(Link link) {
+        dsDAO.deleteAllDoubtsRelatedTo(link);
+    }
+
+    @Override
+    public List<Doubt> getDoubtsFor(Subsurface sub) {
+        return dsDAO.getDoubtsFor(sub);
+    }
+
+    @Override
+    public List<Doubt> getCausalDoubtsFor(Subsurface sub, Job job) {
+        return dsDAO.getCausalDoubtsFor(sub,job);
+    }
+
+    @Override
+    public List<Doubt> getInheritedDoubtsOn(Subsurface sub, Job job) {
+        return dsDAO.getInheritedDoubtsOn(sub,job);
+    }
+
+    
     
 }

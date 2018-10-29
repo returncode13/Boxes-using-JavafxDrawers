@@ -5,8 +5,12 @@
  */
 package fend.edge.parentchildedge;
 
+import db.model.Job;
+import db.services.JobService;
+import db.services.JobServiceImpl;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.dot.LinkModel;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorView;
 import fend.edge.edge.EdgeController;
@@ -32,10 +36,19 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import fend.job.job5.JobType5View;
+import java.util.Random;
+import java.util.Set;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -78,10 +91,13 @@ public class ParentChildEdgeController implements EdgeController{
     private Arrow arrowBeforeDot;
     private Arrow arrowAfterDot;
     
-
+    private DotView dotview;
+    private final ContextMenu menu=new ContextMenu();    //in case the user decides that the link they asked for is not necessary. the handler is removed once the drop is made
+    
     void setModel(ParentChildEdgeModel item) {
         model=item;
         childAnchorModel=model.getChildAnchorModel();
+        //model.dropSuccessFulProperty().addListener(DROP_SUCCESSFUL_LISTENER);
         
     }
 
@@ -95,30 +111,40 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.centerYProperty().addListener(UPDATE_ARROW_LISTENER);
         curve=createStartingCurve();
         
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         JobType0Model job=this.jobView.getController().getModel();
         type=job.getType();
         if(type.equals(JobType0Model.PROCESS_2D)) {
                         curve.startXProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType1View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.SEGD_LOAD)) {
                         curve.startXProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType2View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.ACQUISITION)) {
            
                         curve.startXProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType3View)this.jobView).layoutYProperty(),100));
         }
         if(type.equals(JobType0Model.TEXT)) {
            
                         curve.startXProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
-                        curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),74));
+                        curve.startYProperty().bind(Bindings.add(((JobType4View)this.jobView).layoutYProperty(),100));
+        }
+         if(type.equals(JobType0Model.SEGY)) {
+           
+                        curve.startXProperty().bind(Bindings.add(((JobType5View)this.jobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+                        curve.startYProperty().bind(Bindings.add(((JobType5View)this.jobView).layoutYProperty(),100));
         }
         
         curve.endXProperty().bind(childAnchor.centerXProperty());
         curve.endYProperty().bind(childAnchor.centerYProperty());
-        curve.setMouseTransparent(true);
+        //curve.setMouseTransparent(true);
         constraintCurve();
         overrideAnchorBehaviour();
         
@@ -130,19 +156,43 @@ public class ParentChildEdgeController implements EdgeController{
         curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
         curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
         
+        
+         MenuItem deleteThisLink=new MenuItem("-delete this link");
+        node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
+            @Override
+            public void handle(ContextMenuEvent event) {
+              if(!node.getDropReceived())menu.show(node, event.getScreenX(), event.getScreenY());
+            }
+        });
+        deleteThisLink.setOnAction(e->{
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            node.setVisible(false);
+            
+        });
+        menu.getItems().add(deleteThisLink);
+        
+        
         node.getChildren().add(0,arrowEnd);
         node.getChildren().add(0,arrowBeforeDot);
         node.getChildren().add(0,arrowAfterDot);
         node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,childAnchor);
+        node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
+        //this.interactivePane.getChildren().add(dotview);
         
     }
     
     
     private CubicCurve createStartingCurve() {
         //CubicCurve curve = new CubicCurve();
+        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=0;
+        int maxX=50;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         curve.setStartX(50);
         curve.setStartY(200);
         curve.setControlX1(150);
@@ -155,6 +205,8 @@ public class ParentChildEdgeController implements EdgeController{
         curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
         //curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        
+      
         return curve;
     }
 
@@ -162,8 +214,27 @@ public class ParentChildEdgeController implements EdgeController{
         return this.model;
     }
     
+    /*
+    @FXML
+    void onCurveClicked(MouseEvent e) {
+    if(e.getButton().equals(MouseButton.PRIMARY)){
+    if(e.getClickCount()==2){
+    dotview.getController().getModel().clickDot();
+    }
+    }
+    }
+    
+    @FXML
+    void onContextMenuRequested(ContextMenuEvent event) {
+    System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.onContextMenuRequested():");
+    }*/
+    
     
     public DotView setChildJobView(JobType0View childJobView,DotView dotnode){
+        Random randx=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
        
         if(dotnode==null){              //i.e. create a new dot in the center of the parent and the child
             
@@ -172,10 +243,14 @@ public class ParentChildEdgeController implements EdgeController{
         DotModel dotmodel=model.getDotModel();
         dotnode=new DotView(dotmodel, ParentChildEdgeController.this.interactivePane);
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): created a new dotnode: "+dotnode.getId());
-        node.getChildren().add(dotnode);
+            this.dotview=dotnode;
+        //node.getChildren().add(this.dotview);
         
-        dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
-        dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
+       // dotnode.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
+       // dotnode.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
+       
+       this.dotview.centerXProperty().bind(Bindings.divide((Bindings.add(curve.startXProperty(), curve.endXProperty())),2.0));
+        this.dotview.centerYProperty().bind(Bindings.divide((Bindings.add(curve.startYProperty(), curve.endYProperty())),2.0));
         
         
         JobType0Model job=childJobView.getController().getModel();
@@ -189,6 +264,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGD_LOAD)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType2View)childJobView).getHeight()+" , Width: "+((JobType2View)childJobView).getWidth());
@@ -197,6 +273,7 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.ACQUISITION)) {
              System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
@@ -205,25 +282,44 @@ public class ParentChildEdgeController implements EdgeController{
        childAnchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.TEXT)) {
-             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType3View)childJobView).getHeight()+" , Width: "+((JobType3View)childJobView).getWidth());
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType4View)childJobView).getHeight()+" , Width: "+((JobType4View)childJobView).getWidth());
        // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
        // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
        childAnchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
         childAnchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0));
         childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
-          
+         if(type.equals(JobType0Model.SEGY)) {
+             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): Ht: " +((JobType5View)childJobView).getHeight()+" , Width: "+((JobType5View)childJobView).getWidth());
+       // childAnchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+       // childAnchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxY()));
+       childAnchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71));   //handcoding is awful!. 142 is the width, 74 the height
+        childAnchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0));
+        childAnchor.setRadius(5);
+        node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+        }
+          this.interactivePane.getChildren().add(dotview);
           }
         else{                                    //this is when the dot exists. and when it needs to be "joined" to.
             System.out.println("fend.edge.parentchildedge.ParentChildEdgeController.setChildJobView(): binding to dotnode "+dotnode.getId());
-            childAnchor.centerXProperty().bind(dotnode.centerXProperty());
-            childAnchor.centerYProperty().bind(dotnode.centerYProperty());
+            /*childAnchor.centerXProperty().bind(dotnode.centerXProperty());
+            childAnchor.centerYProperty().bind(dotnode.centerYProperty());*/
+            this.dotview=dotnode;
+            childAnchor.centerXProperty().bind(this.dotview.centerXProperty());
+            childAnchor.centerYProperty().bind(this.dotview.centerYProperty());
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+//            this.interactivePane.getChildren().add(dotview);
             
         }
         node.toBack();
-        return dotnode;
+        
+        this.dotview.toFront();
+        //return dotnode;
+        return this.dotview;
     };
     
     /**
@@ -306,6 +402,7 @@ public class ParentChildEdgeController implements EdgeController{
         childAnchor.setOnMouseDragged(e->{
            
             node.toBack();              ///overriden statement
+            
             //System.out.println("anchor.ParentChildEdgeController.setView() Mouse Dragged");
             double newX=e.getX()+dragDelta.x;
             if(newX>0 && newX<ParentChildEdgeController.this.interactivePane.getScene().getWidth()){
@@ -336,6 +433,7 @@ public class ParentChildEdgeController implements EdgeController{
                //reduce the childanchors radius to zero once it's dropped on a node
                
                childAnchor.setRadius(5);
+                node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
            }
            
         });
@@ -344,6 +442,10 @@ public class ParentChildEdgeController implements EdgeController{
 
     public CubicCurve getCurve() {
         return this.curve;
+    }
+
+    void add(DotView dot) {
+        this.interactivePane.getChildren().add(dot);
     }
     
       private class Delta{
@@ -357,8 +459,37 @@ public class ParentChildEdgeController implements EdgeController{
         ParentChildEdgeController.this.arrowBeforeDot.update();
         ParentChildEdgeController.this.arrowAfterDot.update();
         ParentChildEdgeController.this.arrowStart.update();
+        if(dotview!=null){
+            this.dotview.toFront();
+        }
     };
-      
- 
+    
+    private JobService jobService=new JobServiceImpl();
+    
+  private ChangeListener<Boolean> DROP_SUCCESSFUL_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                /*Job dbparent=jobService.getJob(model.getParentJob().getId());
+                model.getParentJob().setDatabaseJob(dbparent);
+                Job dbchild=jobService.getJob(model.getChildJob().getId());
+                model.getChildJob().setDatabaseJob(dbchild);*/
+                /*DotModel dotmodel=model.getDotModel();
+                Set<LinkModel> links=dotmodel.getLinks();
+                for(LinkModel link:links){
+                JobType0Model parentj=link.getParent();
+                JobType0Model childj=link.getChild();
+                //Job dbChild=jobService.getJob(childj.getId());
+                Job dbChild=childj.getDatabaseJob();
+                //Job dbParent=jobService.getJob(parentj.getId());
+                Job dbParent=parentj.getDatabaseJob();
+                }*/
+                System.out.println(".changed(): updating the parent");
+                model.getParentJob().toggleUpdateProperty();
+                model.setDropSuccessFul(false);
+            }
+            
+        }
+    };
       
 }

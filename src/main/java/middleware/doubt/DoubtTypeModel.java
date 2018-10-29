@@ -15,5 +15,6 @@ public class DoubtTypeModel {
     public static final String QC="qc";
     public static final String INSIGHT="insight";
     public static final String IO="io";
-     public static final String INHERIT="inheritance";
+    public static final String WORKFLOW="workflow";
+    public static final String INHERIT="inheritance";
 }

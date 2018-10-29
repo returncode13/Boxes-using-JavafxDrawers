@@ -5,10 +5,13 @@
  */
 package db.model;
 
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,7 +24,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="sequence",schema="public")
-public class Sequence {
+public class Sequence implements Serializable {
 @Id
 @GeneratedValue
 private Long id;
@@ -120,8 +123,37 @@ private Set<Doubt> doubts;
     public Sequence() {
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + Objects.hashCode(this.id);
+        hash = 43 * hash + Objects.hashCode(this.sequenceno);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Sequence other = (Sequence) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.sequenceno, other.sequenceno)) {
+            return false;
+        }
+        return true;
+    }
+
 
     
-
+    
 
 }

@@ -9,7 +9,10 @@ import db.dao.SummaryDAO;
 import db.dao.SummaryDAOImpl;
 import db.model.Job;
 import db.model.Sequence;
+import db.model.Subsurface;
 import db.model.Summary;
+import db.model.Workspace;
+import java.util.List;
 
 /**
  *
@@ -43,6 +46,61 @@ public class SummaryServiceImpl implements SummaryService{
     @Override
     public Summary getSummaryFor(Sequence sequence,Job job) {
         return summaryDao.getSummaryFor(sequence,job);
+    }
+
+    @Override
+    public List<Long> getDepthsInSummary(Workspace W) {
+        return summaryDao.getDepthsInSummary(W);
+    }
+
+    @Override
+    public List<Summary> getSummariesForJobSeq(Job job,Sequence seq,Workspace W) {
+        return summaryDao.getSummariesForJobSeq(job, seq, W);
+    }
+
+    @Override
+    public List<Summary> getSummariesForJobSeq(Job job, Sequence seq) {
+        return summaryDao.getSummariesForJobSeq(job, seq);
+    }
+
+    @Override
+    public Summary getSummaryFor(Subsurface subsurface, Job job) {
+        return summaryDao.getSummaryFor(subsurface, job);
+    }
+
+    @Override
+    public List<Summary> getSummariesForJobSub(Job job, Subsurface sub, Workspace W) {
+        return summaryDao.getSummariesForJobSub(job, sub, W);
+    }
+
+    @Override
+    public List<Summary> getSummariesFor(Workspace W) {
+        return summaryDao.getSummariesFor(W);
+    }
+
+    @Override
+    public void createBulkSummaries(List<Summary> summaries) {
+        summaryDao.createBulkSummaries(summaries);
+    }
+
+    @Override
+    public void updateBulkSummaries(List<Summary> summariesToBeUpdated) {
+        summaryDao.udpateBulkSummaries(summariesToBeUpdated);
+    }
+
+    @Override
+    public void deleteAllSummaries(Workspace dbWorkspace) {
+        summaryDao.deleteAllSummaries(dbWorkspace);
+    }
+
+    @Override
+    public void deleteAllSummariesForJob(Job job) {
+        summaryDao.deleteAllSummariesForJob(job);
+    }
+
+    @Override
+    public List<Summary> getSummariesFor(Subsurface sub) {
+        return summaryDao.getSummariesFor(sub);
     }
     
 }

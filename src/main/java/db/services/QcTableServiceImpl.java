@@ -10,8 +10,13 @@ import db.model.QcTable;
 
 import java.util.List;
 import db.dao.QcTableDAO;
+import db.model.Job;
 import db.model.QcMatrixRow;
+import db.model.Sequence;
 import db.model.Subsurface;
+import db.model.User;
+import db.model.Workspace;
+import java.util.Map;
 
 /**
  *
@@ -19,56 +24,98 @@ import db.model.Subsurface;
  */
 public class QcTableServiceImpl implements QcTableService{
     
-    QcTableDAO qcmDAO=new QcTableDAOImpl();
+    QcTableDAO qctDAO=new QcTableDAOImpl();
+    
     
     @Override
     public void createQcTable(QcTable qcm) {
-        qcmDAO.createQcTable(qcm);
+        qctDAO.createQcTable(qcm);
     }
 
     @Override
     public QcTable getQcTable(Long qid) {
-        return qcmDAO.getQcTable(qid);
+        return qctDAO.getQcTable(qid);
     }
 
     @Override
     public void updateQcTable(Long qid, QcTable newQ) {
-        qcmDAO.updateQcTable(qid, newQ);
+        qctDAO.updateQcTable(qid, newQ);
+        
     }
 
     @Override
     public void deleteQcTable(Long qid) {
-        qcmDAO.deleteQcTable(qid);
+        qctDAO.deleteQcTable(qid);
     }
 
     /*@Override
     public List<QcTable> getQcTableFor(Volume v) {
-    return qcmDAO.getQcTableFor(v);
+    return qctDAO.getQcTableFor(v);
     }
     
     @Override
     public List<QcTable> getQcTableFor(Volume v, QcType qctype) {
-    return qcmDAO.getQcTableFor(v, qctype);
+    return qctDAO.getQcTableFor(v, qctype);
     }*/
 
     @Override
     public List<QcTable> getQcTableFor(QcMatrixRow qmx) {
-        return qcmDAO.getQcTableFor(qmx);
+        return qctDAO.getQcTableFor(qmx);
     }
 
     @Override
     public List<QcTable> getQcTableFor(Subsurface h) {
-        return qcmDAO.getQcTableFor(h);
+        return qctDAO.getQcTableFor(h);
     }
 
     @Override
     public QcTable getQcTableFor(QcMatrixRow qmx, Subsurface h)  throws Exception{
-        return qcmDAO.getQcTableFor(qmx, h);
+        return qctDAO.getQcTableFor(qmx, h);
     }
 
     @Override
     public QcTable getQcTableFor(Long qcmatrixRowId, Subsurface s) throws Exception {
-         return qcmDAO.getQcTableFor(qcmatrixRowId, s);
+         return qctDAO.getQcTableFor(qcmatrixRowId, s);
+    }
+
+    @Override
+    public void deleteAllQcTablesForJob(Job job) {
+        qctDAO.deleteAllQcTablesForJob(job);
+    }
+
+    @Override
+    public int getQcTablesFor(Job parentJob, Map<Long, Map<Subsurface, QcTable>> qcmatrixRowSubQcTableMap,Boolean present) {
+        return qctDAO.getQcTablesFor(parentJob,qcmatrixRowSubQcTableMap,present);
+    }
+
+    @Override
+    public int update(Long idOfQcMatrix, Subsurface sub, Boolean result, String updateTime, User currentUser) {
+        return qctDAO.update(idOfQcMatrix,  sub, result,  updateTime,currentUser);
+    }
+
+    @Override
+    public void setAllqcTableValuesFor(Sequence seq, Job j,Long qcmatrixId, Boolean result, String updateTime, User currentUser) {
+        qctDAO.setAllqcTableValuesFor(seq, j,qcmatrixId, result, updateTime, currentUser);
+    }
+
+    @Override
+    public void createBulkQcTables(List<QcTable> qctables) {
+        qctDAO.createBulkQcTables(qctables);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getQcTablesOnLeafJobsFor(Workspace w) {
+        return qctDAO.getQcTablesOnLeafJobsFor(w);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getUpdatedQcTablesFor(Workspace w) {
+        return qctDAO.getUpdatedQcTablesFor(w);
+    }
+
+    @Override
+    public Map<Job, Map<Subsurface, List<QcTable>>> getAllQcTablesFor(Workspace w) {
+        return qctDAO.getQcTablesFor(w);
     }
     
     

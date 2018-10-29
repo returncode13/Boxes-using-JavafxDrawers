@@ -31,7 +31,7 @@ public class UserWorkspace implements Serializable {
     private UserWorkspaceId pk=new UserWorkspaceId();
     
     @Transient
-    //@Column(name="userid")
+   // @Column(name="user")
     private User user;
     
     @Transient
@@ -50,19 +50,19 @@ public class UserWorkspace implements Serializable {
     }*/
 
     public User getUser() {
-        return user;
+        return pk.getUser();
     }
 
     public void setUser(User user) {
-        this.user = user;
+        pk.setUser(user);
     }
 
     public Workspace getWorkspace() {
-        return workspace;
+        return pk.getWorkspace();
     }
 
     public void setWorkspace(Workspace workspace) {
-        this.workspace = workspace;
+        pk.setWorkspace(workspace);
     }
 
     @Override

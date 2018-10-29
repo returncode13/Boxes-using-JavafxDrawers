@@ -55,14 +55,39 @@ public class SubsurfaceHeaders extends SequenceHeaders{
     
     private BooleanProperty chosen=new SimpleBooleanProperty();
     private BooleanProperty multiple=new SimpleBooleanProperty();
+    private BooleanProperty deleted=new SimpleBooleanProperty();
+    
     
     private SequenceHeaders sequenceHeader;
     private Subsurface subsurface;
 
+    @Override
+    public Boolean getDeleted() {
+        return deleted.get();
+    }
+
+    @Override
+    public void setDeleted(Boolean deleted) {
+        this.deleted.set(deleted);
+    }
+
+    
+    
+    public boolean isParent(){
+        return false;
+    }
+    
+    public boolean isChild(){
+        return true;
+    }
+    
+    
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -110,10 +135,12 @@ public class SubsurfaceHeaders extends SequenceHeaders{
         this.timeStamp.set(timeStamp);
     }
 
+    @Override
     public Volume0 getVolume() {
         return volume;
     }
 
+    @Override
     public void setVolume(Volume0 volume) {
         this.volume = volume;
     }

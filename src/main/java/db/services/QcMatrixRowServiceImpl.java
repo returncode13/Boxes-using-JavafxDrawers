@@ -61,5 +61,20 @@ public class QcMatrixRowServiceImpl implements QcMatrixRowService{
     public List<QcMatrixRow> getQcMatrixForJob(Job job, boolean b) {
         return qcmDao.getQcMatrixForJob(job, b);
     }
+
+    @Override
+    public void updatePresent(Long id, Boolean val) {
+        qcmDao.updatePresent(id,val);
+    }
+
+    @Override
+    public void deleteAllQcMatrixRowsForJob(Job job) {
+        qcmDao.deleteAllQcMatrixRowsForJob(job);
+    }
+
+    @Override
+    public List<String> getQcMatrixRowNamesForJob(Job job) {
+        return qcmDao.getQcMatrixRowNamesForJob(job);
+    }
     
 }

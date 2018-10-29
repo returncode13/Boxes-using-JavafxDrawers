@@ -6,6 +6,19 @@
 package fend.job.job4.definitions.volume.listFiles;
 
 
+import db.model.Job;
+import db.model.NodeProperty;
+import db.model.NodePropertyValue;
+import db.model.NodeType;
+import db.model.PropertyType;
+import db.services.NodePropertyService;
+import db.services.NodePropertyServiceImpl;
+import db.services.NodePropertyValueService;
+import db.services.NodePropertyValueServiceImpl;
+import db.services.NodeTypeService;
+import db.services.NodeTypeServiceImpl;
+import db.services.PropertyTypeService;
+import db.services.PropertyTypeServiceImpl;
 import fend.job.job0.property.JobModelProperty;
 import fend.volume.volume4.Volume4;
 import java.util.ArrayList;
@@ -60,8 +73,10 @@ public class ListFilesController extends Stage{
     private Button cancelButton;
     
     
-    
-    
+    private PropertyTypeService propertyTypeService=new PropertyTypeServiceImpl();
+    private NodePropertyService nodePropertyService=new NodePropertyServiceImpl();
+    private NodeTypeService nodeTypeService=new NodeTypeServiceImpl();
+    private NodePropertyValueService nodePropertyValueService=new NodePropertyValueServiceImpl();
 
     @FXML
     void handleOK(ActionEvent event) {
@@ -79,6 +94,25 @@ public class ListFilesController extends Stage{
                 jp.setPropertyValue(new String(""+this.to));
             }
         }
+             NodeType textNodeType=nodeTypeService.getNodeTypeObjForType(this.model.getVolumeModel().getType());
+             PropertyType fromProperty=propertyTypeService.getPropertyTypeObjForName("from");
+             PropertyType toProperty=propertyTypeService.getPropertyTypeObjForName("to");
+             
+             NodeProperty fromNodeProperty=nodePropertyService.getNodeProperty(textNodeType, fromProperty);
+             NodeProperty toNodeProperty=nodePropertyService.getNodeProperty(textNodeType, toProperty);
+             Job job=this.model.getVolumeModel().getParentJob().getDatabaseJob();
+             
+             NodePropertyValue fromNodePropertyValue=nodePropertyValueService.getNodePropertyValueFor(job, fromNodeProperty);
+             fromNodePropertyValue.setValue(""+from);
+             
+             NodePropertyValue toNodePropertyValue=nodePropertyValueService.getNodePropertyValueFor(job, toNodeProperty);
+             toNodePropertyValue.setValue(""+to);
+             
+             nodePropertyValueService.updateNodePropertyValue(toNodePropertyValue.getIdNodePropertyValue(), toNodePropertyValue);
+             nodePropertyValueService.updateNodePropertyValue(fromNodePropertyValue.getIdNodePropertyValue(), fromNodePropertyValue);
+             
+             
+             
              
              
              close();

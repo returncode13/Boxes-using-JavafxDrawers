@@ -6,6 +6,7 @@
 package fend.workspace;
 
 import db.model.Workspace;
+import fend.app.AppModel;
 import fend.edge.edge.EdgeModel;
 import fend.job.job0.JobType0Model;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -34,12 +37,81 @@ public class WorkspaceModel {
     private ObservableSet<JobType0Model> observableJobs=FXCollections.observableSet(jobs);
     private ObservableSet<EdgeModel> observableEdges=FXCollections.observableSet(edges);
     private List<String> insightVersions=new ArrayList<>();
-   
-    public WorkspaceModel(){
-  //      id=UUID.randomUUID().getMostSignificantBits();
-          id=null;
+    private Workspace workspace;
+    private BooleanProperty rebuildGraphOrderProperty=new SimpleBooleanProperty(false);
+    private BooleanProperty prepareToRebuildProperty = new SimpleBooleanProperty(false);
+    private BooleanProperty clearDescendantsProperty = new SimpleBooleanProperty(false);
+    private BooleanProperty reloadProperty=new SimpleBooleanProperty(false);
+    private AppModel appmodel;
+    public WorkspaceModel(AppModel model) {
+        appmodel=model;
+         id=null;
     }
 
+    
+     public BooleanProperty reloadProperty() {
+        return reloadProperty;
+    }
+
+    public void reload() {
+       appmodel.reload();
+    }
+
+    public AppModel getAppmodel() {
+        return appmodel;
+    }
+   
+    
+    
+    
+    
+    public BooleanProperty clearDescendantsProperty() {
+        return clearDescendantsProperty;
+    }
+
+    public void clearDescendants() {
+        boolean val=clearDescendantsProperty.get();
+        this.clearDescendantsProperty.set(!val);
+    }
+
+    
+    
+    
+    public BooleanProperty prepareToRebuildProperty() {
+        return prepareToRebuildProperty;
+    }
+
+    public void prepareToRebuild() {
+        boolean val=prepareToRebuildProperty.get();
+        this.prepareToRebuildProperty.set(!val);
+    }
+    
+    
+    public BooleanProperty rebuildGraphOrderProperty() {
+        return rebuildGraphOrderProperty;
+    }
+    
+    public void rebuildGraph(){
+        boolean val=rebuildGraphOrderProperty.get();
+        rebuildGraphOrderProperty.set(!val);
+    }
+    
+    
+    
+    /*public WorkspaceModel(){
+    //      id=UUID.randomUUID().getMostSignificantBits();
+    id=null;
+    }*/
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    
     
     
     
@@ -92,6 +164,37 @@ public class WorkspaceModel {
 
     public void setInsightVersions(List<String> insightVersions) {
         this.insightVersions = insightVersions;
+    }
+
+    BooleanProperty blockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty blockProperty() {
+        return blockProperty;
+    }
+    
+    
+    public void block() {
+       blockProperty.set(true);
+    }
+    
+    public void unblock(){
+        blockProperty.set(false);
+    }
+
+    BooleanProperty summaryBlockProperty=new SimpleBooleanProperty(false);
+
+    public BooleanProperty summaryBlockProperty() {
+        return summaryBlockProperty;
+    }
+    
+    
+    
+    public void blockSummary() {
+        summaryBlockProperty.set(true);
+    }
+
+    public void unBlockSummary() {
+        summaryBlockProperty.set(false);
     }
     
     

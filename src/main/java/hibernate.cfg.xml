@@ -48,5 +48,6 @@ Contributor(s):
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.default_schema">obpmanager</property>
-    </session-factory>
+   
+  </session-factory>
 </hibernate-configuration>

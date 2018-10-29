@@ -5,6 +5,7 @@
  */
 package fend.volume.volume2;
 
+import db.model.Volume;
 import fend.workspace.WorkspaceModel;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
@@ -33,20 +34,48 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
 import fend.volume.volume0.Volume0;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 /**
  *
  * @author sharath nair <sharath.nair@polarcus.com>
- * Type 1 Volumes. logs under ../200../logs
+ * Type 2 Volumes. logs under /logs/
  */
 public class Volume2 implements Volume0{
-    private final String LOGPATH="/../../000scratch/logs";                      //location of logs relative to dugio
-    private final Long type=2L;
+    private final String LOGPATH="/logs/";                      //location of logs relative to dugio
+    private final Long type=Volume0.SEGD_LOAD;
     private Long id;
     private StringProperty name;
     private File volume;
     private JobType0Model parentJob;
     private List<SubsurfaceHeaders> subsurfaces;
+    private BooleanProperty deleteProperty=new SimpleBooleanProperty(false);
+     private Volume dbVolume;
+    
+    
+    @Override
+    public void setDbVolume(Volume v) {
+        dbVolume=v;
+    }
+
+    @Override
+    public Volume getDbVolume() {
+        return dbVolume;
+    }
+    
+   
+    @Override
+    public BooleanProperty deleteProperty() {
+        return deleteProperty;
+    }
+
+    @Override
+    public void delete(boolean b) {
+        //boolean val=deleteProperty.get();
+        deleteProperty.set(b);
+    }
+    
     
     public Volume2(JobType0Model parentBox) {
        // id=UUID.randomUUID().getMostSignificantBits();
@@ -173,7 +202,8 @@ public class Volume2 implements Volume0{
             subsurface.setSubsurfaceName(name);
              BasicFileAttributes attr=null;
            try {
-              attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
+             // attr=Files.readAttributes(Paths.get(this.volume.getAbsolutePath()),BasicFileAttributes.class);
+             attr=Files.readAttributes(Paths.get(sub.getAbsolutePath()),BasicFileAttributes.class);
            } catch (IOException ex) {
                Logger.getLogger(Volume2.class.getName()).log(Level.SEVERE, null, ex);
            }
@@ -203,7 +233,8 @@ public class Volume2 implements Volume0{
    final private String SUBSURFACE_SEARCH="*.0";                                //get only these files under the dugio
    final private FileFilter getSubsurfaceNamesFilter=new WildcardFileFilter(SUBSURFACE_SEARCH);
    
-   final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names  only the .single.idx files. Exclude the headers.single.idx files
+   //final private String SUBSURFACE_TIMESTAMP="^((?!headers).)*idx";             //get the time stamps and the subsurface names  only the .single.idx files. Exclude the headers.single.idx files
+   final private String SUBSURFACE_TIMESTAMP=".*headers.single.idx";             //get the time stamps and the subsurface names . Only the headers.single.idx files   << the .single.idx files were getting touched by some unknown process
    final Pattern pat=Pattern.compile(SUBSURFACE_TIMESTAMP);
    final private FileFilter getSubsurfaceTimeStampFilter=new FileFilter(){
         @Override

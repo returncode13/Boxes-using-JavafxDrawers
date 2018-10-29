@@ -1,6 +1,9 @@
 package db.dao;
 
+import db.model.Doubt;
 import db.model.DoubtStatus;
+import db.model.Workspace;
+import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,4 +20,13 @@ public interface DoubtStatusDAO {
     public DoubtStatus getDoubtStatus(Long id);
     public void deleteDoubtStatus(Long id);
     public void updateDoubtStatus(Long id,DoubtStatus newds);
+
+    public void createBulkDoubtStatus(List<DoubtStatus> doubtStatuses);
+
+    public void updateBulkDoubtStatus(List<DoubtStatus> doubtStatusToBeUpdated);
+
+    public void deleteBulkDoubtStatus(List<Long> idsOfDoubtStatusToBeDeleted);
+
+    public List<DoubtStatus> getDoubtStatusForDoubt(Doubt doubt);
+    public List<DoubtStatus> getAllDoubtStatusInWorkspace(Workspace W);
 }

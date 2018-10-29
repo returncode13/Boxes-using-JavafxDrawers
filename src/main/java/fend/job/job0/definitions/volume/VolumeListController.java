@@ -19,8 +19,9 @@ import javafx.fxml.FXML;
 import javafx.stage.DirectoryChooser;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
-import fend.volume.volume1.Volume4;
+import fend.volume.volume1.Volume1;
 import fend.volume.volume2.Volume2;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -67,7 +68,7 @@ public class VolumeListController {
         
         //type=1L;  <--for demo
         if(type.equals(JobType0Model.PROCESS_2D)){
-            Volume4 volume1=new Volume4(parentjob);
+            Volume1 volume1=new Volume1(parentjob);
             volume1.setId(vol.getId());
             volume1.setName(f.getName());
             volume1.setVolume(f);
@@ -114,14 +115,16 @@ public class VolumeListController {
         model=item;
         parentjob=model.getParentJob();
         type=parentjob.getType();
+        System.out.println("fend.job.job0.definitions.volume.VolumeListController.setModel(): calling job from db");
         dbjob=jobService.getJob(parentjob.getId());
         
         
-        Set<Volume> dbVolumesInJob=dbjob.getVolumes();
+        //Set<Volume> dbVolumesInJob=dbjob.getVolumes();
+        Set<Volume> dbVolumesInJob= new HashSet<>(volumeService.getVolumesForJob(dbjob));
         for(Volume dbVol:dbVolumesInJob){
             Volume0 fevol;
             if(type.equals(JobType0Model.PROCESS_2D)){
-                fevol=new Volume4(parentjob);
+                fevol=new Volume1(parentjob);
                 fevol.setId(dbVol.getId());
                 fevol.setName(dbVol.getNameVolume());
                 File volumeOnDisk=new File(dbVol.getPathOfVolume());

@@ -7,6 +7,8 @@ package db.dao;
 
 import db.model.Dot;
 import db.model.Workspace;
+import java.util.List;
+import javafx.beans.property.StringProperty;
 
 /**
  *
@@ -19,5 +21,15 @@ public interface DotDAO {
     public void deleteDot(Long id);
 
     public void clearUnattachedDots(Workspace ws);
+
+    public void updateStatus(Long id, String status);
+
+    public void updateError(Dot dbDot);
+
+    public void updateTolerance(Dot dbDot);
+
+    public void updateFunction(Dot dbDot);
+
+    public List<Dot> getDotsInWorkspace(Workspace w);
     
 }

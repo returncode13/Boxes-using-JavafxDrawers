@@ -28,6 +28,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void createNodeProperty(NodeProperty np) {
+        System.out.println("db.dao.NodePropertyDAOImpl.createNodeProperty()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -43,6 +44,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public NodeProperty getNodeProperty(Long npid) {
+        System.out.println("db.dao.NodePropertyDAOImpl.getNodeProperty()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             NodeProperty ll=(NodeProperty) session.get(NodeProperty.class,npid);
@@ -57,6 +59,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void updateNodeProperty(Long npid, NodeProperty newNp) {
+        System.out.println("db.dao.NodePropertyDAOImpl.updateNodeProperty()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -79,6 +82,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public void deleteNodeProperty(Long npid) {
+        System.out.println("db.dao.NodePropertyDAOImpl.deleteNodeProperty()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -95,6 +99,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public List<NodeProperty> getPropertyTypesFor(NodeType nodeType) {
+        System.out.println("db.dao.NodePropertyDAOImpl.getPropertyTypesFor()");
           Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodeProperty> result=null;
@@ -120,6 +125,7 @@ public class NodePropertyDAOImpl implements NodePropertyDAO{
 
     @Override
     public NodeProperty getNodeProperty(NodeType ntype, PropertyType protype) {
+        System.out.println("db.dao.NodePropertyDAOImpl.getNodeProperty()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<NodeProperty> result=null;

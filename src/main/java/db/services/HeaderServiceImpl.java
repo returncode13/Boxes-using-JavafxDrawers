@@ -13,6 +13,7 @@ import db.model.Header;
 import db.model.Job;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 
 /**
  *
@@ -25,6 +26,11 @@ public class HeaderServiceImpl implements HeaderService{
     @Override
     public void createHeader(Header h) {
        hDao.createHeader(h);
+    }
+    
+    @Override
+    public void createBulkHeaders(List<Header> headers) {
+        hDao.createBulkHeaders(headers);
     }
 
     @Override
@@ -67,43 +73,7 @@ public class HeaderServiceImpl implements HeaderService{
         hDao.deleteHeadersFor(job);
     }
     
-    /*
-    @Override
-    public void setHeaderFor(Volume v, List<Header> headers) {
-    hDao.setHeaderFor(v,headers);
-    }
-    
-    @Override
-    public void updateHeaderFor(Volume v, List<Header> headers) {
-    hDao.updateHeader(v, headers);
-    }*/
-
-    /* @Override
-    public void deleteHeadersFor(Volume v) {
-    hDao.deleteHeadersFor(v);
-    }*/
-
-    /*@Override
-    public Set<Volume> getVolumesContaining(String subsurface) {
-    System.out.println("sub: "+subsurface);
-    return hDao.getVolumesContaining(subsurface);
-    }
-    
-    @Override
-    public List<Header> getHeaderFor(Volume v, String subsurface) {
-    return hDao.getHeaderFor(v, subsurface);
-    }*/
-    /*  @Override
-    public Set<Volume> getVolumesContaining(Subsurface subsurface) {
-    System.out.println("sub: "+subsurface.getSubsurface());
-    return hDao.getVolumesContaining(subsurface);
-    }
-    
-    @Override
-    public List<Header> getHeaderFor(Volume v, Subsurface subsurface) {
-    return hDao.getHeaderFor(v, subsurface);
-    }*/
-
+   
     @Override
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
         return hDao.getHeadersFor(dbvol,dbsub,timestamp);
@@ -119,6 +89,38 @@ public class HeaderServiceImpl implements HeaderService{
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
         return hDao.getChosenHeaderFor(job,sub);
     }
+
+    @Override
+    public String getLatestTimeStampFor(Volume volume) {
+        return hDao.getLatestTimeStampFor(volume);
+    }
+
+    @Override
+    public List<Header> getChosenHeadersForWorkspace(Workspace W) {
+        return hDao.getChosenHeadersForWorkspace(W);
+    }
+
+    @Override
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
+        hDao.checkForMultipleSubsurfacesInHeadersForJob(job);
+    }
+
+    @Override
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
+        hDao.setChosenToFalseForConflictingSubs(conflictedSub,job,volumeToBeExcluded);
+    }
+
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        hDao.updateDeleteFlagsFor(vol,  subsurfacesOnDisk);
+    }
+
+    @Override
+    public void updateRunInsightWorkflowVariables(Job dbjob, Volume dbvol) {
+        hDao.updateRunInsightWorkflowVariables(dbjob, dbvol);
+    }
+
+    
     
     
 }

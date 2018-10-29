@@ -5,6 +5,7 @@
  */
 package db.dao;
 
+import db.model.Job;
 import db.model.Sequence;
 import db.model.Subsurface;
 import java.util.List;
@@ -25,4 +26,8 @@ public interface SubsurfaceDAO {
     public Subsurface getSubsurfaceObjBysubsurfacename(String dugSubsurface);
 
     public List<Subsurface> getSubsurfaceList();
+
+    public List<Subsurface> getSubsurfacesPresentInJob(Job job);
+    
+     public List<Object[]> getSequenceSubsurfaceMap();
 }

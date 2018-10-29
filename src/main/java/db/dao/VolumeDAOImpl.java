@@ -8,8 +8,10 @@ package db.dao;
 import app.connections.hibernate.HibernateUtil;
 import db.model.Job;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -22,6 +24,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void createVolume(Volume v) {
+        System.out.println("db.dao.VolumeDAOImpl.createVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         
@@ -39,10 +42,20 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public Volume getVolume(Long volid) {
+        System.out.println("db.dao.VolumeDAOImpl.getVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+         String hql="from Volume where id =:volid";
+        List<Volume> results=null;
         try{
-            Volume v = (Volume) session.get(Volume.class, volid);
-            return v;
+            transaction=session.beginTransaction();
+             Query query=session.createQuery(hql);
+            query.setParameter("volid", volid);
+            //Volume v = (Volume) session.get(Volume.class, volid);
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.VolumeDAOImpl.getVolume(): returning volume : "+results.get(0).getId());
+            return results.get(0);
             
         }catch(Exception e){
             e.printStackTrace();
@@ -58,8 +71,14 @@ public class VolumeDAOImpl implements VolumeDAO {
     public void deleteVolume(Long volid) {
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
+       
         try{
             transaction=session.beginTransaction();
+           
+            
+            
+            
+            
            Volume v = (Volume) session.get(Volume.class, volid);
             session.delete(v);
             transaction.commit();
@@ -160,6 +179,7 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public void updateVolume(Long volid, Volume newVol) {
+        System.out.println("db.dao.VolumeDAOImpl.updateVolume()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         
@@ -182,18 +202,47 @@ public class VolumeDAOImpl implements VolumeDAO {
 
     @Override
     public List<Volume> getVolumesForJob(Job job) {
+        System.out.println("db.dao.VolumeDAOImpl.getVolumesForJob()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Volume> results=null;
+        String hql="from Volume v where v.job = :j";
         try{
             transaction=session.beginTransaction();
             
-            Criteria criteria=session.createCriteria(Volume.class);
-            criteria.add(Restrictions.eq("job", job));
-            results=criteria.list();
+            /*Criteria criteria=session.createCriteria(Volume.class);
+            criteria.add(Restrictions.eq("job", job));*/
+            Query query=session.createQuery(hql);
+            query.setParameter("j", job);
+            results=query.list();
+            transaction.commit();
             
         }catch(Exception e){
-            
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        return results;
+    }
+
+    @Override
+    public List<Volume> getAllVolumesIn(Workspace workspace) {
+         System.out.println("db.dao.VolumeDAOImpl.getVolumesForJob()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Volume> results=null;
+        String hql="select v from Volume v inner join v.job j where j.workspace =:w";
+        try{
+            transaction=session.beginTransaction();
+           
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            results=query.list();
+            transaction.commit();
+            System.out.println("db.dao.VolumeDAOImpl.getAllVolumesIn(): returning  "+results.size()+ " volumes belonging to workspace "+workspace.getName());
+        }catch(Exception e){
+            e.printStackTrace();
         }finally{
             session.close();
         }
@@ -202,5 +251,37 @@ public class VolumeDAOImpl implements VolumeDAO {
     }
 
     
-    
+    @Override
+    public void deleteAllVolumesFor(Job job) {
+        System.out.println("db.dao.VolumeDAOImpl.deleteAllVolumesFor()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+       
+        String hqlSelect="select v.id from Volume v where v.job =:j";
+        String hqlDelete="delete  from Volume v where  v.id in (:ids)";
+        try{
+            List<Long> idsToBeDeleted=null;
+            transaction=session.beginTransaction();
+           
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", job);
+            idsToBeDeleted=query.list();
+            if(!idsToBeDeleted.isEmpty()){
+                Query delq=session.createQuery(hqlDelete);
+                delq.setParameterList("ids", idsToBeDeleted);
+                System.out.println("db.dao.VolumeDAOImpl.deleteAllVolumesFor(): deleting "+idsToBeDeleted.size()+" volumes belonging to job: "+job.getNameJobStep());
+                int d=delq.executeUpdate();
+            }
+                transaction.commit();
+            
+            
+           
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+        
+    }
 }

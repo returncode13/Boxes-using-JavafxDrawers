@@ -41,9 +41,12 @@ public class User implements Serializable {
     @Column(name="initials",nullable=false,length=3)
     private String initials;
     
-    @OneToMany(mappedBy = "owner",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner")
     private Set<Workspace> ownedWorkspaces=new HashSet<>();
     
+    
+    @OneToMany(mappedBy = "pk.user")
+    private Set<UserWorkspace> userWorkspaceEntries=new HashSet<>();
     
     /* @OneToMany(mappedBy ="user")
     private Set<Workspace> workspaces;*/
@@ -55,9 +58,8 @@ public class User implements Serializable {
     inverseJoinColumns = { @JoinColumn(name = "id") }
     
     )*/
-    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
-    private Set<Workspace> workspaces = new HashSet<>();
-
+    /*@ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
+    private Set<Workspace> workspaces = new HashSet<>();*/
     /* @OneToMany(mappedBy ="pk.userid",fetch=FetchType.EAGER)
     private Set<UserWorkspace> userWorkspaces=new HashSet<>();*/
     
@@ -111,23 +113,23 @@ public class User implements Serializable {
         this.initials = initials;
     }
 
-    public Set<Workspace> getWorkspaces() {
-        return workspaces;
+    /*  public Set<Workspace> getWorkspaces() {
+    return workspaces;
     }
-
+    
     public void setWorkspaces(Set<Workspace> workspaces) {
-        this.workspaces = workspaces;
+    this.workspaces = workspaces;
     }
-
+    
     public void addToWorkspaces(Workspace workspace){
-        this.workspaces.add(workspace);
+    this.workspaces.add(workspace);
     }
     
     public void removeFromWorkspaces(Workspace workspace){
-        this.workspaces.remove(workspace);
-        
-    }
+    this.workspaces.remove(workspace);
     
+    }
+    */
     public Set<Workspace> getOwnedWorkspaces() {
         return ownedWorkspaces;
     }
@@ -143,6 +145,19 @@ public class User implements Serializable {
      public void removeFromOwnedWorkspaces(Workspace workspace){
         this.ownedWorkspaces.remove(workspace);
     }
+
+    public Set<UserWorkspace> getUserWorkspaceEntries() {
+        return userWorkspaceEntries;
+    }
+
+    public void setUserWorkspaceEntries(Set<UserWorkspace> userWorkspaceEntries) {
+        this.userWorkspaceEntries = userWorkspaceEntries;
+    }
+     
+     
+     
+     
+     
     
      /* public Set<UserWorkspace> getUserWorkspaces() {
      return userWorkspaces;

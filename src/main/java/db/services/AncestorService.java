@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import db.model.Ancestor;
 import db.model.Job;
+import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -28,4 +30,12 @@ public interface AncestorService {
     public Ancestor getAncestorFor(Job fkid,Long ancestor);     //get the entry where sessionsDetails=fkid and where the column ancestor = ancestor*/
 
     public void clearTableForJob(Job dbjob);
+    public Ancestor getAncestorFor(Job job,Job ancestor); 
+    public List<Ancestor> getAncestorFor(Job job);
+    public List<Ancestor> getAncestorsForJobContainingSub(Job job, Subsurface sub);
+    public List<Object[]> getAncestorsSubsurfaceJobsForSummary(Workspace W);// Return all ancestors that contain the same subsurface as the job
+
+    public void removeAllAncestorEntriesFor(Workspace dbWorkspace);
+
+    
 }

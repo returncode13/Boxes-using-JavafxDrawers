@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,9 +21,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="QcMatrixRow",schema="obpmanager")
-public class QcMatrixRow {
+public class QcMatrixRow implements Serializable {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @Column(name="qcmatrixrow_id")        
  Long id;
  
  /*@ManyToOne

@@ -5,6 +5,7 @@
  */
 package db.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.AssociationOverride;
@@ -30,7 +31,7 @@ import javax.persistence.Transient;
         @AssociationOverride(name="pk.subsurface",joinColumns = @JoinColumn(name="id"))
         })
 
-public class SubsurfaceJob {
+public class SubsurfaceJob implements Serializable {
     @EmbeddedId
     private SubsurfaceJobId pk=new SubsurfaceJobId();
     
@@ -43,6 +44,29 @@ public class SubsurfaceJob {
     public SubsurfaceJob() {
     }
 
+    @Column(name="update_time")
+    String updateTime;
+    
+    @Column(name="summary_time")
+    String summaryTime;
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getSummaryTime() {
+        return summaryTime;
+    }
+
+    public void setSummaryTime(String summaryTime) {
+        this.summaryTime = summaryTime;
+    }
+    
+    
     
     
     

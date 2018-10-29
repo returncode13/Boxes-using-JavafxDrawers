@@ -20,5 +20,7 @@ public interface SequenceDAO {
     
     public Sequence getSequenceObjByseqno(Long seqno);
     public List<Sequence> getSequenceList();
+
+   
     
 }

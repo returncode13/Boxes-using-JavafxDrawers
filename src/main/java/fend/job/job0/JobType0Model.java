@@ -6,10 +6,17 @@
 package fend.job.job0;
 
 
+import db.model.Job;
+import db.model.Log;
+import db.model.Subsurface;
+import fend.job.job0.definitions.insight.InsightListParentModel;
 import fend.job.job0.definitions.qcmatrix.QcMatrixModel;
+import fend.job.job0.definitions.qcmatrix.Qint;
 //import fend.job.job1.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.definitions.qcmatrix.qcmatrixrow.QcMatrixRowModelParent;
 import fend.job.job0.property.JobModelProperty;
+import fend.job.job1.definitions.insight.InsightListModel;
+import fend.job.job1.definitions.qcmatrix.QcMatrixType1Model;
 import java.util.Set;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -18,6 +25,7 @@ import javafx.collections.ObservableSet;
 import fend.volume.volume0.Volume0;
 import fend.workspace.WorkspaceModel;
 import java.util.List;
+import java.util.Map;
 import javafx.beans.property.LongProperty;
 import middleware.sequences.SequenceHeaders;
 
@@ -31,6 +39,8 @@ public interface JobType0Model {
     public final static Long SEGD_LOAD=2L;
     public final static Long ACQUISITION=3L;
     public final static Long TEXT=4L;
+    public final static Long SEGY=5L;
+    
     public Long getId();
     public void setId(Long id);
     public void setDepth(Long depth);
@@ -50,6 +60,7 @@ public interface JobType0Model {
     
     public BooleanProperty  getListenToDepthChangeProperty();
     public void setListenToDepthChange(Boolean listenToDepthChange);
+    public void toggleDepthChange();
     public BooleanProperty getChangeProperty();
     public void setChangeProperty(Boolean change);
     public ObservableSet<JobType0Model> getParents();
@@ -68,6 +79,11 @@ public interface JobType0Model {
     public List<JobModelProperty> getJobProperties();
     public void setJobProperties(List<JobModelProperty> jobProperties);
     
+    public Job getDatabaseJob();
+    public void setDatabaseJob(Job job);
+    public Map<Subsurface,Log> getLatestLogForSubsurfaceMap();
+    public void setLatestLogForSubsurfaceMap(Map<Subsurface,Log> mapOfLatestLogForSubsurface);
+    
     
     @Override
     public boolean equals(Object obj);
@@ -77,4 +93,38 @@ public interface JobType0Model {
 
     public WorkspaceModel getWorkspaceModel();
     
+    public Boolean getUpdate();
+    public void toggleUpdateProperty();
+    public BooleanProperty updateProperty();
+    
+    public BooleanProperty deleteProperty();
+    public void toggleDeleteProperty();
+    
+    public BooleanProperty qcChangedProperty();
+    public void toggleQcChangedProperty();
+    public void setQcChanged(boolean v);
+    
+    public BooleanProperty reloadSequenceHeadersProperty();
+    public void reLoadSequenceHeaders();
+    
+    public BooleanProperty exitLineTableProperty();
+    public void exitedLineTable();
+
+    public void block();
+
+    public void unblock();
+    
+    
+    public BooleanProperty exitQcTableProperty();
+    public void exitedQcTable();
+
+    public void setQcMatrixModel(Qint qmm);
+    public Qint getQcMatrixModel();
+
+     public BooleanProperty insightChangedProperty();
+
+    public void insightSelectionHasChanged() ;
+
+    public void setInsightListModel(InsightListParentModel ilistModel);
+    public InsightListParentModel getInsightListModel();
 }

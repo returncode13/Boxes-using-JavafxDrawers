@@ -5,11 +5,14 @@
  */
 package fend.volume.volume0;
 
+import db.model.Volume;
 import middleware.sequences.SubsurfaceHeaders;
 import java.io.File;
 import java.util.List;
 import javafx.beans.property.StringProperty;
 import fend.job.job0.JobType0Model;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 
 /**
@@ -20,6 +23,9 @@ public interface Volume0 {
 
     public static Long PROCESS_2D=1L;
     public static Long SEGD_LOAD=2L;
+    public static Long ACQUISITION=3L;
+    public static Long TEXT=4L;
+    public static Long SEGY=5L;
     public Long getType();
     public Long getId();
     /**
@@ -34,7 +40,14 @@ public interface Volume0 {
     
     public List<SubsurfaceHeaders> getSubsurfaces();
     public File getLogFolder();
+     
+    public BooleanProperty deleteProperty();
+    public void delete(boolean b);
     
+    public void setDbVolume(Volume v);
+    public Volume getDbVolume();
+    
+   
     
    
 }

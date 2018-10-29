@@ -12,8 +12,11 @@ import db.model.Volume;
 import db.model.Workflow;
 import java.util.List;
 import db.dao.LogDAO;
+import db.model.Fheader;
 import db.model.Job;
+import db.model.Pheader;
 import db.model.Subsurface;
+import db.model.Workspace;
 
 /**
  *
@@ -44,6 +47,11 @@ public class LogServiceImpl implements LogService{
 
     @Override
     public List<Log> getLogsFor(Header h) {
+        return ldao.getLogsFor(h);
+    }
+    
+    @Override
+    public List<Log> getLogsFor(Pheader h) {
         return ldao.getLogsFor(h);
     }
 
@@ -110,6 +118,51 @@ public class LogServiceImpl implements LogService{
     @Override
     public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub) {
         return ldao.getLogsByTimeFor(dbJob,sub);
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume v, Workflow w) {
+           ldao.bulkUpdateOnLogs(v, w);
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub) {
+        ldao.bulkUpdateOnLogs(volume, hdr,sub);
+    }
+
+    @Override
+    public String getLatestLogTimeFor(Volume dbVol) {
+       return ldao.getLatestLogTimeFor(dbVol);
+    }
+
+    @Override
+    public void deleteLogsFor(Volume vol) {
+        ldao.deleteLogsFor(vol);
+    }
+
+    @Override
+    public List<Log> getLogsWithInputVolumes(Workspace workspace) {
+        return ldao.getLogsWithInputVolumes(workspace);
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub) {
+        ldao.bulkUpdateOnLogs(volume, phdr,sub);
+    }
+
+    @Override
+    public void deleteLogsFor(Job job) {
+        ldao.deleteLogsFor(job);
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume dbvol, Fheader h, Subsurface subsurface) {
+        ldao.bulkUpdateOnLogs(dbvol, h, subsurface);
+    }
+
+    @Override
+    public void versioningOfLogsFor(Job j) {
+        ldao.versioningOfLogsFor(j);
     }
 
    

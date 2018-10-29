@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.Formula;
 
 /**
  *
@@ -40,13 +41,22 @@ public class Log implements Serializable{
     private Header header;
     
     @ManyToOne
+    @JoinColumn(name="public_headers_fk",nullable = true)
+    private Pheader pheader;
+    
+    @ManyToOne
+    @JoinColumn(name="full_headers_fk",nullable = true)
+    private Fheader fheader;
+    
+    
+    @ManyToOne
     @JoinColumn(name="volume_headers_fk",nullable = false)
     private Volume volume;
     
     @ManyToOne
     @JoinColumn(name="workflow_fk",nullable = true)
     private Workflow workflow=null;
-    /* @Column(name="numberOfRuns")
+   /* @Column(name="numberOfRuns")
     private Long numberOfRuns;*/
 
     @Column(name="logPath",length=4096)
@@ -83,9 +93,30 @@ public class Log implements Serializable{
     @Column(name="SummaryTime")
     private String summaryTime;
     
+    
+   // @Formula("(select count(*) from obpmanager.log l where l.job_fk=job_fk AND l.volume_headers_fk=volume_headers_fk AND l.subsurface_fk=subsurface_fk)")
     @Column(name="version")
     private Long version;
 
+    
+   @Column(name="is_max_version")
+   private Boolean isMaxVersion;
+
+    public Boolean isMaxVersion() {
+        return isMaxVersion;
+    }
+
+    public void setIsMaxVersion(Boolean isMaxVersion) {
+        this.isMaxVersion = isMaxVersion;
+    }
+   
+   
+    
+    
+    @Column(name="input_volumes",columnDefinition = "text")
+    private String inputVolumeNames=new String();
+    
+    
     public Long getVersion() {
         return version;
     }
@@ -251,6 +282,30 @@ public class Log implements Serializable{
 
     public void setJob(Job job) {
         this.job = job;
+    }
+
+    public Pheader getPheader() {
+        return pheader; 
+    }
+
+    public void setPheader(Pheader pheader) {
+        this.pheader = pheader;
+    }
+
+    public String getInputVolumeNames() {
+        return inputVolumeNames;
+    }
+
+    public void setInputVolumeNames(String inputVolumeNames) {
+        this.inputVolumeNames = inputVolumeNames;
+    }
+
+    public Fheader getFheader() {
+        return fheader;
+    }
+
+    public void setFheader(Fheader fheader) {
+        this.fheader = fheader;
     }
     
     

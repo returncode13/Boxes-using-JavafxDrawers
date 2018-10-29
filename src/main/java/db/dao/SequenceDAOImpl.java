@@ -21,6 +21,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public void createSequence(Sequence seq) {
+        System.out.println("db.dao.SequenceDAOImpl.createSequence()");
        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -36,6 +37,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public Sequence getSequence(Long sid) {
+        System.out.println("db.dao.SequenceDAOImpl.getSequence()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Sequence l= (Sequence) session.get(Sequence.class, sid);
@@ -50,6 +52,7 @@ public class SequenceDAOImpl implements SequenceDAO {
 
     @Override
     public void deleteSequence(Long sid) {
+        System.out.println("db.dao.SequenceDAOImpl.deleteSequence()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -108,7 +111,11 @@ public class SequenceDAOImpl implements SequenceDAO {
         }
         if(result.size()!=0){
              return result.get(0);
-        }else
+        }if(result.isEmpty()){
+            return null;
+        }
+        
+        else
             return null;
        
     }
@@ -134,5 +141,7 @@ public class SequenceDAOImpl implements SequenceDAO {
         }
         return result;
     }
+
+   
     
 }

@@ -24,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.hibernate.annotations.Formula;
 
 
 /**
@@ -45,18 +46,23 @@ public class Job implements Serializable{
     private String nameJobStep;
     
     @Column(name = "insightVersionsUsed",nullable=true,length=2048)
-    private String insightVersions;
+    private String insightVersions=new String();
     
     
     @Column(name = "alert",nullable = true)
     private Boolean alert;
     
-    /*@Column(name = "type",nullable=false)
-    private Long type;*/
-    
+  
     @Column(name="depth",nullable=false)
     private Long depth;
    
+    @Formula("(select count(*) from obpmanager.descendant d where d.job_fk=job_id)")
+   // @Column(name="is_Leaf")
+    private Integer isLeaf;
+    
+    @Formula("(select count(*) from obpmanager.ancestor a where a.job_fk=job_id)")
+   // @Column(name="is_Root")
+    private Integer isRoot;
     
     @ManyToOne
     @JoinColumn(name="nodetype_fk",nullable=false)
@@ -67,88 +73,82 @@ public class Job implements Serializable{
     private Workspace workspace;
     
     
-    
-    /*@Column(name = "pending",nullable = true)
-    private Boolean pending;*/
-    /* @OneToMany(mappedBy = "job")                              //create a member named "job" in the JobVolumeMap class definition
-    private Set<JobVolumeMap> jobVolumeMap;*/
-    
-     @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)                             //create a member named "job" in the JobVolumeMap class definition
-    private Set<Volume> volumes;
+ 
+     @OneToMany(mappedBy = "job")                             //create a member named "job" in the JobVolumeMap class definition
+    private Set<Volume> volumes=new HashSet<>();
     
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Ancestor> currentJobInAncestor;                         //The ancestor table is of the form  Job(currentjob)-->Job(ancestor)
     
-    @OneToMany(mappedBy = "ancestor",fetch=FetchType.EAGER)
-    private Set<Ancestor> ancestors;                    
+    @OneToMany(mappedBy = "ancestor")
+    private Set<Ancestor> ancestors=new HashSet<>();                    
     
-    @OneToMany(mappedBy ="job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy ="job")
     private Set<Descendant> currentJobInDescendant;
     
-    @OneToMany(mappedBy ="descendant",fetch=FetchType.EAGER)
-    private Set<Descendant> descendants;
+    @OneToMany(mappedBy ="descendant")
+    private Set<Descendant> descendants=new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
-    private Set<QcMatrixRow> qcmatrix;
+    @OneToMany(mappedBy = "job")
+    private Set<QcMatrixRow> qcmatrix=new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Log> logs;
     
+        
+    @OneToMany(mappedBy = "job")                                    //2D headers . metas
+    private Set<Header> headers=new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
-    private Set<Header> headers;
+    @OneToMany(mappedBy = "job")                                   //p-headers. obpd headers .metas
+    private Set<Pheader> pheaders=new HashSet<>();
     
-    @OneToMany(mappedBy = "parent",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")                                   //t-headers. text headers. md5. timestamp
+    private Set<Theader> theaders=new HashSet<>();
+    
+    @OneToMany(mappedBy = "job")                                    //full-headers.
+    private Set<Theader> fheaders=new HashSet<>();
+    
+    @OneToMany(mappedBy = "parent")
     private Set<Link> linksWithJobAsParent;                 //links where this job is parent...So all the children of this parent job are on the opposite end of the links
     
-    @OneToMany(mappedBy = "child",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "child")
     private Set<Link> linksWithJobAsChild;                  //links where this job is child. So all the parents of this job are on the opposite end of the link
     
-    @OneToMany(mappedBy = "argument",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "argument")
     private Set<VariableArgument> variableArguments;
     
-     @ManyToMany(fetch = FetchType.EAGER)
+     @ManyToMany()
     @JoinTable(name="subsurface_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
-    private Set<Subsurface> subsurfaces;
-    /*
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="sequence_job",schema = "obpmanager",joinColumns ={ @JoinColumn(name="job_id")},inverseJoinColumns ={ @JoinColumn(name="id")})    //unidirectional Many-to-Many relationship . 1 job->several subs.
-    private Set<Sequence> sequences;*/
-     
-    @OneToMany(mappedBy ="pk.job",fetch=FetchType.EAGER)
-    private Set<SubsurfaceJob> subsurfaceJobs=new HashSet<>();
+    private Set<Subsurface> subsurfaces=new HashSet<>();
+   
+    @OneToMany(mappedBy ="pk.job")
+    private Set<SubsurfaceJob> subsurfaceJobs =new HashSet<>();
     
-    @OneToMany(mappedBy = "job",fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "job")
     private Set<Summary> summaries;
     
+    @OneToMany(mappedBy = "job")
+    private Set<Comment> qcComments;
     
-    @OneToMany(mappedBy = "childJob",fetch = FetchType.EAGER)
+    
+    @OneToMany(mappedBy = "childJob")
     private Set<Doubt> doubts;
     
-    /*public Job(String nameJobStep, Boolean alert,String insightVersion,Long type) {
-    this.nameJobStep = nameJobStep;
-    this.alert = alert;
-    this.insightVersions=insightVersion;
-    this.type=type;
-    }
-    */
-
-    /*
-    public Job(String nameJobStep, Boolean alert,String insightVersion,NodeType type) {
-    this.nameJobStep = nameJobStep;
-    this.alert = alert;
-    this.insightVersions=insightVersion;
-    this.nodetype=type;
-    }
-    */
+  
     public Job() {
     }
     
 
     
     
-
+    public boolean isLeaf(){
+        return isLeaf==null ? true : isLeaf == 0;
+    }
+    
+    public boolean isRoot(){
+        return isRoot==null ? true : isRoot == 0;
+    }
   
     
     
@@ -178,24 +178,7 @@ public class Job implements Serializable{
         this.alert = alert;
     }
 
-    /*public Set<JobVolumeMap> getJobVolumeMap() {
-    return jobVolumeMap;
-    }
-    
-    public void setJobVolumeMap(Set<JobVolumeMap> jobVolumeMap) {
-    
-    if(jobVolumeMap!=null)
-    {
-    this.jobVolumeMap.clear();
-    
-    for (Iterator<JobVolumeMap> iterator = jobVolumeMap.iterator(); iterator.hasNext();) {
-    JobVolumeMap next = iterator.next();
-    this.jobVolumeMap.add(next);
-    }
-    }
-    //this.jobVolumeMap = jobVolumeMap;
-    }*/
-   
+ 
 
     public String getInsightVersions() {
         return insightVersions;
@@ -205,30 +188,7 @@ public class Job implements Serializable{
         this.insightVersions = insightVersions;
     }
 
-    /* public Boolean getPending() {
-    return pending;
-    }
-    
-    public void setPending(Boolean pending) {
-    this.pending = pending;
-    }
-    */
-
-    /* public Long getType() {
-    return type;
-    }
-    
-    public void setType(Long type) {
-    this.type = type;
-    }*/
-
-    /*public NodeType getType() {
-    return nodetype;
-    }
-    
-    public void setType(NodeType type) {
-    this.nodetype = type;
-    }*/
+  
 
     public Workspace getWorkspace() {
         return workspace;
@@ -262,94 +222,94 @@ public class Job implements Serializable{
         this.currentJobInDescendant = currentJobInDescendant;
     }
 
-    public Set<QcMatrixRow> getQcmatrix() {
-        return qcmatrix;
+    /* public Set<QcMatrixRow> getQcmatrix() {
+    return qcmatrix;
     }
-
+    
     public void setQcmatrix(Set<QcMatrixRow> qcmatrix) {
-        this.qcmatrix = qcmatrix;
-    }
+    this.qcmatrix = qcmatrix;
+    }*/
 
-    public Set<Link> getLinksWithJobAsParent() {
-        return linksWithJobAsParent;
+    /* public Set<Link> getLinksWithJobAsParent() {
+    return linksWithJobAsParent;
     }
-
+    
     public void setLinksWithJobAsParent(Set<Link> linksWithJobAsParent) {
-        this.linksWithJobAsParent = linksWithJobAsParent;
+    this.linksWithJobAsParent = linksWithJobAsParent;
     }
-
+    
     public Set<Link> getLinksWithJobAsChild() {
-        return linksWithJobAsChild;
+    return linksWithJobAsChild;
     }
-
+    
     public void setLinksWithJobAsChild(Set<Link> linksWithJobAsChild) {
-        this.linksWithJobAsChild = linksWithJobAsChild;
-    }
+    this.linksWithJobAsChild = linksWithJobAsChild;
+    }*/
 
-    public Set<Header> getHeaders() {
+    /*  public Set<Header> getHeaders() {
     return headers;
     }
     
     public void setHeaders(Set<Header> headers) {
     this.headers = headers;
-    }
+    }*/
 
-    public Set<Ancestor> getAncestors() {
-        return ancestors;
+    /* public Set<Ancestor> getAncestors() {
+    return ancestors;
     }
-
-    public void setAncestors(Set<Ancestor> ancestors) {
-        this.ancestors = ancestors;
-    }
-
-    public Set<Descendant> getDescendants() {
-        return descendants;
-    }
-
-    public void setDescendants(Set<Descendant> descendants) {
-        this.descendants = descendants;
-    }
-
-    public Set<Volume> getVolumes() {
-        return volumes;
-    }
-
-    public void setVolumes(Set<Volume> volumes) {
-        this.volumes = volumes;
-    }
-
-    public Set<Log> getLogs() {
-        return logs;
-    }
-
-    public void setLogs(Set<Log> logs) {
-        this.logs = logs;
-    }
-
     
-     public Set<Subsurface> getSubsurfaces() {
+    public void setAncestors(Set<Ancestor> ancestors) {
+    this.ancestors = ancestors;
+    }*/
+
+    /* public Set<Descendant> getDescendants() {
+    return descendants;
+    }
+    
+    public void setDescendants(Set<Descendant> descendants) {
+    this.descendants = descendants;
+    }*/
+
+    /* public Set<Volume> getVolumes() {
+    return volumes;
+    }
+    
+    public void setVolumes(Set<Volume> volumes) {
+    this.volumes = volumes;
+    }*/
+
+    /*public Set<Log> getLogs() {
+    return logs;
+    }
+    
+    public void setLogs(Set<Log> logs) {
+    this.logs = logs;
+    }*/
+
+    /*
+    public Set<Subsurface> getSubsurfaces() {
     return subsurfaces;
     }
     
     public void setSubsurfaces(Set<Subsurface> subsurfaces) {
     this.subsurfaces = subsurfaces;
-    }
+    }*/
 
-    public Set<VariableArgument> getVariableArguments() {
-        return variableArguments;
+    /* public Set<VariableArgument> getVariableArguments() {
+    return variableArguments;
     }
-
+    
     public void setVariableArguments(Set<VariableArgument> variableArguments) {
-        this.variableArguments = variableArguments;
-    }
+    this.variableArguments = variableArguments;
+    }*/
 
-    public Set<Doubt> getDoubts() {
-        return doubts;
+    /*public Set<Doubt> getDoubts() {
+    return doubts;
     }
-
+    
     public void setDoubts(Set<Doubt> doubts) {
-        this.doubts = doubts;
-    }
+    this.doubts = doubts;
+    }*/
 
     public Long getDepth() {
         return depth;
@@ -358,30 +318,24 @@ public class Job implements Serializable{
     public void setDepth(Long depth) {
         this.depth = depth;
     }
-
+    
+    /*
     public Set<Summary> getSummaries() {
-        return summaries;
-    }
-
-    public void setSummaries(Set<Summary> summaries) {
-        this.summaries = summaries;
-    }
-
-    /* public Set<Sequence> getSequences() {
-    return sequences;
+    return summaries;
     }
     
-    public void setSequences(Set<Sequence> sequences) {
-    this.sequences = sequences;
+    public void setSummaries(Set<Summary> summaries) {
+    this.summaries = summaries;
     }*/
 
-    public Set<SubsurfaceJob> getSubsurfaceJobs() {
-        return subsurfaceJobs;
+   
+    /*public Set<SubsurfaceJob> getSubsurfaceJobs() {
+    return subsurfaceJobs;
     }
-
+    
     public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
-        this.subsurfaceJobs = subsurfaceJobs;
-    }
+    this.subsurfaceJobs = subsurfaceJobs;
+    }*/
     
     
     

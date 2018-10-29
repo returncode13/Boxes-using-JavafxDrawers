@@ -8,6 +8,7 @@ package db.dao;
 import db.model.User;
 import db.model.UserWorkspace;
 import db.model.Workspace;
+import java.util.List;
 
 /**
  *
@@ -19,4 +20,8 @@ public interface UserWorkspaceDAO {
     public void deleteUserWorkspace(Long id);
     public void updateUserWorkspace(Long id,UserWorkspace newUserWorkspace);
     public UserWorkspace getUserWorkspaceFor(User user,Workspace workspace);
+
+    public void remove(User u, Workspace w);
+
+    public List<User> getUsersInWorkspace(Workspace currentWorkspace);
 }

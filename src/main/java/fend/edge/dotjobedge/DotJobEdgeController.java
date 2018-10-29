@@ -5,10 +5,14 @@
  */
 package fend.edge.dotjobedge;
 
+import db.model.Job;
+import db.services.JobService;
+import db.services.JobServiceImpl;
 import fend.dot.anchor.AnchorModel;
 import fend.dot.anchor.AnchorView;
 import fend.dot.DotModel;
 import fend.dot.DotView;
+import fend.dot.LinkModel;
 import fend.edge.edge.EdgeController;
 import fend.edge.edge.arrow.Arrow;
 import fend.edge.parentchildedge.ParentChildEdgeController;
@@ -27,8 +31,19 @@ import fend.job.job1.JobType1View;
 import fend.job.job2.JobType2View;
 import fend.job.job3.JobType3View;
 import fend.job.job4.JobType4View;
+import fend.job.job5.JobType5View;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -43,6 +58,7 @@ public class DotJobEdgeController implements EdgeController {
     private AnchorModel anchorModel;
     private AnchorView anchor;
     private AnchorPane interactivePane;
+    private JobService jobService=new JobServiceImpl();
     
     final Delta dragDelta=new Delta(); 
      
@@ -67,12 +83,14 @@ public class DotJobEdgeController implements EdgeController {
    
     private Arrow arrowEnd;
     private Arrow arrowStart;
+    private final ContextMenu menu=new ContextMenu();
+    
     
     void setModel(DotJobEdgeModel item) {
         model=item;
         dotmodel=model.getDotModel();
         anchorModel=model.getAnchorModel();
-        
+        model.dropSuccessFulProperty().addListener(DROP_SUCCESSFUL_LISTENER);
         
     }
     
@@ -111,18 +129,45 @@ public class DotJobEdgeController implements EdgeController {
         curve.startXProperty().addListener(UPDATE_ARROW_LISTENER);
         curve.startYProperty().addListener(UPDATE_ARROW_LISTENER);
         
+        
+         MenuItem deleteThisLink=new MenuItem("-delete this link");
+        node.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>(){
+            @Override
+            public void handle(ContextMenuEvent event) {
+              if(!model.dropSuccessFul.get()){
+                  menu.show(node, event.getScreenX(), event.getScreenY());
+              }
+            }
+        });
+        deleteThisLink.setOnAction(e->{
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            node.setVisible(false);
+            
+        });
+        menu.getItems().add(deleteThisLink);
+        //curve.setOnContextMenuRequested(value);
+        
+        
         node.getChildren().add(0,arrowStart);
         node.getChildren().add(0,arrowEnd);
         node.getChildren().add(0,curve);
         node.getChildren().add(0,anchor);
         //node.getChildren().add(dotnode);
+        node.getStyleClass().add("curve");
         this.interactivePane.getChildren().add(node);
+      //  this.interactivePane.getChildren().add(dotnode);
        
         
     }
     
     private CubicCurve createStartingCurve() {
         //CubicCurve curve = new CubicCurve();
+        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=0;
+        int maxX=50;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
         curve.setStartX(50);
         curve.setStartY(200);
         curve.setControlX1(150);
@@ -135,6 +180,7 @@ public class DotJobEdgeController implements EdgeController {
         curve.setStrokeWidth(2);
         curve.setStrokeLineCap(StrokeLineCap.ROUND);
        // curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        
         return curve;
     }
     
@@ -248,8 +294,29 @@ public class DotJobEdgeController implements EdgeController {
         
     }
     
+    /*
+    @FXML
+    void onCurveClicked(MouseEvent e) {
+    if (e.getButton().equals(MouseButton.PRIMARY)) {
+    if (e.getClickCount() == 2) {
+    dotmodel.clickDot();
+    }
+    }
+    }
+    
+    @FXML
+    void onContextMenuRequested(ContextMenuEvent event) {
+    System.out.println("fend.edge.dotjobedge.DotJobEdgeController.onContextMenuRequested(): ");
+    }*/
+
+    
+    
      public void setChildJobView(JobType0View childJobView){
-        
+        Random randx=new Random();
+        Random randy=new Random();
+        int minx=30;
+        int maxX=110;
+        int startx=randx.nextInt(maxX-minx+1)+minx;
          JobType0Model job=childJobView.getController().getModel();
         Long type=job.getType();
          if(type.equals(JobType0Model.PROCESS_2D)) {
@@ -260,6 +327,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.SEGD_LOAD)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -269,6 +337,8 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType2View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType2View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            
         }
          if(type.equals(JobType0Model.ACQUISITION)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -278,6 +348,7 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType3View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType3View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          if(type.equals(JobType0Model.TEXT)) {
              /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
@@ -287,8 +358,20 @@ public class DotJobEdgeController implements EdgeController {
               anchor.centerXProperty().bind(Bindings.add(((JobType4View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
             anchor.centerYProperty().bind(Bindings.add(((JobType4View)childJobView).layoutYProperty(),0)); 
             anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+        }
+         if(type.equals(JobType0Model.SEGY)) {
+             /*anchor.centerXProperty().bind(((JobType1View)childJobView).layoutXProperty());
+             anchor.centerYProperty().bind(((JobType1View)childJobView).layoutYProperty());*/
+             /* anchor.centerXProperty().bind(Bindings.add(((JobType1View)childJobView).layoutXProperty(),((JobType1View)childJobView).getBoundsInLocal().getMaxX()/2.0));
+             anchor.centerYProperty().bind(Bindings.add(((JobType1View)childJobView).layoutYProperty(),((JobType1View)childJobView).getBoundsInLocal().getMinY()));*/
+              anchor.centerXProperty().bind(Bindings.add(((JobType5View)childJobView).layoutXProperty(),71)); //handcoding is awful!. 142 is the width, 74 the height
+            anchor.centerYProperty().bind(Bindings.add(((JobType5View)childJobView).layoutYProperty(),0)); 
+            anchor.setRadius(5);
+            node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
         }
          this.node.toBack();
+         this.dotnode.toFront();
          
     };
 
@@ -305,5 +388,23 @@ public class DotJobEdgeController implements EdgeController {
         private ChangeListener<? super Number > UPDATE_ARROW_LISTENER=(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
         DotJobEdgeController.this.arrowEnd.update();
         DotJobEdgeController.this.arrowStart.update();
+        this.dotnode.toFront();
+    };
+        
+        private ChangeListener<Boolean> DROP_SUCCESSFUL_LISTENER=new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+            if(newValue){
+                Set<LinkModel> links=model.getDotModel().getLinks();
+                for (LinkModel link : links) {
+                    JobType0Model parent = link.getParent();
+                    Job dbparent = jobService.getJob(parent.getId());
+                    parent.setDatabaseJob(dbparent);
+                }
+                model.setDropSuccessFul(false);
+                node.removeEventHandler(ContextMenuEvent.CONTEXT_MENU_REQUESTED, node.getOnContextMenuRequested());
+            }
+            
+        }
     };
 }

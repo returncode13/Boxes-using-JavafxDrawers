@@ -6,6 +6,7 @@
 package db.dao;
 
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,8 +15,10 @@ import java.util.List;
 import java.util.Set;
 import db.model.Header;
 import db.model.Job;
+import db.model.Log;
 import db.model.Subsurface;
 import db.model.Volume;
+import db.model.Workspace;
 //import fend.session.node.headers.SubSurfaceHeaders;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -30,9 +33,12 @@ import org.hibernate.criterion.Restrictions;
  */
 public class HeaderDAOImpl implements HeaderDAO{
 
+    
+    
+    
     @Override
     public void createHeader(Header h) {
-               
+               System.out.println("db.dao.HeaderDAOImpl.createHeader()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -45,6 +51,30 @@ public class HeaderDAOImpl implements HeaderDAO{
             session.close();
         }
         
+    }
+    
+    @Override
+    public void createBulkHeaders(List<Header> headers) {
+        System.out.println("db.dao.HeaderDAOImpl.createBulkHeaders()");
+        int batchsize=Math.min(headers.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        try{
+            transaction=session.beginTransaction();
+           for(int ii=0;ii<headers.size();ii++){
+               session.saveOrUpdate(headers.get(ii));
+               if(ii%batchsize ==0){
+                   session.flush();
+                   session.clear();
+               }
+           }
+            
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
     @Override
@@ -63,6 +93,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public void updateHeader(Long hid, Header newH) {
+        System.out.println("db.dao.HeaderDAOImpl.updateHeader()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -92,15 +123,15 @@ public class HeaderDAOImpl implements HeaderDAO{
             h.setOffsetMin(newH.getOffsetMin());
             
             h.setTraceCount(newH.getTraceCount());
-            h.setNumberOfRuns(newH.getNumberOfRuns());
+            //h.setNumberOfRuns(newH.getNumberOfRuns());
             h.setModified(newH.getModified());
-            h.setWorkflowVersion(newH.getWorkflowVersion());
+            //h.setWorkflowVersion(newH.getWorkflowVersion());
             h.setUpdateTime(newH.getUpdateTime());
             h.setSummaryTime(newH.getSummaryTime());
             h.setTextfilepath(newH.getTextfilepath());
-            h.setMultipleInstances(newH.getModified());
+            h.setMultipleInstances(newH.getMultipleInstances());
             h.setChosen(newH.getChosen());
-            h.setLogs(newH.getLogs());
+            //h.setLogs(newH.getLogs());
             /*if(newH.getModified()){
             h.setModified(Boolean.FALSE);
             }*/
@@ -139,6 +170,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public List<Header> getHeadersFor(Volume v) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
@@ -158,14 +190,19 @@ public class HeaderDAOImpl implements HeaderDAO{
     
     @Override
     public List<Header> getHeadersFor(Job job) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Header> result=null;
+        String hql="from Header h where h.job =:j";
         try{
             transaction=session.beginTransaction();
-            Criteria criteria=session.createCriteria(Header.class);
+            /*Criteria criteria=session.createCriteria(Header.class);
             criteria.add(Restrictions.eq("job", job));
-            result=criteria.list();
+            result=criteria.list();*/
+                Query query=session.createQuery(hql);
+                query.setParameter("j", job);
+                result=query.list();
             transaction.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -177,16 +214,70 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public void deleteHeadersFor(Volume v) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("db.dao.HeaderDAOImpl.deleteHeadersFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.headerId from Header h where h.volume =:v";
+        String hqlDelete="Delete from Header h where h.headerId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("v", v);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.HeaderDAOImpl.deleteHeadersFor(): deleting "+idsToDelete.size()+" headers belonging to volume: "+v.getNameVolume()+" ("+v.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
     }
 
     @Override
     public void deleteHeadersFor(Job job) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         System.out.println("db.dao.HeaderDAOImpl.deleteHeadersFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.headerId from Header h where h.job =:j";
+        String hqlDelete="Delete from Header h where h.headerId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("j", job);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.HeaderDAOImpl.deleteHeadersFor(job): deleting "+idsToDelete.size()+" headers belonging to job: "+job.getNameJobStep()+" ("+job.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
     }
 
      @Override
     public List<Subsurface> getSubsurfacesToBeSummarized(Volume v) {
+         System.out.println("db.dao.HeaderDAOImpl.getSubsurfacesToBeSummarized()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         List<Header> result=null;
@@ -218,245 +309,10 @@ public class HeaderDAOImpl implements HeaderDAO{
         }
     }
    
-    
-    
-    /*@Override
-    public void updateHeader(Volume v, List<Headers> headers) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<Headers> result=null;
-    List<Headers> toBedeleted=new ArrayList<>();
-    List<Headers> toBeUpdated=new ArrayList<>();
-    List<Headers> toBeAdded=new ArrayList<>();
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(Header.class);
-    criteria.add(Restrictions.eq("volume", v));
-    result=criteria.list();
-    
-    //the volume at this point has either more number of subsurfaces for update or less
-    
-    if(result.size()>headers.size())                                            //more subsurface lines in the extracted entries as compared to the the latest header extract
-    {
-    for (Iterator<Headers> iterator = result.iterator(); iterator.hasNext();) {
-    Header next = iterator.next();
-    for (Iterator<Headers> iterator1 = headers.iterator(); iterator1.hasNext();) {
-    Header n = iterator1.next();
-    if(n.getSubsurface().equals(next.getSubsurface()))                  //since subsurface is what interests us.
-    {
-    n.setId(next.getId());
-    toBeUpdated.add(n);
-    if(toBedeleted.contains(n))toBedeleted.remove(n);
-    session.update(n);
-    }else
-    {
-    toBedeleted.add(n);
-    
-    }
-    
-    
-    
-    }
-    
-    
-    
-    
-    }
-    
-    
-    for (Iterator<Headers> iterator1 = toBedeleted.iterator(); iterator1.hasNext();) {
-    Header nn = iterator1.next();
-    for (Iterator<Headers> r = result.iterator(); r.hasNext();) {
-    Header next = r.next();
-    if(next.getSubsurface().equals(nn.getSubsurface()))
-    {
-    nn.setIdHeaders(next.getIdHeaders());
-    }
-    
-    }
-    
-    for (Iterator<Headers> iterator = toBedeleted.iterator(); iterator.hasNext();) {
-    Header next = iterator.next();
-    this.deleteHeader(next.getIdHeaders());
-    
-    }
-    
-    
-    
-    }
-    
-    }
-    else{
-    if(result.size()<=headers.size()){
-    for (Iterator<Headers> iterator = headers.iterator(); iterator.hasNext();) {
-    Header next = iterator.next();
-    for (Iterator<Headers> iterator1 = result.iterator(); iterator1.hasNext();) {
-    Header n = iterator1.next();
-    if(n.getSubsurface().equals(next.getSubsurface()))                  //since subsurface is what interests us.
-    {
-    next.setIdHeaders(n.getIdHeaders());
-    toBeUpdated.add(next);
-    if(toBeAdded.contains(next)){toBeAdded.remove(next);}
-    session.update(n);
-    }else
-    {
-    toBeAdded.add(next);
-    
-    }
-    
-    
-    
-    }
-    
-    
-    
-    
-    }
-    
-    for(Iterator<Headers> iterator1=toBeAdded.iterator();iterator1.hasNext();){
-    Header nn=iterator1.next();
-    
-    this.createHeader(nn);
-    }
-    }
-    }
-    
-    
-    
-    
-    
-    
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
-    }
-    }*/
-    /* @Override
-    public void deleteHeadersFor(Volume v) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
-
-    /* @Override
-    public Set<Volume> getVolumesContaining(String subsurface) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<Headers> result=null;
-    Set<Volume> volumeSet=new HashSet<>();
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(Header.class);
-    criteria.add(Restrictions.eq("subsurface", subsurface));
-    
-    result=criteria.list();
-    if(result.size()>0){
-    System.out.println("res >0 :"+result.size());
-    }else
-    {System.out.println("res=0");}
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
-    }
-    
-    if(result.size()==0){
-    System.out.println("result is zero");
-    }
-    
-    
-    for (Iterator<Headers> iterator = result.iterator(); iterator.hasNext();) {
-    Header next = iterator.next();
-    System.out.println("Adding: "+next.getVolume());
-    volumeSet.add(next.getVolume());
-    
-    }
-    
-    return volumeSet;
-    
-    }*/
-    
-    /*  @Override
-    public Set<Volume> getVolumesContaining(Subsurface subsurface) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<Headers> result=null;
-    Set<Volume> volumeSet=new HashSet<>();
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(Header.class);
-    criteria.add(Restrictions.eq("subsurface", subsurface));
-    
-    result=criteria.list();
-    if(result.size()>0){
-    System.out.println("res >0 :"+result.size());
-    }else
-    {System.out.println("res=0");}
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
-    }
-    
-    if(result.size()==0){
-    System.out.println("result is zero");
-    }
-    
-    
-    for (Iterator<Headers> iterator = result.iterator(); iterator.hasNext();) {
-    Header next = iterator.next();
-    System.out.println("Adding: "+next.getVolume());
-    volumeSet.add(next.getVolume());
-    
-    }
-    
-    return volumeSet;
-    
-    }*/
-    /*@Override
-    public List<Headers> getHeadersFor(Volume v, String s) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<Headers> result=null;
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(Header.class);
-    criteria.add(Restrictions.eq("volume", v));
-    criteria.add(Restrictions.eq("subsurface", s));
-    result=criteria.list();
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
-    }
-    return result;
-    }*/
-    
-    /* @Override
-    public List<Headers> getHeadersFor(Volume v, Subsurface s) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction transaction = null;
-    List<Headers> result=null;
-    try{
-    transaction=session.beginTransaction();
-    Criteria criteria=session.createCriteria(Header.class);
-    criteria.add(Restrictions.eq("volume", v));
-    criteria.add(Restrictions.eq("subsurface", s));
-    result=criteria.list();
-    transaction.commit();
-    }catch(Exception e){
-    e.printStackTrace();
-    }finally{
-    session.close();
-    }
-    return result;
-    }*/
-
+  
     @Override
     public Header getHeadersFor(Volume dbvol, Subsurface dbsub, String timestamp) {
+        System.out.println("db.dao.HeaderDAOImpl.getHeadersFor()");
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
             List<Header> result=null;
@@ -485,6 +341,7 @@ public class HeaderDAOImpl implements HeaderDAO{
 
     @Override
     public Set<Header> getMultipleInstances(Job job, Subsurface sub) {
+        System.out.println("db.dao.HeaderDAOImpl.getMultipleInstances()");
         Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
             Set<Header> result=null;
@@ -500,11 +357,11 @@ public class HeaderDAOImpl implements HeaderDAO{
                 //criteria.add(Restrictions.and(rest1,rest2));
                
                 
-             //   Query query=session.createQuery("from obpmanager.subsurface_job where job_id = :jobid and id =:subid");
+             //   Query selectQuery=session.createQuery("from obpmanager.subsurface_job where job_id = :jobid and id =:subid");
 //                "select * from obpmanager.header INNER JOIN obpmanager.job on obpmanager.header.job_fk=obpmanager.job.job_id INNER JOIN public.subsurface on obpmanager.header.subsurface_fk=public.subsurface.id AND chosen=false WHERE public.subsurface.id=16062 AND obpmanager.job.job_id=91;"
-/*  Query query=session.createQuery("from Header INNER JOIN Job on Header.job.id=Job.id INNER JOIN Subsurface on Header.subsurface.id=Subsurface.id  WHERE Subsurface.id =:subid AND Job.id =:jobid");
-query.setParameter("jobid", job);
-query.setParameter("subid", sub);
+/*  Query selectQuery=session.createQuery("from Header INNER JOIN Job on Header.job.id=Job.id INNER JOIN Subsurface on Header.subsurface.id=Subsurface.id  WHERE Subsurface.id =:subid AND Job.id =:jobid");
+selectQuery.setParameter("jobid", job);
+selectQuery.setParameter("subid", sub);
 */
                 result=new LinkedHashSet(criteria.list());
                 transaction.commit();
@@ -541,8 +398,10 @@ query.setParameter("subid", sub);
 
     @Override
     public Header getChosenHeaderFor(Job job, Subsurface sub) throws Exception{
+        System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction transaction = null;
+            System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor() started ");
             Set<Header> result=null;
             try{
                 transaction=session.beginTransaction();
@@ -564,7 +423,7 @@ query.setParameter("subid", sub);
             }finally{
                 session.close();
             }
-            
+            System.out.println("db.dao.HeaderDAOImpl.getChosenHeaderFor() returnin ");
             if(result.isEmpty())
             {
                 return null;
@@ -580,6 +439,271 @@ query.setParameter("subid", sub);
                 return null;
             }
     }
+
+    @Override
+    public String getLatestTimeStampFor(Volume volume) {
+        System.out.println("db.dao.HeaderDAOImpl.getLatestTimeStampFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<String> result=null;
+        String sql="select MAX(timeStamp) from Header where volume =:v";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(sql);
+            query.setParameter("v", volume);
+            
+            result=query.list();
+            transaction.commit();
+            if(result.get(0)==null){
+                return new String("0");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public List<Header> getChosenHeadersForWorkspace(Workspace W) {
+        System.out.println("db.dao.HeaderDAOImpl.getChosenHeadersForWorkspace()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Header> result=null;
+        String hql="Select h from Header h INNER JOIN h.job j where h.chosen=true and  j.workspace =:wrk";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(hql);
+            query.setParameter("wrk", W);
+            
+            result=query.list();
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public void checkForMultipleSubsurfacesInHeadersForJob(Job job) {
+        System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+       
+        String hqlDetermineCommonSubs="Select h.subsurface.id from Header h    where h.job =:j "
+                + "                                                         group by h.subsurface.id "
+                + "                                                         having count(*) > 1";
+        String hqlSelectIds="Select h.headerId from Header h where h.subsurface.id in (:subs) and h.job =:j";
+        String hqlUpdateChooseFalse="update Header h Set h.chosen = false,h.multipleInstances = true where h.headerId in (:ids)";
+        String hqlUpdateChooseTrue="update Header h Set h.chosen = true,h.multipleInstances = false where h.job =:j";
+        try{
+            transaction=session.beginTransaction();
+            Query subsurfaceQuery= session.createQuery(hqlDetermineCommonSubs);
+            subsurfaceQuery.setParameter("j", job );
+            List<Long> subIds=subsurfaceQuery.list();
+                
+            if(subIds.isEmpty()){
+                System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): no subs repeated for job: "+job.getNameJobStep());
+                Query chooseTrueQuery=session.createQuery(hqlUpdateChooseTrue);
+                chooseTrueQuery.setParameter("j", job);
+                int qes=chooseTrueQuery.executeUpdate();
+                transaction.commit();
+            }else{
+                System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): Found "+subIds.size()+" repeated subs for job: "+job.getNameJobStep());
+                    Query selectHeaderIds=session.createQuery(hqlSelectIds);
+                    selectHeaderIds.setParameterList("subs", subIds);
+                    selectHeaderIds.setParameter("j",job);
+                    List<Long> repeatedHeaderIds=selectHeaderIds.list();
+                    
+                        if(repeatedHeaderIds.isEmpty()){
+                            System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): no headers found for job: "+job.getNameJobStep());
+                            transaction.commit();
+                        }else{
+                            
+                            System.out.println("db.dao.HeaderDAOImpl.checkForMultipleSubsurfacesInHeadersForJob(): updating the chosen headers for "+repeatedHeaderIds.size()+" headers for job: "+job.getNameJobStep()+"\n"
+                                    + "You will need to select the correct subsurface.\n"
+                                    + "See the header table for this job ");
+                            Query updateQuery=session.createQuery(hqlUpdateChooseFalse);
+                            updateQuery.setParameterList("ids",repeatedHeaderIds);
+                            int result=updateQuery.executeUpdate();
+                            transaction.commit();
+                        }
+                    
+                
+            }
+            
+            
+           
+            
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void setChosenToFalseForConflictingSubs(Subsurface conflictedSub, Job job, Volume volumeToBeExcluded) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select h.headerId from Header h where  h.subsurface =:s and h.job =:j and h.volume !=:v ";
+        String hqlUpdate="update Header h set h.chosen=false,h.multipleInstances=true where h.headerId in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", job);
+            query.setParameter("s", conflictedSub);
+            query.setParameter("v", volumeToBeExcluded);
+            List<Long> idsToUpdate=query.list();
+            
+                if(idsToUpdate.isEmpty()){
+                    System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): no headers found to update. ");
+                    transaction.commit();
+                }else{
+                    System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): updating "+idsToUpdate.size()+" conflicting headers");
+                    for(Long l: idsToUpdate){
+                        System.out.println("db.dao.HeaderDAOImpl.setChosenToFalseForConflictingSubs(): id to update: "+l);
+                    }
+                    Query updateQ=session.createQuery(hqlUpdate);
+                    updateQ.setParameterList("ids", idsToUpdate);
+                    int res=updateQ.executeUpdate();
+                    transaction.commit();
+                            
+                }
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateDeleteFlagsFor(Volume vol, List<String> subsurfacesOnDisk) {
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        String hqlSelectSubsNotInDiskVolume="select s from Subsurface s where s.subsurface not in (:names)";
+        String hqlSelectHeadersThatContainDeletedSubs="select h.headerId from Header h where h.volume =:v and h.subsurface in (:subs)";
+        String hqlUpdateDeleteFalse="update Header h set h.deleted=false where h.volume =:v";
+        String hqlUpdateDeleteTrue="update Header h set h.deleted=true where h.headerId in (:ids)";
+        try{
+            transaction =session.beginTransaction();
+            Query selectSubsNotInDisk=session.createQuery(hqlSelectSubsNotInDiskVolume);
+            selectSubsNotInDisk.setParameterList("names", subsurfacesOnDisk);
+            List<Subsurface> deletedSubs=selectSubsNotInDisk.list();
+            
+            if(deletedSubs.isEmpty()){
+                System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): all subs in disk volume : "+vol.getPathOfVolume()+" are present in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                /*Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                delFalse.setParameter("v", vol);
+                int delF=delFalse.executeUpdate();*/
+                transaction.commit();
+            }else{
+                 System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): "+deletedSubs.size()+" in disk volume : "+vol.getPathOfVolume()+" are ABSENT in the database volume : "+vol.getNameVolume()+" ("+vol.getId()+")");
+                 Query selectHeaders=session.createQuery(hqlSelectHeadersThatContainDeletedSubs);
+                 selectHeaders.setParameter("v", vol);
+                 selectHeaders.setParameterList("subs", deletedSubs);
+                 List<Long> headersToUdpate=selectHeaders.list();
+                 
+                    if(headersToUdpate.isEmpty()){
+                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): no previously existing subsurfaces were deleted");
+                        Query delFalse=session.createQuery(hqlUpdateDeleteFalse);
+                        delFalse.setParameter("v", vol);
+                        int delF=delFalse.executeUpdate();
+                        transaction.commit();
+                    }else{
+                        System.out.println("db.dao.HeaderDAOImpl.updateDeleteFlagsFor(): set delete=true on "+headersToUdpate.size()+" headers for vol: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                        Query delTrue=session.createQuery(hqlUpdateDeleteTrue);
+                        delTrue.setParameterList("ids", headersToUdpate);
+                        int delT=delTrue.executeUpdate();
+                        transaction.commit();
+                    }
+                 
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void updateRunInsightWorkflowVariables(Job j, Volume v) {
+        System.out.println("db.dao.HeaderDAOImpl.updateRunInsightWorkflowVariables()");
+       Session session=HibernateUtil.getSessionFactory().openSession();
+       Transaction transaction=null;
+       List<Header> headersToBeUpdated=new ArrayList<>();
+       String hqlLatestLogs="Select l from Log l where l.job=:jb and l.volume=:v and l.isMaxVersion=true";
+       try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlLatestLogs);
+            query.setParameter("jb", j);
+            query.setParameter("v", v);
+            
+            List<Log> latestLogs=query.list();
+            transaction.commit();
+            
+            for(Log l:latestLogs){
+                Header h=l.getHeader();
+                if(h!=null){
+                    h.setNumberOfRuns(l.getVersion()+1);
+                    h.setInsightVersion(l.getInsightVersion());
+                    h.setWorkflowVersion(l.getWorkflow().getWfversion());
+                    headersToBeUpdated.add(h);
+                }
+               
+            }
+            
+            System.out.println("db.dao.HeaderDAOImpl.updateRunInsightWorkflowVariables(): will update "+headersToBeUpdated.size());
+            
+            
+       }catch(Exception e){
+           e.printStackTrace();
+       }finally{
+           session.close();
+       }
+       
+       updateBulkHeaders(headersToBeUpdated);
+    }
+
+    private void updateBulkHeaders(List<Header> headersToBeUpdated) {
+          if(headersToBeUpdated.isEmpty()) {
+            System.out.println("db.dao.HeaderDAOImpl.updateBulkHeaders(): No headers to be updated!");
+            return;
+        }
+         System.out.println("db.dao.HeaderDAOImpl.updateBulkHeaders():");
+          int batchsize=Math.min(headersToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<headersToBeUpdated.size();ii++){
+                session.update(headersToBeUpdated.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    
 
     
     

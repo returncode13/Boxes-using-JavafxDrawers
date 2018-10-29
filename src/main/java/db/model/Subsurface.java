@@ -42,13 +42,23 @@ public class Subsurface implements Serializable {
     @OneToMany(mappedBy = "subsurfaceFK")
     private Set<Acquisition> acquisition;
     
-    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Summary> summaries;
 
     
     
     
     @OneToMany(mappedBy = "subsurface")
     private Set<Header> headers;
+    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Pheader> pheaders;
+    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Theader> theaders;
+    
+    @OneToMany(mappedBy = "subsurface")
+    private Set<Fheader> fheaders;
     
     @OneToMany(mappedBy = "subsurface")
     private Set<QcTable> qctables;
@@ -88,6 +98,16 @@ public class Subsurface implements Serializable {
     public void setHeaders(Set<Header> headers) {
     this.headers = headers;
     }
+
+    public Set<Pheader> getPheaders() {
+        return pheaders;
+    }
+
+    public void setPheaders(Set<Pheader> pheaders) {
+        this.pheaders = pheaders;
+    }
+    
+    
     
     
     public String getSubsurface() {
@@ -135,14 +155,51 @@ public class Subsurface implements Serializable {
     public void setSubsurfaceJobs(Set<SubsurfaceJob> subsurfaceJobs) {
         this.subsurfaceJobs = subsurfaceJobs;
     }
+
+    public Set<Summary> getSummaries() {
+        return summaries;
+    }
+
+    public void setSummaries(Set<Summary> summaries) {
+        this.summaries = summaries;
+    }
     
     
+    
+    /*
+    @Override
+    public int hashCode() {
+    int hash = 7;
+    hash = 71 * hash + Objects.hashCode(this.id);
+    hash = 71 * hash + Objects.hashCode(this.subsurface);
+    return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final Subsurface other = (Subsurface) obj;
+    if (!Objects.equals(this.subsurface, other.subsurface)) {
+    return false;
+    }
+    if (!Objects.equals(this.id, other.id)) {
+    return false;
+    }
+    return true;
+    }*/
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 71 * hash + Objects.hashCode(this.id);
-        hash = 71 * hash + Objects.hashCode(this.subsurface);
+        int hash = 5;
+        hash = 13 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -158,14 +215,13 @@ public class Subsurface implements Serializable {
             return false;
         }
         final Subsurface other = (Subsurface) obj;
-        if (!Objects.equals(this.subsurface, other.subsurface)) {
-            return false;
-        }
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
+    
+    
     
     
    

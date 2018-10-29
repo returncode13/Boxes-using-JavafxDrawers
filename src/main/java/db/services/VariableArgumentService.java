@@ -5,7 +5,11 @@
  */
 package db.services;
 
+import db.model.Dot;
 import db.model.VariableArgument;
+import db.model.Workspace;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -13,8 +17,16 @@ import db.model.VariableArgument;
  */
 public interface VariableArgumentService {
     public void createVariableArgument(VariableArgument va);
+
     public VariableArgument getVariableArgument(Long vaid);
-    public void updateVariableArgument(Long vaid,VariableArgument newVa);
+
+    public void updateVariableArgument(Long vaid, VariableArgument newVa);
+
     public void deleteVariableArgument(Long vaid);
-    
+
+    public List<VariableArgument> getVariableArgumentsForDot(Dot dbDot);
+
+    public List<VariableArgument> getVariableArgumentsForWorkspace(Workspace w);
+
+    public void deleteVariableArgumentFor(Dot dot);
 }

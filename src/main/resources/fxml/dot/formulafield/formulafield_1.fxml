@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<fx:root prefHeight="309.0" prefWidth="688.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fend.dot.formulaField.FormulaFieldController">
+   <children>
+      <VBox style="-fx-background-color: #181A1E;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <GridPane prefHeight="309.0" prefWidth="652.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="465.0" minWidth="10.0" prefWidth="445.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="0.0" prefWidth="11.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.0" minWidth="10.0" prefWidth="92.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="187.0" minWidth="3.0" prefWidth="20.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="90.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="-Infinity" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <JFXButton fx:id="okButton" buttonType="RAISED" maxWidth="1.7976931348623157E308" onAction="#okClicked" style="-fx-background-color: #272B30; -fx-text-fill: WHITE;" text="Ok" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+                  <HBox GridPane.rowIndex="3">
+                     <children>
+                        <JFXTextField editable="false" style="-fx-text-fill: white;" text="     y =" />
+                        <JFXTextField fx:id="function" alignment="BOTTOM_LEFT" onKeyReleased="#onFunctionKeyReleased" prefHeight="26.0" prefWidth="389.0" promptText="f(x0,x1,..,xn)" style="-fx-text-fill: white;" />
+                     </children>
+                  </HBox>
+                  <VBox>
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label text="list of variables that can be used to define the function" textFill="WHITE" underline="true" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <JFXTextArea fx:id="textArea" editable="false" style="-fx-text-fill: white;" text=" y = job_y&#10;x0 = job_x_0&#10;x1 = job_x_1&#10;x2 = job_x_2&#10;   .&#10;   .&#10;   .&#10;xn = job_x_n" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets left="10.0" top="10.0" />
+                           </padding>
+                        </JFXTextArea>
+                     </children>
+                  </VBox>
+                  <JFXButton fx:id="cancel" buttonType="RAISED" layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" onAction="#cancel" style="-fx-background-color: #272B30; -fx-text-fill: WHITE;" text="Cancel" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                  <JFXTextField fx:id="tolerance" alignment="CENTER" layoutX="10.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onToleranceKeyReleased" promptText="tolerance %" style="-fx-text-fill: white;" text="t" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </JFXTextField>
+                  <JFXTextField fx:id="error" alignment="CENTER" layoutX="466.0" layoutY="263.0" maxWidth="1.7976931348623157E308" onKeyReleased="#onErrorKeyReleased" promptText="error %" style="-fx-text-fill: white;" text="e" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <HBox alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <Label style="-fx-text-fill: yellow;" text="tolerance" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                     <children>
+                        <Label style="-fx-text-fill: yellow;" text="error" />
+                     </children>
+                  </HBox>
+                  <VBox alignment="TOP_RIGHT" GridPane.columnIndex="5">
+                     <children>
+                        <JFXButton text="help" textFill="YELLOW">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </JFXButton>
+                     </children>
+                  </VBox>
+                  <HBox alignment="TOP_CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <children>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../icons/formulaField/arrow.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="TOP_CENTER" layoutX="460.0" layoutY="233.0" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                     <children>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../icons/formulaField/arrow.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+               </children>
+            </GridPane>
+         </children>
+      </VBox>
+   </children>
+</fx:root>

@@ -5,6 +5,8 @@
  */
 package db.model;
 
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,7 +23,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="DoubtType",schema="obpmanager")
-public class DoubtType {
+public class DoubtType implements Serializable {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long idDoubtType;
@@ -52,6 +54,59 @@ private String name;
         this.doubtstatus = doubtstatus;
     }
 
+     @Override
+    public int hashCode() {
+    int hash = 7;
+    hash = 43 * hash + Objects.hashCode(this.idDoubtType);
+    hash = 43 * hash + Objects.hashCode(this.name);
+    return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final DoubtType other = (DoubtType) obj;
+    if (!Objects.equals(this.name, other.name)) {
+    return false;
+    }
+    if (!Objects.equals(this.idDoubtType, other.idDoubtType)) {
+    return false;
+    }
+    return true;
+    }
+
+    /*@Override
+    public int hashCode() {
+    int hash = 5;
+    hash = 29 * hash + Objects.hashCode(this.idDoubtType);
+    return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+    if (this == obj) {
+    return true;
+    }
+    if (obj == null) {
+    return false;
+    }
+    if (getClass() != obj.getClass()) {
+    return false;
+    }
+    final DoubtType other = (DoubtType) obj;
+    if (!Objects.equals(this.idDoubtType, other.idDoubtType)) {
+    return false;
+    }
+    return true;
+    }*/
 
     
     

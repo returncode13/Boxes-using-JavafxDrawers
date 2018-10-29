@@ -6,6 +6,8 @@
 package fend.job.table.lineTable;
 
 import fend.job.job0.JobType0Model;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import middleware.sequences.SequenceHeaders;
 
@@ -16,7 +18,8 @@ import middleware.sequences.SequenceHeaders;
 public class LineTableModel {
     private ObservableList<SequenceHeaders> sequenceHeaders;
     private JobType0Model job;
-
+    private BooleanProperty reloadTableProperty=new SimpleBooleanProperty(true);
+    
     public LineTableModel(JobType0Model job) {
         this.job = job;
         sequenceHeaders=this.job.getSequenceHeaders();
@@ -34,6 +37,15 @@ public class LineTableModel {
 
     public void setSequenceHeaders(ObservableList<SequenceHeaders> sequenceHeaders) {
         this.sequenceHeaders = sequenceHeaders;
+    }
+    
+    public BooleanProperty reloadTableProperty(){
+        return reloadTableProperty;
+    }
+    
+    public void reloadTable() {
+        boolean val=reloadTableProperty.get();
+        reloadTableProperty.set(!val);
     }
     
     

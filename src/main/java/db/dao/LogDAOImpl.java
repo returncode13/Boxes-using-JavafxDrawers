@@ -10,11 +10,19 @@ import db.model.Log;
 import db.model.Volume;
 import db.model.Workflow;
 import app.connections.hibernate.HibernateUtil;
+import app.properties.AppProperties;
+import db.model.Fheader;
 import db.model.Job;
+import db.model.Pheader;
 import db.model.Subsurface;
+import db.model.Workspace;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -31,6 +39,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public void createLogs(Log l) {
+        System.out.println("db.dao.LogDAOImpl.createLogs()");
        Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -46,6 +55,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLogs(Long lid) {
+        System.out.println("db.dao.LogDAOImpl.getLogs()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         try{
             Log l= (Log) session.get(Log.class, lid);
@@ -60,6 +70,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public void updateLogs(Long lid, Log newL) {
+        System.out.println("db.dao.LogDAOImpl.updateLogs()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         try{
@@ -80,7 +91,7 @@ public class LogDAOImpl implements LogDAO{
             ll.setUpdateTime(newL.getUpdateTime());
             ll.setSummaryTime(newL.getSummaryTime());
             ll.setJob(newL.getJob());
-            ll.setVersion(newL.getVersion());
+            //ll.setVersion(newL.getVersion());
             session.update(ll);
             
             
@@ -110,13 +121,34 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Header h) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
         try{
             transaction=session.beginTransaction();
             Criteria criteria=session.createCriteria(Log.class);
-            criteria.add(Restrictions.eq("headers", h));
+            criteria.add(Restrictions.eq("header", h));
+            result=criteria.list();
+            transaction.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result;
+    }
+    
+     @Override
+    public List<Log> getLogsFor(Pheader h) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+        List<Log> result=null;
+        try{
+            transaction=session.beginTransaction();
+            Criteria criteria=session.createCriteria(Log.class);
+            criteria.add(Restrictions.eq("pheader", h));
             result=criteria.list();
             transaction.commit();
         }catch(Exception e){
@@ -129,6 +161,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -148,6 +181,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Subsurface subline) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -168,6 +202,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLatestLogFor(Volume v, Subsurface subline) {
+        System.out.println("db.dao.LogDAOImpl.getLatestLogFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -192,6 +227,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -216,6 +252,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Subsurface subline, Boolean completed, Boolean running, Boolean errored, Boolean cancelled) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -241,6 +278,7 @@ public class LogDAOImpl implements LogDAO{
     
     @Override
     public List<Log> getLogsFor(Volume v, Workflow workflow) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -266,6 +304,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Volume v, Long seq) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -286,6 +325,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getSequencesFor(Volume v) {
+        System.out.println("db.dao.LogDAOImpl.getSequencesFor()");
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -307,6 +347,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getSubsurfacesFor(Volume v, Long seq) {
+        System.out.println("db.dao.LogDAOImpl.getSubsurfacesFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -329,6 +370,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public Log getLogsFor(Volume volume, Subsurface linename, String timestamp, String filename) throws Exception{
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -359,6 +401,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsFor(Job dbJob) {
+        System.out.println("db.dao.LogDAOImpl.getLogsFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -378,6 +421,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsByTimeFor(Job dbJob) {
+        System.out.println("db.dao.LogDAOImpl.getLogsByTimeFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -398,6 +442,7 @@ public class LogDAOImpl implements LogDAO{
 
     @Override
     public List<Log> getLogsByTimeFor(Job dbJob, Subsurface sub) {
+        System.out.println("db.dao.LogDAOImpl.getLogsByTimeFor()");
          Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
         List<Log> result=null;
@@ -417,6 +462,306 @@ public class LogDAOImpl implements LogDAO{
         return result;
     }
 
+    @Override
+    public void bulkUpdateOnLogs(Volume v, Workflow w) {
+        System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set workflow =:wk where volume =:v and workflow is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", v);
+            query.setParameter("wk", w);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        
+                
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Header hdr,Subsurface sub) {
+        System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set header =:hd where volume =:v and subsurface =:sub and header is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", volume);
+            query.setParameter("hd", hdr);
+            query.setParameter("sub", sub);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public String getLatestLogTimeFor(Volume dbVol) {
+        System.out.println("db.dao.LogDAOImpl.getLatestLogTimeFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<String> result=null;
+        String sql="select MAX(timestamp) from Log where volume = :v";
+        try{
+            transaction=session.beginTransaction();
+            Query query= session.createQuery(sql);
+            query.setParameter("v", dbVol);
+            
+            result=query.list();
+            
+            transaction.commit();
+            if(result.get(0)==null){
+                return new String("0");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+        return result.get(0);
+    }
+
+    @Override
+    public void deleteLogsFor(Volume vol) {
+        System.out.println("db.dao.LogDAOImpl.deleteLogsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select l.id from Log l where l.volume =:v";
+        String hqlDelete="Delete from Log l where l.idLogs in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("v", vol);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.LogDAOImpl.deleteLogsFor(): deleting "+idsToDelete.size()+" logs belonging to volume: "+vol.getNameVolume()+" ("+vol.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public List<Log> getLogsWithInputVolumes(Workspace workspace) {
+        System.out.println("db.dao.LogDAOImpl.getLogsWithInputVolumes()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Log> result=null;
+        String hql="Select l from Log l where (l.job,l.subsurface,l.version) in "
+                + "("
+                + " Select ll.job,ll.subsurface,max(ll.version) from Log ll Inner join ll.job j"
+                + " where j.workspace =:w "
+                + " group by ll.job,ll.subsurface"
+                + ")";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hql);
+            query.setParameter("w", workspace);
+            result=query.list();
+            System.out.println("db.dao.LogDAOImpl.getLogsWithInputVolumes(): retrieved  "+result.size()+" logs for the workspace: "+workspace.getName() );
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+       return result;
+    }
+
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Pheader phdr, Subsurface sub) {
+    System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set pheader = :hd where volume =:v and subsurface =:sub and pheader is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", volume);
+            query.setParameter("hd", phdr);
+            query.setParameter("sub", sub);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+    
+    @Override
+    public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub) {
+    System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+        Session session=HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        int result=13;
+        String sql="update Log set fheader = :hd where volume =:v and subsurface =:sub and fheader is null ";
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(sql);
+            query.setParameter("v", volume);
+            query.setParameter("hd", fhdr);
+            query.setParameter("sub", sub);
+            result=query.executeUpdate();
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void deleteLogsFor(Job job) {
+         System.out.println("db.dao.LogDAOImpl.deleteLogsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        
+        String hqlSelect="Select l.id from Log l where l.job =:j";
+        String hqlDelete="Delete from Log l where l.idLogs in (:ids)";
+        try{
+            transaction=session.beginTransaction();
+            Query selectQuery= session.createQuery(hqlSelect);
+            selectQuery.setParameter("j", job);
+            List<Long> idsToDelete=selectQuery.list();
+            
+            if(!idsToDelete.isEmpty()){
+                Query delQuery= session.createQuery(hqlDelete);
+                delQuery.setParameterList("ids", idsToDelete);
+                System.out.println("db.dao.LogDAOImpl.deleteLogsFor(job): deleting "+idsToDelete.size()+" logs belonging to job: "+job.getNameJobStep()+" ("+job.getId()+")");
+                int result=delQuery.executeUpdate();
+            }
+            
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+    @Override
+    public void versioningOfLogsFor(Job j) {
+         System.out.println("db.dao.LogDAOImpl.deleteLogsFor()");
+        Session session =HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction=null;
+        List<Log> results=null;
+        String hqlSelect="Select l from Log l where l.job =:j order by l.subsurface asc,l.timestamp asc";
+        
+        try{
+            transaction=session.beginTransaction();
+            Query query=session.createQuery(hqlSelect);
+            query.setParameter("j", j);
+            results=query.list();
+            
+            Subsurface ref=null;
+            Log earlierLog=null;
+            if(!results.isEmpty()){
+                ref=results.get(0).getSubsurface();
+                earlierLog=results.get(0);
+            }
+            int i=0;
+            long ver;
+            long max=0L;
+            int count=0;
+            
+            for(Log l:results){
+               
+                
+                if(l.getSubsurface().equals(ref)){
+                    ver=i++;
+                    //if(ver>max) max=ver;
+                    earlierLog.setIsMaxVersion(false);
+                    
+                }else{
+                    
+                    i=0;
+                    ver=i++;
+                    ref=l.getSubsurface();
+                    earlierLog.setIsMaxVersion(true);
+                    
+                }
+                l.setVersion(ver);
+                
+                earlierLog=l;
+                
+            }
+            earlierLog.setIsMaxVersion(true);
+            
+            bulkUpdateOnLogs(results);
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+       
+    }
+
+    private void bulkUpdateOnLogs(List<Log> logsToBeUpdated) {
+       
+        if(logsToBeUpdated.isEmpty()) {
+            System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs(): No logs to be updated!");
+            return;
+        }
+         System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+          int batchsize=Math.min(logsToBeUpdated.size(), AppProperties.BULK_TRANSACTION_BATCH_SIZE);
+         Session session = HibernateUtil.getSessionFactory().openSession();
+         Transaction transaction=null;
+        try{
+            transaction=session.beginTransaction();
+            for(int ii=0;ii<logsToBeUpdated.size();ii++){
+                session.update(logsToBeUpdated.get(ii));
+                if(ii%batchsize ==0 ){
+                    session.flush();
+                    session.clear();
+                    
+                }
+                
+            }
+            
+            transaction.commit();
+            
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            session.close();
+        }
+    }
+
+   
     
 
     

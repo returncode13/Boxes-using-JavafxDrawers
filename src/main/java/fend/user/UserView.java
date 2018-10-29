@@ -24,7 +24,7 @@ public class UserView extends AnchorPane{
     
        
         //this.location=LandingController.class.getResource("landingView/LandingView.fxml"); 
-        this.location=getClass().getClassLoader().getResource("fxml/user/user.fxml"); 
+        this.location=getClass().getClassLoader().getResource("fxml/user/user_1.fxml"); 
           System.out.println(location.toString());
            fXMLLoader=new FXMLLoader();
               

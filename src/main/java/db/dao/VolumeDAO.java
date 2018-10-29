@@ -7,6 +7,7 @@ package db.dao;
 
 import db.model.Job;
 import db.model.Volume;
+import db.model.Workspace;
 import java.util.List;
 
 /**
@@ -24,6 +25,9 @@ public interface VolumeDAO {
     public void setHeaderExtractionFlag(Volume v);
     public void resetHeaderExtractionFlag(Volume v);
     public List<Volume> getVolumesForJob(Job job);
+
+    public List<Volume> getAllVolumesIn(Workspace workspace);
+    public void deleteAllVolumesFor(Job job);
 
    
     

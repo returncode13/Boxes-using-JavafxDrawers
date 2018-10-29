@@ -5,6 +5,7 @@
  */
 package middleware.dugex;
 
+import app.properties.AppProperties;
 import db.model.Header;
 import db.model.Job;
 import db.model.Sequence;
@@ -14,12 +15,15 @@ import db.services.HeaderService;
 import db.services.HeaderServiceImpl;
 import db.services.JobService;
 import db.services.JobServiceImpl;
+import db.services.SubsurfaceService;
+import db.services.SubsurfaceServiceImpl;
 import db.services.VolumeService;
 import db.services.VolumeServiceImpl;
 import fend.job.job0.JobType0Model;
 import fend.volume.volume0.Volume0;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +31,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import middleware.sequences.SequenceHeaders;
 import middleware.sequences.SubsurfaceHeaders;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  *
@@ -39,17 +45,32 @@ public class HeaderLoader {
     private ObservableList<SubsurfaceHeaders> subsurfaceHeaders=FXCollections.observableArrayList();
     private ObservableList<SequenceHeaders> sequenceHeaders=FXCollections.observableArrayList();
     private Map<Sequence,List<SubsurfaceHeaders>> lookupmap=new HashMap<>();
-    
+     private SubsurfaceService subsurfaceService=new SubsurfaceServiceImpl();
+     
     public HeaderLoader(JobType0Model job) {
         this.job = job;
-        Job dbjob=jobService.getJob(this.job.getId());
+        //Job dbjob=jobService.getJob(this.job.getId());
+       
+        
+    }
+
+    
+    public void retrieveHeaders(){
+         Job dbjob=job.getDatabaseJob();
 //        List<Header> headersInJob=headerService.getHeadersFor(dbjob);
-        Set<Header> headersInJob=dbjob.getHeaders();
+        //Set<Header> headersInJob=dbjob.getHeaders();
+        System.out.println("middleware.dugex.HeaderLoader.retrieveHeaders():"+timeNow()+" fetching headers");
+        Set<Header> headersInJob=new HashSet<>(headerService.getHeadersFor(dbjob));
+        System.out.println("middleware.dugex.HeaderLoader.retrieveHeaders():"+timeNow()+" retrieved "+headersInJob.size()+" headers");
         List<Volume0> feVolsInJob=job.getVolumes();
-        Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+       // Set<Subsurface> subsinJob=dbjob.getSubsurfaces();
+        System.out.println("middleware.dugex.HeaderLoader.retrieveHeaders():"+timeNow()+" fetching subsurfaces");
+                Set<Subsurface> subsinJob=new HashSet<>(subsurfaceService.getSubsurfacesPresentInJob(dbjob));
+        System.out.println("middleware.dugex.HeaderLoader.retrieveHeaders():"+timeNow()+" retrieved "+subsinJob.size()+" subsurfaces");
+
         System.out.println("middleware.dugex.HeaderLoader.<init>(): Listing all subs in the job.. "+dbjob.getNameJobStep()+" id: "+dbjob.getId());
         for(Subsurface s:subsinJob){
-            System.err.println(""+s.getSubsurface());
+            System.out.println(""+s.getSubsurface());
         }
         Map<Long,Volume0> feVolMap=new HashMap<>();
             for(Volume0 v:feVolsInJob){
@@ -92,6 +113,7 @@ public class HeaderLoader {
                 sub.setUpdateTime(h.getUpdateTime());
                 sub.setChosen(h.getChosen());
                 sub.setMultiple(h.getMultipleInstances());
+                sub.setDeleted(h.getDeleted());
                 if(!lookupmap.containsKey(h.getSubsurface().getSequence())){
                     List<SubsurfaceHeaders> subMap=new ArrayList<>();
                     subMap.add(sub);
@@ -112,14 +134,16 @@ public class HeaderLoader {
         }
         
         
-        
     }
-
+    
+    
     public ObservableList<SequenceHeaders> getSequenceHeaders() {
         return sequenceHeaders;
     }
     
-    
+     private String timeNow(){
+        return DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
+    }
     
     
 }

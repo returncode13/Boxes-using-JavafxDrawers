@@ -1,0 +1,37 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : May 22, 2018, 8:57:30 PM
+    Author     : sharath nair <sharath.nair@polarcus.com>
+*/
+
+/*
+.tree-cell{
+    -fx-padding: 0 0 0 0;
+}
+
+.tree-cell .label{
+    -fx-padding: 0 0 0 0;
+}
+
+.tree-table-cell:selected{
+    -fx-background-color: #A7A8AA;
+    -fx-text-fill: black;
+}*/
+
+.tree-table-row-cell:selected{
+    -fx-accent: black;
+   -fx-text-fill:#0044cc;
+   -fx-background: pink;
+   -fx-background-color: pink;
+}
+
+.tree-table-view:selected{
+    -fx-accent: black;
+    -fx-text-fill:#0044cc;
+    -fx-background: pink;
+    -fx-background-color: pink;    
+}

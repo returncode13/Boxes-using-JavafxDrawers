@@ -34,6 +34,14 @@ public class DugioScripts implements Serializable{
     private File segdLoadSaillineInsightFromGCLogs;
     private File segdLoadCheckIfGCLogsFinished;
     private File subsurfaceInsightVersionForLog;
+    private File workflowDifference;
+    private File workflowShowOnlyDifference;
+    private File parentVolumesFrom2Dlogs;
+    private File md5SumCheckforText;
+    
+    private File dugioFullHeaderExtractor;
+    
+    
     
     private String getSubsurfacesContent="#!/bin/bash\nls $1|grep \"\\.0$\" | grep -o \".[[:alnum:]]*.[_[:alnum:]]*[^.]\"\n";
     private String dugioGetHeaderListContent="#!/bin/bash\n"
@@ -58,23 +66,25 @@ public class DugioScripts implements Serializable{
      private String getTimeSubsurfacesContent="#!/bin/bash\n"
     + "ls -ltr --time-style=+%Y%m%d%H%M%S $1|grep \".[[:digit:]].single.idx\" | grep -o \"[[:digit:]]\\{14\\}.[_[:alnum:]-]*[^.]\" | sed s/2D-//\n";
      
-     /*private String subsurfaceLogContent ="#!/bin/bash\n" +
-     "grep -A 0 lineName $1 | awk '{ print $1\" \"$2\" \"$7}'";*/
     
-     /*private String subsurfaceLogContent ="#!/bin/bash\n" +
-     "for i in $1/*; do  grep -A 0 lineName $i /dev/null  ; done | awk '{ print $1 \" \" $2 \" \"  $7}' | sort -k 1,2";*/
-    
-     
-     /*private String subsurfaceLogContent="#!/bin/bash\n" +
-     "for i in $1/*; do awk '/lineName/VERSION/ {print FILENAME \" \"$0}' ORS=\" \" $i | awk '{print $1\" \"$2\" \"$3\" \"$8\" Version=\"$15\"-\"$16}'; done | sort -k 2,3";*/
-    
-   /*  private String subsurfaceLogContent="#!/bin/bash\n" +
-"for i in $1/*; do awk '/lineName|VERSION/ { print FILENAME\" \" $0}' ORS=\" \" $i | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}';done | sort -k 2,3";*/
-     
-     
-     private String subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +
-"sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' | awk '{print $7\" Insight=\"$12}'";                //one log at a time
-     
+       
+      private String  subsurfaceInsightVersionForLogContent="#!/bin/bash\n" +                                                             //one log at a time.  Currently using this for 2D
+"sed '100q;2,100p;d' $1 | awk '/lineName|VERSION/ {print $0} ORS=\"\"' |awk '{for(i=1;i<=NF;i++){\n" +
+"										if($i ~ /lineName/){\n" +
+"											printf $i\" Insight=\"\n" +
+"										}\n" +
+"										if($i ~ /VERSION/) {\n" +                                // if the column contains VERSION, then print from there on till the end 
+"											for(j=i+1;j<=NF;j++){\n" +
+"												printf $j\n" +
+"											}\n" +
+"											exit\n" +
+"										}\n" +
+"									   }\n" +
+"									}'\n" +
+"\n" +
+"\n" +
+"grep -o \"Input File.*$\" $1 | awk -F '=' '{printf \" Input_File=\"$2 }'";                                                             //this line fetches the input volumes used for this job . 
+                                                                                                                                        //the result of the script is of the form lineName=<><space>Insight=<><space>Input_File=file_1<space>Input_File=file_2<space>...Input_File=<file_n                                        
      
       private String subsurfaceLogContent="#!/bin/bash\n" +
 "for i in $1/*; do sed '100q;2,100p;d' $i | awk '/lineName|VERSION/ {print  \"'$i' \"$0}' ORS=\" \"  | awk '{$4=$5=$6=$7=$9=$10=$11=$12=$13=\"\"; print $0}' ;done";
@@ -108,14 +118,14 @@ public class DugioScripts implements Serializable{
 "content=$(cat $1/notes.txt)\n" +
 "echo $var \"  Contents: \" $content";
        
-       /*
-       check if the gun_cable.logs under segdloadVolume/logs folder has finished updating
+       /**
+       check if the gun_cable.logs under segdloadVolume/logs folder has finished updating.
        */
        private String segdLoadCheckIfGCLogsFinishedContents="#!/bin/bash\n" +
 "tail -1 $1| grep -q Finished ;echo $?";
        
-       /*
-       for extraction of time linename from the gun_cable.logs under segdloadVolume/logs folder
+       /**
+       for extraction of time linename from the gun_cable.logs under segdloadVolume/logs folder.
        */
        private String segdLoadLineNameTimeMappingFromGunCableLogsContents="#!/bin/bash\n" +
 "grep Finished $1 | awk '{print $5\"-\"$6\"-\"$7\"T\" $8\" \"$13}'|sed 's/.$//'|sed 's/]//'";
@@ -123,8 +133,38 @@ public class DugioScripts implements Serializable{
      /*
        for extracting sailline-insight mapping from the gun_cable.logs under segdloadVolume/logs folder
        */
+       /* private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
+       "grep -B 1 Started  $1 | awk '{print $2 $13}' | sed 's/://' |grep [[:alnum:]]|sed '$!N;s/\\n/ /' ";*/
+       
+       
        private String segdLoadSaillineInsightFromGCLogsContents="#!/bin/bash\n" +
-"grep -B 1 Started  $1 | awk '{print $2 $13}' | sed 's/://' |grep [[:alnum:]]|sed '$!N;s/\\n/ /' ";
+       "grep -B 1 Started  $1 ";
+       
+        /**
+        * Show the entire difference between the workflows.
+       **/
+       private String workflowDifferenceContents="#!/bin/bash\n" +
+        "/usr/bin/diff -y -W 250 $1 $2";
+       
+       /**
+        * Show only the differences between the workflows.
+       **/
+       private String workflowShowOnlyDifferenceContents="#!/bin/bash\n" +
+        "/usr/bin/diff -y --suppress-common-lines -W 250 $1 $2";
+       
+       
+       private String parentVolumeFrom2DLogsContents="#!/bin/bash\n" +
+"grep -o \"Input File.*$\" $1 | awk -F '=' '{print $2 }'";                          //get parent volume names from 2d Logs
+       
+       
+       private String md5SumCheckforTextContents="#!/bin/bash\n" +
+"md5sum $1";
+       
+       /**
+        * following script returns values in the format header_name=value
+        */
+       private String dugioFullHeaderExtractorContents="#!/bin/bash\n" +
+       "dugio read file=$1 line=$2 query=time:0 full_headers | durange raw=true output=bash";
        
      public DugioScripts()
     {
@@ -219,7 +259,7 @@ public class DugioScripts implements Serializable{
             logStatusCompletedSuccessfully.setExecutable(true,false);
             
             logStatusCompletedSuccessfully.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -232,7 +272,7 @@ public class DugioScripts implements Serializable{
             logStatusErrored.setExecutable(true,false);
             
             logStatusErrored.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+          
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -245,7 +285,7 @@ public class DugioScripts implements Serializable{
             logStatusCancelled.setExecutable(true,false);
             
             logStatusCancelled.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -259,7 +299,7 @@ public class DugioScripts implements Serializable{
             workflowExtractor.setExecutable(true,false);
             
             workflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -273,7 +313,7 @@ public class DugioScripts implements Serializable{
             p190TimeStampLineNameExtractor.setExecutable(true,false);
             
             p190TimeStampLineNameExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -285,9 +325,9 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadNotesTxtTimeWorkflowExtractor.setExecutable(true,false);
             
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
-        } catch (IOException ex) {
+            segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           
+        } catch (IOException ex) {  
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -298,8 +338,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadLinenameTimeFromGCLogs.setExecutable(true,false);
             segdLoadLinenameTimeFromGCLogs.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -311,8 +351,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadSaillineInsightFromGCLogs.setExecutable(true,false);
             segdLoadSaillineInsightFromGCLogs.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -324,8 +364,8 @@ public class DugioScripts implements Serializable{
             bw.close();
             segdLoadCheckIfGCLogsFinished.setExecutable(true,false);
             segdLoadCheckIfGCLogsFinished.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+            
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -336,12 +376,67 @@ public class DugioScripts implements Serializable{
             bw.close();
             subsurfaceInsightVersionForLog.setExecutable(true,false);
             subsurfaceInsightVersionForLog.deleteOnExit();
-            //segdLoadNotesTxtTimeWorkflowExtractor.deleteOnExit();
-           //subsurfaceLog.deleteOnExit();
+           
         } catch (IOException ex) {
             Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        try {
+            workflowDifference=File.createTempFile("workflowDifference", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workflowDifference));
+            bw.write(workflowDifferenceContents);
+            bw.close();
+            workflowDifference.setExecutable(true,false);
+            workflowDifference.deleteOnExit();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            workflowShowOnlyDifference=File.createTempFile("workflowShowOnlyDifference", ".sh");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workflowShowOnlyDifference));
+            bw.write(workflowShowOnlyDifferenceContents);
+            bw.close();
+            workflowShowOnlyDifference.setExecutable(true,false);
+            workflowShowOnlyDifference.deleteOnExit();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try{
+            parentVolumesFrom2Dlogs=File.createTempFile("parentVolumesFrom2DLogs",".sh");
+            BufferedWriter bw= new BufferedWriter(new FileWriter(parentVolumesFrom2Dlogs));
+            bw.write(parentVolumeFrom2DLogsContents);
+            bw.close();
+            parentVolumesFrom2Dlogs.setExecutable(true,false);
+            parentVolumesFrom2Dlogs.deleteOnExit();
+        }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+         try{
+            md5SumCheckforText=File.createTempFile("md5SumCheckforText",".sh");
+            BufferedWriter bw= new BufferedWriter(new FileWriter(md5SumCheckforText));
+            bw.write(md5SumCheckforTextContents);
+            bw.close();
+            md5SumCheckforText.setExecutable(true,false);
+            md5SumCheckforText.deleteOnExit();
+        }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+         try{
+             dugioFullHeaderExtractor=File.createTempFile("dugioFullHeaderExtractor", ".sh");
+             BufferedWriter bw=new BufferedWriter(new FileWriter(dugioFullHeaderExtractor));
+             bw.write(dugioFullHeaderExtractorContents);
+             bw.close();
+             dugioFullHeaderExtractor.setExecutable(true,false);
+             dugioFullHeaderExtractor.deleteOnExit();
+         }catch(IOException ex){
+            Logger.getLogger(DugioScripts.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     
@@ -406,6 +501,28 @@ public class DugioScripts implements Serializable{
 
     public File getSubsurfaceInsightVersionForLog() {
         return subsurfaceInsightVersionForLog;
+    }
+
+    public File getWorkflowDifference() {
+        return workflowDifference;
+    }
+
+    public File getWorkflowShowOnlyDifference() {
+        return workflowShowOnlyDifference;
+    }
+    
+    
+
+    public File getParentVolumesFrom2Dlogs() {
+        return parentVolumesFrom2Dlogs;
+    }
+
+    public File getMd5SumCheckforText() {
+        return md5SumCheckforText;
+    }
+
+    public File getDugioFullHeaderExtractor() {
+        return dugioFullHeaderExtractor;
     }
     
     

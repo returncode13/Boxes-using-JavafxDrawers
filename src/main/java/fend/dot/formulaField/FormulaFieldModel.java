@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -66,14 +68,37 @@ public class FormulaFieldModel {
     private Dot dbDot;
     private Set<VariableArgument> dbVariableArguments;
     private Map<String,Job> variableArgumentMap=new HashMap<>();
+    private BooleanProperty functionValidityProperty=new SimpleBooleanProperty(true);
+    private BooleanProperty limitsValidityProperty=new SimpleBooleanProperty(true);
+    
+    public BooleanProperty limitsValidityProperty(){
+        return this.limitsValidityProperty;
+    }
+    
+    public void setLimitsValidity(boolean b){
+        this.limitsValidityProperty.set(b);
+    }
+    
+    public BooleanProperty functionValidityProperty(){
+        return this.functionValidityProperty;
+    }
+    
+    public void setFunctionValidity(boolean b){
+        this.functionValidityProperty.set(b);
+    }
+    
+    
     
     public FormulaFieldModel(DotModel dot) {
         this.dot = dot;
-        dbDot=dotService.getDot(dot.getId());
+        //dbDot=dotService.getDot(dot.getId());
+        dbDot=this.dot.getDatabaseDot();
+               
         function.set(dbDot.getFunction());
         tolerance.set(dbDot.getTolerance()==null?0.0:dbDot.getTolerance());
         error.set(dbDot.getError()==null?0.0:dbDot.getError());
-        dbVariableArguments=dbDot.getVariableArguments();
+        //dbVariableArguments=dbDot.getVariableArguments();
+        dbVariableArguments=new HashSet<>(variableArgumentService.getVariableArgumentsForDot(dbDot));
         variableArgumentMap.clear();
         for(VariableArgument va:dbVariableArguments){
             variableArgumentMap.put(va.getVariable(), va.getArgument());
@@ -118,7 +143,11 @@ public class FormulaFieldModel {
         this.error.set(error);
     }
 
-   
+    public DotModel getDot() {
+        return dot;
+    }
+
+    
 
     public String getInfo(){
        return dot.getVariableArgumentModel().getInfo();
@@ -146,7 +175,7 @@ public class FormulaFieldModel {
     private final ChangeListener<String> formulaChangeListener=new ChangeListener<String>() {
        @Override
        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-           dot.setFormula(function.get());
+           dot.setFunction(function.get());
        }
    };
     
@@ -165,6 +194,9 @@ public class FormulaFieldModel {
     dot.setError(error.get());
     }
     };*/
+    
+    
+    
     private final ChangeListener<Number> errorChangeListener=new ChangeListener<Number>() {
        @Override
        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -172,4 +204,17 @@ public class FormulaFieldModel {
          
        }
    };
+
+    
+    BooleanProperty warnUser=new SimpleBooleanProperty(false);
+    
+    void removeUserWarning() {
+        dot.removeUserWarning();
+        warnUser.set(false);
+    }
+
+    void warnUser() {
+        dot.warnUser();
+        warnUser.set(true);
+    }
 }

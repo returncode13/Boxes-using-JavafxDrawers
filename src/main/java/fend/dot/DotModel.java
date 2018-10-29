@@ -6,6 +6,7 @@
 package fend.dot;
 
 
+import db.model.Dot;
 import db.model.Job;
 import fend.dot.formulaField.FormulaFieldModel;
 import fend.dot.variableArgument.VariableArgumentModel;
@@ -62,6 +63,21 @@ public class DotModel {
     private DoubleProperty error=new SimpleDoubleProperty(0.0);
     private DoubleProperty tolerance=new SimpleDoubleProperty(0.0);
     private VariableArgumentModel variableArgumentModel=new VariableArgumentModel();
+    private Dot databaseDot;
+    private BooleanProperty dotclickedProperty=new SimpleBooleanProperty(false);
+    
+    
+    
+    
+    public BooleanProperty dotClickedProperty(){
+        return dotclickedProperty;
+    }
+    
+    
+    public void clickDot(){
+        boolean val =dotclickedProperty.get();
+        dotclickedProperty.set(!val);
+    }
     
     
     public DotModel(WorkspaceModel workspaceM){
@@ -79,6 +95,18 @@ public class DotModel {
        
         
     }   
+
+    public Dot getDatabaseDot() {
+        return databaseDot;
+    }
+
+    public void setDatabaseDot(Dot databaseDot) {
+        this.databaseDot = databaseDot;
+        
+    }
+    
+    
+    
 
     public Long getId() {
         return id;
@@ -228,7 +256,7 @@ public class DotModel {
         return function;
     }
 
-    public void setFormula(String formula) {
+    public void setFunction(String formula) {
         this.function.set(formula);
     }
 
@@ -272,6 +300,34 @@ public class DotModel {
 
     void toggleLinkWasCreated() {
         linkWasCreated.set(!linkWasCreated.get());
+    }
+
+    private BooleanProperty exitedFormulaFieldProperty=new SimpleBooleanProperty(false);
+    
+    public BooleanProperty exitedFormulaFieldProperty(){
+        return this.exitedFormulaFieldProperty;
+    }
+    
+    public void exitedFormulaField() {
+        this.exitedFormulaFieldProperty.set(!exitedFormulaFieldProperty.get());
+        
+    }
+
+    
+    BooleanProperty warnUser=new SimpleBooleanProperty(false);
+
+    public BooleanProperty warnUserProperty() {
+        return warnUser;
+    }
+    
+    
+    
+    public void removeUserWarning() {
+        warnUser.set(false);
+    }
+
+    public void warnUser() {
+        warnUser.set(true);
     }
 
    
