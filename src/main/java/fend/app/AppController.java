@@ -968,11 +968,13 @@ public class AppController extends Stage implements Initializable{
                     CommentType qccommentType=null;
                     CommentType workflowCommentType=null;
                     if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_QC)==null){
+                        System.out.println("fend.AppController.checkForCommentTypes(): no QC type found...creating");
                         qccommentType=new CommentType();
                         qccommentType.setType(CommentTypeModel.TYPE_QC);
                         commentTypeService.createCommentType(qccommentType);
                     }
                     if(commentTypeService.getCommentTypeByName(CommentTypeModel.TYPE_WORKFLOW)==null){
+                        System.out.println("fend.AppController.checkForCommentTypes(): no QC type found...creating");
                         workflowCommentType=new CommentType();
                         workflowCommentType.setType(CommentTypeModel.TYPE_WORKFLOW);
                         commentTypeService.createCommentType(workflowCommentType);

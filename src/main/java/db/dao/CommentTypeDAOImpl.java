@@ -30,7 +30,10 @@ public class CommentTypeDAOImpl implements CommentTypeDAO {
             query.setParameter("n",type);
             results=query.list();
             
-            if(results.isEmpty()) throw new Exception("no commenttype object with type "+type+" found");
+            if(results.isEmpty()) {
+                return null;
+               // throw new Exception("no commenttype object with type "+type+" found");
+            }
         }catch(Exception e){
             e.printStackTrace();
         }finally{
