@@ -895,29 +895,143 @@ public class HeaderExtractor {
                     
                     if(hdr.getVolume().getVolumeType().equals(Volume0.PROCESS_2D) || hdr.getVolume().getVolumeType().equals(Volume0.SEGD_LOAD) || hdr.getVolume().getVolumeType().equals(Volume0.SEGY) ){
                         try{
+                        
+                        try{
                             traceCount=Long.valueOf(forTraces(hdr));
-                            cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
-                            cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
-                            cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
-                            
-                            inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
-                            inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
-                            inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
-                            xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
-                            xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
-                            xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
-                            dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
-                            dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
-                            dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
-                            dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
-                            dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
-                            dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
-                            offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
-                            offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
-                            offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
-                            
                         }catch(NumberFormatException nfe){
+                            System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  tracecount set to zero: "+nfe.getMessage());
                             traceCount=0L;
+                        }
+                            try{
+                            cmpMax=Long.valueOf(forEachKey(hdr,dmh.cmpMax));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  cmpMax set to zero: "+nfe.getMessage());
+                                cmpMax=-1L;
+                            }
+                            
+                            try{
+                            cmpMin=Long.valueOf(forEachKey(hdr,dmh.cmpMin));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  cmpMin set to zero: "+nfe.getMessage());
+                                cmpMin=-1L;
+                            }
+                            
+                            try{
+                                
+                            cmpInc=Long.valueOf(forEachKey(hdr,dmh.cmpInc));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  cmpInc set to zero: "+nfe.getMessage());
+                                cmpInc=-1L;
+                            }
+                            
+                            try{
+                            inlineMax=Long.valueOf(forEachKey(hdr,dmh.inlineMax));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  inlineMax set to zero: "+nfe.getMessage());
+                                inlineMax=-1L;
+                            }
+                            
+                            try{
+                            inlineMin=Long.valueOf(forEachKey(hdr,dmh.inlineMin));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  inlineMin set to zero: "+nfe.getMessage());
+                                inlineMin=-1L;
+                            }
+                            
+                            try{
+                            inlineInc=Long.valueOf(forEachKey(hdr,dmh.inlineInc));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  inlineInc set to zero: "+nfe.getMessage());
+                                inlineInc=-1L;
+                            }
+                            
+                            try{
+                            xlineMax=Long.valueOf(forEachKey(hdr,dmh.xlineMax));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  xlineMax set to zero: "+nfe.getMessage());
+                                xlineMax=-1L;
+                            }
+                            
+                            try{
+                            xlineMin=Long.valueOf(forEachKey(hdr,dmh.xlineMin));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  xlineMin set to -1: "+nfe.getMessage());
+                                xlineMin=-1L;
+                            }
+                            
+                            try{
+                            xlineInc=Long.valueOf(forEachKey(hdr,dmh.xlineInc));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  xlineInc set to -1: "+nfe.getMessage());
+                                xlineInc=-1L;
+                            }
+                            
+                            try{
+                            dugShotMax=Long.valueOf(forEachKey(hdr,dmh.dugShotMax));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugShotMax set to -1: "+nfe.getMessage());
+                               dugShotMax=-1L;
+                            }
+                            
+                            try{
+                            dugShotMin=Long.valueOf(forEachKey(hdr,dmh.dugShotMin));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugShotMin set to -1: "+nfe.getMessage());
+                               dugShotMin=-1L;
+                            }
+                            
+                            try{
+                            dugShotInc=Long.valueOf(forEachKey(hdr,dmh.dugShotInc));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugShotInc set to -1: "+nfe.getMessage());
+                               dugShotInc=-1L;
+                            }
+                            
+                            try{
+                            dugChannelMax=Long.valueOf(forEachKey(hdr,dmh.dugChannelMax));
+                            }catch(NumberFormatException nfe){
+                                 System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugChannelMax set to -1: "+nfe.getMessage());
+                               dugChannelMax=-1L;
+                            }
+                            
+                            try{
+                            dugChannelMin=Long.valueOf(forEachKey(hdr,dmh.dugChannelMin));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugChannelMin set to -1: "+nfe.getMessage());
+                               dugChannelMin=-1L;
+                            }
+                            
+                            try{
+                            dugChannelInc=Long.valueOf(forEachKey(hdr,dmh.dugChannelInc));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  dugChannelInc set to -1: "+nfe.getMessage());
+                               dugChannelInc=-1L;
+                            }
+                            
+                            try{
+                            offsetMax=Long.valueOf(forEachKey(hdr,dmh.offsetMax));
+                            }catch(NumberFormatException nfe){
+                                System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  offsetMax set to -1: "+nfe.getMessage());
+                               offsetMax=-1L;
+                            }
+                            
+                            try{
+                            offsetMin=Long.valueOf(forEachKey(hdr,dmh.offsetMin));
+                            }catch(NumberFormatException nfe){
+                                  System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  offsetMin set to -1: "+nfe.getMessage());
+                               offsetMin=-1L;
+                            }
+                            
+                            try{
+                            offsetInc=Long.valueOf(forEachKey(hdr,dmh.offsetInc));
+                            }catch(NumberFormatException nfe){
+                                  System.out.println("middleware.dugex.HeaderExtractor.POPULATE():  offsetInc set to -1: "+nfe.getMessage());
+                               offsetInc=-1L;
+                            }
+                            
+                            /*}catch(NumberFormatException nfe){
+                            System.out.println("middleware.dugex.HeaderExtractor.POPULATE(): NFE: "+hdr.getSubsurface().getSubsurface()+);*/
+                            /* traceCount=0L;
                             cmpMax=-1L;
                             cmpMin=-1L;
                             cmpInc=-1L;
@@ -936,7 +1050,7 @@ public class HeaderExtractor {
                             dugChannelInc=-1L;
                             offsetMax=-1L;
                             offsetMin=-1L;
-                            offsetInc=-1L;
+                            offsetInc=-1L;*/
                         }catch(IOException ioe){
                             System.out.println("middleware.dugex.HeaderExtractor.populate(): IOException: "+ioe.getMessage());
                         }

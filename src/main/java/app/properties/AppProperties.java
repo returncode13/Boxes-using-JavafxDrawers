@@ -21,7 +21,7 @@ public class AppProperties {
     public static String DEVELOPER_MODE="DEVELOPER";
     public static String OFFICE_MODE="OFFICE";
     public static String PRODUCTION_MODE="PRODUCTION";
-    public static final String VERSION="Internal-39.0.2";             //www.semver.org MAJOR.MINOR.PATCH
+    public static final String VERSION="Internal-39.0.5";             //www.semver.org MAJOR.MINOR.PATCH
                                                             /*
                                                                     1. MAJOR version when you make incompatible API changes
                                                                     2. MINOR version when you add functionality in a backwards-compatible manner.

@@ -51,20 +51,20 @@ public class DugioScripts implements Serializable{
     private String dugioHeaderValuesContent="#!/bin/bash\n"
             + "module add prod\n"
             + "dugio md_get file=$1 line=$2 key=$3";
-    /*private String dugioTracesContent="#!/bin/bash\n" +
+    private String dugioTracesContent="#!/bin/bash\n" +
     "count = `ls -1 $1/*.idb 2>/dev/null | wc -l`\n" +
     "if [ count!=0 ]\n" +
     "then\n" +
-    "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1\n" +
+    "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1|sed 's/,//g'\n" +
     "else\n" +
     "dugio summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1\n" +
-    "fi";*/
+    "fi";
     /* private String dugioTracesContent = "#!/bin/bash\n"
     + "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1 | sed \'s,\\,,,g\'";*/
             
            //private String dugioTracesContent= "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1 | sed 's,\\,,,g'";   //dont forget the comma in [[:digit:],]
             
-               private String dugioTracesContent= "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1 | sed 's/,//'";   //dont forget the comma in [[:digit:],]
+              // private String dugioTracesContent= "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1 | sed 's/,//g'";   //dont forget the comma in [[:digit:],]
 
     /*private String dugio2TracesContent="#!/bin/bash\n"
             + "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1";*/
