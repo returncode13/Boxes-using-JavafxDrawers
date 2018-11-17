@@ -51,14 +51,25 @@ public class DugioScripts implements Serializable{
     private String dugioHeaderValuesContent="#!/bin/bash\n"
             + "module add prod\n"
             + "dugio md_get file=$1 line=$2 key=$3";
-    private String dugioTracesContent="#!/bin/bash\n" +
+    /* private String dugioTracesContent="#!/bin/bash\n" +
     "count = `ls -1 $1/*.idb 2>/dev/null | wc -l`\n" +
     "if [ count!=0 ]\n" +
     "then\n" +
     "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1|sed 's/,//g'\n" +
     "else\n" +
     "dugio summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1\n" +
-    "fi";
+    "fi";*/
+    
+    private String dugioTracesContent="#!/bin/bash\n" +
+"count=`ls -1 $1/*.idb 2>/dev/null | wc -l`\n" +
+"if [ $count -gt 0 ]\n" +
+"then\n" +
+"echo \"dugio2\"\n" +
+"dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1|sed 's/,//g'\n" +
+"else\n" +
+"echo \"dugio\"\n" +
+"dugio summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1\n" +
+"fi";
     /* private String dugioTracesContent = "#!/bin/bash\n"
     + "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1 | sed \'s,\\,,,g\'";*/
             
