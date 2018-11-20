@@ -64,10 +64,8 @@ public class DugioScripts implements Serializable{
 "count=`ls -1 $1/*.idb 2>/dev/null | wc -l`\n" +
 "if [ $count -gt 0 ]\n" +
 "then\n" +
-"echo \"dugio2\"\n" +
 "dugio2 summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:],]+|head -1|sed 's/,//g'\n" +
 "else\n" +
-"echo \"dugio\"\n" +
 "dugio summary file=$1 line=$2 | grep  Traces |grep -oP [[:digit:]]+|head -1\n" +
 "fi";
     /* private String dugioTracesContent = "#!/bin/bash\n"
