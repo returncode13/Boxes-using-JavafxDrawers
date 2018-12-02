@@ -217,6 +217,12 @@ public class HeaderExtractor {
                                     final int currentInd=iii+1;
                                      //System.out.println("middleware.dugex.HeaderExtractor.<init>(): progress is "+(double)currentInd/subsInVol.size()+" current index: "+iii+" total: "+subsInVol.size());
                                     Subsurface dbsub=subsurfaceService.getSubsurfaceObjBysubsurfacename(sub.getSubsurfaceName());
+                                    try{
+                                        if(dbsub==null) throw new NullPointerException("SUBSURFACE : "+sub.getSubsurfaceName()+" NOT FOUND IN THE DATABASE!. RUN THE ORCA UPDATE COMMAND");
+                                    }catch(NullPointerException npe){
+                                        System.out.println("..skipping assigning any value to "+sub.getSubsurfaceName());
+                                        return "SKIPPED header extraction for sub: "+sub.getSubsurfaceName();
+                                    }
                                     String updateTime=DateTime.now(DateTimeZone.UTC).toString(AppProperties.TIMESTAMP_FORMAT);
 
                                     Sequence dbseq=dbsub.getSequence();
@@ -1341,7 +1347,7 @@ public class HeaderExtractor {
                         
                         String value;
                         while((value=br.readLine())!=null){
-                         //   System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
+                            System.out.println("DHVEx: forTraces Volume: "+hdr.getVolume().getNameVolume()+" sub: "+hdr.getSubsurface().getSubsurface()+" Traces ="+value+"");
                             return value;
                         }
                       }catch(Exception ex){
@@ -1361,7 +1367,7 @@ public class HeaderExtractor {
                         
                         String value;
                         while((value=br.readLine())!=null){
-                         //   System.out.println("DHVEx: forTraces Volume: "+volume+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
+                            System.out.println("DHVEx: forTraces Volume: "+hdr.getVolume().getNameVolume()+" sub: "+hdr.getSubsurface()+" Traces ="+value+"");
                             return value;
                         }
                       }catch(Exception ex){

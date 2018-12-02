@@ -620,7 +620,7 @@ public class LogDAOImpl implements LogDAO{
     
     @Override
     public void bulkUpdateOnLogs(Volume volume, Fheader fhdr, Subsurface sub) {
-    System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
+    //System.out.println("db.dao.LogDAOImpl.bulkUpdateOnLogs()");
         Session session=HibernateUtil.getSessionFactory().openSession();
         Transaction transaction=null;
         int result=13;

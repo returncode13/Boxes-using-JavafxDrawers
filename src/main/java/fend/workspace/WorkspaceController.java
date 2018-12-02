@@ -801,12 +801,15 @@ public class WorkspaceController {
                     try{
                         xyh.x=Double.valueOf(n.getValue());
                     }catch(NumberFormatException nfe){
+                        System.out.println("fend.workspace.WorkspaceController.loadSession(): X received : "+nfe.getMessage()+" for job : "+key);
                         xyh.x=0.0;
                     }
-                }else{
+                }
+                if(n.getNodeProperty().getPropertyType().getName().equalsIgnoreCase("y")){
                     try{
                         xyh.y=Double.valueOf(n.getValue());
                     }catch(NumberFormatException nfe){
+                        System.out.println("fend.workspace.WorkspaceController.loadSession(): Y received : "+nfe.getMessage()+" for job : "+key);
                         xyh.y=0.0;
                     }
                 }
